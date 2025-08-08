@@ -1,0 +1,68 @@
+'use client'
+import { useState } from 'react'
+import Link from 'next/link'
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Logout,
+  Mail,
+  PasswordField,
+  RightArrow,
+  User,
+} from '@/components/uikit/icons'
+import BottomNav from '@/components/dashboard/bottomNav'
+import { ButtonListItem } from '@/components/uikit/buttons/buttonListItem'
+import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/uikit/buttons/button'
+import { Header } from '@/components/dashboard/header'
+import { ContentWrapper } from '@/components/dashboard/contentWrapper'
+
+export default function AccountPage() {
+  const [userInfo] = useState({
+    name: 'Davod Osanlo',
+    email: 'davod.osanlo@gmail.com',
+    phone: '+1 234 567 8900',
+  })
+
+  return (
+    <>
+      <Header title="Account" returnHref="/dashboard/profile" />
+      {/* The main content of page starts here */}
+      <>
+        <ContentWrapper className="grid content-between">
+          <div className="pt-4 grid divide-y divide-border-seprator">
+            <Link href="/dashboard/account/edit-account">
+              <ButtonListItem
+                text="Edit Account Information"
+                caption="Full name, Mobile number"
+                icon={User}
+              />
+            </Link>
+            <Link href="/dashboard/account/change-email">
+              <ButtonListItem text="Change Email" badgeText="Verified" icon={Mail} />
+            </Link>
+            <ButtonListItem text="Change Password" icon={PasswordField} />
+            <ButtonListItem text="Logout" icon={Logout} />
+          </div>
+          <div className="flex gap-3 rounded-md border-border-attention border-1 text-attention-default p-3">
+            <AlertTriangle className="size-5 mt-1" />
+            <div className="pb-2">
+              <p className="body-small pb-4">
+                Permanently delete your account and all associated data.
+              </p>
+              <Link
+                href=""
+                className="border-border-attention border-2 rounded-md px-4 py-2 button-medium text-attention-default"
+              >
+                Delete Account
+              </Link>
+            </div>
+          </div>
+        </ContentWrapper>
+      </>
+      {/* The main content of page ends here */}
+
+      <BottomNav />
+    </>
+  )
+}

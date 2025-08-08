@@ -1,0 +1,565 @@
+import React from 'react'
+import Link from 'next/link'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { Button } from '@/components/uikit/buttons/button'
+import OrderReview from '@/components/dashboard/order/OrderReview'
+import { ArrowLeft } from '@/components/uikit/icons'
+
+type Args = {
+  params: Promise<{
+    slug: string
+  }>
+}
+
+export default async function OrderPage({ params: paramsPromise }: Args) {
+  const { slug } = await paramsPromise
+
+  if (!slug || !/^[a-zA-Z0-9]{6,8}$/.test(slug)) {
+    notFound() // Redirect to 404 if slug isn’t a valid ID
+  }
+
+  // Mock data for preview
+  const orderData = {
+    id: slug,
+    flashings: [
+      { id: '20UM', length: [690, 1000, 8000], material: 'Steel', thickness: 1, color: 'Steel' },
+      { id: '20UM', length: [690, 1000, 8000], material: 'Steel', thickness: 1, color: 'Steel' },
+      { id: '20UM', length: [690, 1000, 8000], material: 'Steel', thickness: 1, color: 'Steel' },
+    ],
+  }
+
+  const hasFlashings = orderData.flashings.length > 0
+
+  return (
+    <div className="flex flex-col min-h-screen w-full">
+      {/* Header */}
+      <div className="bg-surface-card p-4 border-b-1 border-b-border-dark flex items-center gap-xl">
+        <Link href={`/${orderData.id}/details`}>
+          <ArrowLeft />
+        </Link>
+        <h6 className="text-smd text-heading font-semibold">Order Review</h6>
+      </div>
+
+      {hasFlashings ? (
+        <>
+          {/* Flashings present */}
+          <div className="grow overflow-y-auto h-0 px-4 pt-m pb-3xl space-y-4">
+            {orderData.flashings.map((flashing, idx) => (
+              <OrderReview key={idx} data={flashing} />
+            ))}
+          </div>
+
+          {/* Bottom buttons (sticky) */}
+          <div className="p-4 border-t-1 border-t-border-dark bg-surface-card sticky bottom-0">
+            <div className="flex justify-between gap-4">
+              <Button variant="secondary" size="lg" className="flex-1" asChild>
+                <Link href="/canvas/">Add New Flashing</Link>
+              </Button>
+              <Button variant="default" size="lg" className="flex-1" asChild>
+                <Link href={`/${orderData.id}/shipping`}>Proceed Order</Link>
+              </Button>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Empty state */}
+          <div className="flex flex-1 flex-col items-center justify-center text-center px-4 bg-background">
+            <svg
+              width="270"
+              height="140"
+              viewBox="0 0 270 140"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g clipPath="url(#clip0_2500_87719)">
+                <path
+                  d="M59.2422 127.626C59.2422 127.626 57.7956 123.671 55.943 118.531H55.8615V118.303C54.1464 113.546 52.1004 107.828 50.5371 103.304V118.482H44.3031V96.9409H48.4111C48.2513 96.4287 48.149 96.0394 48.0994 95.7968C47.8357 94.5203 48.1474 93.7225 48.6046 93.0508H30.4941V139.324H65.083V138.443C61.2099 136.6 60.1054 129.951 59.2422 127.626ZM39.1018 118.531H32.8678V96.9903H39.1018V118.531Z"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path d="M50.5355 122.204V120.188H44.308V122.204H50.5355Z" fill="#6D6D6D" />
+                <path d="M55.8616 122.251V120.234H56.453L57.0077 122.251H55.8616Z" fill="#6D6D6D" />
+                <path d="M39.1001 122.251V120.234H32.8725V122.251H39.1001Z" fill="#6D6D6D" />
+                <path
+                  d="M47.3033 133.506C48.5109 133.506 49.4899 132.529 49.4899 131.323C49.4899 130.118 48.5109 129.141 47.3033 129.141C46.0956 129.141 45.1166 130.118 45.1166 131.323C45.1166 132.529 46.0956 133.506 47.3033 133.506Z"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M60.6439 132.63C60.4065 132.967 60.0784 133.23 59.6975 133.389C59.3167 133.547 58.8986 133.595 58.4917 133.527C58.0847 133.458 57.7055 133.276 57.3979 133.001C57.0903 132.727 56.8667 132.371 56.7531 131.975C56.6396 131.579 56.6406 131.159 56.7561 130.763C56.8715 130.368 57.0968 130.013 57.4058 129.74C57.7147 129.467 58.0948 129.287 58.502 129.22C58.9093 129.154 59.3271 129.203 59.7072 129.364"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M35.8664 133.553C37.074 133.553 38.053 132.576 38.053 131.37C38.053 130.165 37.074 129.188 35.8664 129.188C34.6587 129.188 33.6797 130.165 33.6797 131.37C33.6797 132.576 34.6587 133.553 35.8664 133.553Z"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M50.5371 103.537V118.491H44.3096V96.9453H48.2545"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M50.112 102.07H44.9074"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M50.112 104.441H44.9075"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M50.112 106.816H44.9075"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M39.1001 118.536V96.9922H32.8726V118.536H39.1001Z"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M38.6798 111.988H33.3218"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M38.6798 99.7461H33.3218"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M38.6798 114.363H33.3218"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M38.6798 116.734H33.3218"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M54.5378 75.2965C54.2488 74.4842 53.8204 73.7283 53.2718 73.0626C51.2866 70.6485 51.2626 69.1151 50.1437 67.9582C49.0247 66.8014 47.2489 67.3296 48.8473 71.2532C49.0999 71.8723 49.3295 72.4345 49.5363 72.9398"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M46.3072 72.6565C47.9344 72.6804 53.3404 73.0873 56.3103 77.5119"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M46.3971 76.1255C49.8337 75.4011 58.4174 74.6448 60.1022 84.5823"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M51.6975 87.5614C51.2292 85.9355 50.6761 84.3941 50.0735 83.4543C48.3056 80.6971 44.3575 80.9013 44.3575 80.9013C44.3575 80.9013 34.3192 72.0153 32.8662 70.4101C31.4132 68.805 31.9695 67.2748 34.567 69.0587C35.9081 69.9793 38.6398 71.9308 40.9608 73.6077"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M44.1863 80.5046C44.1863 80.5046 39.0313 69.072 38.2592 66.9179C37.4872 64.7638 38.531 63.6278 40.2845 66.4855C41.0453 67.7269 42.2298 69.6767 43.3215 71.4909"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M43.6986 79.5904C43.6986 79.5904 43.2878 69.7838 43.2894 67.8834C43.2894 64.7512 45.1739 63.8608 45.6599 68.0828C45.9796 70.9023 46.3424 76.0992 46.3424 76.0992"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M192.14 75.4745C192.43 74.5958 192.88 73.7784 193.469 73.0635C195.455 70.6478 195.476 69.1128 196.6 67.9575C197.724 66.8023 199.493 67.3289 197.895 71.2525C197.625 71.9195 197.38 72.5205 197.159 73.0555"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M200.569 72.6565C199.148 72.6565 193.638 72.9501 190.553 77.3364"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M200.307 76.1174C196.846 75.3961 188.318 74.6813 186.638 84.5741"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M195.161 87.1506C195.604 85.6779 196.12 84.3104 196.667 83.4488C198.435 80.6916 202.383 80.8958 202.383 80.8958C202.383 80.8958 212.418 72.0114 213.874 70.4062C215.33 68.801 214.771 67.2709 212.174 69.0548C210.797 69.9994 207.958 72.0322 205.594 73.7331"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M202.554 80.5046C202.554 80.5046 207.709 69.072 208.481 66.9179C209.253 64.7638 208.209 63.6278 206.457 66.4855C205.681 67.7492 204.466 69.7517 203.353 71.5915"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M203.352 71.6137C203.409 69.9431 203.452 68.499 203.451 67.8831C203.451 64.7509 201.566 63.8606 201.08 68.0826C200.76 70.902 200.399 76.099 200.399 76.099"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M203.042 79.5916C203.042 79.5916 203.231 75.1079 203.352 71.6135"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M101.658 63.125C93.7269 67.0805 91.2238 73.2827 92.0565 79.7433H91.9798C91.9798 79.7433 81.5483 79.6045 75.7044 96.9345C73.9925 92.9135 72.255 88.9787 71.5085 87.7469C69.8093 84.9514 64.0086 86.2071 62.4932 84.2653C60.9779 82.3234 60.4408 81.7123 60.4408 81.7123C60.4408 81.7123 55.9332 87.0831 50.3035 86.4816C50.3035 86.4816 49.9838 87.4485 50.198 89.8898C50.4122 92.3311 47.4375 92.6104 48.1008 95.8032C48.7642 98.996 59.2372 127.629 59.2372 127.629C60.225 130.291 61.5294 138.618 66.9417 138.915C66.9564 138.954 66.982 138.988 67.0155 139.012C67.049 139.037 67.0888 139.051 67.1303 139.054C75.7124 139.03 180.654 139.118 180.654 139.118C180.654 139.118 180.663 139.004 180.674 138.791C185.35 137.69 186.562 130.139 187.493 127.629C187.493 127.629 197.968 98.996 198.63 95.8032C199.292 92.6104 196.322 92.3311 196.534 89.8898C196.747 87.4485 196.427 86.4816 196.427 86.4816C190.804 87.0752 186.295 81.7139 186.295 81.7139C186.295 81.7139 185.758 82.3202 184.244 84.2669C182.73 86.2135 179.856 84.0148 178.159 86.8103C176.787 89.0697 171.925 100.911 170.107 105.37C164.593 88.9979 157.497 80.6783 145.921 78.5849C145.162 73.9927 143.137 68.7799 138.01 64.9919"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M196.3 89.5307C196.701 86.9778 196.493 85.9949 196.493 85.9949C191.356 87.1038 186.608 81.2734 186.608 81.2734C186.608 81.2734 186.069 81.95 184.53 84.1009C184.092 84.7568 183.418 85.2194 182.647 85.3933C184.78 92.3215 194.065 93.2118 197.546 93.2948C197.287 91.7837 195.996 91.4694 196.3 89.5307Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M50.1341 89.518C49.7329 86.965 50.2476 85.9949 50.2476 85.9949C55.3866 87.1038 60.134 81.2734 60.134 81.2734C60.134 81.2734 60.9077 81.3596 62.4438 83.5073C63.0624 84.3737 64.1254 85.1029 64.7663 85.28C62.634 92.2066 51.9548 93.1464 48.4734 93.231C48.7355 91.7247 50.4379 91.4582 50.1341 89.518Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M92.4354 79.4258C89.312 80.064 85.6372 81.4841 82.7744 84.6546C85.439 88.5032 95.1815 101.811 112.346 104.6C112.332 104.481 112.306 104.364 112.269 104.25C102.753 100.343 93.4408 89.5085 92.4354 79.4258Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M145.288 77.6562C145.883 81.2017 145.72 84.385 145.64 86.2646C145.376 92.4779 143.092 96.7685 141.337 99.8608L141.001 102.084C148.25 100.378 154.276 88.8399 155.246 82.2373C152.673 80.8379 151.592 78.9295 145.288 77.6562Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M112.147 100.129C112.147 100.129 119.037 111.994 119.751 119.488"
+                  stroke="#111111"
+                  strokeWidth="1.28078"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M140.064 99.8359C140.064 99.8359 137.155 111.511 137.943 118.999"
+                  stroke="#111111"
+                  strokeWidth="1.28078"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M75.519 96.3047L82.9902 113.761"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M170.363 104.887L165.272 114.816"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M97.8718 126.492C97.8718 126.492 97.2324 139.484 90.4294 139.181"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M135.926 105.115C139.585 94.3061 138.164 80.7418 135.693 78.776C135.196 78.3819 133.701 78.0819 131.629 77.8537C130.763 77.7596 130.085 78.3883 130.085 78.3883L133.158 78.867C131.788 91.9701 125.929 96.0996 125.929 96.0996C116.382 85.0915 105.706 77.7117 105.706 77.7117L106.473 77.1836L105.93 77.1916L101.024 78.8781C101.024 78.8781 119.702 96.2001 125.232 127.808C126.1 132.764 126.687 136.659 127.077 139.714L136.535 139.16C135.117 128.194 133.608 111.976 135.926 105.115Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M110.022 70.6914L109.782 74.9022L105.706 77.7073C105.706 77.7073 116.382 85.087 125.929 96.1095C125.929 96.1095 131.788 91.9753 133.158 78.8769L130.085 78.3982"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M104.719 55.5586C103.068 56.0277 99.6714 57.5387 101.043 61.8389C102.231 65.5615 105.544 64.9807 107.633 64.1733"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M135.865 40.0859C137.449 46.4875 137.91 53.4891 137.889 58.8966L135.865 40.0859Z"
+                  fill="white"
+                />
+                <path
+                  d="M135.865 40.0859C137.449 46.4875 137.91 53.4891 137.889 58.8966"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M108.124 54.0039C109.288 54.9437 112.785 60.7454 113.795 63.5233C113.795 63.5233 120.44 60.305 130.336 58.9886C130.336 58.9886 135.755 58.4636 137.985 58.8689C137.985 58.8689 138.677 69.0474 134.896 74.8059C131.116 80.5645 121.68 80.1911 116.973 77.5504C112.266 74.9096 111.378 73.4943 109.985 70.2409C108.591 66.9874 104.491 54.7283 104.491 54.7283L108.124 54.0039Z"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M105.554 56.4953C105.554 56.4953 102.061 52.1792 100.372 47.4689C98.7733 43.0411 100.33 38.0261 104.254 35.5018C107.538 33.3908 110.268 34.4311 110.268 34.4311C110.268 34.4311 105.859 28.4859 110.762 22.2135C111.612 21.1209 112.679 20.2148 113.896 19.5516C115.112 18.8883 116.453 18.4822 117.833 18.3585C124.615 17.7761 127.358 23.3321 127.358 23.3321C127.358 23.3321 133.076 9.00504 148.813 15.2678C150.4 15.9061 152.337 17.9485 153.316 19.3654C159.249 27.9593 144.321 40.686 136.011 42.5209C126.884 44.5346 121.305 43.6091 118.073 41.6625C120.437 42.7539 119.529 57.0585 105.554 56.4953Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M129.51 52.6055L131.517 61.3079L128.936 61.8935"
+                  stroke="#111111"
+                  strokeWidth="1.28078"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M132.935 56.1001C133.427 56.0452 133.756 55.3745 133.669 54.602C133.583 53.8296 133.114 53.2479 132.622 53.3029C132.129 53.3578 131.801 54.0285 131.887 54.801C131.974 55.5734 132.443 56.155 132.935 56.1001Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M124.413 56.6665C124.905 56.6116 125.234 55.9409 125.147 55.1684C125.061 54.396 124.592 53.8143 124.099 53.8693C123.607 53.9242 123.278 54.5949 123.365 55.3674C123.451 56.1398 123.921 56.7214 124.413 56.6665Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M121.095 53.0003C121.095 53.0003 124.742 52.7833 124.695 50.3516"
+                  stroke="#111111"
+                  strokeWidth="1.28078"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M131.589 46.8734C131.589 46.8734 133.987 45.9304 134.837 47.9058"
+                  stroke="#111111"
+                  strokeWidth="1.28078"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M128.718 65.7747C127.438 66.0085 126.136 66.0947 124.836 66.0316C124.037 65.9981 123.431 66.4911 123.667 66.989C124.081 67.8634 125.071 68.9037 127.42 68.6309C129.735 68.3564 130.197 67.2889 130.192 66.4672C130.189 65.9726 129.442 65.6327 128.718 65.7747Z"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M150.058 119.391C149.72 119.391 149.39 119.491 149.11 119.678C148.829 119.865 148.61 120.131 148.481 120.443C148.352 120.754 148.318 121.097 148.384 121.427C148.45 121.758 148.612 122.061 148.851 122.3C149.09 122.538 149.394 122.7 149.725 122.766C150.056 122.832 150.399 122.798 150.711 122.669C151.023 122.54 151.29 122.322 151.477 122.042C151.665 121.761 151.765 121.432 151.765 121.095C151.765 120.643 151.585 120.21 151.265 119.89C150.945 119.571 150.511 119.391 150.058 119.391Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M144.561 131.379C144.108 131.379 143.674 131.558 143.354 131.878C143.034 132.198 142.854 132.631 142.854 133.083C142.854 133.535 143.034 133.968 143.354 134.288C143.674 134.608 144.108 134.787 144.561 134.787H144.569C145.022 134.786 145.455 134.606 145.775 134.285C146.094 133.965 146.273 133.531 146.272 133.079C146.271 132.627 146.09 132.194 145.769 131.875C145.448 131.556 145.014 131.378 144.561 131.379Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M188.445 115.73H142.09V127.31L133.583 127.452L133.639 139.031L182.767 138.798L182.711 127.31H188.449L188.445 115.73ZM146.455 134.951C146.21 135.202 145.918 135.402 145.595 135.539C145.272 135.676 144.925 135.747 144.574 135.749H144.561C143.854 135.751 143.175 135.472 142.674 134.974C142.173 134.476 141.89 133.8 141.888 133.094C141.887 132.388 142.166 131.71 142.665 131.21C143.164 130.71 143.841 130.428 144.548 130.426H144.561C145.085 130.428 145.597 130.584 146.033 130.875C146.469 131.166 146.81 131.578 147.012 132.061C147.214 132.544 147.269 133.076 147.17 133.59C147.071 134.104 146.822 134.578 146.455 134.951ZM150.058 123.752C149.531 123.752 149.015 123.596 148.577 123.303C148.138 123.011 147.797 122.595 147.595 122.109C147.393 121.622 147.34 121.087 147.443 120.571C147.546 120.055 147.8 119.58 148.173 119.208C148.546 118.836 149.021 118.582 149.538 118.48C150.055 118.377 150.591 118.43 151.078 118.631C151.565 118.833 151.982 119.174 152.275 119.612C152.568 120.049 152.724 120.564 152.724 121.09C152.724 121.796 152.443 122.474 151.943 122.973C151.444 123.473 150.765 123.754 150.058 123.755V123.752ZM157.492 135.96L157.462 129.737L159.482 129.727L159.511 135.95L157.492 135.96ZM159.994 118.1H162.014V124.323H159.994V118.1ZM160.416 135.945L160.386 129.722L181.965 129.62L181.995 135.843L160.416 135.945ZM184.5 124.316H162.921V118.094H184.5V124.316Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M176.861 135.158L176.838 130.539"
+                  stroke="#6D6D6D"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M174.484 135.17L174.461 130.551"
+                  stroke="#6D6D6D"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M172.107 135.182L172.084 130.562"
+                  stroke="#6D6D6D"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M169.477 123.537V118.918"
+                  stroke="#6D6D6D"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M181.742 123.537V118.918"
+                  stroke="#6D6D6D"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M167.1 123.537V118.918"
+                  stroke="#6D6D6D"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M164.724 123.537V118.918"
+                  stroke="#6D6D6D"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path d="M237.09 98.8398H179.682V139.26H237.09V98.8398Z" fill="#6D6D6D" />
+                <path d="M211.892 98.9336V139.492V98.9336Z" fill="#6D6D6D" />
+                <path
+                  d="M211.892 98.9336V139.492"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M204.164 103.316H230.14"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M219.88 117.84H236.569"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M201.567 131.387H234.103"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M206.113 114.207H189.294"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M179.746 107.855H189.943"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M179.682 126.523H199.618"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M179.596 107.918C175.309 109.603 179.725 112.422 179.725 112.422C179.725 112.422 180.83 109.231 186.479 107.931L179.596 107.918Z"
+                  fill="#6D6D6D"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M237.258 117.773C241.544 119.458 237.127 122.279 237.127 122.279C237.127 122.279 236.024 119.088 230.374 117.786L237.258 117.773Z"
+                  fill="#6D6D6D"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M194.749 126.555C194.749 126.555 184.802 128.428 185.048 134.269C185.048 134.269 177.075 131.35 179.773 126.555H194.749Z"
+                  fill="#6D6D6D"
+                  stroke="#111111"
+                  strokeWidth="0.960582"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M-0.0473633 139.211H269.291"
+                  stroke="#111111"
+                  strokeWidth="1.28078"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_2500_87719">
+                  <rect width="270" height="140" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+            <p className="subtitle-large font-regular text-smd my-4">
+              There are no drawings for this order
+            </p>
+            <Button variant="" size="lg" className="" asChild>
+              <Link href="/canvas/">Add New Flashing</Link>
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+  const { slug } = await paramsPromise
+  return {
+    title: `Canva ${slug} - Order`,
+    description: 'Order page for a specific ID',
+  }
+}
