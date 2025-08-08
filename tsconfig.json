@@ -34,7 +34,7 @@
     "next-env.d.ts",
     "next.config.js",
     "next-sitemap.config.cjs",
-    "src/app/(frontend)/dashboard/library/page.jsx"
+    "src/app/(frontend)/(use ui)/dashboard/library/page.jsx"
   ],
   "exclude": ["node_modules"]
 }
