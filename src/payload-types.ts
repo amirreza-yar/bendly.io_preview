@@ -856,7 +856,7 @@ export interface Order {
     orderTotal?: number | null;
   };
   paymentHistory?: (string | null) | Paymenthistory;
-  status?: ('pending' | 'in-progress' | 'delivered' | 'cancelled]' | 'indexed') | null;
+  status?: ('pending' | 'in-progress' | 'delivered' | 'cancelled' | 'indexed') | null;
   metadata?: {
     createdAt?: string | null;
     updatedAt?: string | null;
@@ -945,7 +945,10 @@ export interface Appsetting {
     foldStyles?: string | null;
     statusOptions?: string | null;
   };
-  permissions?: {};
+  permissions?: {
+    read?: boolean | null;
+    write?: boolean | null;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -1749,7 +1752,12 @@ export interface AppsettingsSelect<T extends boolean = true> {
         foldStyles?: T;
         statusOptions?: T;
       };
-  permissions?: T | {};
+  permissions?:
+    | T
+    | {
+        read?: T;
+        write?: T;
+      };
   createdAt?: T;
   updatedAt?: T;
 }

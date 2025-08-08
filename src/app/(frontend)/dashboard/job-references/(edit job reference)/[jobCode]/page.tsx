@@ -1,6 +1,6 @@
 import { ArrowLeft, Edit, MapMarker, Plus, ProfileNav, Remove } from '@/components/uikit/icons'
 import Link from 'next/link'
-import { jobReferences } from '../../../../../../utils/demoJobRefData'
+import { jobReferences } from '@/utilities/demoJobRefData'
 import { notFound } from 'next/navigation'
 import { Button } from '@/components/uikit/buttons/button'
 import JobRefHeader from '@/components/dashboard/jobReference/edit/header'

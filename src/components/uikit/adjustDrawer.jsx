@@ -1,7 +1,7 @@
 "use client";
 
 import { Drawer as DrawerPrimitive } from "vaul";
-import { cn } from "@/lib/utils";
+import { cn } from '@/utilities/ui';
 
 function Drawer({ ...props }) {
   // Attributes changed for drawer to outside be interactive

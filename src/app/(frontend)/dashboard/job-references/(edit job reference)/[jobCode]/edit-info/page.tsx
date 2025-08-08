@@ -8,7 +8,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useNewJobReference } from '@/providers/data_providers/job_reference_providers/AddJobReferenceContext'
-import { jobReferences } from '../../../../../../../utils/demoJobRefData'
+import { jobReferences } from '@/utilities/demoJobRefData'
 import { toast } from 'sonner'
 
 let existingCodes: string[]

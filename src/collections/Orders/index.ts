@@ -36,7 +36,7 @@ export const Orders: CollectionConfig = {
       { name: 'orderTotal', type: 'number' },
     ] },
     { name: 'paymentHistory', type: 'relationship', relationTo: 'paymenthistory' },
-    { name: 'status', type: 'select', options: [{ label: 'Pending', value: 'pending' }, { label: 'In-Progress', value: 'in-progress' }, { label: 'Delivered', value: 'delivered' }, { label: 'Cancelled]', value: 'cancelled]' }, { label: 'Indexed', value: 'indexed' }] },
+    { name: 'status', type: 'select', options: [{ label: 'Pending', value: 'pending' }, { label: 'In-Progress', value: 'in-progress' }, { label: 'Delivered', value: 'delivered' }, { label: 'Cancelled', value: 'cancelled' }, { label: 'Indexed', value: 'indexed' }] },
     { name: 'metadata', type: 'group', fields: [
       { name: 'createdAt', type: 'date' },
       { name: 'updatedAt', type: 'date' },

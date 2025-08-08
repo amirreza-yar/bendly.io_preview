@@ -17,13 +17,29 @@ export const AppSettings: CollectionConfig = {
   fields: [
     { name: '_id', type: 'text' },
     { name: 'setting', type: 'text' },
-    { name: 'appDefaults', type: 'group', fields: [
-      { name: 'materialOptions', type: 'text' },
-      { name: 'foldStyles', type: 'text' },
-      { name: 'statusOptions', type: 'text' },
-    ] },
-    { name: 'permissions', type: 'group', fields: [
-    ] },
+    {
+      name: 'appDefaults',
+      type: 'group',
+      fields: [
+        { name: 'materialOptions', type: 'text' },
+        { name: 'foldStyles', type: 'text' },
+        { name: 'statusOptions', type: 'text' },
+      ],
+    },
+    {
+      name: 'permissions',
+      type: 'group',
+      fields: [
+        {
+          name: 'read',
+          type: 'checkbox',
+        },
+        {
+          name: 'write',
+          type: 'checkbox',
+        },
+      ],
+    },
     { name: 'createdAt', type: 'date' },
     { name: 'updatedAt', type: 'date' },
   ],
