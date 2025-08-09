@@ -22,6 +22,7 @@ import { FeaturedStop } from '@/components/uikit/icons'
 import useTapper from '@/hooks/canvas/useTapper'
 import RemoveCrushFoldOnDrawingModal from '@/components/canvas/removeCrushFoldOnDrawingModal'
 import useLoading from '@/hooks/canvas/useLoading'
+import { useNewFlashingContext } from '@/providers/data_providers/flashing_providers/NewFlashingContext'
 
 const flashing = {
   nodes: [
@@ -75,6 +76,10 @@ export default function CanvasPage() {
     setIsPinchZooming,
     showOverlapDialogobjectsZoomScale,
   } = useCanvasContext()
+
+  const { newFlashing, setNewFlashing } = useNewFlashingContext()
+
+  console.log(newFlashing)
 
   useCanvas()
 
