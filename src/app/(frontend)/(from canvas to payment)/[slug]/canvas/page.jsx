@@ -97,7 +97,7 @@ export default function CanvasPage() {
 
   useTapper()
 
-  useLoading({ flashing })
+  // useLoading({ flashing })
 
   return (
     <>

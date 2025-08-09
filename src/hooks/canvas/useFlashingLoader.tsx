@@ -35,46 +35,46 @@ function sortFlashingNodes(flashing) {
   return { ...flashing, nodes: sortedNodes }
 }
 
-const flashing = {
-  nodes: [
-    {
-      node_id: '3pik7o',
-      left: 550,
-      top: 250,
-      next_node_id: 'xk6ibn',
-    },
-    {
-      node_id: 'xk6ibn',
-      left: 900,
-      top: 200,
-      prev_node_id: '3pik7o',
-      next_node_id: 'zsnkuo',
-    },
-    {
-      node_id: 'zsnkuo',
-      left: 900,
-      top: 400,
-      prev_node_id: 'xk6ibn',
-      next_node_id: '9dntq7',
-    },
-    {
-      node_id: '9dntq7',
-      left: 700,
-      top: 550,
-      prev_node_id: 'zsnkuo',
-      next_node_id: 'lm247w',
-    },
-    {
-      node_id: 'lm247w',
-      left: 850,
-      top: 550,
-      prev_node_id: '9dntq7',
-    },
-  ],
-  startCrushFold: false,
-  endCrushFold: false,
-  crushFoldDir: false,
-}
+// const flashing = {
+//   nodes: [
+//     {
+//       node_id: '3pik7o',
+//       left: 550,
+//       top: 250,
+//       next_node_id: 'xk6ibn',
+//     },
+//     {
+//       node_id: 'xk6ibn',
+//       left: 900,
+//       top: 200,
+//       prev_node_id: '3pik7o',
+//       next_node_id: 'zsnkuo',
+//     },
+//     {
+//       node_id: 'zsnkuo',
+//       left: 900,
+//       top: 400,
+//       prev_node_id: 'xk6ibn',
+//       next_node_id: '9dntq7',
+//     },
+//     {
+//       node_id: '9dntq7',
+//       left: 700,
+//       top: 550,
+//       prev_node_id: 'zsnkuo',
+//       next_node_id: 'lm247w',
+//     },
+//     {
+//       node_id: 'lm247w',
+//       left: 850,
+//       top: 550,
+//       prev_node_id: '9dntq7',
+//     },
+//   ],
+//   startCrushFold: false,
+//   endCrushFold: false,
+//   crushFoldDir: false,
+// }
 
 function createCrushFoldObject(circle, direction, position) {
   const dirCoef = direction ? 1 : -1
@@ -230,7 +230,7 @@ function createColorSideCrushFoldObject(circle, direction, position) {
   return crushFoldObject
 }
 
-const addColorSideFlashing = (
+export const addColorSideFlashing = (
   canvas,
   direction = false,
   startCrushFold = false,
@@ -303,6 +303,8 @@ const addColorSideFlashing = (
   let startCircle, endCircle
   let startLine, endLine
 
+  const toggleButtonPosition = { top: 0, left: 0 }
+
   const colorSideObjects = []
 
   circles.map((circle) => {
@@ -372,9 +374,9 @@ const addColorSideFlashing = (
         const x2 = newLine.x2
         const y2 = newLine.y2
 
-        // Compute 3/4 point on the line
-        const px = x1 + 0.75 * (x2 - x1)
-        const py = y1 + 0.75 * (y2 - y1)
+        // Compute midpoint of the line
+        const px = x1 + 0.5 * (x2 - x1) // or (x1 + x2) / 2
+        const py = y1 + 0.5 * (y2 - y1) // or (y1 + y2) / 2
 
         const dx = x2 - x1
         const dy = y2 - y1
@@ -385,13 +387,16 @@ const addColorSideFlashing = (
         const uy = dx / length
 
         // Offsets to avoid overlap with line
-        const flagOffset = direction ? -70 : 70
+        const flagOffset = direction ? -40 : 40
         const textOffsetX = ux * flagOffset
         const textOffsetY = uy * flagOffset
 
         // Final flag position
         const fx = px + textOffsetX
         const fy = py + textOffsetY
+
+        toggleButtonPosition.top = py - textOffsetY
+        toggleButtonPosition.left = px - textOffsetX
 
         const flagText = new Text('Color Side', {
           fontSize: 8,
@@ -500,7 +505,7 @@ const addColorSideFlashing = (
 
   // canvas.bringObjectToFront(colorSideObjects.find((obj) => obj._isMeasurement))
 
-  return colorSideObjects
+  return { colorSideObjects, toggleButtonPosition }
 }
 
 function isLineHorizontal(line) {
@@ -668,7 +673,7 @@ const offset3D = { x: 180, y: -145 }
 const drawConnectingLines = true // Flag to control drawing connecting lines
 const annotationOffset = 22 // Distance of annotations from lines
 
-function create3DFlashing(canvas) {
+export function create3DFlashing(canvas) {
   // Clear existing 3D elements
   const existingElements = canvas
     .getObjects()
@@ -784,7 +789,7 @@ function create3DFlashing(canvas) {
   )
 }
 
-const centerDrawingGroup = (
+export const centerDrawingGroup = (
   canvas,
   minPadding = 50, // uniform padding all sides
 ) => {
@@ -844,13 +849,13 @@ const centerDrawingGroup = (
     .filter((obj) => obj._colorSideFlag)
     .map((obj) => {
       if (obj.type === 'line') {
-        obj.set({ strokeWidth: obj.strokeWidth / scale })
+        obj.set({ strokeWidth: obj.strokeWidth / scale / 0.7 })
       } else if (obj.type === 'circle') {
-        obj.set({ radius: obj.radius / scale })
+        obj.set({ radius: obj.radius / scale / 0.7 })
       } else if (obj.type === 'rect') {
-        obj.set({ height: obj.height / scale, width: obj.width / scale })
+        obj.set({ height: obj.height / scale / 0.7, width: obj.width / scale / 0.7 })
       } else if (obj.type === 'text') {
-        obj.set({ fontSize: obj.fontSize / scale })
+        obj.set({ fontSize: obj.fontSize / scale / 0.7 })
       }
 
       canvas.bringObjectToFront(obj)
@@ -859,38 +864,54 @@ const centerDrawingGroup = (
   canvas.requestRenderAll()
 }
 
-const CanvasTest: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+export const loadFlashing = (canvas, flashing) => {
+  sortFlashingNodes(flashing).nodes.map((cir) => {
+    canvas.add(
+      new Circle({
+        node_id: cir.node_id,
+        next_node_id: cir.next_node_id,
+        left: cir.left,
+        top: cir.top,
+        next_line_bside_length: cir.next_line_bside_length,
+        originX: 'center',
+        originY: 'center',
+        radius: 0.2,
+        fill: '#000',
+        hasControls: false,
+        hasBorders: false,
+        lockRotation: true,
+        lockScalingX: true,
+        lockScalingY: true,
+        lockMovementX: true,
+        lockMovementY: true,
+        padding: 12,
+        selectable: false,
+        evented: true,
+        // objectCaching: true,
+        // statefullCache: true,
+      }),
+    )
+  })
 
-  useEffect(() => {
-    if (!canvasRef.current) return
+  const circles = canvas.getObjects().filter((obj) => obj.type === 'circle')
 
-    const canvas = new Canvas(canvasRef.current, {
-      backgroundColor: '#f9f9f9',
-      selection: false,
-    })
+  circles
+    .filter((cir) => cir.next_node_id)
+    .map((cir) => {
+      const currentCir = cir
+      const nextCir = canvas.getObjects().find((obj) => obj.node_id === currentCir.next_node_id)
 
-    // Disable caching for the canvas
-    // canvas.enableRetinaScaling = false // optional: avoids scaling cache
-    // canvas.renderOnAddRemove = true // force re-render instead of caching
-    // canvas.imageSmoothingEnabled = false // no smoothing
-    // canvas.skipOffscreen = true // skip offscreen caching
-
-    canvas.setWidth(window.innerWidth)
-    canvas.setHeight(window.innerHeight / 1.5)
-
-    sortFlashingNodes(flashing).nodes.map((cir) => {
-      canvas.add(
-        new Circle({
-          node_id: cir.node_id,
-          next_node_id: cir.next_node_id,
-          left: cir.left,
-          top: cir.top,
-          next_line_bside_length: cir.next_line_bside_length,
-          originX: 'center',
-          originY: 'center',
-          radius: 0.2,
-          fill: '#000',
+      const line = new Line(
+        [
+          currentCir.getCenterPoint().x,
+          currentCir.getCenterPoint().y,
+          nextCir.getCenterPoint().x,
+          nextCir.getCenterPoint().y,
+        ],
+        {
+          stroke: '#000',
+          strokeWidth: 2,
+          strokeLineCap: 'round',
           hasControls: false,
           hasBorders: false,
           lockRotation: true,
@@ -898,83 +919,24 @@ const CanvasTest: React.FC = () => {
           lockScalingY: true,
           lockMovementX: true,
           lockMovementY: true,
-          padding: 12,
           selectable: false,
-          evented: true,
           // objectCaching: true,
           // statefullCache: true,
-        }),
+        },
       )
-    })
 
-    const circles = canvas.getObjects().filter((obj) => obj.type === 'circle')
+      line.side = 'A'
 
-    circles
-      .filter((cir) => cir.next_node_id)
-      .map((cir) => {
-        const currentCir = cir
-        const nextCir = canvas.getObjects().find((obj) => obj.node_id === currentCir.next_node_id)
+      currentCir.line2 = line
+      nextCir.line1 = line
 
-        const line = new Line(
-          [
-            currentCir.getCenterPoint().x,
-            currentCir.getCenterPoint().y,
-            nextCir.getCenterPoint().x,
-            nextCir.getCenterPoint().y,
-          ],
-          {
-            stroke: '#000',
-            strokeWidth: 2,
-            strokeLineCap: 'round',
-            hasControls: false,
-            hasBorders: false,
-            lockRotation: true,
-            lockScalingX: true,
-            lockScalingY: true,
-            lockMovementX: true,
-            lockMovementY: true,
-            selectable: false,
-            // objectCaching: true,
-            // statefullCache: true,
-          },
-        )
+      line.circle1 = currentCir
+      line.circle2 = nextCir
 
-        line.side = 'A'
+      canvas.add(line)
 
-        currentCir.line2 = line
-        nextCir.line1 = line
-
-        line.circle1 = currentCir
-        line.circle2 = nextCir
-
-        canvas.add(line)
-
-        circles.forEach((cir) => {
-          canvas.bringObjectToFront(cir)
-        })
+      circles.forEach((cir) => {
+        canvas.bringObjectToFront(cir)
       })
-
-    const colorSideObjects = addColorSideFlashing(canvas, true, true, true)
-
-    create3DFlashing(canvas)
-
-    colorSideObjects.map((obj) => canvas.bringObjectToFront(obj))
-
-    centerDrawingGroup(canvas)
-
-    canvas.requestRenderAll()
-
-    return () => {
-      canvas.dispose()
-    }
-  }, [])
-
-  return (
-    <div style={{ padding: 20 }}>
-      <h2>js Canvas Test</h2>
-      <canvas ref={canvasRef} width={600} height={600} style={{ border: '1px solid #ccc' }} />
-    </div>
-  )
+    })
 }
-
-export default CanvasTest
