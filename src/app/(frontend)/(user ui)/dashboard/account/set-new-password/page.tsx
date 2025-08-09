@@ -51,59 +51,13 @@ export default function AccountPage() {
 
   return (
     <>
-      <Header title="Change Password" returnHref="/dashboard/account" />
+      <Header title="Set Password" returnHref="/dashboard/account" />
       <ContentWrapper>
-        {isVerified ? (
-          // ✅ UI after password verification
-          <div className="grid justify-center text-center pt-8">
-            <div className="grid gap-2 pt-8 px-6">
-              <h5>Change your password</h5>
-              <p className="subtitle-regular">Enter a new password for your account</p>
-            </div>
-            <div className="grid pt-8">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Current Password</FormLabel>
-                        <FormControl>
-                          <LabeledInput
-                            type="password"
-                            placeholder="Enter your new password"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Link href="/dashboard/account">
-                    <Button type="submit" className="w-full bg-primary">
-                      Update Password
-                    </Button>
-                  </Link>
-                </form>
-              </Form>
-            </div>
-            <Link
-              href="/dashboard/account"
-              className="w-full flex items-center justify-center pt-6 text-primary gap-2"
-            >
-              <ResetPasswordIcon className="size-[15px]" />
-              <p className="label-regular">Cancel, Back to Account Page</p>
-              <ChevronRight className="size-5" />
-            </Link>
-          </div>
-        ) : (
-          // ❌ UI before password verification
           <div className="grid justify-center text-center">
             <div className="grid gap-2 pt-8 px-6">
-              <h5>Confirm your identity</h5>
+              <h5>Set a Password for Your Account</h5>
               <p className="subtitle-regular">
-                For your security, please enter your current password to continue
+                You signed up using Google. If you'd like to log in with your email and a password in the future, set a password now.
               </p>
             </div>
             <div className="grid pt-8">
@@ -114,11 +68,11 @@ export default function AccountPage() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Current Password</FormLabel>
+                        <FormLabel>Password</FormLabel>
                         <FormControl>
                           <LabeledInput
                             type="password"
-                            placeholder="Enter your current password"
+                            placeholder="Enter your password"
                             {...field}
                           />
                         </FormControl>
@@ -127,21 +81,12 @@ export default function AccountPage() {
                     )}
                   />
                   <Button type="submit" className="w-full bg-primary">
-                    Continue
+                    Set Password
                   </Button>
                 </form>
               </Form>
             </div>
-            <Link
-              href="/dashboard/account/reset-password"
-              className="w-full flex items-center justify-center pt-6 text-primary gap-2"
-            >
-              <ResetPasswordIcon className="size-[15px]" />
-              <p className="label-regular">Forgot Password?</p>
-              <ChevronRight className="size-5" />
-            </Link>
           </div>
-        )}
       </ContentWrapper>
     </>
   )

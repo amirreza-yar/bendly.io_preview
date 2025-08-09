@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+
 import {
   AlertTriangle,
   ArrowLeft,
@@ -12,8 +13,7 @@ import {
 } from '@/components/uikit/icons'
 import BottomNav from '@/components/dashboard/bottomNav'
 import { ButtonListItem } from '@/components/uikit/buttons/buttonListItem'
-import { Separator } from '@/components/ui/separator'
-import { Button } from '@/components/uikit/buttons/button'
+import { AlertModal } from '@/components/uikit/alertModal'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 
@@ -23,7 +23,7 @@ export default function AccountPage() {
     email: 'davod.osanlo@gmail.com',
     phone: '+1 234 567 8900',
   })
-
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   return (
     <>
       <Header title="Account" returnHref="/dashboard/profile" />
@@ -41,8 +41,11 @@ export default function AccountPage() {
             <Link href="/dashboard/account/change-email">
               <ButtonListItem text="Change Email" badgeText="Verified" icon={Mail} />
             </Link>
-            <ButtonListItem text="Change Password" icon={PasswordField} />
-            <ButtonListItem text="Logout" icon={Logout} />
+            <Link href="/dashboard/account/change-password">
+              <ButtonListItem text="Change Password" icon={PasswordField} />
+            </Link>
+
+            <ButtonListItem text="Logout" icon={Logout} onClick={() => setIsModalOpen(true)} />
           </div>
           <div className="flex gap-3 rounded-md border-border-attention border-1 text-attention-default p-3">
             <AlertTriangle className="size-5 mt-1" />
@@ -63,6 +66,20 @@ export default function AccountPage() {
       {/* The main content of page ends here */}
 
       <BottomNav />
+
+      <AlertModal
+        title="Sure About Signing Out?"
+        description="Are you sure you want to sign out? You'll need to log in again to access your account"
+        cancelButtonText="Cencel"
+        actionButtonText="Yes, Logout"
+        open={isModalOpen}
+        onAction={() => {
+          setIsModalOpen(false)
+        }}
+        onCancle={() => {
+          setIsModalOpen(false)
+        }}
+      />
     </>
   )
 }
