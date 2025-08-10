@@ -13,9 +13,9 @@ import UnitSwitcher from './unitSwitcher'
 import useObjectUtils from '@/hooks/canvas/useObjectUtils'
 import { IconButton } from '@/components/uikit/buttons/iconButton'
 import { motion } from 'framer-motion'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
-import { useBreakLineContext } from '@/providers/hooks_provider/breakLineProvider'
-import { useCrushFoldContext } from '@/providers/hooks_provider/crushFoldProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
+import { useBreakLineContext } from '@/providers/canvas_providers/breakLineProvider'
+import { useCrushFoldContext } from '@/providers/canvas_providers/crushFoldProvider'
 
 export const slideFromBottom = {
   hidden: {

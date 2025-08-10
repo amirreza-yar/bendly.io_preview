@@ -2,9 +2,9 @@
 'use client'
 import { IconButton } from '@/components/uikit/buttons/iconButton'
 import { Check, XIcon } from '@/components/uikit/icons'
-import { useTapperingContext } from '@/providers/hooks_provider/tapperingProvider'
+import { useTapperingContext } from '@/providers/canvas_providers/tapperingProvider'
 import { toast } from 'sonner'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
 import { motion } from 'framer-motion'
 
 // Define animation variants

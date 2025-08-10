@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react'
 import { Circle, Text, Line, Point, Rect, Group, util } from 'fabric'
 
-import { useCanvasContext } from '@/providers/canvasContextProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
 import useGrid from './useGrid'
 import { useHistory } from './useHistory'
 import {
@@ -16,7 +16,7 @@ import {
   // createLengthAnnotation,
 } from '@/utilities/canvas/canvasUtils'
 import { AlertModal } from '@/components/uikit/alertModal'
-import { useBreakLineContext } from '@/providers/hooks_provider/breakLineProvider'
+import { useBreakLineContext } from '@/providers/canvas_providers/breakLineProvider'
 import { RemoveCrushFoldOnDrawingModal } from '@/components/canvas/removeCrushFoldOnDrawingModal'
 import { Button } from '@/components/ui/button'
 
@@ -40,7 +40,7 @@ export default function useDrawing() {
     startCrushFoldObjectRef,
     endCrushFoldObjectRef,
     objectsZoomScale,
-    canvasIsEmpty
+    canvasIsEmpty,
   } = useCanvasContext()
 
   const { addHistory, tempUndo, undo } = useHistory()
@@ -418,7 +418,10 @@ export default function useDrawing() {
 
   useEffect(() => {
     const canvas = canvasInstance.current
-    if (!canvas) return
+    if (!canvas) {
+      // console.error('falied to load canvas')
+      return
+    }
 
     let currentZoom = canvas.getZoom()
     let clickedCircle, otherSideCircle, otherCrushFoldObject
@@ -561,7 +564,7 @@ export default function useDrawing() {
         bufferCircle.mainCircle = circle
 
         // Draw a line if there's a previous dot
-        if ((prevCircle && undoStack.current.length) || prevCircle && !canvasIsEmpty) {
+        if ((prevCircle && undoStack.current.length) || (prevCircle && !canvasIsEmpty)) {
           const prevActiveCircle = activeCircle.current
           canvas.remove(prevActiveCircle.bufferCircle)
           prevActiveCircle?.set({
@@ -1038,5 +1041,5 @@ export default function useDrawing() {
       //     canvas.bringObjectToFront(cir);
       //   });
     }
-  }, [isDrawing, isBreakLining])
+  }, [isDrawing])
 }

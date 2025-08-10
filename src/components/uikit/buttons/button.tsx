@@ -15,6 +15,7 @@ const buttonVariants = cva('button_style', {
     },
     size: {
       default: '',
+      large: '',
       // Extend sizes as needed
     },
   },

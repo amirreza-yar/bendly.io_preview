@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { db, ContentSchema, Template, Order, CanvasState } from '../lib/db'
+import { db, ContentSchema, Template, Order, CanvasState } from '../lib/db/appDB'
 
 interface AppState {
   user: any | null

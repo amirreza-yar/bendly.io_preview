@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useCanvasContext } from "@/providers/canvasContextProvider"; // Make sure the path is correct
+import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider"; // Make sure the path is correct
 import { Line, Group } from "fabric"; // Ensure you import fabric elements
 
 const GRID_SIZE = 50; // You can set this value based on your requirements

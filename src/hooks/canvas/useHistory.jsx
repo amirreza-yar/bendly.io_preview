@@ -1,5 +1,5 @@
 'use client'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
 import { Circle, Text, Line, Point, Rect, Group } from 'fabric'
 import {
   createAngleAnnotationObj,

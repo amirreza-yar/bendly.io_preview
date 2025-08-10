@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { Circle, Line } from 'fabric'
 
-import { useCanvasContext } from '@/providers/canvasContextProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
 import useGrid from '../useGrid'
 import { useHistory } from '../useHistory'
 import { getAllMainLines, getAllCircles, hasAnyOverlap } from '@/utilities/canvas/canvasUtils'

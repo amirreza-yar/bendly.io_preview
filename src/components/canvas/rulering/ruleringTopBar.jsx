@@ -3,13 +3,13 @@
 import { IconButton } from '@/components/uikit/buttons/iconButton'
 import { Remove, XIcon } from '@/components/uikit/icons'
 import { toast } from 'sonner'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
 import CancelModal from '../cancelModal'
 
 // TopBar.jsx
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { useRemovingContext } from '@/providers/hooks_provider/removingProvider '
+import { useRemovingContext } from '@/providers/canvas_providers/removingProvider '
 
 // Define animation variants
 const topBarVariants = {

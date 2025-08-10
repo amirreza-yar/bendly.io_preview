@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
 import {
   calculateLineLength,
   rotateObjectsAroundPoint,
@@ -12,7 +12,7 @@ import {
 } from '@/utilities/canvas/canvasUtils'
 import { createCrushFoldObject } from '@/utilities/canvas/crushFoldUtils'
 import { useDebouncedEffect } from '@/utilities/canvas/useDebounce'
-import { useUIVisibility } from '@/providers/UICanvasContext'
+import { useUIVisibility } from '@/providers/canvas_providers/UICanvasContext'
 import { Point, Text, Group, Rect, Line, Circle, Path, loadSVGFromString, util } from 'fabric'
 import { useHistory } from './useHistory'
 import useObjectUtils from './useObjectUtils'

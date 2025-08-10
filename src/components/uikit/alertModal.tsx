@@ -11,7 +11,7 @@ import { cn } from '@/utilities/ui'
 interface AlertDialogContentProps
   extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content> {}
 
-function AlertDialogContent({ className, ...props }: AlertDialogContentProps) {
+export function AlertDialogContent({ className, ...props }: AlertDialogContentProps) {
   return (
     <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal">
       <AlertDialogPrimitive.Overlay

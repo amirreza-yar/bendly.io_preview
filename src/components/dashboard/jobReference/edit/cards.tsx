@@ -1,4 +1,4 @@
-import { JobReference } from '@/utilities/demoJobRefData'
+import { JobReference } from '@/utilities/demo_datas/demoJobRefData'
 import { Edit, MapMarker, ProfileNav, Remove } from '@/components/uikit/icons'
 import Link from 'next/link'
 import { RemoveJobRefAddressModal } from './modals'

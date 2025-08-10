@@ -1,7 +1,7 @@
 // NavBar.jsx
 import React, { useRef, useState } from 'react'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
-import { useUIVisibility } from '@/providers/UICanvasContext'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
+import { useUIVisibility } from '@/providers/canvas_providers/UICanvasContext'
 import NavButton from './navbarButton'
 import NavDropdown from './navbarModifyDropDown'
 import {
@@ -24,10 +24,10 @@ import {
 } from '@/components/uikit/icons'
 import { toast } from 'sonner'
 import CancelModal from './cancelModal'
-import { useCancelChangesModalContext } from '@/providers/hooks_provider/cancelChangesModalProvider'
-import { useMovingContext } from '@/providers/hooks_provider/movingProvider'
-import { useResizingContext } from '@/providers/hooks_provider/resizingProvider'
-import { useCrushFoldContext } from '@/providers/hooks_provider/crushFoldProvider'
+import { useCancelChangesModalContext } from '@/providers/canvas_providers/cancelChangesModalProvider'
+import { useMovingContext } from '@/providers/canvas_providers/movingProvider'
+import { useResizingContext } from '@/providers/canvas_providers/resizingProvider'
+import { useCrushFoldContext } from '@/providers/canvas_providers/crushFoldProvider'
 
 const NavBar = () => {
   const {

@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
-import { useUIVisibility } from '@/providers/UICanvasContext'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
+import { useUIVisibility } from '@/providers/canvas_providers/UICanvasContext'
 import { useHistory } from './useHistory'
 import { Circle, Text, Line, Point, Rect, Group } from 'fabric'
 
@@ -16,8 +16,8 @@ import {
   // createLengthAnnotation,
 } from '@/utilities/canvas/canvasUtils'
 import useObjectUtils from './useObjectUtils'
-import { useCancelChangesModalContext } from '@/providers/hooks_provider/cancelChangesModalProvider'
-import { useBreakLineContext } from '@/providers/hooks_provider/breakLineProvider'
+import { useCancelChangesModalContext } from '@/providers/canvas_providers/cancelChangesModalProvider'
+import { useBreakLineContext } from '@/providers/canvas_providers/breakLineProvider'
 import { createCrushFoldObject } from '@/utilities/canvas/crushFoldUtils'
 
 export default function useMoving() {

@@ -1,6 +1,6 @@
 // "use client";
 import { util, Point, Line, Path, Text, Group, Rect } from 'fabric'
-// import { useCanvasContext } from "@/providers/canvasContextProvider";
+// import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
 
 export const calculateLineLength = (line) => {
   const { x1, y1, x2, y2 } = line

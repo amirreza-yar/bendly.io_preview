@@ -1,6 +1,6 @@
 // hooks/useLineResizing.jsx
 import { useEffect, useRef, useState } from 'react'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
 import {
   calculateLineLength,
   rotateObjectsAroundPoint,
@@ -12,7 +12,7 @@ import {
   // createLengthAnnotation,
 } from '@/utilities/canvas/canvasUtils'
 import { useDebouncedEffect } from '@/utilities/canvas/useDebounce'
-import { useUIVisibility } from '@/providers/UICanvasContext'
+import { useUIVisibility } from '@/providers/canvas_providers/UICanvasContext'
 import { Point, Text, Group, Rect, Line, Circle } from 'fabric'
 import { useHistory } from './useHistory'
 import useObjectUtils from './useObjectUtils'

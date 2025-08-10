@@ -4,7 +4,7 @@ import { Circle, Line, Shadow, util, Text, Group, Path } from "fabric";
 
 import { calculateLineLength } from "@/utilities/canvas/canvasUtils";
 
-import { useCanvasContext } from "@/providers/canvasContextProvider";
+import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
 import useGrid from "../useGrid";
 import { saveCanvasState } from "@/lib/(dev)/db";
 
