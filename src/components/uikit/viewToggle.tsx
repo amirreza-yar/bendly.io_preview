@@ -16,7 +16,7 @@ export const ViewToggle = <T extends string>({ modes, view, onChange }: ViewTogg
           key={mode}
           type="button"
           onClick={() => onChange(mode)}
-          className={`rounded-2xs p-1 font-medium transition ${
+          className={`rounded-2xs p-1 label-small transition ${
             view === mode ? 'bg-primary text-white' : 'bg-nuteral text-body'
           }`}
         >

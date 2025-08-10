@@ -6,8 +6,8 @@ import { Drawer, DrawerTrigger, DrawerContent, DrawerTitle } from '@/components/
 import { LabeledInput } from '@/components/uikit/input'
 import { IconButton } from '@/components/uikit/buttons/iconButton'
 import { XIcon, Check } from '@/components/uikit/icons'
-import { useResizingContext } from '@/providers/hooks_provider/resizingProvider'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
+import { useResizingContext } from '@/providers/canvas_providers/resizingProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
 import CancelModal from '../cancelModal'
 import { toast } from 'sonner'
 

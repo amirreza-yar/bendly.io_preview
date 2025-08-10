@@ -3,9 +3,9 @@
 import { IconButton } from "@/components/uikit/buttons/iconButton";
 import { Check, XIcon } from "@/components/uikit/icons";
 import { ArrowRight } from "@/components/uikit/icons";
-import { useResizingContext } from "@/providers/hooks_provider/resizingProvider";
+import { useResizingContext } from "@/providers/canvas_providers/resizingProvider";
 import { toast } from "sonner";
-import { useCanvasContext } from "@/providers/canvasContextProvider";
+import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
 
 // TopBar.jsx
 import { motion} from "framer-motion";

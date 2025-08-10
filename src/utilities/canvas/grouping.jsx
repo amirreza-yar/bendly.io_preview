@@ -1,5 +1,5 @@
 "use client";
-import { useCanvasContext } from "@/providers/canvasContextProvider";
+import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
 import { Group } from "fabric";
 
 export const groupDrawings = () => {

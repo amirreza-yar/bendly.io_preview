@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useCanvasContext } from "@/providers/canvasContextProvider";
+import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
 import useGrid from "./useGrid";
 
 export default function useControls() {

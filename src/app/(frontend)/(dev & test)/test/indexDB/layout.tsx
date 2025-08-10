@@ -1,8 +1,25 @@
+import { db } from '@/lib/db/appDB'
 import { DBProviders } from '@/providers/indexDB'
-import { fetchPayloadSchema } from '@/lib/fetchSchema'
+
+// const testSchema = {
+//   collctions: {
+
+//   },
+//   schema: 9876,
+// }
 
 export default async function TestLayout({ children }: { children: React.ReactNode }) {
-  const schema = await fetchPayloadSchema()
+  // return <DBProviders schema={testSchema}>{children}</DBProviders>
 
-  return <DBProviders schema={schema}>{children}</DBProviders>
+  // ;(async () => {
+  //   await db.open()
+  //   // await db.users.put({
+  //   //   id: 'testing',
+  //   //   name: 'amirreza',
+  //   //   email: 'yar.amirreza@gmail.com',
+  //   //   createdAt: Date.now(),
+  //   // })
+  // })()
+
+  return <>{children}</>
 }

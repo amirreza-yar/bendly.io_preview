@@ -34,7 +34,7 @@
     "next-env.d.ts",
     "next.config.js",
     "next-sitemap.config.cjs",
-    "src/app/(frontend)/(use ui)/dashboard/library/page.jsx"
-  ],
+    "src/app/(frontend)/(user dashboard)/dashboard/library/page.jsx"
+, "src/hooks/canvas/useFlashingLoader.jsx", "src/components/canvas/canvasController.jsx", "src/components/canvas/canvasController.jsx", "src/providers/.dev/indexDB.tsx"  ],
   "exclude": ["node_modules"]
 }

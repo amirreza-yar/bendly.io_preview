@@ -11,7 +11,7 @@ const Ruler = ({ ...props }) => {
   )
 }
 
-const RulerBold = ({...props}) => {
+const RulerBold = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -22,7 +22,7 @@ const RulerBold = ({...props}) => {
   )
 }
 
-const Drawing = ({...props}) => {
+const Drawing = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -33,9 +33,16 @@ const Drawing = ({...props}) => {
   )
 }
 
-const DrawingBold = ({...props}) => {
+const DrawingBold = ({ ...props }) => {
   return (
-    <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      {...props}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M14.062 2.80371C14.3552 1.90187 15.2025 1.25 16.2021 1.25C17.4448 1.25 18.4521 2.25736 18.4521 3.5C18.4521 4.74264 17.4448 5.75 16.2021 5.75C15.2427 5.75 14.4235 5.14944 14.0999 4.30371H3.25977C2.84555 4.30371 2.50977 3.96792 2.50977 3.55371C2.50977 3.1395 2.84555 2.80371 3.25977 2.80371H14.062Z"
         fill="currentColor"
@@ -48,7 +55,7 @@ const DrawingBold = ({...props}) => {
   )
 }
 
-const Taper = ({...props}) => {
+const Taper = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -70,7 +77,7 @@ const Taper = ({...props}) => {
   )
 }
 
-const TaperBold = ({...props}) => {
+const TaperBold = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -105,7 +112,7 @@ const TaperBold = ({...props}) => {
   )
 }
 
-const Modify = ({...props}) => {
+const Modify = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -116,7 +123,7 @@ const Modify = ({...props}) => {
   )
 }
 
-const ModifyBold = ({...props}) => {
+const ModifyBold = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -139,7 +146,7 @@ const ModifyBold = ({...props}) => {
   )
 }
 
-const CrushFold = ({...props}) => {
+const CrushFold = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -153,7 +160,7 @@ const CrushFold = ({...props}) => {
   )
 }
 
-const CrushFoldBold = ({...props}) => {
+const CrushFoldBold = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -167,7 +174,7 @@ const CrushFoldBold = ({...props}) => {
   )
 }
 
-const Crosshair = ({...props}) => {
+const Crosshair = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -180,7 +187,7 @@ const Crosshair = ({...props}) => {
   )
 }
 
-const CircleQuestion = ({...props}) => {
+const CircleQuestion = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -204,7 +211,7 @@ const XIcon = ({ ...props }) => {
   )
 }
 
-const ArrowRight = ({...props}) => {
+const ArrowRight = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -218,7 +225,7 @@ const ArrowRight = ({...props}) => {
   )
 }
 
-const UTurnRightUp = ({...props}) => {
+const UTurnRightUp = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -229,7 +236,7 @@ const UTurnRightUp = ({...props}) => {
   )
 }
 
-const UTurnLeftUp = ({...props}) => {
+const UTurnLeftUp = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -240,7 +247,7 @@ const UTurnLeftUp = ({...props}) => {
   )
 }
 
-const Earaser = ({...props}) => {
+const Earaser = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -254,7 +261,7 @@ const Earaser = ({...props}) => {
   )
 }
 
-const Move = ({...props}) => {
+const Move = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -265,7 +272,7 @@ const Move = ({...props}) => {
   )
 }
 
-const Resize = ({...props}) => {
+const Resize = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -276,7 +283,7 @@ const Resize = ({...props}) => {
   )
 }
 
-const EaraserBold = ({...props}) => {
+const EaraserBold = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -291,7 +298,7 @@ const EaraserBold = ({...props}) => {
   )
 }
 
-const MoveBold = ({...props}) => {
+const MoveBold = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -318,7 +325,7 @@ const MoveBold = ({...props}) => {
   )
 }
 
-const ResizeBold = ({...props}) => {
+const ResizeBold = ({ ...props }) => {
   return (
     <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -1506,6 +1513,46 @@ const ResetPasswordIcon = ({ ...props }) => {
   )
 }
 
+const TransferVerticaly = ({ ...props }) => {
+  return (
+    <svg
+      {...props}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M18.3252 3.78237L20.359 8.08717C20.6518 8.70697 20.4802 9.46487 19.8645 9.76637C18.0951 10.6327 15.9064 10.6278 14.1357 9.76587C13.5174 9.46497 13.3435 8.70487 13.6371 8.08317L15.6678 3.78397C16.2467 2.74197 17.745 2.74097 18.3252 3.78237Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M16.999 19.4981L16.998 10.5748"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8.32514 20.2177L10.3589 15.9129C10.6517 15.2931 10.4801 14.5351 9.86445 14.2337C8.09509 13.3674 5.90636 13.3723 4.13565 14.2342C3.5174 14.5351 3.34343 15.2952 3.63709 15.9169L5.66772 20.2161C6.24663 21.2581 7.74493 21.259 8.32514 20.2177Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6.99805 4.49866L6.99805 13.4259"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 export {
   Account,
   CrushFold,
@@ -1595,4 +1642,5 @@ export {
   ProgressRejected,
   Camera,
   ResetPasswordIcon,
+  TransferVerticaly,
 }

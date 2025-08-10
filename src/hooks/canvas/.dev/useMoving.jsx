@@ -3,8 +3,8 @@
 import { useEffect, useRef } from 'react'
 import { Circle } from 'fabric'
 
-import { useCanvasContext } from '@/providers/canvasContextProvider'
-import { useUIVisibility } from '@/providers/UICanvasContext'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
+import { useUIVisibility } from '@/providers/canvas_providers/UICanvasContext'
 import { useHistory } from '../useHistory'
 import {
   moveCircle,

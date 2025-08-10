@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
 import { Point, Line, Group, Rect, Text, Path, Gradient, Circle } from 'fabric'
 import {
   calculateLineLength,
@@ -10,7 +10,7 @@ import {
 } from '@/utilities/canvas/canvasUtils'
 import { removeAnnotations } from '@/utilities/canvas/annotationUtils'
 import { useDebouncedEffect } from '@/utilities/canvas/useDebounce'
-import { useUIVisibility } from '@/providers/UICanvasContext'
+import { useUIVisibility } from '@/providers/canvas_providers/UICanvasContext'
 import useObjectUtils from './useObjectUtils'
 
 /**

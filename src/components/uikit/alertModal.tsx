@@ -11,7 +11,7 @@ import { cn } from '@/utilities/ui'
 interface AlertDialogContentProps
   extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content> {}
 
-function AlertDialogContent({ className, ...props }: AlertDialogContentProps) {
+export function AlertDialogContent({ className, ...props }: AlertDialogContentProps) {
   return (
     <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal">
       <AlertDialogPrimitive.Overlay
@@ -99,7 +99,7 @@ export function AlertModal({
         <div data-slot="alert-dialog-header" className="flex flex-col gap-4">
           {dismissible && (
             <AlertDialogPrimitive.Cancel className="absolute top-4 end-4 [&_svg:not([class*='size-'])]:size-6">
-              <XIcon className="text-neutral-dark" />
+              <XIcon className="text-neutral-dark" variant="secondary" />
             </AlertDialogPrimitive.Cancel>
           )}
           {Icon && <Icon />}

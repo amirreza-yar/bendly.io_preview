@@ -1,9 +1,9 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
-import { useUIVisibility } from '@/providers/UICanvasContext'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
+import { useUIVisibility } from '@/providers/canvas_providers/UICanvasContext'
 import { toast } from 'sonner'
-import { useCancelChangesModalContext } from '@/providers/hooks_provider/cancelChangesModalProvider'
+import { useCancelChangesModalContext } from '@/providers/canvas_providers/cancelChangesModalProvider'
 import { useHistory } from './useHistory'
 import { Circle, Text, Line, Point, Rect, Group } from 'fabric'
 import {

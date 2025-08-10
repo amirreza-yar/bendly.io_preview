@@ -6,7 +6,7 @@ import { IconButtonGroup } from '@/components/uikit/buttons/iconButtonGroup'
 import { CircleQuestion, UTurnLeftUp, UTurnRightUp } from '@/components/uikit/icons'
 import { motion } from 'framer-motion'
 import { useHistory } from '@/hooks/canvas/useHistory'
-import { useCanvasContext } from '@/providers/canvasContextProvider'
+import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
 
 export const slideFromTop = {
   hidden: {

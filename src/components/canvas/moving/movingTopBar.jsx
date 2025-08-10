@@ -3,12 +3,12 @@
 import { IconButton } from "@/components/uikit/buttons/iconButton";
 import { Check, XIcon } from "@/components/uikit/icons";
 import { toast } from "sonner";
-import { useCanvasContext } from "@/providers/canvasContextProvider";
+import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
 import CancelModal from "../cancelModal";
 
 // TopBar.jsx
 import { motion } from "framer-motion";
-import { useMovingContext } from "@/providers/hooks_provider/movingProvider";
+import { useMovingContext } from "@/providers/canvas_providers/movingProvider";
 import { Button } from "@/components/ui/button";
 
 // Define animation variants

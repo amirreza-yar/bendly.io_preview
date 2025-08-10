@@ -1,7 +1,7 @@
 "use client";
 import { util } from "fabric";
 
-import { useCanvasContext } from "@/providers/canvasContextProvider";
+import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
 import useGrid from "@/hooks/canvas/useGrid";
 import { groupDrawings, unGroupDrawings } from "@/utilities/canvas/grouping";
 
