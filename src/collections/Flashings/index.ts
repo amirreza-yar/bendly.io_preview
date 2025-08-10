@@ -17,7 +17,7 @@ export const Flashings: CollectionConfig = {
   fields: [
     { name: '_id', type: 'text' },
     { name: 'ownerId', type: 'relationship', relationTo: 'users' },
-    { name: 'data', type: 'text' },
+    { name: 'data', type: 'json', required: true },
     { name: 'revisions', type: 'array', fields: [] },
     { name: 'status', type: 'select', options: [{ label: 'Drafted', value: 'drafted' }] },
     { name: 'createdAt', type: 'date' },
