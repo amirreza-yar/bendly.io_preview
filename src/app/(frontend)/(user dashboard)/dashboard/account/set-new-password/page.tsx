@@ -20,7 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useUser } from '@/providers/main_providers/UserContext'
 
 export const FormSchema = z.object({
-  password: z.string().min(1, 'Password is required'),
+  password: z.string().nonempty('Password is required'),
 })
 
 type FormValues = z.infer<typeof FormSchema>
@@ -53,40 +53,41 @@ export default function AccountPage() {
     <>
       <Header title="Set Password" returnHref="/dashboard/account" />
       <ContentWrapper>
-          <div className="grid justify-center text-center">
-            <div className="grid gap-2 pt-8 px-6">
-              <h5>Set a Password for Your Account</h5>
-              <p className="subtitle-regular">
-                You signed up using Google. If you'd like to log in with your email and a password in the future, set a password now.
-              </p>
-            </div>
-            <div className="grid pt-8">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <LabeledInput
-                            type="password"
-                            placeholder="Enter your password"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" className="w-full bg-primary">
-                    Set Password
-                  </Button>
-                </form>
-              </Form>
-            </div>
+        <div className="grid justify-center text-center">
+          <div className="grid gap-2 pt-8 px-6">
+            <h5>Set a Password for Your Account</h5>
+            <p className="subtitle-regular">
+              You signed up using Google. If you'd like to log in with your email and a password in
+              the future, set a password now.
+            </p>
           </div>
+          <div className="grid pt-8">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <LabeledInput
+                          type="password"
+                          placeholder="Enter your password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full bg-primary">
+                  Set Password
+                </Button>
+              </form>
+            </Form>
+          </div>
+        </div>
       </ContentWrapper>
     </>
   )

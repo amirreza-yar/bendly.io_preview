@@ -31,7 +31,7 @@ import { useEffect, useState } from 'react'
 
 export default function SelectMaterialAndColorPage() {
   const router = useRouter()
-  const [isNavigating, setIsNavigating] = useState(false)
+  const [isNavigating, setIsNavigating] = useState<boolean>(false)
 
   const materialsWithProperties = useLiveQuery(() => db.materialsAndProps.toArray(), [])
 
@@ -55,7 +55,7 @@ export default function SelectMaterialAndColorPage() {
   }, [savedFlashing, isNavigating])
 
   // Helper function to get allowed colors for a material:
-  function getColorNames(material: string) {
+  function getColorNames(material: string): string[] {
     const mat = materialsWithProperties?.find((m) => m.material === material)
     return mat?.colors?.map((c) => c.name) || []
   }

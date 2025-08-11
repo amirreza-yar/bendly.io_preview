@@ -30,7 +30,7 @@ export default function PreviewPage() {
 
   const flashing = useLiveQuery(() => db.flashings.get({ id: flashingId }), [flashingId], null)
 
-  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false)
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState<boolean>(false)
 
   const [canvasView, setCanvasView] = useState<'2D' | '3D'>('2D')
 

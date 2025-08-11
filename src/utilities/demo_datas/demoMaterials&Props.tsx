@@ -1,5 +1,6 @@
-export const materialsWithProperties = [
-  // Materials that can be colorized (have colors, no thickness)
+import { StoredMaterialAndProps } from '@/types/material&PropsType'
+
+export const materialsWithProperties: StoredMaterialAndProps = [
   {
     material: 'Pre-painted steel',
     colors: [
