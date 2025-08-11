@@ -14,16 +14,27 @@ import {
   addColorSideFlashing,
   drawingBounds,
 } from '@/hooks/canvas/useFlashingLoader'
-import { ArrowLeft, CircleQuestion, TransferVerticaly } from '@/components/uikit/icons'
-import { notFound, useParams, useRouter } from 'next/navigation'
+import { ArrowLeft, CircleQuestion, TransferVerticaly, XIcon } from '@/components/uikit/icons'
+import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db/appDB'
 import { upsertPartialFlashing } from '@/lib/db/helpers/flashingHelpers'
+import { toast } from 'sonner'
+import { AlertDialogContent, AlertModal } from '@/components/uikit/alertModal'
+import { cn } from '@/utilities/ui'
+import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 
 export default function ColorSidePage() {
   const { flashingId }: { flashingId: string } = useParams()
+  const searchParams = useSearchParams()
+
+  const returnParam = searchParams.get('return')
 
   const router = useRouter()
+
+  const [hasColorChanged, setHasColorChanged] = useState(false)
+
+  console.log(returnParam)
 
   // const flashing: StoredFlashing | undefined = getFlashingById(flashingId)
 
@@ -107,10 +118,10 @@ export default function ColorSidePage() {
   const confirmColorSide = () => {
     upsertPartialFlashing(flashingId, {
       crushFoldDir: flashingDir,
-      isDraft: false,
     })
 
     router.push(`/flashing/${flashingId}/preview`)
+    toast('Your changes have been saved')
   }
 
   return (
@@ -118,12 +129,72 @@ export default function ColorSidePage() {
       <div className="w-[100vw] h-[100vh]">
         <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark">
           <div className="flex items-center justify-between h-full w-full px-4">
-            <div className="flex items-center gap-[18px] pr-3">
-              <a href={`/flashing/${flashingId}/canvas`}>
-                <ArrowLeft />
-              </a>
-              <h6>Color Side</h6>
-            </div>
+            {returnParam === 'preview' ? (
+              hasColorChanged ? (
+                <AlertDialogPrimitive.Root data-slot="alert-dialog">
+                  <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" asChild>
+                    <div className="flex items-center gap-[18px] pr-3">
+                      <ArrowLeft />
+                      <h6>Color Side</h6>
+                    </div>
+                  </AlertDialogPrimitive.Trigger>
+                  <AlertDialogContent className="font-roboto">
+                    <div data-slot="alert-dialog-header" className="flex flex-col gap-4">
+                      <AlertDialogPrimitive.Cancel className="absolute top-4 end-4 [&_svg:not([class*='size-'])]:size-6">
+                        <XIcon className="text-neutral-dark" variant="secondary" />
+                      </AlertDialogPrimitive.Cancel>
+                      <AlertDialogPrimitive.Title
+                        data-slot="alert-dialog-title"
+                        className="text-sm/[19px] font-semibold"
+                      >
+                        Unsaved Chnages
+                      </AlertDialogPrimitive.Title>
+
+                      <AlertDialogPrimitive.Description
+                        data-slot="alert-dialog-description"
+                        className="text-muted-foreground text-sm"
+                      >
+                        You've made changes that haven't been saved. If you go back now, they'll be
+                        lost.
+                      </AlertDialogPrimitive.Description>
+                    </div>
+                    <div
+                      data-slot="alert-dialog-footer"
+                      className={'flex flex-col gap-4 sm:flex-row sm:justify-end pt-4'}
+                    >
+                      <AlertDialogPrimitive.Action asChild>
+                        <Button onClick={confirmColorSide}>Save & Go Back</Button>
+                      </AlertDialogPrimitive.Action>
+
+                      <AlertDialogPrimitive.Cancel asChild>
+                        <Button
+                          variant="secondary"
+                          onClick={() => {
+                            router.push(`/flashing/${flashingId}/preview`)
+                          }}
+                        >
+                          Discard Changes
+                        </Button>
+                      </AlertDialogPrimitive.Cancel>
+                    </div>
+                  </AlertDialogContent>
+                </AlertDialogPrimitive.Root>
+              ) : (
+                <div className="flex items-center gap-[18px] pr-3">
+                  <a href={`/flashing/${flashingId}/preview`}>
+                    <ArrowLeft />
+                  </a>
+                  <h6>Color Side</h6>
+                </div>
+              )
+            ) : (
+              <div className="flex items-center gap-[18px] pr-3">
+                <a href={`/flashing/${flashingId}/preview/edit-canvas`}>
+                  <ArrowLeft />
+                </a>
+                <h6>Color Side</h6>
+              </div>
+            )}
           </div>
         </header>
 
@@ -143,7 +214,10 @@ export default function ColorSidePage() {
           black
           size="large"
           className="fixed bottom-24 left-4"
-          onClick={() => setFlashingDir(!flashingDir)}
+          onClick={() => {
+            setFlashingDir(!flashingDir)
+            setHasColorChanged(true)
+          }}
         >
           <TransferVerticaly />
         </IconButton>

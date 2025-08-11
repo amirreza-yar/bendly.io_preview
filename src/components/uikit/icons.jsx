@@ -1553,6 +1553,41 @@ const TransferVerticaly = ({ ...props }) => {
   )
 }
 
+const FeaturedAlert = ({ ...props }) => {
+  return (
+    <svg
+      {...props}
+      width="40"
+      height="40"
+      viewBox="0 0 40 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="20" cy="20" r="20" fill="#FCEAD8" />
+      <circle cx="20" cy="20" r="16" fill="#E76423" />
+      <path
+        d="M17.1853 14.2405L12.8363 22.9433C11.7901 25.0368 13.3116 27.5 15.651 27.5H24.349C26.6883 27.5 28.2099 25.0368 27.1638 22.9433L22.8148 14.2405C21.655 11.9198 18.345 11.9198 17.1853 14.2405Z"
+        stroke="white"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M20 24.1667V24.1751"
+        stroke="white"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M20 16.6667V21.6667"
+        stroke="white"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export {
   Account,
   CrushFold,
@@ -1643,4 +1678,5 @@ export {
   Camera,
   ResetPasswordIcon,
   TransferVerticaly,
+  FeaturedAlert,
 }

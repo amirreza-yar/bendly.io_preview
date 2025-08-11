@@ -8,31 +8,24 @@ import Link from 'next/link'
 import BottomNav from '@/components/dashboard/bottomNav'
 import { useEffect, useRef } from 'react'
 import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
-import { initNewFlashing } from '@/lib/db/helpers/flashingHelpers'
-import { redirect } from 'next/navigation'
+import { deleteAllDraftFlashings, initNewFlashing } from '@/lib/db/helpers/flashingHelpers'
+import { redirect, useRouter } from 'next/navigation'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db/appDB'
 
 export default function Page() {
-  const flashings = useLiveQuery(
-    () => db.flashings.toArray(),
-    [],
-    null, // initial value
-  )
+  const router = useRouter()
 
   const didRunRef = useRef(false)
 
   useEffect(() => {
-    if (!didRunRef.current && flashings) {
+    if (!didRunRef.current) {
       didRunRef.current = true
-      ;(async () => {
-        const toDelete = flashings.filter(
-          (flash) => !(flash.color || flash.thickness) || flash.nodes.length < 2,
-        )
-        await Promise.all(toDelete.map((flash) => db.flashings.delete(flash.id)))
-      })()
+      deleteAllDraftFlashings().catch((err) => {
+        console.error('Failed to delete draft flashings:', err)
+      })
     }
-  }, [flashings])
+  }, [])
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -77,9 +70,9 @@ export default function Page() {
   ]
 
   const newFlashing = () => {
-    const flashingId = initNewFlashing()
-
-    redirect(`/flashing/${flashingId}`)
+    initNewFlashing().then((flashingId) => {
+      router.push(`/flashing/${flashingId}`)
+    })
   }
 
   return (

@@ -54,6 +54,7 @@ export default function useCrushFold() {
     startCrushFoldObjectRef,
     endCrushFoldObjectRef,
     crushFoldObjectDirectionRef,
+    setHasEditModalChanges
   } = useCanvasContext()
 
   const { centerDrawingGroup } = useObjectUtils()
@@ -544,6 +545,7 @@ export default function useCrushFold() {
     message && toast(message)
     setIsCrushFolding(false)
     setIsCanvasChanged(false)
+    setHasEditModalChanges(true)
     // setIsDrawing(true)
   }
 

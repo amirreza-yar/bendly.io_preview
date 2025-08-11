@@ -37,31 +37,7 @@ export default function SelectMaterialAndColorPage() {
 
   const { flashingId }: { flashingId: string } = useParams()
 
-  const savedFlashing = useLiveQuery(
-    () => db.flashings.get({ id: flashingId }),
-    [flashingId],
-    null, // initial value
-  )
-
-  // Detect navigation start by patching push/replace
-  // useEffect(() => {
-  //   const originalPush = router.push
-  //   const originalReplace = router.replace
-
-  //   router.push = (...args) => {
-  //     setIsNavigating(true)
-  //     return originalPush.apply(router, args)
-  //   }
-  //   router.replace = (...args) => {
-  //     setIsNavigating(true)
-  //     return originalReplace.apply(router, args)
-  //   }
-
-  //   return () => {
-  //     router.push = originalPush
-  //     router.replace = originalReplace
-  //   }
-  // }, [router])
+  const savedFlashing = useLiveQuery(() => db.flashings.get({ id: flashingId }), [flashingId], null)
 
   useEffect(() => {
     console.log(isNavigating)

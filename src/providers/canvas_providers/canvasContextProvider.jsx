@@ -52,6 +52,8 @@ export const CanvasProvider = ({ children }) => {
 
   const drwDirRevRef = useRef(false)
 
+  const [hasEditModalChanges, setHasEditModalChanges] = useState(false)
+
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
 
@@ -128,6 +130,8 @@ export const CanvasProvider = ({ children }) => {
         endCrushFoldObjectRef,
         objectsZoomScale,
         crushFoldObjectDirectionRef,
+        hasEditModalChanges,
+        setHasEditModalChanges,
       }}
     >
       {children}

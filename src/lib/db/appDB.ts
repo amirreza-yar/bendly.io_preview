@@ -2,6 +2,7 @@
 import Dexie, { Table } from 'dexie'
 import type { StoredFlashing } from '@/types/flashingTypes'
 import { StoredMaterialAndProps } from '@/types/material&PropsType'
+import { Template } from '@/types/template/templateType'
 
 export interface User {
   id?: string
@@ -12,6 +13,7 @@ export class AppDB extends Dexie {
   users!: Table<User, string | number>
   flashings!: Table<StoredFlashing, string>
   materialsAndProps!: Table<StoredMaterialAndProps, number>
+  templates!: Table<Template, string>
 
   constructor() {
     super('AppDB')
@@ -20,17 +22,18 @@ export class AppDB extends Dexie {
       users: '++id, name',
       flashings: 'id, material, color, thickness, createdAt, updatedAt',
       materialsAndProps: 'material',
+      templates: 'name, owner',
     })
   }
 }
+
+export const db = new AppDB()
 
 /**
  * Lazy DB instance — don't create it on module load to avoid SSR errors.
  * Call initDB() on the client to initialize.
  */
 // let dbInstance: AppDB | null = null
-
-export const db = new AppDB()
 
 // export async function initDB(): Promise<AppDB> {
 //   if (dbInstance) return dbInstance

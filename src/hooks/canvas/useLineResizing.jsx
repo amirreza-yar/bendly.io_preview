@@ -31,6 +31,7 @@ export default function useLineResizing() {
     endCrushFoldObjectRef,
     setIsPinchZooming,
     objectsZoomScale,
+    setHasEditModalChanges,
   } = useCanvasContext()
   const { addHistory, snapshotCircles, tempUndo } = useHistory()
 
@@ -717,6 +718,7 @@ export default function useLineResizing() {
     canvas.isChanged = false
     setHasPendingChange(false)
 
+    setHasEditModalChanges(true)
     // setIsPanning(true)
 
     // setIsDrawing(true)
@@ -1076,7 +1078,7 @@ export default function useLineResizing() {
 
       removeAnnotations(canvas)
 
-      createAnnotations(false, true )
+      createAnnotations(false, true)
 
       // setIsResizingDrawerOpen(true)
     }

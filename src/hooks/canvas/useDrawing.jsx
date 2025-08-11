@@ -17,7 +17,7 @@ import {
 } from '@/utilities/canvas/canvasUtils'
 import { AlertModal } from '@/components/uikit/alertModal'
 import { useBreakLineContext } from '@/providers/canvas_providers/breakLineProvider'
-import { RemoveCrushFoldOnDrawingModal } from '@/components/canvas/removeCrushFoldOnDrawingModal'
+import { RemoveCrushFoldOnDrawingModal } from '@/components/flashing/canvas/canvasUI/removeCrushFoldOnDrawingModal'
 import { Button } from '@/components/ui/button'
 
 export default function useDrawing() {
@@ -41,6 +41,8 @@ export default function useDrawing() {
     endCrushFoldObjectRef,
     objectsZoomScale,
     canvasIsEmpty,
+    setIsCanvasChanged,
+    setHasEditModalChanges,
   } = useCanvasContext()
 
   const { addHistory, tempUndo, undo } = useHistory()
@@ -713,6 +715,7 @@ export default function useDrawing() {
         } else {
           createAnnotations()
           addHistory('drawing', circle)
+          setHasEditModalChanges(true)
         }
       }
 

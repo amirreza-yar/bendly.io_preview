@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { db } from '@/lib/db/appDB'
-import { seedMaterialsIfEmpty } from '@/lib/db/helpers/flashingHelpers'
+import { seedMaterialsIfEmpty } from '@/lib/db/helpers/materials&PropsHelpers'
 
 const DBReadyContext = createContext<{ ready: boolean; error?: Error } | null>(null)
 

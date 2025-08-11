@@ -35,6 +35,7 @@ export default function useMoving() {
     endCrushFoldObjectRef,
     objectsZoomScale,
     crushFoldObjectDirectionRef,
+    setHasEditModalChanges
   } = useCanvasContext()
 
   const { onModalApply, onModalDiscard } = useCancelChangesModalContext()
@@ -840,6 +841,7 @@ export default function useMoving() {
 
       const onModified = (e) => {
         setIsCanvasChanged(true)
+        setHasEditModalChanges(true)
         let movingCircle = e.target
 
         repositionHitboxLine(movingCircle)

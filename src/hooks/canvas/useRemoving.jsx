@@ -38,6 +38,7 @@ export default function useRemoving() {
     startCrushFoldObjectRef,
     endCrushFoldObjectRef,
     setCanvasIsEmpty,
+    setHasEditModalChanges,
   } = useCanvasContext()
 
   const {
@@ -568,8 +569,12 @@ export default function useRemoving() {
         obj = obj.line2
       }
 
+      
+
       selectedLine.circle2.line2.circle1 = selectedLine.circle1
       selectedLine.circle1.line2 = selectedLine.circle2.line2
+
+      setHasEditModalChanges(true)
     }
     // else if (!selectedLine.circle2.line2 && !selectedLine.circle1.line1) {
     //   canvas.remove(selectedLine.circle1);
@@ -637,6 +642,8 @@ export default function useRemoving() {
     }
 
     console.log('remove line applied')
+
+    setHasEditModalChanges(true)
   }
 
   const resetChanges = (message) => {

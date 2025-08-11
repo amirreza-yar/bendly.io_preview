@@ -24,6 +24,7 @@ export default function useTapper() {
     startCrushFoldObjectRef,
     endCrushFoldObjectRef,
     objectsZoomScale,
+    setHasEditModalChanges,
   } = useCanvasContext()
   const {
     setTopBarVisible,
@@ -1459,5 +1460,6 @@ export default function useTapper() {
     triggerRef,
     inputRef,
     resetChanges,
+    setHasEditModalChanges
   }
 }

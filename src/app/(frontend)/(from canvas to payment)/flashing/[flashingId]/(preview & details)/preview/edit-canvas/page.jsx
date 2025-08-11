@@ -11,8 +11,7 @@ import usePinchZoom from '@/hooks/canvas/usePinchZoom'
 import usePanning from '@/hooks/canvas/usePanning'
 import useRulering from '@/hooks/canvas/useRuler'
 
-// import CanvasControllers from "@/components/ui/canvas/controllers";
-import CanvasControllers from '@/components/flashing/canvas/canvasUI/canvasController'
+import CanvasControllers from '@/components/flashing/canvas/editCanvasUI/canvasController'
 import ResizingDrawer from '@/components/flashing/canvas/resizing/resizingDrawer'
 import { useHistory } from '@/hooks/canvas/useHistory'
 import { AlertDialog } from '@/components/ui/alert-dialog'
@@ -39,10 +38,6 @@ export default function CanvasPage() {
     showOverlapDialogobjectsZoomScale,
   } = useCanvasContext()
 
-  const { flashingId } = useParams()
-
-  const flashing = useLiveQuery(() => db.flashings.get({ id: flashingId }), [])
-
   useCanvas()
 
   useDrawing()
@@ -58,19 +53,6 @@ export default function CanvasPage() {
   useRulering()
 
   useTapper()
-
-  // flashing && useLoading({ flashing })
-  useEffect(() => {
-    if (flashing) {
-      console.log(flashingId, flashing)
-    }
-  }, [flashing])
-
-  // if (flashing && (flashing.color || flashing.thickness) && flashing.nodes.length > 1) {
-  //   useLoading({ flashing })
-  // } else if (flashing && !(flashing.color || flashing.thickness)) {
-  //   notFound()
-  // }
 
   return (
     <>

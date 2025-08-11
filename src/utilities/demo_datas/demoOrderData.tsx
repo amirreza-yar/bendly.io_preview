@@ -5,7 +5,7 @@ export const orders: Order[] = [
   {
     orderId: 45678920,
     orderDateTime: '2025-07-01T08:15:00Z',
-    orderProgress: 'Order Review',
+    orderProgress: 'Completed',
     orderStatus: 'Pending',
     deliveryType: 'delivery',
     deliveryDate: '2025-07-03',
