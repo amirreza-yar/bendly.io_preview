@@ -27,3 +27,26 @@ export function Header({ title, children, className, returnHref }: HeaderProps) 
     </header>
   )
 }
+
+export function HeaderWithCenterTitle({
+  title,
+  className,
+  returnHref,
+}: Pick<HeaderProps, 'title' | 'className' | 'returnHref'>) {
+  return (
+    <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white">
+      <div
+        className={cn('flex items-center justify-center h-full w-full px-4 relative', className)}
+      >
+        <div className="flex items-center gap-[18px] pr-3">
+          {returnHref && (
+            <Link className="absolute left-4" href={returnHref}>
+              <ArrowLeft />
+            </Link>
+          )}
+          <h6>{title}</h6>
+        </div>
+      </div>
+    </header>
+  )
+}

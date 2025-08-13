@@ -17,10 +17,10 @@ export const Input = forwardRef<HTMLInputElement, InputProp>(
         {...props}
         data-slot="input"
         className={cn(
-          'px-4 py-3 font-roboto text-neutral-dark placeholder:text-neutral-midlight selection:bg-primary-light border-[2px] border-neutral-light h-11 w-full min-w-0 rounded-md bg-transparent shadow-xs transition-[color,border] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-neutral-light',
+          'px-4 py-3 font-roboto text-[14px]/[16.6px] text-neutral-dark placeholder:text-neutral-midlight selection:bg-primary-light border-[2px] border-border-dark h-11 w-full min-w-0 rounded-md bg-transparent shadow-xs transition-[color,border] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-surface-disable disabled:opacity-60',
           'focus-visible:border-primary',
           'file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium ',
-          'aria-invalid:ring-destructive/20 aria-invalid:text-destructive aria-invalid:placeholder:text-destructive/80 aria-invalid:border-destructive',
+          'aria-invalid:ring-destructive/20 aria-invalid:text-destructive aria-invalid:border-destructive',
           className,
         )}
       />
@@ -73,7 +73,10 @@ export function LabeledInput({
       <div className="relative">
         {/* Icon inside input */}
         {Icon && (
-          <div className="absolute inset-y-0 start-0 flex items-center pl-4 pointer-events-none [&_svg:not([class*='size-'])]:size-[20px]">
+          <div
+            aria-invalid={error}
+            className="aria-invalid:text-destructive absolute inset-y-0 start-0 flex items-center pl-4 pointer-events-none [&_svg:not([class*='size-'])]:size-[20px]"
+          >
             <Icon className="text-neutral-dark" />
           </div>
         )}
@@ -124,7 +127,7 @@ export function LabeledInput({
       {/* Help text */}
       {helpText && (
         <div
-          className={`flex items-center gap-1 [&_svg:not([class*='size-'])]:size-[12px] text-2xs/[19px] font-regular ${error ? 'text-attention-default' : 'text-neutral-dark'}`}
+          className={`aria-invalid:text-destructive flex items-center gap-1 [&_svg:not([class*='size-'])]:size-[12px] text-2xs/[19px] font-regular ${error ? 'text-attention-default' : 'text-neutral-dark'}`}
         >
           <Info />
           <p>{helpText}</p>
@@ -216,7 +219,7 @@ export function LabeledInputWithCode({
         {/* Actual Input */}
         <div className="flex">
           <Input
-            className="w-14 flex-none bg-gray-200 border border-gray-300 rounded-none rounded-l-md text-center border-r-0"
+            className="w-14 flex-none bg-gray-200 rounded-none rounded-l-md text-center border-r-0"
             placeholder={code}
             value={code}
             readOnly

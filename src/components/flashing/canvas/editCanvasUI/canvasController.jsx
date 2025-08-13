@@ -409,9 +409,9 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
     })
 
     if (savedFlashing.color && !flashing.startCrushFold && !flashing.endCrushFold) {
-      window.location.assign(`/flashing/${flashingId}/preview/edit-color-side`)
+      window.location.assign(`/f/${flashingId}/preview/edit-color-side`)
     } else if (savedFlashing) {
-      window.location.assign(`/flashing/${flashingId}/preview`)
+      window.location.assign(`/f/${flashingId}/preview`)
     }
 
     console.log(flashing.nodes)
@@ -435,7 +435,7 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
       <AnimatePresence>
         {topBarVisible && (
           <TopBar
-            onClose={() => window.location.assign(`/flashing/${flashingId}/preview`)}
+            onClose={() => window.location.assign(`/f/${flashingId}/preview`)}
             hasEditModalChanges={hasEditModalChanges}
             canvasIsEmpty={canvasIsEmpty}
             deleteFlashing={deleteFlashing}

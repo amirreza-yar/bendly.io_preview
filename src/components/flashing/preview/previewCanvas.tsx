@@ -15,7 +15,7 @@ export default function PreviewCanvas({
 
   useEffect(() => {
     if (setTotalGirth) {
-      setTotalGirth(totalGirth)
+      setTotalGirth(totalGirth ?? 0)
     }
   }, [totalGirth, setTotalGirth])
 

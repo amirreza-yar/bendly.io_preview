@@ -14,7 +14,7 @@ export function EditFlashingDrawer({ flashingId }: { flashingId: string }): Reac
           </DrawerClose>
         </div>
         <a
-          href={`/flashing/${flashingId}/preview/edit-canvas`}
+          href={`/f/${flashingId}/preview/edit-canvas`}
           className="flex items-center gap-4 p-4 h-16"
         >
           <Edit />
@@ -24,7 +24,7 @@ export function EditFlashingDrawer({ flashingId }: { flashingId: string }): Reac
           <Separator className="" />
         </div>
         <a
-          href={`/flashing/${flashingId}/preview/edit-color-side?return=preview`}
+          href={`/f/${flashingId}/preview/edit-color-side?return=preview`}
           className="flex items-center gap-4 p-4 h-16"
         >
           <TransferHorizontaly />

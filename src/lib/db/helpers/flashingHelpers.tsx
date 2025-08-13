@@ -3,10 +3,8 @@ import { db } from '../appDB'
 import type { StoredFlashing } from '@/types/flashingTypes'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { generateRandomId } from './utils'
-import { StoredMaterialAndProps } from '@/types/material&PropsType'
-import { materialsWithProperties } from '@/utilities/demo_datas/demoMaterials&Props'
-import { useEffect } from 'react'
 import Dexie from 'dexie'
+import { getTotalGirth } from '@/hooks/canvas/useFlashingLoader'
 
 type ReturnDexieError = Promise<string | typeof Dexie.DexieError | Error>
 
@@ -29,22 +27,26 @@ export function getFlashingById(flashingId: string): StoredFlashing | undefined 
 }
 
 export async function upsertPartialFlashing(id: string, partial: Partial<StoredFlashing>) {
-  // const db = getDBOrThrow()
   const now = Date.now()
 
   await db.transaction('rw', db.flashings, async () => {
     // Try to update first (merge)
-    const updatedCount = await db.flashings.update(id, {
-      ...partial,
-      updatedAt: now,
-      // we will compute a correct isDraft below for both update and create cases
-    } as Partial<StoredFlashing>)
+    const existing = await db.flashings.get(id)
 
-    if (updatedCount) {
-      // After update, recompute completeness and set isDraft properly (in case partial completed it)
-      const merged = await db.flashings.get(id)
-      if (!merged) return
-      await db.flashings.update(id, { updatedAt: now })
+    if (existing) {
+      // Merge existing + partial
+      const merged: StoredFlashing = {
+        ...existing,
+        ...partial,
+        updatedAt: now,
+      }
+
+      // Recompute derived fields
+      merged.crushFold = merged.startCrushFold || merged.endCrushFold
+      merged.tapered = merged.nodes.some((node) => !!node.next_line_bside_length)
+      merged.totalGirth = getTotalGirth(merged.nodes) ?? 0
+
+      await db.flashings.put(merged)
       return
     }
 
@@ -60,15 +62,27 @@ export async function upsertPartialFlashing(id: string, partial: Partial<StoredF
       thickness: undefined,
       createdAt: now,
       updatedAt: now,
-      isDraft: true, // will be overwritten below after merge check
+      isDraft: true,
       colorSideDirection: false,
+      crushFold: false,
+      tapered: false,
+      totalGirth: 0,
     }
 
-    const merged = { ...base, ...partial }
+    const merged: StoredFlashing = {
+      ...base,
+      ...partial,
+    }
+
+    // Recompute derived fields
+    merged.crushFold = merged.startCrushFold || merged.endCrushFold
+    merged.tapered = merged.nodes.some((node) => !!node.next_line_bside_length)
+    merged.totalGirth = getTotalGirth(merged.nodes) ?? 0
+
     merged.updatedAt = now
     merged.createdAt = now
 
-    await db.flashings.add(merged as StoredFlashing)
+    await db.flashings.add(merged)
   })
 }
 

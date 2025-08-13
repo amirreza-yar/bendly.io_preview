@@ -32,11 +32,6 @@ export default function LibraryPage() {
     { title: 'App Template 2', imageSrc: 'rectangle-10.png', isMyTemplate: false },
   ]
 
-  // const appTemplates = [
-  //   { title: 'App Template 1', imageSrc: 'rectangle-10.png' },
-  //   { title: 'App Template 2', imageSrc: 'rectangle-10.png' },
-  // ]
-
   return (
     <>
       <Header title="Library" returnHref="/dashboard">
@@ -44,7 +39,7 @@ export default function LibraryPage() {
           <Magnifier />
         </Link>
       </Header>
-      <ContentWrapper className='no-scrollbar'>
+      <ContentWrapper className="no-scrollbar">
         <div className="flex flex-col items-start self-stretch flex-grow-0 flex-shrink-0 gap-4 pt-4">
           <Tabs defaultValue="my-templates">
             <TabsList className="sticky top-4 bg-white z-20">

@@ -71,7 +71,7 @@ export default function Page() {
 
   const newFlashing = () => {
     initNewFlashing().then((flashingId) => {
-      router.push(`/flashing/${flashingId}`)
+      router.push(`/f/${flashingId}`)
     })
   }
 

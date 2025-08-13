@@ -414,7 +414,7 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
         isDraft: false,
       })
 
-      router.push(`/flashing/${flashingId}/preview`)
+      router.push(`/f/${flashingId}/preview`)
     } else if (!canvasIsEmpty && savedFlashing.color) {
       upsertPartialFlashing(flashingId, {
         nodes: flashing.nodes,
@@ -423,7 +423,7 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
         endCrushFold: flashing.endCrushFold,
       })
 
-      window.location.assign(`/flashing/${flashingId}/color-side`)
+      window.location.assign(`/f/${flashingId}/color-side`)
     } else {
       throw 'An error accured'
     }

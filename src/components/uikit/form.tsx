@@ -89,7 +89,7 @@ export function FormLabel(props: FormLabelProps) {
     <Label
       data-slot="form-label"
       data-error={!!error}
-      className={cn('data-[error=true]:text-destructive', props.className)}
+      className={cn('data-[error=true]:text-destructive label-regular', props.className)}
       htmlFor={formItemId}
       {...props}
     />

@@ -37,4 +37,7 @@ export type Flashing = FlashingWithColor | FlashingWithThickness
 export type StoredFlashing = BaseFlashing & {
   color?: ColorType
   thickness?: ThicknessType
+  crushFold: boolean
+  tapered: boolean
+  totalGirth: number
 }

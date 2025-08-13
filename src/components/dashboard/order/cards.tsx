@@ -5,13 +5,22 @@ import {
   ChevronRight,
   DateIcon,
   Delivery,
+  Download,
+  Edit,
+  Remove,
   WareHouse,
+  XIcon,
 } from '@/components/uikit/icons'
 import Link from 'next/link'
 import { OrderStatusBadge } from './badge'
 import { Flashing, Order } from '@/types/orders/orderType'
 import { ReplacementRequest } from '@/types/orders/requestType'
 import { formatDate, formatDateTime } from './utils'
+import { StoredOrder, StoredOrderFlashing } from '@/types/orderTypes'
+import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
+import { AlertDialogContent } from '@/components/uikit/alertModal'
+import { Button } from '@/components/uikit/buttons/button'
+import { ReactNode } from 'react'
 
 export function OrderCard({ order, ...props }: { order: Order }) {
   console.log(order.flashings[0])
@@ -126,5 +135,139 @@ export function RequestCard({ req, ...props }: { req: ReplacementRequest }) {
         <ChevronRight />
       </div>
     </Link>
+  )
+}
+
+export function NewOrderCard({
+  flashing,
+  onDeleteFlashing,
+  onSaveFlashing,
+  orderId,
+  ...props
+}: {
+  flashing: StoredOrderFlashing
+  onDeleteFlashing: (flashingId: string) => void
+  onSaveFlashing: (flashingId: string) => void
+  orderId: string | string[]
+}) {
+  return (
+    <div {...props} className="grid gap-2 bg-white p-3 rounded-xs border border-border-default">
+      <Link href="" className="grid grid-cols-2 p-3 rounded-xs border border-border-default">
+        <div>Canvas here</div>
+        <div className="grid gap-1">
+          <Edit className="justify-self-end size-5 mb-4" />
+          <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>
+          <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
+        </div>
+      </Link>
+      <Link
+        href={`/f/${flashing.id}/preview/edit-material-properties?orderId=${orderId}`}
+        className="flex justify-between items-start p-3 rounded-xs border border-border-default"
+      >
+        <div className="grid gap-2">
+          <p className="caption-small">Material: {flashing.material}</p>
+          <p className="caption-small">
+            {flashing.color
+              ? `Color: ${flashing.color.name}`
+              : `Thickness: ${flashing.thickness?.thickness}mm`}
+          </p>
+        </div>
+        <Edit className="justify-self-end size-5 mb-4" />
+      </Link>
+      <Link
+        href={`/f/${flashing.id}/details?orderId=${orderId}`}
+        className="grid gap-4 p-3 rounded-xs border border-border-default"
+      >
+        <div className="flex justify-between items-start">
+          <div className="grid gap-2">
+            <p className="caption-small">
+              Code: <span className="label-regular">{flashing.code}</span>
+            </p>
+            <p className="caption-small">
+              Position:
+              {flashing.position ? flashing.position : 'Not provided'}
+            </p>
+          </div>
+          <Edit className="justify-self-end size-5 mb-4" />
+        </div>
+        <div className="flex justify-between pr-11">
+          <div className="grid gap-2">
+            <p className="label-regular border-b pb-1 pr-2">Quantity</p>
+            {flashing.specifications.map((spec, index) => (
+              <p key={index} className="caption-small">
+                {spec.quantity} pcs
+              </p>
+            ))}
+          </div>
+          <div className="grid gap-2 pr-6">
+            <p className="label-regular border-b pb-1 pr-2">Length</p>
+            {flashing.specifications.map((spec, index) => (
+              <p key={index} className="caption-small">
+                {spec.length} mm
+              </p>
+            ))}
+          </div>
+        </div>
+      </Link>
+      <div className="flex justify-end items-center">
+        <DeleteFlashingModalOnOrderReview deleteFlashing={() => onDeleteFlashing(flashing.id)}>
+          <div className="flex label-regular items-center gap-2 px-4">
+            Delete
+            <Remove className="size-5" />
+          </div>
+        </DeleteFlashingModalOnOrderReview>
+        <div className="flex label-regular items-center gap-2 pl-4 pr-2">
+          PDF
+          <Download className="size-5" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export const DeleteFlashingModalOnOrderReview = ({
+  deleteFlashing,
+  children,
+}: {
+  deleteFlashing: () => void
+  children: ReactNode
+}) => {
+  return (
+    <AlertDialogPrimitive.Root data-slot="alert-dialog">
+      <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" asChild>
+        {children}
+      </AlertDialogPrimitive.Trigger>
+      <AlertDialogContent className="font-roboto">
+        <div data-slot="alert-dialog-header" className="flex flex-col gap-4">
+          <AlertDialogPrimitive.Cancel className="absolute top-4 end-4 [&_svg:not([class*='size-'])]:size-6">
+            <XIcon className="text-neutral-dark" variant="secondary" />
+          </AlertDialogPrimitive.Cancel>
+          <AlertDialogPrimitive.Title
+            data-slot="alert-dialog-title"
+            className="text-sm/[19px] font-semibold"
+          >
+            Delete Flashing?
+          </AlertDialogPrimitive.Title>
+
+          <AlertDialogPrimitive.Description
+            data-slot="alert-dialog-description"
+            className="text-muted-foreground text-sm"
+          >
+            Are you sure you want to delete this Flashing? This action cannot be undone.
+          </AlertDialogPrimitive.Description>
+        </div>
+        <div data-slot="alert-dialog-footer" className="flex gap-4 justify-end pt-4">
+          <AlertDialogPrimitive.Action asChild>
+            <Button variant="ghost">No</Button>
+          </AlertDialogPrimitive.Action>
+
+          <AlertDialogPrimitive.Cancel asChild>
+            <Button variant="ghost" onClick={deleteFlashing}>
+              Yes
+            </Button>
+          </AlertDialogPrimitive.Cancel>
+        </div>
+      </AlertDialogContent>
+    </AlertDialogPrimitive.Root>
   )
 }

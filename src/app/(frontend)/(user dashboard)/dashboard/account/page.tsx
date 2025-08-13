@@ -13,9 +13,12 @@ import {
 } from '@/components/uikit/icons'
 import BottomNav from '@/components/dashboard/bottomNav'
 import { ButtonListItem } from '@/components/uikit/buttons/buttonListItem'
-import { AlertModal } from '@/components/uikit/alertModal'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
+import { LogoutModal } from '@/components/dashboard/auth/modals'
+import { apiLogout } from '@/utilities/api/user_auth/auth'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 export default function AccountPage() {
   const [userInfo] = useState({
@@ -23,7 +26,19 @@ export default function AccountPage() {
     email: 'davod.osanlo@gmail.com',
     phone: '+1 234 567 8900',
   })
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
+  const router = useRouter()
+
+  const onLogoutHandler = async () => {
+    const res = await apiLogout()
+    if (res.ok) {
+      toast('Signed out successfuly')
+      router.push('/dashboard')
+    } else {
+      toast('Something went wrong')
+    }
+  }
+
   return (
     <>
       <Header title="Account" returnHref="/dashboard/profile" />
@@ -45,7 +60,9 @@ export default function AccountPage() {
               <ButtonListItem text="Change Password" icon={PasswordField} />
             </Link>
 
-            <ButtonListItem text="Logout" icon={Logout} onClick={() => setIsModalOpen(true)} />
+            <LogoutModal onLogoutHandler={onLogoutHandler}>
+              <ButtonListItem text="Logout" icon={Logout} />
+            </LogoutModal>
           </div>
           <div className="flex gap-3 rounded-md border-border-attention border-1 text-attention-default p-3">
             <AlertTriangle className="size-5 mt-1" />
@@ -66,20 +83,6 @@ export default function AccountPage() {
       {/* The main content of page ends here */}
 
       <BottomNav />
-
-      <AlertModal
-        title="Sure About Signing Out?"
-        description="Are you sure you want to sign out? You'll need to log in again to access your account"
-        cancelButtonText="Cencel"
-        actionButtonText="Yes, Logout"
-        open={isModalOpen}
-        onAction={() => {
-          setIsModalOpen(false)
-        }}
-        onCancle={() => {
-          setIsModalOpen(false)
-        }}
-      />
     </>
   )
 }

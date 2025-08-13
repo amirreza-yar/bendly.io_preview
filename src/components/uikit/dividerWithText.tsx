@@ -3,7 +3,7 @@ import { Separator } from '../ui/separator'
 
 interface TextType {
   text: string
-  className: string
+  className?: string
 }
 
 export default function DividerWithText({ text, className, ...props }: TextType) {

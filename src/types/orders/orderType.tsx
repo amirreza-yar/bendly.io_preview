@@ -67,7 +67,7 @@ export type JobReference = {
 }
 
 export type Specification = {
-  pieceId: string
+  id: string
   quantity: number
   length: number
   cost: number
@@ -124,3 +124,36 @@ interface PickupOrder extends BaseOrder {
 export type Order = DeliveryOrder | PickupOrder
 
 export type OrderList = Order[]
+
+interface StoredOrder {
+  orderStatus: OrderStatus
+  orderId: number
+  orderDateTime: string
+  deliveryType: DeliveryType
+  orderProgress: OrderProgress
+
+  jobRefrence?: JobReference
+
+  flashings: {
+    flashingId: string
+    code: string
+    position: string
+    material: string
+    color: string
+    thickness: number
+    crushfold: boolean
+    tapered: boolean
+    totalGirth: number
+    sepcifications: Specification[]
+  }
+
+  recipientInfo?: RecipientInfo
+  deliveryDate?: string
+  deliveryId?: number
+  driverInfo?: DriverInfo
+  deliveryCost?: number
+  GST?: number
+  paymentHistory?: PaymentHistory
+
+  rejectionDesc?: string
+}

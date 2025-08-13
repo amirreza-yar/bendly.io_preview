@@ -3,6 +3,7 @@ import Dexie, { Table } from 'dexie'
 import type { StoredFlashing } from '@/types/flashingTypes'
 import { StoredMaterialAndProps } from '@/types/material&PropsType'
 import { Template } from '@/types/template/templateType'
+import { StoredOrder } from '@/types/orderTypes'
 
 export interface User {
   id?: string
@@ -14,6 +15,7 @@ export class AppDB extends Dexie {
   flashings!: Table<StoredFlashing, string>
   materialsAndProps!: Table<StoredMaterialAndProps, number>
   templates!: Table<Template, string>
+  orders!: Table<StoredOrder, number>
 
   constructor() {
     super('AppDB')
@@ -23,6 +25,7 @@ export class AppDB extends Dexie {
       flashings: 'id, material, color, thickness, createdAt, updatedAt',
       materialsAndProps: 'material',
       templates: 'name, owner',
+      orders: 'id, status, progress, deliveryType',
     })
   }
 }
