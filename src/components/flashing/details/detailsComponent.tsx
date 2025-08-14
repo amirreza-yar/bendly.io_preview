@@ -55,7 +55,7 @@ export default function DetailsComponent({
 }) {
   const form = useForm<DetailsFormValues>({
     resolver: zodResolver(DetailsFormSchema),
-    defaultValues: { specifications: [{ quantity: 2, length: 250 }] },
+    defaultValues: { specifications: [{ quantity: undefined, length: undefined }] },
   })
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function DetailsComponent({
 
   return (
     <>
-      {isDirty ? (
+      {order && isDirty ? (
         <UnsavedChangesOnDetailsModal
           onDiscardChanges={onModalDiscardChanges}
           onSaveChanges={() => form.handleSubmit(onDetailsFormSubmit)()}

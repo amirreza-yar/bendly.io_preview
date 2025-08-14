@@ -78,13 +78,19 @@ export function getAllOrders(): StoredOrder[] | undefined | null {
   return useLiveQuery(() => db.orders.toArray(), [], null)
 }
 
-export function getFlashingsByOrderId(orderId: number): StoredFlashing[] {
+export function getFlashingsByOrderId(orderId: number): (StoredFlashing | undefined)[] {
   const flashingIds = getOrderById(orderId)?.flashings?.map((flash) => flash.id)
 
   console.log(flashingIds)
   return useLiveQuery(
-    () => db.flashings.filter((flash) => flashingIds?.includes(flash.id)),
-    [orderId],
-    null,
+    async () => {
+      if (!flashingIds || flashingIds.length === 0) return []
+      const rows = await db.flashings.where('id').anyOf(flashingIds).toArray()
+      // if you need to preserve the original flashingIds order:
+      const map = new Map(rows.map((r) => [r.id, r]))
+      return flashingIds.map((id) => map.get(id)).filter(Boolean)
+    },
+    [flashingIds?.join(',')],
+    [],
   )
 }

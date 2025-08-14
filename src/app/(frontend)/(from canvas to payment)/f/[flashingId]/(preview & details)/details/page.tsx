@@ -44,6 +44,8 @@ export default function DetailsPage() {
       specifications: specificationsToBeStored,
     }
 
+    console.log(flashing, newFlashing)
+
     const newOrderFlashing: Partial<StoredOrder> = {
       flashings: [newFlashing],
     }

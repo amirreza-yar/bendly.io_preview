@@ -21,6 +21,7 @@ import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 import { AlertDialogContent } from '@/components/uikit/alertModal'
 import { Button } from '@/components/uikit/buttons/button'
 import { ReactNode } from 'react'
+import { StoredFlashing } from '@/types/flashingTypes'
 
 export function OrderCard({ order, ...props }: { order: Order }) {
   console.log(order.flashings[0])
@@ -145,11 +146,15 @@ export function NewOrderCard({
   orderId,
   ...props
 }: {
-  flashing: StoredOrderFlashing
+  flashing:
+    | (StoredFlashing & Pick<StoredOrderFlashing, 'code' | 'position' | 'specifications'>)
+    | undefined
   onDeleteFlashing: (flashingId: string) => void
   onSaveFlashing: (flashingId: string) => void
   orderId: string | string[]
 }) {
+  if (!flashing) return
+
   return (
     <div {...props} className="grid gap-2 bg-white p-3 rounded-xs border border-border-default">
       <Link href="" className="grid grid-cols-2 p-3 rounded-xs border border-border-default">
@@ -246,14 +251,14 @@ export const DeleteFlashingModalOnOrderReview = ({
             data-slot="alert-dialog-title"
             className="text-sm/[19px] font-semibold"
           >
-            Delete Flashing?
+            Delete Flashing
           </AlertDialogPrimitive.Title>
 
           <AlertDialogPrimitive.Description
             data-slot="alert-dialog-description"
             className="text-muted-foreground text-sm"
           >
-            Are you sure you want to delete this Flashing? This action cannot be undone.
+            Are you sure you want to delete this Flashing This action cannot be undone.
           </AlertDialogPrimitive.Description>
         </div>
         <div data-slot="alert-dialog-footer" className="flex gap-4 justify-end pt-4">

@@ -10,9 +10,10 @@ import { getFlashingsByOrderId, getOrderById } from '@/lib/db/helpers/orderHelpe
 import { looksLikeGeneratedId, looksLikeGeneratedNumericId } from '@/lib/db/helpers/utils'
 import Link from 'next/link'
 import { notFound, useParams, useSearchParams } from 'next/navigation'
+import { useMemo } from 'react'
 
 export default function OrderReviewPage() {
-  const { orderId } = useParams()
+  const { orderId }: { orderId: string } = useParams()
 
   if (!orderId || !looksLikeGeneratedNumericId(Number(orderId))) {
     return notFound()
@@ -20,7 +21,13 @@ export default function OrderReviewPage() {
 
   const order = getOrderById(Number(orderId))
 
-  console.log(getFlashingsByOrderId(orderId))
+  const flashings = getFlashingsByOrderId(Number(orderId))
+
+  // create a map for O(1) lookups; memoize to avoid rebuilding each render
+  const flashingsMap = useMemo(() => {
+    if (!flashings || !Array.isArray(flashings)) return new Map<string, any>()
+    return new Map(flashings.map((f: any) => [f?.id, f]))
+  }, [flashings])
 
   const onDeleteFlashing = (flashingId: string) => {}
 
@@ -38,15 +45,29 @@ export default function OrderReviewPage() {
       />
       <ContentWrapper className="pt-18 bg-surface-page-body">
         <div className="grid gap-4">
-          {order?.flashings?.map((flash, index) => (
-            <NewOrderCard
-              key={index}
-              flashing={flash}
-              onDeleteFlashing={onDeleteFlashing}
-              onSaveFlashing={onSaveFlashing}
-              orderId={orderId}
-            />
-          ))}
+          {order?.flashings?.map((flash) => {
+            const found = flashingsMap.get(flash.id) ?? null
+            const augmented = found
+              ? {
+                  ...found,
+                  code: flash.code,
+                  position: flash.position,
+                  specifications: flash.specifications,
+                }
+              : null
+
+            if (!augmented) return
+
+            return (
+              <NewOrderCard
+                key={flash.id} // stable key
+                flashing={augmented}
+                onDeleteFlashing={onDeleteFlashing}
+                onSaveFlashing={onSaveFlashing}
+                orderId={orderId}
+              />
+            )
+          })}
         </div>
       </ContentWrapper>
       <Footer>

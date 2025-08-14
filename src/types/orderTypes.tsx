@@ -47,7 +47,8 @@ export type Specification = {
   cost?: number
 }
 
-export type StoredOrderFlashing = Pick<StoredFlashing, 'id'> & {
+export type StoredOrderFlashing = {
+  id: string
   code: string
   position?: string
   specifications: Specification[]
