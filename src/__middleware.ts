@@ -21,24 +21,26 @@ async function verifyJWT(token: string) {
 }
 
 export async function middleware(req: NextRequest) {
-  const path = req.nextUrl.pathname
-  const token = req.cookies.get('auth_token')?.value ?? ''
+  // const path = req.nextUrl.pathname
+  // const token = req.cookies.get('auth_token')?.value ?? ''
 
-  const rule = routeRules.find((r) => r.matcher.test(path))
-  if (!rule) return NextResponse.next()
+  // const rule = routeRules.find((r) => r.matcher.test(path))
+  // if (!rule) return NextResponse.next()
 
-  if (rule.authRequired) {
-    const user = token ? await verifyJWT(token) : null
+  // if (rule.authRequired) {
+  //   const user = token ? await verifyJWT(token) : null
 
-    await verifyJWT(token).then((res) => console.log(res))
-  }
+  //   console.log(path, token, user)
+
+  //   await verifyJWT(token).then((res) => console.log(res))
+  // }
 
   const res = NextResponse.next()
-  res.headers.set('X-Frame-Options', 'DENY')
-  res.headers.set('X-Content-Type-Options', 'nosniff')
-  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  res.headers.set('Permissions-Policy', 'geolocation=(), microphone=()')
-  res.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
+  // res.headers.set('X-Frame-Options', 'DENY')
+  // res.headers.set('X-Content-Type-Options', 'nosniff')
+  // res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  // res.headers.set('Permissions-Policy', 'geolocation=(), microphone=()')
+  // res.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
   return res
 }
 

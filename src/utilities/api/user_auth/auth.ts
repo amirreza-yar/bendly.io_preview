@@ -139,3 +139,19 @@ export async function apiLogout() {
     return null
   }
 }
+
+export async function apiGetProfile() {
+  try {
+    const res = await fetch(userAuthApiUrl('/api/auth/profile'), {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    return res.json()
+  } catch {
+    return null
+  }
+}

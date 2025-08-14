@@ -4,12 +4,19 @@ import Link from 'next/link'
 import { ArrowLeft, ChevronRight, Pencil, RightArrow } from '@/components/uikit/icons'
 import { Separator } from '@/components/uikit/separator'
 import BottomNav from '@/components/dashboard/bottomNav'
+import { apiGetProfile } from '@/utilities/api/user_auth/auth'
 
 export default function ProfilePage() {
   const [userInfo] = useState({
     name: 'Davod Osanlo',
     email: 'davod.osanlo@gmail.com',
   })
+
+  const getProfile = async () => {
+    const res = await apiGetProfile()
+
+    console.log(res)
+  }
 
   return (
     <>
@@ -24,6 +31,7 @@ export default function ProfilePage() {
         <div className="flex flex-col w-full py-4 gap-6">
           <Link
             href="/dashboard/account"
+            onClick={getProfile}
             className="flex items-center justify-between rounded-md border-2 border-border-default px-4 py-[10px]"
           >
             <div className="grid gap-2">
@@ -38,7 +46,7 @@ export default function ProfilePage() {
               <span className="label-regular">Orders</span>
               <ChevronRight className="size-6" />
             </Link>
-            <Separator className />
+            <Separator />
             <Link href="/dashboard/job-references" className="flex items-center justify-between">
               <span className="label-regular">Job Refrences</span>
               <ChevronRight className="size-6" />

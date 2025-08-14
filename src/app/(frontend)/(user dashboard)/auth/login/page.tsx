@@ -32,7 +32,7 @@ export default function LoginPage() {
     const res = await apiLogin(email, data.password)
     if (res?.apiCode === '100600') {
       toast('Welcome')
-      router.push('/dashboard')
+      // router.push('/dashboard')
     } else if (res?.apiCode === '100602' || res?.apiCode === '100603') {
       setErrorText('Incorrect password, Please try again')
     } else {
