@@ -1,5 +1,5 @@
 'use client'
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
+import { Carousel, CarouselContent, CarouselItem } from '@/components/uikit/carousel'
 import { Button } from '@/components/uikit/buttons/button'
 import JobRefCard from '@/components/uikit/cards/jobRefCard'
 import DividerWithText from '@/components/uikit/dividerWithText'
@@ -108,7 +108,7 @@ export default function Page() {
           <div className="flex justify-between items-center w-full py-4">
             <h6>Recent Job Reference</h6>
             <Link
-              href="/dashboard/job-references"
+              href="/dashboard/j"
               className="flex items-center [&_svg]:size-5 gap-2 text-sm/[17px] font-semibold text-primary"
             >
               <span>View All</span>

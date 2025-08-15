@@ -15,13 +15,15 @@ import {
   drawingBounds,
 } from '@/hooks/canvas/useFlashingLoader'
 import { ArrowLeft, CircleQuestion, TransferVerticaly } from '@/components/uikit/icons'
-import { notFound, useParams, useRouter } from 'next/navigation'
+import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db/appDB'
 import { upsertPartialFlashing } from '@/lib/db/helpers/flashingHelpers'
 
 export default function ColorSidePage() {
   const { flashingId }: { flashingId: string } = useParams()
+
+  const orderId = useSearchParams().get('orderId')
 
   const router = useRouter()
 
@@ -110,7 +112,7 @@ export default function ColorSidePage() {
       isDraft: false,
     })
 
-    router.push(`/f/${flashingId}/preview`)
+    router.push(`/f/${flashingId}/preview?orderId=${orderId}`)
   }
 
   return (

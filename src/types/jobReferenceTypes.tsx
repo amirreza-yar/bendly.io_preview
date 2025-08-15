@@ -22,12 +22,13 @@ export type JobReference = {
 export type StoredAddress = Address &
   RecipientInfo & {
     id: string
-    jobReferenceId: string
+    // jobReferenceId: string
   }
 
 export type StoredJobReference = {
-  id: string
   code: number
   projectName?: string
   addresses?: StoredAddress[]
+  createdAt?: number
+  updatedAt?: number
 }

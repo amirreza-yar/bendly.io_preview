@@ -24,7 +24,7 @@ import { useResizingContext } from '@/providers/canvas_providers/resizingProvide
 import { useTapperingContext } from '@/providers/canvas_providers/tapperingProvider'
 import TapperingDrawer from '../tappering/tapperingDrawer'
 import { upsertPartialFlashing } from '@/lib/db/helpers/flashingHelpers'
-import { notFound, redirect, useParams, useRouter } from 'next/navigation'
+import { notFound, redirect, useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db/appDB'
 import useLoading from '@/hooks/canvas/useLoading'
@@ -60,6 +60,8 @@ function getDistance(nodeA, nodeB) {
 
 const CanvasControllers = ({ handleUndo, handleRedo }) => {
   const { flashingId } = useParams()
+
+  const orderId = useSearchParams().get('orderId')
 
   const savedFlashing = useLiveQuery(
     () => db.flashings.get({ id: flashingId }),
@@ -350,15 +352,6 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
     let node = startCircle
     let index = 0
 
-    // {
-    //   node_id: 'circle456',
-    //   next_node_id: 'circle789',
-    //   prev_node_id: 'circle123',
-    //   next_line_bside_length: 180,
-    //   left: 300,
-    //   top: 250,
-    // },
-
     while (node) {
       const nodeObject = {
         node_id: uuids[index],
@@ -414,7 +407,7 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
         isDraft: false,
       })
 
-      router.push(`/f/${flashingId}/preview`)
+      router.push(`/f/${flashingId}/preview?orderId=${orderId}`)
     } else if (!canvasIsEmpty && savedFlashing.color) {
       upsertPartialFlashing(flashingId, {
         nodes: flashing.nodes,
@@ -423,12 +416,10 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
         endCrushFold: flashing.endCrushFold,
       })
 
-      window.location.assign(`/f/${flashingId}/color-side`)
+      window.location.assign(`/f/${flashingId}/color-side?orderId=${orderId}`)
     } else {
       throw 'An error accured'
     }
-
-    console.log(flashing.nodes)
   }
 
   return (

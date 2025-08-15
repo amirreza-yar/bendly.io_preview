@@ -47,7 +47,7 @@ export default function ProfilePage() {
               <ChevronRight className="size-6" />
             </Link>
             <Separator />
-            <Link href="/dashboard/job-references" className="flex items-center justify-between">
+            <Link href="/dashboard/j" className="flex items-center justify-between">
               <span className="label-regular">Job Refrences</span>
               <ChevronRight className="size-6" />
             </Link>

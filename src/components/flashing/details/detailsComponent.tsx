@@ -60,7 +60,7 @@ export default function DetailsComponent({
 
   useEffect(() => {
     if (order?.flashings?.length) {
-      const lastFlashing = order.flashings[order.flashings.length - 1]
+      const lastFlashing = order.flashings.find((flash) => flash.id === flashingId)
       form.reset({
         code: lastFlashing.code,
         position: lastFlashing.position,
@@ -95,7 +95,7 @@ export default function DetailsComponent({
           </header>
         </UnsavedChangesOnDetailsModal>
       ) : order ? (
-        <Header title={title} returnHref={`/new-order/${order.id}`} />
+        <Header title={title} returnHref={`/o/${order.id}/review`} />
       ) : (
         <Header title={title} returnHref={`/f/${flashingId}/preview`} />
       )}

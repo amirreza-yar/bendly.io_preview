@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/uikit/buttons/button'
 import { ArrowRight, Edit } from '@/components/uikit/icons'
 import { Header } from '@/components/dashboard/header'
@@ -84,9 +84,9 @@ export default function PreviewPage() {
               <DeleteFlashingModalOnPreview deleteFlashing={deleteFlashing} />
 
               {flashing?.color && !flashing.startCrushFold && !flashing.endCrushFold ? (
-                <EditFlashingDrawer flashingId={flashingId} />
+                <EditFlashingDrawer flashingId={flashingId} next="preview" />
               ) : (
-                <a href={`/f/${flashingId}/preview/edit-canvas`}>
+                <a href={`/f/${flashingId}/edit/canvas?next=preview`}>
                   <Edit />
                 </a>
               )}
@@ -108,7 +108,7 @@ export default function PreviewPage() {
               Crush Fold: {flashing?.startCrushFold || flashing?.endCrushFold ? 'Yes' : 'No'}
             </p>
             <Link
-              href={`/f/${flashingId}/preview/edit-material-properties`}
+              href={`/f/${flashingId}/edit/material-properties?next=preview`}
               className="flex items-center gap-2 caption-small rounded-xs bg-surface-disable p-2 border border-border-default"
             >
               <div className="grid gap-2 caption-small">

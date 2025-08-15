@@ -3,7 +3,7 @@
 import { usePageNavigationAppRouter } from '@/hooks/usePageNavigationRouter'
 import { getFlashingById } from '@/lib/db/helpers/flashingHelpers'
 import { looksLikeGeneratedId } from '@/lib/db/helpers/utils'
-import { notFound, redirect, useParams } from 'next/navigation'
+import { notFound, redirect, useParams, useSearchParams } from 'next/navigation'
 
 export default function FlashingSlugCheckPage() {
   const { isBusy } = usePageNavigationAppRouter()
@@ -14,6 +14,8 @@ export default function FlashingSlugCheckPage() {
 
   const { flashingId }: { flashingId: string } = useParams()
 
+  const orderId = useSearchParams().get('orderId')
+
   const doesLooksLikeGeneratedId = looksLikeGeneratedId(flashingId)
 
   if (doesLooksLikeGeneratedId) {
@@ -22,7 +24,7 @@ export default function FlashingSlugCheckPage() {
     if (flashing && !flashing.isDraft) {
       return redirect(`/f/${flashingId}/canvas`)
     } else {
-      return redirect(`/f/${flashingId}/material-properties`)
+      return redirect(`/f/${flashingId}/material-properties?orderId=${orderId}`)
     }
   } else {
     console.log('not found')

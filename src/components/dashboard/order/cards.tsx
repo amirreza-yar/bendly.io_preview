@@ -22,6 +22,8 @@ import { AlertDialogContent } from '@/components/uikit/alertModal'
 import { Button } from '@/components/uikit/buttons/button'
 import { ReactNode } from 'react'
 import { StoredFlashing } from '@/types/flashingTypes'
+import { EditFlashingDrawer } from '@/components/dashboard/order/drawers'
+import { cn } from '@/utilities/ui'
 
 export function OrderCard({ order, ...props }: { order: Order }) {
   console.log(order.flashings[0])
@@ -144,6 +146,7 @@ export function NewOrderCard({
   onDeleteFlashing,
   onSaveFlashing,
   orderId,
+  className,
   ...props
 }: {
   flashing:
@@ -151,22 +154,42 @@ export function NewOrderCard({
     | undefined
   onDeleteFlashing: (flashingId: string) => void
   onSaveFlashing: (flashingId: string) => void
-  orderId: string | string[]
+  orderId: string
+  className?: string
 }) {
   if (!flashing) return
 
   return (
-    <div {...props} className="grid gap-2 bg-white p-3 rounded-xs border border-border-default">
-      <Link href="" className="grid grid-cols-2 p-3 rounded-xs border border-border-default">
-        <div>Canvas here</div>
-        <div className="grid gap-1">
-          <Edit className="justify-self-end size-5 mb-4" />
-          <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>
-          <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
-        </div>
-      </Link>
+    <div
+      {...props}
+      className={cn('grid gap-2 bg-white p-3 rounded-xs border border-border-default', className)}
+    >
+      {flashing.color && !flashing.startCrushFold && !flashing.endCrushFold ? (
+        <EditFlashingDrawer flashingId={flashing.id} orderId={orderId}>
+          <div className="grid grid-cols-2 p-3 rounded-xs border border-border-default">
+            <div>Canvas here</div>
+            <div className="grid gap-1">
+              <Edit className="size-5 justify-self-end" />
+              <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>
+              <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
+            </div>
+          </div>
+        </EditFlashingDrawer>
+      ) : (
+        <Link
+          href={`/f/${flashing.id}/edit/canvas?next=order&orderId=${orderId}`}
+          className="grid grid-cols-2 p-3 rounded-xs border border-border-default"
+        >
+          <div>Canvas here</div>
+          <div className="grid gap-1">
+            <Edit className="size-5 justify-self-end" />
+            <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>
+            <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
+          </div>
+        </Link>
+      )}
       <Link
-        href={`/f/${flashing.id}/preview/edit-material-properties?orderId=${orderId}`}
+        href={`/f/${flashing.id}/edit/material-properties?next=order&orderId=${orderId}`}
         className="flex justify-between items-start p-3 rounded-xs border border-border-default"
       >
         <div className="grid gap-2">
@@ -198,7 +221,7 @@ export function NewOrderCard({
         <div className="flex justify-between pr-11">
           <div className="grid gap-2">
             <p className="label-regular border-b pb-1 pr-2">Quantity</p>
-            {flashing.specifications.map((spec, index) => (
+            {flashing?.specifications?.map((spec, index) => (
               <p key={index} className="caption-small">
                 {spec.quantity} pcs
               </p>
@@ -206,7 +229,7 @@ export function NewOrderCard({
           </div>
           <div className="grid gap-2 pr-6">
             <p className="label-regular border-b pb-1 pr-2">Length</p>
-            {flashing.specifications.map((spec, index) => (
+            {flashing?.specifications?.map((spec, index) => (
               <p key={index} className="caption-small">
                 {spec.length} mm
               </p>
@@ -221,7 +244,7 @@ export function NewOrderCard({
             <Remove className="size-5" />
           </div>
         </DeleteFlashingModalOnOrderReview>
-        <div className="flex label-regular items-center gap-2 pl-4 pr-2">
+        <div className="flex label-regular items-center gap-2 pl-4 pr-2 opacity-40">
           PDF
           <Download className="size-5" />
         </div>

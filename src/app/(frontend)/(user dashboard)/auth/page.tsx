@@ -26,7 +26,6 @@ const AuthPage = () => {
     } else {
       toast('Something went wrong. Try again')
     }
-
     console.log(res)
   }
 
@@ -51,6 +50,7 @@ const AuthPage = () => {
           <DividerWithText text="OR" />
 
           <AuthEmailForm onSubmitEmail={onSubmitEmail} defaultEmail={defaultEmail} />
+          {/* <AuthEmailForm defaultEmail={defaultEmail} /> */}
         </div>
       </ContentWrapper>
     </>

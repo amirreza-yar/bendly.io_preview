@@ -2,19 +2,10 @@ import { JobReference } from '@/utilities/demo_datas/demoJobRefData'
 import { Edit, MapMarker, ProfileNav, Remove } from '@/components/uikit/icons'
 import Link from 'next/link'
 import { RemoveJobRefAddressModal } from './modals'
+import { StoredAddress, StoredJobReference } from '@/types/jobReferenceTypes'
 
 interface JobRefAddressCardProps {
-  address: {
-    id: string
-    title: string
-    streetAddress: string
-    suburb: string
-    state: string
-    stateAbbreviation: string
-    postcode: number
-    recipientName: string
-    recipientMobile: number
-  }
+  address: StoredAddress
   jobCode: number
 }
 
@@ -48,7 +39,7 @@ export function JobRefAddressCard({ address, jobCode, ...props }: JobRefAddressC
             trigger={<Remove />}
             // onDelete={() => toast('Address Deleted')}
           />
-          <Link href={`/dashboard/job-references/${jobCode}/${address.id}`}>
+          <Link href={`/dashboard/j/${jobCode}/${address.id}`}>
             <Edit />
           </Link>
         </div>
@@ -58,13 +49,13 @@ export function JobRefAddressCard({ address, jobCode, ...props }: JobRefAddressC
 }
 
 interface JobRefInfoCardProps {
-  jobReference: JobReference
+  jobReference: StoredJobReference | null
 }
 
 export function JobRefInfoCard({ jobReference }: JobRefInfoCardProps) {
   return (
     <Link
-      href={`/dashboard/job-references/${jobReference.code}/edit-info`}
+      href={`/dashboard/j/${jobReference?.code}/edit-info`}
       data-slot="card"
       className="grid gap-4 items-center rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative mt-4 mb-8"
     >

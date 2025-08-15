@@ -8,10 +8,15 @@ import { getTotalGirth } from '@/hooks/canvas/useFlashingLoader'
 
 type ReturnDexieError = Promise<string | typeof Dexie.DexieError | Error>
 
-export async function initNewFlashing(): ReturnDexieError {
+export async function initNewFlashing(orderId?: string): ReturnDexieError {
+  const partialData: Partial<StoredFlashing> = {}
+  if (orderId) {
+    partialData.orderIdToBeSaved = orderId
+  }
+
   try {
     const newFlashingId = generateRandomId()
-    await upsertPartialFlashing(newFlashingId, {})
+    await upsertPartialFlashing(newFlashingId, partialData)
     return newFlashingId
   } catch (err) {
     if (err instanceof Dexie.DexieError || err instanceof Error) {
@@ -105,5 +110,35 @@ export const deleteAllDraftFlashings = async () => {
     } else {
       return new Error(String(err))
     }
+  }
+}
+
+export async function removeOrderIdToBeSavedFromFlashingById(
+  flashingId: string | number,
+): Promise<number> {
+  if (flashingId === undefined || flashingId === null) return 0
+
+  try {
+    const modifiedCount = await db.transaction('rw', db.flashings, async () => {
+      // `modify` returns number of modified rows
+      const count = await db.flashings
+        .where('id')
+        .equals(flashingId as any)
+        .modify((f: any) => {
+          if ('orderIdToBeSaved' in f) {
+            delete f.orderIdToBeSaved
+          }
+        })
+      return count
+    })
+
+    return modifiedCount ?? 0
+  } catch (err) {
+    console.error(
+      'removeOrderIdToBeSavedFromFlashingById: transaction failed for id=',
+      flashingId,
+      err,
+    )
+    throw err
   }
 }

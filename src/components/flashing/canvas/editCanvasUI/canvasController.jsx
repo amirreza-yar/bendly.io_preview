@@ -24,7 +24,7 @@ import { useResizingContext } from '@/providers/canvas_providers/resizingProvide
 import { useTapperingContext } from '@/providers/canvas_providers/tapperingProvider'
 import TapperingDrawer from '../tappering/tapperingDrawer'
 import { upsertPartialFlashing } from '@/lib/db/helpers/flashingHelpers'
-import { notFound, redirect, useParams, useRouter } from 'next/navigation'
+import { notFound, redirect, useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db/appDB'
 import useLoading from '@/hooks/canvas/useLoading'
@@ -61,6 +61,9 @@ function getDistance(nodeA, nodeB) {
 
 const CanvasControllers = ({ handleUndo, handleRedo }) => {
   const { flashingId } = useParams()
+  const searchParams = useSearchParams()
+  const next = searchParams?.get('next')
+  const orderId = searchParams?.get('orderId')
 
   const savedFlashing = useLiveQuery(
     () => db.flashings.get({ id: flashingId }),
@@ -235,7 +238,6 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
               hoverCursor: 'pointer',
             },
           )
-          console.log(currentCir)
 
           if (currentCir.next_line_bside_length) {
             line.bSideLineLength = currentCir.next_line_bside_length
@@ -263,8 +265,6 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
           setCanvasIsEmpty(false)
 
           addHistory('drawing', currentCir, true)
-
-          console.log(nextCir.node_id)
         })
 
       activeCircle.current = circles.find((cir) => !cir.next_node_id)
@@ -273,24 +273,12 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
         const startCircle = circles.find((cir) => !cir.prev_node_id)
         startCircle.set({ radius: 0.2 })
         addCrushFoldObject(canvas, startCircle, 'start')
-        console.log(
-          startCircle.prev_node_id,
-          startCircle.prev_next_id,
-          startCircle.line1,
-          startCircle.node_id,
-        )
       }
 
       if (savedFlashing.endCrushFold) {
         const endCircle = circles.find((cir) => !cir.next_node_id)
         endCircle.set({ radius: 0.2 })
         addCrushFoldObject(canvas, endCircle, 'end')
-        console.log(
-          endCircle.prev_node_id,
-          endCircle.prev_next_id,
-          endCircle.line1,
-          endCircle.node_id,
-        )
       }
 
       centerDrawingGroup(50, 150, 130)
@@ -408,20 +396,26 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
       endCrushFold: flashing.endCrushFold,
     })
 
-    if (savedFlashing.color && !flashing.startCrushFold && !flashing.endCrushFold) {
-      window.location.assign(`/f/${flashingId}/preview/edit-color-side`)
-    } else if (savedFlashing) {
-      window.location.assign(`/f/${flashingId}/preview`)
+    if (next === 'preview') {
+      if (savedFlashing.color && !flashing.startCrushFold && !flashing.endCrushFold) {
+        window.location.assign(`/f/${flashingId}/edit/color-side?next=preview`)
+      } else if (savedFlashing) {
+        window.location.assign(`/f/${flashingId}/preview`)
+      }
+    } else if (next === 'order' && orderId) {
+      if (savedFlashing.color && !flashing.startCrushFold && !flashing.endCrushFold) {
+        window.location.assign(`/f/${flashingId}/edit/color-side?next=order&orderId=${orderId}`)
+      } else if (savedFlashing) {
+        window.location.assign(`/o/${orderId}/review`)
+      }
     }
-
-    console.log(flashing.nodes)
   }
 
   const deleteFlashing = async () => {
-    await deleteFlashingById(flashingId).then(
-      () => {toast('The drawn flashing was removed.')
-      window.location.assign('/dashboard')}
-    )
+    await deleteFlashingById(flashingId).then(() => {
+      toast('The drawn flashing was removed.')
+      window.location.assign('/dashboard')
+    })
   }
 
   return (
@@ -435,7 +429,13 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
       <AnimatePresence>
         {topBarVisible && (
           <TopBar
-            onClose={() => window.location.assign(`/f/${flashingId}/preview`)}
+            onClose={() => {
+              if (next === 'preview') {
+                window.location.assign(`/f/${flashingId}/preview`)
+              } else if (next === 'order' && orderId) {
+                window.location.assign(`/o/${orderId}/review`)
+              }
+            }}
             hasEditModalChanges={hasEditModalChanges}
             canvasIsEmpty={canvasIsEmpty}
             deleteFlashing={deleteFlashing}

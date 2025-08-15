@@ -63,7 +63,7 @@ export interface AlertModalProps
   onCancleButtonVariant?: 'default' | 'secondary' | 'ghost'
   actionButtonClassName?: string
   dismissible?: boolean
-  onAction?: () => void
+  onAction?: (data: any) => void
   onCancle?: () => void
   defaultOpen?: boolean
 }

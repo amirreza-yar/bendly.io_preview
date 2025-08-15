@@ -28,9 +28,10 @@ function AlertDialogContent({ ...props }) {
 
 interface RemoveJobRefModalProps {
   trigger: React.ReactElement
+  onJobRefDelete: (jobRefCode: number) => void
 }
 
-export function RemoveJobRefModal({ trigger }: RemoveJobRefModalProps) {
+export function RemoveJobRefModal({ trigger, onJobRefDelete }: RemoveJobRefModalProps) {
   return (
     <AlertModal
       title="Are you sure you want to delete?"
@@ -40,7 +41,7 @@ export function RemoveJobRefModal({ trigger }: RemoveJobRefModalProps) {
       actionButtonText="Delete"
       actionButtonClassName="bg-surface-attention"
       dismissible
-      onAction={() => toast('Job Reference Deleted')}
+      onAction={onJobRefDelete}
       onCancle={() => {}}
     >
       {trigger}
