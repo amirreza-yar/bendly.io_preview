@@ -1,10 +1,34 @@
 'use client'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import {DropdownMenu} from '@/components/ui/dropdown-menu'
+import { DropdownMenu } from '@/components/ui/dropdown-menu'
 import Link from 'next/link'
+import z from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/uikit/form'
+import { Select } from '@/components/uikit/select'
+import { Button } from '@/components/uikit/buttons/button'
+
+const formSchema = z.object({
+  reason: z.string(),
+})
+
+const reasons = [
+  { value: 'privacy', label: 'Privacy concern' },
+  { value: 'serv', label: 'No longer using the service' },
+  { value: 'alt', label: 'Found a better alternative' },
+]
 
 export default function finalConfirmPage() {
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+  })
+
+  const onSubmitForm = (data) => {
+    console.log(data)
+  }
+
   return (
     <>
       <Header title="Final Confirmation" returnHref="/dashboard/profile" />
@@ -15,33 +39,39 @@ export default function finalConfirmPage() {
             This action is permanent and will delete all your data. This cannot be undone.
           </p>
         </div>
-        <div className="flex gap-3 rounded-md border-border-default border-1 text-regular p-3 mt-6">
-          <input type="checkbox" className="w-5 h-5 mt-1" />
-          <div className="pb-2">
-            <p className="body-small pt-1">
-              I understand that deleting my account is permanent and cannot be undone. All my data
-              will be permanently removed from the system.
-            </p>
-          </div>
-        </div>
-
-        <div>
-            <DropdownMenu className="bg-dark"/>
-        </div>
-        <div className="flex gap-2 text-center justify-center h-11 px-4 mt-6">
-          <Link
-            href="/dashboard/account"
-            className="flex items-center justify-center border-border-primary border-2 bg-primary rounded-md px-4 py-2 button-medium text-white w-full"
-          >
-            Cancel
-          </Link>
-          <Link
-            href=""
-            className="flex items-center justify-center border-border-attention border-2 rounded-md px-4 py-2 button-medium text-attention-default w-full"
-          >
-         Delete Account
-          </Link>
-        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmitForm)}>
+            <FormField
+              control={form.control}
+              name="reason"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="grid gap-2">
+                      <Select
+                        label="Why are you deleting your account? (Optional)"
+                        items={reasons}
+                        placeholder="Please select one of the options"
+                        required
+                        {...field}
+                        value={field.value ?? ''}
+                        onValueChange={field.onChange}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-2 text-center justify-center h-11 mt-6">
+              <Button
+                type='submit'
+              >
+                Submit
+              </Button>
+            </div>
+          </form>
+        </Form>
       </ContentWrapper>
     </>
   )

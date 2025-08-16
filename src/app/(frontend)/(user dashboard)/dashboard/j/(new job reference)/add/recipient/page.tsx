@@ -15,6 +15,8 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { addJobReference } from '@/lib/db/helpers/jobRefHelpers'
 import { generateRandomId } from '@/lib/db/helpers/utils'
+import { Header } from '@/components/dashboard/header'
+import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 
 const formSchema = z.object({
   recipientFullName: z
@@ -99,7 +101,8 @@ export default function JobReferencesPage() {
           id: generateRandomId({ length: 4 }),
           title: newJobReference.addressTitle ?? '',
           streetAddress: newJobReference.streetAddress,
-          suburb: newJobReference.state,
+          state: newJobReference.state,
+          suburb: newJobReference.suburb,
           postcode: Number(newJobReference.postcode),
           recipientName: recipientName,
           recipientMobile: recipientMobile,
@@ -113,17 +116,8 @@ export default function JobReferencesPage() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark">
-        <div className="flex items-center justify-between h-full w-full px-4">
-          <div className="flex items-center gap-[18px] pr-3">
-            <Link href={`/dashboard/j/add/address-details`}>
-              <ArrowLeft />
-            </Link>
-            <h6>Recipient</h6>
-          </div>
-        </div>
-      </header>
-      <div className="overflow-scroll h-full pt-18 pb-22 px-4">
+      <Header title="Recipient" returnHref="/dashboard/j/add/address-details" />
+      <ContentWrapper>
         <div className="grid gap-4">
           <Link
             href={`/dashboard/j/add`}
@@ -232,7 +226,7 @@ export default function JobReferencesPage() {
             </div>
           </div>
         </div>
-      </div>
+      </ContentWrapper>
     </>
   )
 

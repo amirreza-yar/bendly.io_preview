@@ -8,7 +8,7 @@ type ContentWrapperProps = {
 
 export function ContentWrapper({ className, children }: ContentWrapperProps) {
   return (
-    <section className={cn('overflow-scroll h-full b-0 pt-14 pb-20 px-4 no-scrollbar', className)}>
+    <section className={cn('overflow-scroll h-full b-0 pt-18 pb-20 px-4 no-scrollbar', className)}>
       {children}
     </section>
   )

@@ -26,12 +26,13 @@ function AlertDialogContent({ ...props }) {
   )
 }
 
-interface RemoveJobRefModalProps {
+export function RemoveJobRefModal({
+  trigger,
+  onJobRefDelete,
+}: {
   trigger: React.ReactElement
-  onJobRefDelete: (jobRefCode: number) => void
-}
-
-export function RemoveJobRefModal({ trigger, onJobRefDelete }: RemoveJobRefModalProps) {
+  onJobRefDelete: (jobRefId: string) => void
+}) {
   return (
     <AlertModal
       title="Are you sure you want to delete?"
@@ -49,7 +50,13 @@ export function RemoveJobRefModal({ trigger, onJobRefDelete }: RemoveJobRefModal
   )
 }
 
-export function RemoveJobRefAddressModal({ trigger }: RemoveJobRefModalProps) {
+export function RemoveJobRefAddressModal({
+  trigger,
+  onJobRefAddressDelete,
+}: {
+  trigger: React.ReactElement
+  onJobRefAddressDelete: (jobRefId: string, addressId: string) => void
+}) {
   return (
     <>
       <AlertModal
@@ -59,7 +66,7 @@ export function RemoveJobRefAddressModal({ trigger }: RemoveJobRefModalProps) {
         actionButtonText="Delete"
         actionButtonClassName="bg-surface-attention"
         dismissible
-        onAction={() => toast('Address Deleted')}
+        onAction={onJobRefAddressDelete}
         onCancle={() => {}}
       >
         {trigger}

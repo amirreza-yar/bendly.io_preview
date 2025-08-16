@@ -12,7 +12,12 @@ import { useState } from 'react'
 import { notFound, redirect, useParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useNewAddress } from '@/providers/data_providers/job_reference_providers/NewAddressContext'
 import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
+import { getJobRefById, updateJobReference } from '@/lib/db/helpers/jobRefHelpers'
+import { generateRandomId } from '@/lib/db/helpers/utils'
+import { Header } from '@/components/dashboard/header'
+import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 
 const formSchema = z.object({
   recipientFullName: z
@@ -22,24 +27,31 @@ const formSchema = z.object({
   recipientMobileNumber: z
     .string()
     .min(10, 'Please enter a valid number')
-    .max(10, 'Please enter a valid number')
     .regex(/^\d+$/, 'Mobile number must contain only digits'),
 })
 
 type FormValues = z.infer<typeof formSchema>
 
 export default function JobReferencesPage({}) {
-  const { jobCode, addressId } = useParams()
+  const { jobId } = useParams<{ jobId: string }>()
 
-  const address = jobReferences
-    .find((job) => job.code === jobCode)
-    ?.addresses.find((addr) => addr.id === addressId)
+  const jobReference = getJobRefById(jobId)
 
-  if (!address) {
-    notFound()
-  }
+  const { newAddress, setNewAddress } = useNewAddress()
 
   const router = useRouter()
+
+  if (
+    !(
+      newAddress.addressTitle &&
+      newAddress.streetAddress &&
+      newAddress.suburb &&
+      newAddress.state &&
+      newAddress.postcode
+    )
+  ) {
+    notFound()
+  }
 
   const [radioValue, setRadioValue] = useState('me')
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -55,50 +67,90 @@ export default function JobReferencesPage({}) {
   } = form
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    address.recipientName = data.recipientFullName
-    address.recipientMobile = data.recipientMobileNumber
+    console.log('Recipient data submitted:', data)
+
+    setNewAddress({
+      recipientFullName: data.recipientFullName,
+      recipientMobileNumber: data.recipientMobileNumber,
+    })
 
     setRadioValue('someone-else')
 
     setIsDrawerOpen(false)
   }
 
-  const handleNextClick = () => {
-    toast('Recipient Updated')
-    router.push(`/dashboard/j/${jobCode}/${addressId}`)
+  const handleNextClick = async () => {
+    const recipientName = newAddress.recipientFullName
+      ? newAddress.recipientFullName
+      : 'Amirreza Yarahmadi'
+
+    const recipientMobile = newAddress.recipientMobileNumber
+      ? Number(newAddress.recipientMobileNumber)
+      : 8987654123
+
+    await updateJobReference(jobReference?.id ?? '', {
+      addresses: [
+        {
+          id: generateRandomId({ length: 4 }),
+          title: newAddress.addressTitle ?? '',
+          streetAddress: newAddress.streetAddress,
+          suburb: newAddress.suburb,
+          state: newAddress.state,
+          postcode: Number(newAddress.postcode),
+          recipientName: recipientName,
+          recipientMobile: recipientMobile,
+        },
+      ],
+    })
+
+    toast('New Address Added')
+    router.push(`/dashboard/j/${jobReference?.id}`)
   }
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark">
-        <div className="flex items-center justify-between h-full w-full px-4">
-          <div className="flex items-center gap-[18px] pr-3">
-            <Link href={`/dashboard/j/${jobCode}/${addressId}`}>
-              <ArrowLeft />
-            </Link>
-            <h6>Edit Recipient</h6>
-          </div>
-        </div>
-      </header>
-      <div className="overflow-scroll h-full pt-18 pb-22 px-4">
+      <Header
+        title="Recipient"
+        returnHref={`/dashboard/j/${jobReference?.id}/new-address-details`}
+      />
+      <ContentWrapper>
         <div className="grid gap-4">
+          <Link
+            href={`/dashboard/j/${jobReference?.id}/new-address-details`}
+            data-slot="card"
+            className="grid gap-4 rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative mb-4"
+          >
+            <Edit className="absolute top-3 right-3 size-5" />
+            <div className="grid gap-2">
+              <div className="flex gap-2">
+                <MapMarker className="size-5" />
+                <div className="flex flex-col gap-1 truncate">
+                  <p className="label-regular">{newAddress.addressTitle}</p>
+                  <p className="body-small">
+                    {newAddress.streetAddress}, {newAddress.suburb}, {newAddress.state}{' '}
+                    {newAddress.postcode}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Link>
           <div>
             <h6 className="text-smd-m">Who will receive this order delivery?</h6>
           </div>
           <RadioGroup value={radioValue} onValueChange={setRadioValue}>
             <div className="flex items-center gap-3">
-              <RadioGroupItem value="me" id="me" />
+              <RadioGroupItem value="me" />
               <p className="label-regular">Me (Amirreza)</p>
             </div>
             <div
               className="flex items-center gap-3 pt-1"
-              onClick={() => !address.recipientName && setIsDrawerOpen(true)}
+              onClick={() => !newAddress.recipientFullName && setIsDrawerOpen(true)}
             >
-              <RadioGroupItem value="someone-else" id="someone-else" />
+              <RadioGroupItem value="someone-else" />
               <p className="label-regular">Someone else</p>
             </div>
           </RadioGroup>
-          {address.recipientName && (
+          {newAddress.recipientFullName && (
             <div
               data-slot="card"
               className="grid gap-4 rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative"
@@ -107,19 +159,21 @@ export default function JobReferencesPage({}) {
               <Edit className="absolute top-3 right-3 size-5" />
               <div className="grid gap-2">
                 <p className="label-regular">Delivery Recipient</p>
-                <p className="caption-regular text-subtitle pt-1">{address.recipientName}</p>
-                <p className="caption-regular font-regular">+61{address.recipientMobile}</p>
+                <p className="caption-regular text-subtitle pt-1">{newAddress.recipientFullName}</p>
+                <p className="caption-regular font-regular">
+                  +61{newAddress.recipientMobileNumber}
+                </p>
               </div>
             </div>
           )}
-          <Drawer open={isDrawerOpen}>
+          <Drawer open={isDrawerOpen} trigger>
             <div className="flex flex-col p-6">
               <div className="flex justify-between pb-6">
                 <h6>Recipient Information</h6>
                 <XIcon
                   onClick={() => {
                     setIsDrawerOpen(false)
-                    if (!address.recipientName) {
+                    if (!newAddress.recipientFullName) {
                       setRadioValue('me')
                     }
                   }}
@@ -130,7 +184,7 @@ export default function JobReferencesPage({}) {
                 <LabeledInput
                   label="Recipient Full Name"
                   required
-                  defaultValue={address.recipientName}
+                  defaultValue={newAddress.recipientFullName}
                   type="text"
                   placeholder="Enter the full name"
                   error={!!errors.recipientFullName}
@@ -140,7 +194,7 @@ export default function JobReferencesPage({}) {
                 <LabeledInputWithCode
                   label="Recipient Mobile Number"
                   required
-                  defaultValue={address.recipientMobile}
+                  defaultValue={newAddress.recipientMobileNumber}
                   type="number"
                   placeholder="e.g., 400123456"
                   error={!!errors.recipientMobileNumber}
@@ -166,29 +220,7 @@ export default function JobReferencesPage({}) {
             </div>
           </div>
         </div>
-      </div>
+      </ContentWrapper>
     </>
   )
-
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors, isSubmitting },
-  //   reset,
-  // } = useForm<FormValues>({
-  //   resolver: zodResolver(formSchema),
-  // })
-
-  // const router = useRouter()
-
-  // const onSubmit = (data: FormValues) => {
-  //   router.push(`/dashboard/j/add/address-details`)
-  //   reset()
-  // }
-
-  // return (
-  //   <>
-
-  //   </>
-  // )
 }

@@ -98,7 +98,7 @@ export default function JobReferencesPage() {
               <div className="grid w-full gap-4">
                 {searchResults?.map((job) => (
                   <Link
-                    href={`/dashboard/j/${job?.code}`}
+                    href={`/dashboard/j/${job?.id}`}
                     key={job?.code}
                     data-slot="card"
                     className="grid gap-4 rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative"
@@ -112,25 +112,43 @@ export default function JobReferencesPage() {
                       <div className="flex gap-2">
                         <MapMarker className="size-5" />
                         <div className="flex flex-col gap-1 truncate">
-                          <p className="label-regular">{job?.addresses?.[0].title}</p>
-                          <p className="body-small">
-                            {job?.addresses?.[0].streetAddress}, {job?.addresses?.[0].suburb},{' '}
-                            {job?.addresses?.[0].state} {job?.addresses?.[0].postcode}
-                          </p>
+                          {(job.addresses?.length ?? 0) > 0 ? (
+                            <>
+                              <p className="label-regular">{job?.addresses?.[0].title}</p>
+                              <p className="body-small">
+                                {job?.addresses?.[0].streetAddress}, {job?.addresses?.[0].suburb},{' '}
+                                {job?.addresses?.[0].state} {job?.addresses?.[0].postcode}
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <p className="label-regular">No Title Provided</p>
+                              <p className="body-small">Self Pickup - No Delivery Address</p>
+                            </>
+                          )}
                         </div>
                       </div>
-                      {job?.addresses?.[1] && (
+                      {job?.addresses?.[1] ? (
                         <>
                           <div className="flex items-center gap-2">
                             <p className="label-small">Other Address:</p>
-                            <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1">
+                            <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
                               {job?.addresses?.[1].title}
                             </span>
                             {job?.addresses?.length > 2 && (
-                              <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1">
+                              <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
                                 +{job?.addresses?.length - 2}
                               </span>
                             )}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <p className="label-small">Other Address:</p>
+                            <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
+                              ---
+                            </span>
                           </div>
                         </>
                       )}

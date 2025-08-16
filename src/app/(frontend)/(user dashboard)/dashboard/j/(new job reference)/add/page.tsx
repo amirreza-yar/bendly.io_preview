@@ -9,6 +9,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useNewJobReference } from '@/providers/data_providers/job_reference_providers/AddJobReferenceContext'
 import { jobReferCodeExists } from '@/lib/db/helpers/jobRefHelpers'
+import { Header } from '@/components/dashboard/header'
+import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 
 const formSchema = z.object({
   jobReferenceCode: z
@@ -17,7 +19,7 @@ const formSchema = z.object({
     .refine(
       async (val) => {
         // Check the DB for existence
-        const exists = await jobReferCodeExists(Number(val))
+        const exists = await jobReferCodeExists({ code: Number(val) })
         return !exists // return true if it's valid (i.e., does NOT exist)
       },
       { message: 'Job Reference Code already exists' },
@@ -53,17 +55,9 @@ export default function JobReferencesPage() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark">
-        <div className="flex items-center justify-between h-full w-full px-4">
-          <div className="flex items-center gap-[18px] pr-3">
-            <Link href="/dashboard/j">
-              <ArrowLeft />
-            </Link>
-            <h6>Basic Information</h6>
-          </div>
-        </div>
-      </header>
-      <div className="overflow-scroll h-full pt-18 pb-22 px-4">
+      <Header title="Basic Information" returnHref="/dashboard/j" />
+
+      <ContentWrapper className="pt-18">
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
           <div className="bg-surface-info-subtle text-primary-dark rounded-md p-3 body-small flex items-start gap-3">
             <Info className="size-4 mt-1" />
@@ -101,7 +95,7 @@ export default function JobReferencesPage() {
             </div>
           </div>
         </form>
-      </div>
+      </ContentWrapper>
     </>
   )
 }

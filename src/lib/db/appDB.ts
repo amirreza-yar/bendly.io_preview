@@ -17,7 +17,7 @@ export class AppDB extends Dexie {
   materialsAndProps!: Table<StoredMaterialAndProps, number>
   templates!: Table<Template, string>
   orders!: Table<StoredOrder, number>
-  jobReferences!: Table<StoredJobReference, number>
+  jobReferences!: Table<StoredJobReference, string>
 
   constructor() {
     super('AppDB')
@@ -28,7 +28,7 @@ export class AppDB extends Dexie {
       materialsAndProps: 'material',
       templates: 'name, owner',
       orders: 'id, status, progress, deliveryType',
-      jobReferences: 'code, projectName',
+      jobReferences: 'id, code, projectName',
     })
   }
 }

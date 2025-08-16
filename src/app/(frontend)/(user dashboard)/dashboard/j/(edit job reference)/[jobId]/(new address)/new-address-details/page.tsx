@@ -11,6 +11,7 @@ import { Select } from '@/components/uikit/select'
 import { Separator } from '@/components/uikit/separator'
 import { useNewAddress } from '@/providers/data_providers/job_reference_providers/NewAddressContext'
 import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
+import { getJobRefById } from '@/lib/db/helpers/jobRefHelpers'
 
 const existingCodes = ['3568', '4921', '5782'] // Replace with fetch/API call if needed
 
@@ -57,13 +58,10 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 export default function JobReferencesPage({}) {
-  const { jobCode } = useParams()
+  const { jobId } = useParams<{ jobId: string }>()
 
-  const address = jobReferences.find((job) => job.code === jobCode)
+  const jobReference = getJobRefById(jobId)
 
-  if (!address) {
-    notFound()
-  }
   const { newAddress, setNewAddress } = useNewAddress()
 
   const {
@@ -87,7 +85,7 @@ export default function JobReferencesPage({}) {
       postcode: data.postcode,
     })
 
-    router.push(`/dashboard/j/${jobCode}/new-recipient`)
+    router.push(`/dashboard/j/${jobReference?.id}/new-recipient`)
   }
 
   return (
@@ -95,7 +93,7 @@ export default function JobReferencesPage({}) {
       <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark">
         <div className="flex items-center justify-between h-full w-full px-4">
           <div className="flex items-center gap-[18px] pr-3">
-            <Link href={`/dashboard/j/${jobCode}`}>
+            <Link href={`/dashboard/j/${jobReference?.id}`}>
               <ArrowLeft />
             </Link>
             <h6>Address Details</h6>

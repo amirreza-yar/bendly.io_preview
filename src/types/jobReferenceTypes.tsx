@@ -4,7 +4,7 @@ export type Address = {
   title: string
   streetAddress?: string
   suburb?: string
-  state?: AustraliaStates
+  state?: AustraliaStates | string
   postcode?: number
 }
 
@@ -26,6 +26,7 @@ export type StoredAddress = Address &
   }
 
 export type StoredJobReference = {
+  id: string
   code: number
   projectName?: string
   addresses?: StoredAddress[]

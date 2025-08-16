@@ -1,11 +1,12 @@
 'use client'
+import { AustraliaStates } from '@/types/jobReferenceTypes'
 import { createContext, useContext, useState, ReactNode } from 'react'
 
 type NewAddressData = {
   addressTitle: string
   streetAddress: string
   suburb: string
-  state: string
+  state: AustraliaStates
   postcode: string
   recipientFullName: string
   recipientMobileNumber: number | string

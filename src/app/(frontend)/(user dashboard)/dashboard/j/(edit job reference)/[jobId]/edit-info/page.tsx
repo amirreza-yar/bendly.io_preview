@@ -23,11 +23,13 @@ import {
   FormMessage,
 } from '@/components/uikit/form'
 import { Footer } from '@/components/dashboard/footer'
+import { Header } from '@/components/dashboard/header'
+import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 
 export default function JobReferencesPage({}) {
-  const { jobCode } = useParams()
+  const { jobId } = useParams<{ jobId: string }>()
 
-  const jobReference = getJobRefById(Number(jobCode))
+  const jobReference = getJobRefById(jobId)
 
   if (jobReference === undefined) {
     // notFound()
@@ -40,7 +42,7 @@ export default function JobReferencesPage({}) {
       .regex(/^[0-9]+$/, 'Digits only')
       .refine(
         async (val) => {
-          const exists = await jobReferCodeExists(Number(val))
+          const exists = await jobReferCodeExists({ jobRefId: jobReference?.id, code: Number(val) })
           return !exists
         },
         { message: 'Job Reference Code already exists' },
@@ -61,18 +63,16 @@ export default function JobReferencesPage({}) {
         projectName: jobReference.projectName,
       })
     }
-    console.log(form.formState.isDirty)
   }, [jobReference, form])
 
   const router = useRouter()
 
   const onSubmit = async (data: FormValues) => {
-    updateJobReference(Number(jobCode), {
+    updateJobReference(jobReference?.id ?? '', {
       code: Number(data.jobReferenceCode),
       projectName: data.projectName,
     }).then(() => {
-      const newCode = data.jobReferenceCode
-      router.push(`/dashboard/j/${newCode}`)
+      router.push(`/dashboard/j/${jobReference?.id}`)
       toast('Job Reference Updated')
     })
   }
@@ -81,17 +81,8 @@ export default function JobReferencesPage({}) {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark">
-        <div className="flex items-center justify-between h-full w-full px-4">
-          <div className="flex items-center gap-[18px] pr-3">
-            <Link href={`/dashboard/j/${jobCode}`}>
-              <ArrowLeft />
-            </Link>
-            <h6>Edit Basic Information</h6>
-          </div>
-        </div>
-      </header>
-      <div className="overflow-scroll h-full pt-18 pb-22 px-4">
+      <Header title="Edit Basic Infromation" returnHref={`/dashboard/j/${jobReference?.id}`} />
+      <ContentWrapper>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
             <FormField
@@ -138,7 +129,7 @@ export default function JobReferencesPage({}) {
             </Footer>
           </form>
         </Form>
-      </div>
+      </ContentWrapper>
     </>
   )
 }

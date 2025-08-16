@@ -50,7 +50,6 @@ const AuthPage = () => {
           <DividerWithText text="OR" />
 
           <AuthEmailForm onSubmitEmail={onSubmitEmail} defaultEmail={defaultEmail} />
-          {/* <AuthEmailForm defaultEmail={defaultEmail} /> */}
         </div>
       </ContentWrapper>
     </>

@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 
 interface JobRefHeaderProps {
   jobCode: number | undefined
-  onJobRefDelete: (jobRefCode: number) => void
+  onJobRefDelete: (jobRefId: string) => void
 }
 
 export default function JobRefHeader({ jobCode, onJobRefDelete }: JobRefHeaderProps) {
