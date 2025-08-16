@@ -24,7 +24,9 @@ export default function ProfilePage() {
     console.log(res)
   }
 
-  getUserInfo()
+  useEffect(() => {
+    getUserInfo()
+  }, [])
 
   return (
     <>
