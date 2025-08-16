@@ -15,6 +15,9 @@ import Link from 'next/link'
 import { Header } from '@/components/dashboard/header'
 import { getAllJobRefs } from '@/lib/db/helpers/jobRefHelpers'
 import { StoredJobReference } from '@/types/jobReferenceTypes'
+import { ContentWrapper } from '@/components/dashboard/contentWrapper'
+import { JobRefCard } from '@/components/dashboard/jobReference/cards'
+import { useParams } from 'next/navigation'
 
 export function searchJobReferences(
   data: StoredJobReference[] | null | undefined,
@@ -42,6 +45,8 @@ export function searchJobReferences(
 }
 
 export default function JobReferencesPage() {
+  const { orderId } = useParams<{ orderId: string }>()
+
   const [searchValue, setSearchValue] = useState<string>('')
 
   const [searchResults, setSearchResults] = useState<StoredJobReference[] | null>()
@@ -60,11 +65,11 @@ export default function JobReferencesPage() {
 
   return (
     <>
-      <Header title="Job References" returnHref="/dashboard/profile" />
+      <Header title="Job References" returnHref={`/o/${orderId}/delivery-ship`} />
 
       {jobReferences?.length !== 0 ? (
         <>
-          <div className="overflow-scroll h-full pt-14 pb-22 px-4 no-scrollbar">
+          <ContentWrapper>
             <div className="grid">
               <div className="w-full py-4 flex items-center relative sticky top-0 z-10">
                 <Magnifier className="size-5 absolute left-4" />
@@ -96,64 +101,8 @@ export default function JobReferencesPage() {
               </div>
 
               <div className="grid w-full gap-4">
-                {searchResults?.map((job) => (
-                  <Link
-                    href={`/dashboard/j/${job?.id}`}
-                    key={job?.code}
-                    data-slot="card"
-                    className="grid gap-4 rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative"
-                  >
-                    <ChevronRight className="absolute top-4 right-4" />
-                    <div className="grid gap-1 label-regular">
-                      <p>JR-{job?.code}</p>
-                      <p>{job?.projectName}</p>
-                    </div>
-                    <div className="grid gap-2">
-                      <div className="flex gap-2">
-                        <MapMarker className="size-5" />
-                        <div className="flex flex-col gap-1 truncate">
-                          {(job.addresses?.length ?? 0) > 0 ? (
-                            <>
-                              <p className="label-regular">{job?.addresses?.[0].title}</p>
-                              <p className="body-small">
-                                {job?.addresses?.[0].streetAddress}, {job?.addresses?.[0].suburb},{' '}
-                                {job?.addresses?.[0].state} {job?.addresses?.[0].postcode}
-                              </p>
-                            </>
-                          ) : (
-                            <>
-                              <p className="label-regular">No Title Provided</p>
-                              <p className="body-small">Self Pickup - No Delivery Address</p>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      {job?.addresses?.[1] ? (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <p className="label-small">Other Address:</p>
-                            <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
-                              {job?.addresses?.[1].title}
-                            </span>
-                            {job?.addresses?.length > 2 && (
-                              <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
-                                +{job?.addresses?.length - 2}
-                              </span>
-                            )}
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <p className="label-small">Other Address:</p>
-                            <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
-                              ---
-                            </span>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </Link>
+                {searchResults?.map((job, index) => (
+                  <JobRefCard job={job} key={index} />
                 ))}
               </div>
               {searchResults?.length === 0 && (
@@ -167,7 +116,7 @@ export default function JobReferencesPage() {
                 </div>
               )}
             </div>
-          </div>
+          </ContentWrapper>
 
           <div className="fixed bottom-0 left-0 w-full h-19 z-10 bg-white border-t-1 border-border-dark px-4">
             <div className="w-full h-full">

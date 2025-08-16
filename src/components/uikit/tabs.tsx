@@ -1,13 +1,8 @@
 import { cn } from '@/utilities/ui'
 import * as TabsPrimitive from '@radix-ui/react-tabs'
-import React from 'react'
+import React, { ComponentPropsWithoutRef } from 'react'
 
-interface GeneralProp {
-  className?: string
-  children?: React.ReactNode
-}
-
-export function Tabs({ ...props }: { className?: string; children?: React.ReactNode }) {
+export function Tabs({ ...props }: ComponentPropsWithoutRef<typeof TabsPrimitive.Root>) {
   return <TabsPrimitive.Root {...props} data-slot="tabs" className="flex flex-col gap-2 w-full" />
 }
 

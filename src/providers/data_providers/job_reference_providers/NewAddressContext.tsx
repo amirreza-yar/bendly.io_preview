@@ -1,29 +1,19 @@
 'use client'
-import { AustraliaStates } from '@/types/jobReferenceTypes'
+import { StoredAddress } from '@/types/jobReferenceTypes'
 import { createContext, useContext, useState, ReactNode } from 'react'
 
-type NewAddressData = {
-  addressTitle: string
-  streetAddress: string
-  suburb: string
-  state: AustraliaStates
-  postcode: string
-  recipientFullName: string
-  recipientMobileNumber: number | string
-}
-
 type NewAddressContextType = {
-  newAddress: Partial<NewAddressData>
-  setNewAddress: (data: Partial<NewAddressData>) => void
+  newAddress: Partial<StoredAddress>
+  setNewAddress: (data: Partial<StoredAddress>) => void
   resetNewAddress: () => void
 }
 
 const NewAddressContext = createContext<NewAddressContextType | undefined>(undefined)
 
 export function NewAddressProvider({ children }: { children: ReactNode }) {
-  const [newAddress, setNewAddressState] = useState<Partial<NewAddressData>>({})
+  const [newAddress, setNewAddressState] = useState<Partial<StoredAddress>>({})
 
-  const setNewAddress = (data: Partial<NewAddressData>) => {
+  const setNewAddress = (data: Partial<StoredAddress>) => {
     setNewAddressState((prev) => ({ ...prev, ...data }))
   }
 

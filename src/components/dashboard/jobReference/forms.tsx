@@ -25,6 +25,9 @@ import {
   FormMessage,
 } from '@/components/uikit/form'
 import { Footer } from '@/components/dashboard/footer'
+import { StoredAddress } from '@/types/jobReferenceTypes'
+import { Select } from '@/components/uikit/select'
+import { Separator } from '@/components/uikit/separator'
 
 const SomeOneElseFormSchema = z.object({
   name: z
@@ -34,8 +37,7 @@ const SomeOneElseFormSchema = z.object({
   mobile: z
     .string('Mobile number is required')
     .nonempty('Mobile number is required')
-    .min(10, 'Please enter a valid number')
-    .max(10, 'Please enter a valid number'),
+    .regex(/^\d{10}$/, 'Please eneter a valid mobile number'),
 })
 
 type SomeOneElseFormValues = z.infer<typeof SomeOneElseFormSchema>
@@ -46,7 +48,13 @@ const RecipientInfoFormSchema = z.object({
 
 type RecipientInfoFormValues = z.infer<typeof RecipientInfoFormSchema>
 
-export function RecipientForm() {
+export function RecipientForm({
+  onSubmitRecipient,
+  prevRecipient,
+}: {
+  onSubmitRecipient: (data: { name: string; mobile: number }) => void
+  prevRecipient?: { name: string; mobile: number }
+}) {
   const [user] = useState<{ name: string; mobile: number }>({
     name: 'Amirreza Yarahmadi',
     mobile: 8987654123,
@@ -54,7 +62,7 @@ export function RecipientForm() {
 
   const [someOneElseInfo, setSomeOneElseInfo] = useState<{
     name: string
-    mobile: string
+    mobile: number
   }>()
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -70,13 +78,26 @@ export function RecipientForm() {
     },
   })
 
+  useEffect(() => {
+    if (prevRecipient?.name === user.name && prevRecipient?.mobile === user.mobile) {
+      recipientInfoForm.reset({
+        recipient: 'me',
+      })
+    } else if (prevRecipient?.name && prevRecipient?.mobile) {
+      recipientInfoForm.reset({
+        recipient: 'someone-else',
+      })
+      setSomeOneElseInfo(prevRecipient)
+    }
+  }, [prevRecipient, someOneElseForm, recipientInfoForm])
+
   const recipient = recipientInfoForm.watch('recipient')
 
   useEffect(() => {
     if (someOneElseInfo) {
       someOneElseForm.reset({
         name: someOneElseInfo.name,
-        mobile: someOneElseInfo.mobile,
+        mobile: String(someOneElseInfo.mobile),
       })
     }
   }, [someOneElseInfo, someOneElseForm])
@@ -94,7 +115,7 @@ export function RecipientForm() {
 
     setSomeOneElseInfo({
       name: data.name,
-      mobile: data.mobile,
+      mobile: Number(data.mobile),
     })
 
     setIsDrawerOpen(false)
@@ -102,6 +123,17 @@ export function RecipientForm() {
 
   const onRecipientInfoFormSubmit = (data: RecipientInfoFormValues) => {
     console.log(data)
+    if (data.recipient === 'me') {
+      onSubmitRecipient({
+        name: user.name,
+        mobile: user.mobile,
+      })
+    } else if (data.recipient === 'someone-else' && someOneElseInfo) {
+      onSubmitRecipient({
+        name: someOneElseInfo.name,
+        mobile: someOneElseInfo.mobile,
+      })
+    }
   }
 
   return (
@@ -116,7 +148,7 @@ export function RecipientForm() {
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                     className="grid gap-2"
                   >
                     <FormItem className="flex items-center gap-3">
@@ -164,10 +196,7 @@ export function RecipientForm() {
             <XIcon
               onClick={() => {
                 setIsDrawerOpen(false)
-                // !someOneElseInfo &&
-                recipientInfoForm.reset({
-                  recipient: 'me',
-                })
+                !someOneElseInfo && recipientInfoForm.setValue('recipient', 'me')
               }}
               className="size-6"
             />
@@ -224,5 +253,182 @@ export function RecipientForm() {
         </div>
       </Drawer>
     </>
+  )
+}
+
+const addressFormSchema = z.object({
+  addressTitle: z
+    .string()
+    .nonempty('Address Title / Site Name is required')
+    .max(100, 'Address title must be under 100 characters'),
+
+  streetAddress: z
+    .string()
+    .nonempty('Street Address is required')
+    .regex(
+      /^[a-zA-Z0-9\s,'\.-]+$/,
+      'Street address can only contain letters, numbers, spaces, comma, hyphen, dot, and apostrophe',
+    )
+    .max(100, 'Street address must be under 100 characters'),
+
+  suburb: z
+    .string()
+    .nonempty('Suburb is required')
+    .regex(/^[a-zA-Z\s'-]+$/, 'Suburb must contain only letters, spaces, and hyphens')
+    .max(50, 'Suburb name must be under 50 characters'),
+
+  state: z.string('State is required'),
+
+  postcode: z
+    .string('Postcode is required')
+    .nonempty('Postcode is required')
+    .regex(/^\d{4}$/, 'Postcode must be a 4-digit value'),
+})
+
+export type AddressFormValues = z.infer<typeof addressFormSchema>
+
+const australianStates = [
+  { value: 'NSW', label: 'New South Wales' },
+  { value: 'VIC', label: 'Victoria' },
+  { value: 'QLD', label: 'Queensland' },
+  { value: 'WA', label: 'Western Australia' },
+  { value: 'SA', label: 'South Australia' },
+  { value: 'TAS', label: 'Tasmania' },
+  { value: 'ACT', label: 'Australian Capital Territory' },
+  { value: 'NT', label: 'Northern Territory' },
+]
+
+export const AddressForm = ({
+  address,
+  onAddressFormSubmit,
+}: {
+  address: Partial<StoredAddress> | null
+  onAddressFormSubmit: (data: AddressFormValues) => void
+}) => {
+  const form = useForm<AddressFormValues>({
+    resolver: zodResolver(addressFormSchema),
+  })
+
+  useEffect(() => {
+    if (address) {
+      form.reset({
+        addressTitle: address.title,
+        suburb: address.suburb,
+        state: address.state,
+        postcode: String(address.postcode ?? ''),
+        streetAddress: address.streetAddress,
+      })
+    }
+  }, [form, address])
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onAddressFormSubmit)} className="grid gap-4">
+        <FormField
+          control={form.control}
+          name="streetAddress"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <LabeledInput
+                  label="Street Address"
+                  required
+                  type="text"
+                  placeholder="e.g., 123 Main St"
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="suburb"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <LabeledInput
+                  label="Suburb"
+                  required
+                  type="text"
+                  placeholder="e.g., Sydney"
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="state"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <div className="grid gap-2">
+                  <Select
+                    label="State/Territory"
+                    items={australianStates}
+                    placeholder="Select state / territory"
+                    required
+                    {...field}
+                    value={field.value ?? ''}
+                    onValueChange={field.onChange}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="postcode"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <LabeledInput
+                  label="Postcode"
+                  required
+                  type="text"
+                  placeholder="e.g., 2000"
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Separator className="my-2" />{' '}
+        <FormField
+          control={form.control}
+          name="addressTitle"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <LabeledInput
+                  label="Address Title / Site Name"
+                  required
+                  type="text"
+                  placeholder="Eneter a name for Site / Address"
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Footer>
+          <Button type="submit" className="w-full bg-primary">
+            Continue to Recipient Details
+          </Button>
+        </Footer>
+      </form>
+    </Form>
   )
 }

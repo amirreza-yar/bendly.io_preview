@@ -1,5 +1,7 @@
 import { ChevronDown } from '@/components/uikit/icons'
+import { StoredFlashing } from '@/types/flashingTypes'
 import { Flashing, PaymentHistory } from '@/types/orders/orderType'
+import { StoredOrderFlashing } from '@/types/orderTypes'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { ComponentPropsWithoutRef } from 'react'
 
@@ -128,6 +130,90 @@ export function OrderSummeryAccordion({ flashings }: OrderSummaryAccordionProp) 
           </AccordionPrimitive.Content>
         </AccordionPrimitive.Item>
       ))}
+    </AccordionPrimitive.Root>
+  )
+}
+
+type NewOrderSummaryAccordionProp = {
+  flashings:
+    | (StoredFlashing & Pick<StoredOrderFlashing, 'code' | 'position' | 'specifications'>)[]
+    | undefined
+}
+
+export function NewOrderSummaryAccordion({ flashings }: NewOrderSummaryAccordionProp) {
+  return (
+    <AccordionPrimitive.Root
+      data-slot="accordion"
+      type="single"
+      collapsible
+      defaultValue="item-1"
+      className="grid gap-y-4 divide-y divide-border-seprator items-center"
+    >
+      {flashings &&
+        flashings.map((flash, index) => (
+          <AccordionPrimitive.Item key={index} value={flash.id}>
+            <AccordionPrimitive.Trigger
+              data-slot="accordion-trigger"
+              className="w-full flex justify-between text-sm font-medium transition-all outline-none [&[data-state=open]_svg]:rotate-180 pb-4"
+            >
+              <div className="flex gap-3 w-full">
+                <span className="w-14 h-14 rounded-md border border-border-default" />
+                <div className="grid items-center justify-items-stretch w-full">
+                  <p className="label-regular justify-self-start">
+                    {flash.material} /{' '}
+                    {flash.color ? flash.color?.name : `${flash.thickness?.thickness}mm`}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="label-small">
+                      Qty:{' '}
+                      {flash.specifications?.reduce(
+                        (sum: number, spec: any) => sum + spec.quantity,
+                        0,
+                      )}{' '}
+                      pcs
+                    </p>
+                    <div className="flex gap-1 items-center">
+                      <p className="label-small">
+                        Subtotal:{' '}
+                        <span className="text-success">
+                          $
+                          {flash.specifications
+                            ?.reduce((sum, spec) => sum + (spec?.cost ?? 0), 0)
+                            .toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
+                        </span>
+                      </p>
+                      <ChevronDown className="pointer-events-none size-5 shrink-0 translate-y-0.5 transition-transform duration-200 mb-1" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </AccordionPrimitive.Trigger>
+            <AccordionPrimitive.Content
+              data-slot="accordion-content"
+              className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm"
+            >
+              <div className="flex justify-between pb-4">
+                <div className="grid gap-2 pl-19">
+                  {flash.specifications?.map((spec, index) => (
+                    <p key={index} className="caption-small">
+                      {spec.quantity} x {spec.length} mm
+                    </p>
+                  ))}
+                </div>
+                <div className="grid gap-2 pr-6">
+                  {flash.specifications?.map((spec, index) => (
+                    <p key={index} className="caption-small text-success">
+                      ${spec.cost?.toFixed(2)}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </AccordionPrimitive.Content>
+          </AccordionPrimitive.Item>
+        ))}
     </AccordionPrimitive.Root>
   )
 }

@@ -46,7 +46,7 @@ export default function jobReferencePage() {
 
   return (
     <>
-      <Header title={`Job Ref: JR-${jobReference?.id}`} returnHref="/dashboard/j">
+      <Header title={`Job Ref: JR-${jobReference?.code}`} returnHref="/dashboard/j">
         <RemoveJobRefModal
           trigger={<Remove className="size-6" />}
           onJobRefDelete={onJobRefDelete}

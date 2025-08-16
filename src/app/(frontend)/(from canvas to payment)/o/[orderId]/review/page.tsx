@@ -34,7 +34,6 @@ export default function OrderReviewPage() {
 
   const flashings = getFlashingsByOrderId(Number(orderId))
 
-  // create a map for O(1) lookups; memoize to avoid rebuilding each render
   const flashingsMap = useMemo(() => {
     if (!flashings || !Array.isArray(flashings)) return new Map<string, any>()
     return new Map(flashings.map((f: any) => [f?.id, f]))
@@ -54,11 +53,13 @@ export default function OrderReviewPage() {
   }
 
   const onGoHome = async () => {
-    // await deleteOrderById(Number(orderId))
+    await deleteOrderById(Number(orderId))
     router.push('/dashboard')
   }
 
-  const onProceedOrder = () => {}
+  const onProceedOrder = () => {
+    router.push(`/o/${orderId}/delivery-ship`)
+  }
 
   return (
     <>
@@ -91,7 +92,6 @@ export default function OrderReviewPage() {
                     return (
                       <CarouselItem key={flash.id} className="last:mb-4">
                         <NewOrderCard
-                          // className="h-90"
                           flashing={augmented}
                           onDeleteFlashing={onDeleteFlashing}
                           onSaveFlashing={onSaveFlashing}

@@ -1,5 +1,5 @@
 import { JobReference } from '@/utilities/demo_datas/demoJobRefData'
-import { Edit, MapMarker, ProfileNav, Remove } from '@/components/uikit/icons'
+import { ChevronRight, Edit, MapMarker, ProfileNav, Remove } from '@/components/uikit/icons'
 import Link from 'next/link'
 import { RemoveJobRefAddressModal } from './modals'
 import { StoredAddress, StoredJobReference } from '@/types/jobReferenceTypes'
@@ -69,6 +69,68 @@ export function JobRefInfoCard({ jobReference }: JobRefInfoCardProps) {
       <div className="grid gap-2 label-regular">
         <div className="flex gap-2 truncate">JR-{jobReference?.code}</div>
         <div className="flex gap-2 truncate">{jobReference?.projectName}</div>
+      </div>
+    </Link>
+  )
+}
+
+export function JobRefCard({ job, ...props }: { job: StoredJobReference | null }) {
+  return (
+    <Link
+      {...props}
+      href={`/dashboard/j/${job?.id}`}
+      data-slot="card"
+      className="grid gap-4 rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative"
+    >
+      <ChevronRight className="absolute top-4 right-4" />
+      <div className="grid gap-1 label-regular">
+        <p>JR-{job?.code}</p>
+        <p>{job?.projectName}</p>
+      </div>
+      <div className="grid gap-2">
+        <div className="flex gap-2">
+          <MapMarker className="size-5" />
+          <div className="flex flex-col gap-1 truncate">
+            {(job?.addresses?.length ?? 0) > 0 ? (
+              <>
+                <p className="label-regular">{job?.addresses?.[0].title}</p>
+                <p className="body-small">
+                  {job?.addresses?.[0].streetAddress}, {job?.addresses?.[0].suburb},{' '}
+                  {job?.addresses?.[0].state} {job?.addresses?.[0].postcode}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="label-regular">No Title Provided</p>
+                <p className="body-small">Self Pickup - No Delivery Address</p>
+              </>
+            )}
+          </div>
+        </div>
+        {job?.addresses?.[1] ? (
+          <>
+            <div className="flex items-center gap-2">
+              <p className="label-small">Other Address:</p>
+              <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
+                {job?.addresses?.[1].title}
+              </span>
+              {job?.addresses?.length > 2 && (
+                <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
+                  +{job?.addresses?.length - 2}
+                </span>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <p className="label-small">Other Address:</p>
+              <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
+                ---
+              </span>
+            </div>
+          </>
+        )}
       </div>
     </Link>
   )
