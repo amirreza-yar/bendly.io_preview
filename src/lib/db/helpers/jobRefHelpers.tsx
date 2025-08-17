@@ -12,13 +12,14 @@ export function getJobRefById(jobRefId: string): StoredJobReference | undefined 
   return useLiveQuery(() => db.jobReferences.get({ id: jobRefId }), [jobRefId], null)
 }
 
-export async function addJobReference(jobRefData: Omit<StoredJobReference, 'id'>) {
+export async function addJobReference(jobRefData: Omit<StoredJobReference, 'id'>): Promise<string> {
   const now = Date.now()
+  const jobId = generateRandomId({ length: 4 })
 
   await db.transaction('rw', db.jobReferences, async () => {
     const merged: StoredJobReference = {
       ...jobRefData,
-      id: generateRandomId({ length: 4 }),
+      id: jobId,
     }
 
     merged.updatedAt = now
@@ -26,6 +27,7 @@ export async function addJobReference(jobRefData: Omit<StoredJobReference, 'id'>
 
     await db.jobReferences.add(merged)
   })
+  return jobId
 }
 
 export async function updateJobReference(

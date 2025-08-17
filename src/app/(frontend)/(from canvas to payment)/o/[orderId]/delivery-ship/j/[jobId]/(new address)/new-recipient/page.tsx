@@ -20,7 +20,7 @@ import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { RecipientForm } from '@/components/dashboard/jobReference/forms'
 
-export default function JobReferencesPage({}) {
+export default function RecipientInfoPage({}) {
   const { jobId, orderId } = useParams<{ jobId: string; orderId: string }>()
 
   const jobReference = getJobRefById(jobId)

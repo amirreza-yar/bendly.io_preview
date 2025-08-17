@@ -86,10 +86,17 @@ export default function jobReferencePage() {
                         <MapMarker className="size-5" />
                         <div className="grid gap-1">
                           <p className="label-regular truncate">{address.title}</p>
-                          <p className="body-small truncate">
-                            {address.streetAddress}, {address.suburb}, {address.state}{' '}
-                            {address.postcode}{' '}
-                          </p>
+                          {address.streetAddress &&
+                          address.suburb &&
+                          address.state &&
+                          address.postcode ? (
+                            <p className="body-small truncate">
+                              {address.streetAddress}, {address.suburb}, {address.state}{' '}
+                              {address.postcode}{' '}
+                            </p>
+                          ) : (
+                            <p className="body-small truncate">Self Pickup - No Delivery Address</p>
+                          )}
                         </div>
                       </div>
                       <div className="flex gap-2">

@@ -35,14 +35,12 @@ export default function JobReferencesPage() {
   }
 
   const onSubmitRecipient = async (data: { name: string; mobile: number }) => {
-    const jobId = generateRandomId({ length: 4 })
-
-    await addJobReference({
+    const jobId = await addJobReference({
       code: Number(newJobReference.jobReferenceCode),
       projectName: newJobReference.projectName,
       addresses: [
         {
-          id: jobId,
+          id: generateRandomId({ length: 4 }),
           title: newJobReference.addressTitle ?? '',
           streetAddress: newJobReference.streetAddress,
           state: newJobReference.state,
@@ -55,6 +53,7 @@ export default function JobReferencesPage() {
     })
 
     if (returnHref === 'delivery') {
+      console.log(jobId)
       await upsertPartialOrder(Number(orderId), {
         jobRefrence: {
           id: jobId,

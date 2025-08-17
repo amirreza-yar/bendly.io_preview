@@ -157,7 +157,7 @@ export function NewOrderSummaryAccordion({ flashings }: NewOrderSummaryAccordion
               className="w-full flex justify-between text-sm font-medium transition-all outline-none [&[data-state=open]_svg]:rotate-180 pb-4"
             >
               <div className="flex gap-3 w-full">
-                <span className="w-14 h-14 rounded-md border border-border-default" />
+                <span className="w-17 h-14 rounded-md border border-border-default" />
                 <div className="grid items-center justify-items-stretch w-full">
                   <p className="label-regular justify-self-start">
                     {flash.material} /{' '}
@@ -198,7 +198,7 @@ export function NewOrderSummaryAccordion({ flashings }: NewOrderSummaryAccordion
               <div className="flex justify-between pb-4">
                 <div className="grid gap-2 pl-19">
                   {flash.specifications?.map((spec, index) => (
-                    <p key={index} className="caption-small">
+                    <p key={index} className="caption-small text-subtitle">
                       {spec.quantity} x {spec.length} mm
                     </p>
                   ))}

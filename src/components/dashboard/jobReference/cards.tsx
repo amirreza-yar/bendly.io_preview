@@ -103,7 +103,10 @@ export function JobRefCard({
         <div className="flex gap-2">
           <MapMarker className="size-5" />
           <div className="flex flex-col gap-1 truncate">
-            {(job?.addresses?.length ?? 0) > 0 ? (
+            {job?.addresses?.[0].streetAddress &&
+            job?.addresses?.[0].suburb &&
+            job?.addresses?.[0].state &&
+            job?.addresses?.[0].postcode ? (
               <>
                 <p className="label-regular">{job?.addresses?.[0].title}</p>
                 <p className="body-small">
@@ -113,7 +116,7 @@ export function JobRefCard({
               </>
             ) : (
               <>
-                <p className="label-regular">No Title Provided</p>
+                <p className="label-regular">{job?.addresses?.[0].title}</p>
                 <p className="body-small">Self Pickup - No Delivery Address</p>
               </>
             )}
