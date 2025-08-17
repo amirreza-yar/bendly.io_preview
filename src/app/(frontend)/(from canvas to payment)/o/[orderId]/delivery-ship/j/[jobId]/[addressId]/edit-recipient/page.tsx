@@ -8,7 +8,11 @@ import { RecipientForm } from '@/components/dashboard/jobReference/forms'
 import { toast } from 'sonner'
 
 export default function JobReferencesPage({}) {
-  const { jobId, addressId } = useParams<{ jobId: string; addressId: string }>()
+  const { jobId, addressId, orderId } = useParams<{
+    jobId: string
+    addressId: string
+    orderId: string
+  }>()
 
   const address = getJobRefAddressByIds(jobId, addressId)
 
@@ -19,8 +23,6 @@ export default function JobReferencesPage({}) {
   const router = useRouter()
 
   const onSubmitRecipient = async (data: { name: string; mobile: number }) => {
-    console.log(data)
-
     await updateJobReference(jobId, {
       addresses: [
         {
@@ -36,12 +38,15 @@ export default function JobReferencesPage({}) {
       ],
     })
     toast('Recipient Updated')
-    router.push(`/dashboard/j/${jobId}/${addressId}`)
+    router.push(`/o/${orderId}/delivery-ship/j/${jobId}`)
   }
 
   return (
     <>
-      <Header title="Edit Recipient" returnHref={`/dashboard/j/${jobId}/${addressId}`} />
+      <Header
+        title="Edit Recipient"
+        returnHref={`/o/${orderId}/delivery-ship/j/${jobId}/${addressId}`}
+      />
       <ContentWrapper>
         <div className="grid gap-4">
           <div>

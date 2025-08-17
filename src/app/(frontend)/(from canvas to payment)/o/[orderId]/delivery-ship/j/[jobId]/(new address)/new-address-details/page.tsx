@@ -17,7 +17,10 @@ import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { AddressForm, AddressFormValues } from '@/components/dashboard/jobReference/forms'
 
 export default function JobReferencesPage({}) {
-  const { jobId } = useParams<{ jobId: string }>()
+  const { jobId, orderId } = useParams<{
+    jobId: string
+    orderId: string
+  }>()
 
   const jobReference = getJobRefById(jobId)
 
@@ -34,12 +37,12 @@ export default function JobReferencesPage({}) {
       postcode: Number(data.postcode),
     })
 
-    router.push(`/dashboard/j/${jobReference?.id}/new-recipient`)
+    router.push(`/o/${orderId}/delivery-ship/j/${jobId}/new-recipient`)
   }
 
   return (
     <>
-      <Header title="Edit Address Details" returnHref={`/dashboard/j/${jobId}`} />
+      <Header title="Edit Address Details" returnHref={`/o/${orderId}/delivery-ship/j/${jobId}`} />
       <ContentWrapper>
         <AddressForm address={newAddress} onAddressFormSubmit={onAddressFormSubmit} />
       </ContentWrapper>

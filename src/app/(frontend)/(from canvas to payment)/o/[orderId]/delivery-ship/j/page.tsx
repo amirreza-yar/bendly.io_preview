@@ -69,7 +69,7 @@ export default function JobReferencesPage() {
 
       {jobReferences?.length !== 0 ? (
         <>
-          <ContentWrapper>
+          <ContentWrapper className="pt-14">
             <div className="grid">
               <div className="w-full py-4 flex items-center relative sticky top-0 z-10">
                 <Magnifier className="size-5 absolute left-4" />
@@ -102,7 +102,11 @@ export default function JobReferencesPage() {
 
               <div className="grid w-full gap-4">
                 {searchResults?.map((job, index) => (
-                  <JobRefCard job={job} key={index} />
+                  <JobRefCard
+                    job={job}
+                    toHref={`/o/${orderId}/delivery-ship/j/${job.id}`}
+                    key={index}
+                  />
                 ))}
               </div>
               {searchResults?.length === 0 && (
@@ -121,8 +125,8 @@ export default function JobReferencesPage() {
           <div className="fixed bottom-0 left-0 w-full h-19 z-10 bg-white border-t-1 border-border-dark px-4">
             <div className="w-full h-full">
               <div className="flex justify-around items-center h-full">
-                <Link className="w-full" href="/dashboard/j/add">
-                  <Button className="w-full">
+                <Link className="w-full" href={`/o/${orderId}/delivery-ship/j/add`}>
+                  <Button size="large" className="w-full">
                     <Plus />
                     Create New Job References
                   </Button>
@@ -136,8 +140,8 @@ export default function JobReferencesPage() {
           <p className="text-center subtitle-large text-subtitle">
             No job references have been created yet{' '}
           </p>
-          <Link className="w-full" href="/dashboard/j/add">
-            <Button className="w-full">
+          <Link className="w-full" href={`/o/${orderId}/delivery-ship/j/add`}>
+            <Button size="large">
               <Plus />
               Create New Job References
             </Button>

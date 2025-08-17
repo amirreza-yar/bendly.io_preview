@@ -6,11 +6,12 @@ import { Button } from '@/components/uikit/buttons/button'
 import Link from 'next/link'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useNewJobReference } from '@/providers/data_providers/job_reference_providers/AddJobReferenceContext'
 import { jobReferCodeExists } from '@/lib/db/helpers/jobRefHelpers'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
+import { Footer } from '@/components/dashboard/footer'
 
 const formSchema = z.object({
   jobReferenceCode: z
@@ -30,13 +31,16 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 export default function JobReferencesPage() {
+  const { orderId } = useParams<{ orderId: string }>()
+
+  const returnHref = useSearchParams().get('return')
+
   const { newJobReference, setNewJobReference } = useNewJobReference()
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset,
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   })
@@ -49,13 +53,23 @@ export default function JobReferencesPage() {
       projectName: data.projectName || '',
     })
 
-    router.push(`/dashboard/j/add/address-details`)
-    // reset()
+    router.push(
+      returnHref === 'delivery'
+        ? `/o/${orderId}/delivery-ship/j/add/address-details?return=${returnHref}`
+        : `/o/${orderId}/delivery-ship/j/add/address-details`,
+    )
   }
 
   return (
     <>
-      <Header title="Basic Information" returnHref="/dashboard/j" />
+      <Header
+        title="Basic Information"
+        returnHref={
+          returnHref === 'delivery'
+            ? `/o/${orderId}/delivery-ship`
+            : `/o/${orderId}/delivery-ship/j`
+        }
+      />
 
       <ContentWrapper className="pt-18">
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
@@ -83,17 +97,11 @@ export default function JobReferencesPage() {
             helpText="Name this job reference for easy identification"
             {...register('projectName')}
           />
-          <div className="fixed bottom-0 left-0 w-full h-19 z-10 bg-white border-t-1 border-border-dark px-4">
-            <div className="w-full h-full">
-              <div className="flex justify-around items-center h-full">
-                {/* <Link href={`/${slug}/canvas`} className="w-full"> */}
-                <Button type="submit" className="w-full bg-primary">
-                  Next
-                </Button>
-                {/* </Link> */}
-              </div>
-            </div>
-          </div>
+          <Footer>
+            <Button type="submit" className="w-full bg-primary">
+              Next
+            </Button>
+          </Footer>
         </form>
       </ContentWrapper>
     </>

@@ -7,13 +7,15 @@ import { StoredAddress, StoredJobReference } from '@/types/jobReferenceTypes'
 interface JobRefAddressCardProps {
   address: StoredAddress
   jobId: string
-  onJobRefAddressDelete: (addressId: string) => void
+  toHref?: string
+  onJobRefAddressDelete?: (addressId: string) => void
 }
 
 export function JobRefAddressCard({
   address,
   jobId,
   onJobRefAddressDelete,
+  toHref,
   ...props
 }: JobRefAddressCardProps) {
   return (
@@ -41,10 +43,12 @@ export function JobRefAddressCard({
           </div>
         </div>
         <div className="flex justify-end items-center [&_svg]:size-5 gap-6">
-          <RemoveJobRefAddressModal
-            trigger={<Remove />}
-            onJobRefAddressDelete={() => onJobRefAddressDelete(address.id)}
-          />
+          {onJobRefAddressDelete && (
+            <RemoveJobRefAddressModal
+              trigger={<Remove />}
+              onJobRefAddressDelete={() => onJobRefAddressDelete(address.id)}
+            />
+          )}
           <Link href={`/dashboard/j/${jobId}/${address.id}`}>
             <Edit />
           </Link>
@@ -74,11 +78,19 @@ export function JobRefInfoCard({ jobReference }: JobRefInfoCardProps) {
   )
 }
 
-export function JobRefCard({ job, ...props }: { job: StoredJobReference | null }) {
+export function JobRefCard({
+  job,
+  toHref,
+  ...props
+}: {
+  job: StoredJobReference | null
+  toHref?: string
+}) {
+  const href = toHref ? toHref : `/dashboard/j/${job?.id}`
   return (
     <Link
       {...props}
-      href={`/dashboard/j/${job?.id}`}
+      href={href}
       data-slot="card"
       className="grid gap-4 rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative"
     >

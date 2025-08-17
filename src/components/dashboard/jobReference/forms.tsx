@@ -302,7 +302,7 @@ export const AddressForm = ({
   address,
   onAddressFormSubmit,
 }: {
-  address: Partial<StoredAddress> | null
+  address?: Partial<StoredAddress> | null
   onAddressFormSubmit: (data: AddressFormValues) => void
 }) => {
   const form = useForm<AddressFormValues>({

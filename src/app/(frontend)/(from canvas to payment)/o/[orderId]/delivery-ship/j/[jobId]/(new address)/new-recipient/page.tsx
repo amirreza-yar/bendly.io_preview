@@ -21,11 +21,11 @@ import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { RecipientForm } from '@/components/dashboard/jobReference/forms'
 
 export default function JobReferencesPage({}) {
-  const { jobId } = useParams<{ jobId: string }>()
+  const { jobId, orderId } = useParams<{ jobId: string; orderId: string }>()
 
   const jobReference = getJobRefById(jobId)
 
-  const { newAddress, setNewAddress } = useNewAddress()
+  const { newAddress } = useNewAddress()
 
   const router = useRouter()
 
@@ -58,19 +58,19 @@ export default function JobReferencesPage({}) {
     })
 
     toast('New Address Added')
-    router.push(`/dashboard/j/${jobReference?.id}`)
+    router.push(`/o/${orderId}/delivery-ship/j/${jobReference?.id}`)
   }
 
   return (
     <>
       <Header
         title="Recipient"
-        returnHref={`/dashboard/j/${jobReference?.id}/new-address-details`}
+        returnHref={`/o/${orderId}/delivery-ship/j/${jobReference?.id}/new-address-details`}
       />
       <ContentWrapper>
         <div className="grid gap-4">
           <Link
-            href={`/dashboard/j/${jobReference?.id}/new-address-details`}
+            href={`/o/${orderId}/delivery-ship/j/${jobReference?.id}/new-address-details`}
             data-slot="card"
             className="grid gap-4 rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative"
           >

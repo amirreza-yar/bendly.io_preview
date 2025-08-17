@@ -21,7 +21,11 @@ import { useEffect } from 'react'
 import { AddressForm, AddressFormValues } from '@/components/dashboard/jobReference/forms'
 
 export default function JobReferencesPage({}) {
-  const { jobId, addressId } = useParams<{ jobId: string; addressId: string }>()
+  const { jobId, addressId, orderId } = useParams<{
+    jobId: string
+    addressId: string
+    orderId: string
+  }>()
 
   const address = getJobRefAddressByIds(jobId, addressId)
 
@@ -47,13 +51,16 @@ export default function JobReferencesPage({}) {
       ],
     })
 
-    router.push(`/dashboard/j/${jobId}/${addressId}`)
+    router.push(`/o/${orderId}/delivery-ship/j/${jobId}`)
     toast('Address Updated')
   }
 
   return (
     <>
-      <Header title="Edit Address Details" returnHref={`/dashboard/j/${jobId}/${addressId}`} />
+      <Header
+        title="Edit Address Details"
+        returnHref={`/o/${orderId}/delivery-ship/j/${jobId}/${addressId}`}
+      />
       <ContentWrapper>
         <AddressForm address={address} onAddressFormSubmit={onAddressFormSubmit} />
       </ContentWrapper>
