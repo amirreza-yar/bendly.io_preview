@@ -4,6 +4,7 @@ import './globals.css'
 import { Toaster } from 'sonner'
 import { UserData, UserProvider } from '@/providers/main_providers/UserContext'
 import { DBProvider } from '@/providers/db_providers/DBContext'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 export const metadata = {
   title: 'Flashing Factory DEV',

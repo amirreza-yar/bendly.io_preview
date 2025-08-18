@@ -19,7 +19,7 @@ import Link from 'next/link'
 import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { toast } from 'sonner'
-import NoFlashingSVG from '@/components/dashboard/order/noFlashingSVG'
+import { NoFlashingSVG } from '@/components/dashboard/order/svgs'
 
 export default function OrderReviewPage() {
   const { orderId }: { orderId: string } = useParams()

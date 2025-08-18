@@ -1,18 +1,9 @@
 'use client'
-import { orderExistsById } from '@/lib/db/helpers/orderHelpers'
-import { looksLikeGeneratedNumericId } from '@/lib/db/helpers/utils'
-import { useLiveQuery } from 'dexie-react-hooks'
-import { notFound, useParams } from 'next/navigation'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
 
-export default function NewOrderLayout({ children }: { children: ReactNode }) {
-  const { orderId } = useParams()
+const queryClient = new QueryClient()
 
-  if (!looksLikeGeneratedNumericId(Number(orderId))) return notFound()
-
-  const orderExists = orderExistsById(Number(orderId))
-
-  if (orderExists === false) return notFound()
-
-  return <>{children}</>
+export default function App({ children }: { children: ReactNode }) {
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 }

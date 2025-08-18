@@ -10,7 +10,7 @@ import {
   apiSendEmailCode,
   apiVerifyEmailCode,
   apiVerifyMobileCode,
-} from '@/utilities/api/user_auth/auth'
+} from '@/utilities/api/auth'
 import { toast } from 'sonner'
 import { VerifyPhoneOTPForm, VerifyPhoneOTPValue } from '@/components/dashboard/auth/forms'
 import { CodeResendTime, CodeResendTimeHandle } from '@/components/dashboard/auth/resendTime'

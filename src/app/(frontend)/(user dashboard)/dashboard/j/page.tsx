@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import {
+  AlertTriangle,
   ArrowLeft,
   ChevronRight,
   Magnifier,
@@ -108,51 +109,58 @@ export default function JobReferencesPage() {
                       <p>JR-{job?.code}</p>
                       <p>{job?.projectName}</p>
                     </div>
-                    <div className="grid gap-2">
-                      <div className="flex gap-2">
-                        <MapMarker className="size-5" />
-                        <div className="flex flex-col gap-1 truncate">
-                          {(job.addresses?.length ?? 0) > 0 ? (
-                            <>
-                              <p className="label-regular">{job?.addresses?.[0].title}</p>
+                    {(job.addresses?.length ?? 0) > 0 ? (
+                      <>
+                        <div className="grid gap-2">
+                          <div className="flex gap-2">
+                            <MapMarker className="size-5" />
+                            <div className="flex flex-col gap-1 truncate">
+                              <p className="label-regular">{job?.addresses?.[0]?.title}</p>
                               <p className="body-small">
-                                {job?.addresses?.[0].streetAddress}, {job?.addresses?.[0].suburb},{' '}
-                                {job?.addresses?.[0].state} {job?.addresses?.[0].postcode}
+                                {job?.addresses?.[0]?.streetAddress}, {job?.addresses?.[0]?.suburb},{' '}
+                                {job?.addresses?.[0]?.state} {job?.addresses?.[0]?.postcode}
                               </p>
+                            </div>
+                          </div>
+                          {job?.addresses?.[1] ? (
+                            <>
+                              <div className="flex items-center gap-2">
+                                <p className="label-small">Other Address:</p>
+                                <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
+                                  {job?.addresses?.[1].title}
+                                </span>
+                                {job?.addresses?.length > 2 && (
+                                  <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
+                                    +{job?.addresses?.length - 2}
+                                  </span>
+                                )}
+                              </div>
                             </>
                           ) : (
                             <>
-                              <p className="label-regular">No Title Provided</p>
-                              <p className="body-small">Self Pickup - No Delivery Address</p>
+                              <div className="flex items-center gap-2">
+                                <p className="label-small">Other Address:</p>
+                                <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
+                                  ---
+                                </span>
+                              </div>
                             </>
                           )}
                         </div>
-                      </div>
-                      {job?.addresses?.[1] ? (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <p className="label-small">Other Address:</p>
-                            <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
-                              {job?.addresses?.[1].title}
-                            </span>
-                            {job?.addresses?.length > 2 && (
-                              <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
-                                +{job?.addresses?.length - 2}
-                              </span>
-                            )}
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex gap-3 items-start text-alert-default bg-surface-alert-subtle p-3 rounded-md">
+                          <AlertTriangle className="size-5 mt-0.5" />
+                          <div className="grid">
+                            <p className="label-large">Associated addresses deleted</p>
+                            <p className="body-small">
+                              Add an address to continue or delete this Job Reference.
+                            </p>
                           </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <p className="label-small">Other Address:</p>
-                            <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
-                              ---
-                            </span>
-                          </div>
-                        </>
-                      )}
-                    </div>
+                        </div>
+                      </>
+                    )}
                   </Link>
                 ))}
               </div>

@@ -28,7 +28,7 @@ export type PaymentHistory = {
   id?: string
   orderId?: string
   total: number
-  date: string
+  date: number
   transactionId: string
   via: PaymentMethod
 }
@@ -64,16 +64,34 @@ export interface StoredOrder {
 
   jobRefrence?: Pick<StoredJobReference, 'id' | 'projectName' | 'code'>
 
-  address?: Address & { description?: string }
+  address?: Address
 
   flashings?: StoredOrderFlashing[]
   recipientInfo?: RecipientInfo
-  deliveryDate?: string
+  deliveryDate?: number
+  deliveryDesc?: string
   deliveryId?: number
   driverInfo?: DriverInfo
   deliveryCost?: number
   GST?: number
   paymentHistory?: PaymentHistory
+  pickupInfo?: {
+    desc: string
+    address: {
+      streetAddress: string
+      suburb: string
+      state: string
+      postcode: number
+    }
+  }
+
+  notes?: string
+
+  flashingTotalCost?: number
+
+  totalCost?: number
 
   rejectionDesc?: string
+
+  completed: boolean
 }

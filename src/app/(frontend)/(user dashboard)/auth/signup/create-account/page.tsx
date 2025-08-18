@@ -5,11 +5,7 @@ import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import Link from 'next/link'
 import { Edit } from '@/components/uikit/icons'
 import { useEffect, useState } from 'react'
-import {
-  apiCreateAccount,
-  apiSendEmailCode,
-  apiVerifyEmailCode,
-} from '@/utilities/api/user_auth/auth'
+import { apiCreateAccount, apiSendEmailCode, apiVerifyEmailCode } from '@/utilities/api/auth'
 import { toast } from 'sonner'
 import {
   CreateAccountForm,

@@ -15,18 +15,22 @@ import {
   getJobRefById,
 } from '@/lib/db/helpers/jobRefHelpers'
 import { toast } from 'sonner'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Footer } from '@/components/dashboard/footer'
 import { Header } from '@/components/dashboard/header'
 import { RemoveJobRefModal } from '@/components/dashboard/jobReference/modals'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { getOrderById, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
 import { StoredAddress } from '@/types/jobReferenceTypes'
+import { AlertModal } from '@/components/uikit/alertModal'
 
 export default function jobReferencePage() {
   const { jobId, orderId } = useParams<{ jobId: string; orderId: string }>()
 
   const returnHref = useSearchParams().get('return')
+
+  const [addAddressModal, setAddAddressModal] = useState<boolean>(false)
+  const selectedAddressIdRef = useRef<string>('')
 
   const router = useRouter()
 
@@ -40,28 +44,34 @@ export default function jobReferencePage() {
     const address: StoredAddress | undefined = jobReference?.addresses?.find(
       (addr) => addr.id === addressId,
     )
-    console.log(address)
 
-    await upsertPartialOrder(Number(orderId), {
-      jobRefrence: {
-        id: jobReference?.id ?? '',
-        code: jobReference?.code ?? 0,
-        projectName: jobReference?.projectName,
-      },
-      address: {
-        title: address?.title ?? '',
-        streetAddress: address?.streetAddress,
-        suburb: address?.suburb,
-        state: address?.state,
-        postcode: address?.postcode,
-      },
-      recipientInfo: {
-        recipientName: address?.recipientName ?? '',
-        recipientMobile: address?.recipientMobile ?? 0,
-      },
-    })
-
-    router.push(`/o/${orderId}/delivery-ship`)
+    if (
+      order?.deliveryType === 'delivery' &&
+      !(address?.streetAddress && address?.state && address?.suburb && address?.postcode)
+    ) {
+      selectedAddressIdRef.current = addressId
+      setAddAddressModal(true)
+    } else {
+      await upsertPartialOrder(Number(orderId), {
+        jobRefrence: {
+          id: jobReference?.id ?? '',
+          code: jobReference?.code ?? 0,
+          projectName: jobReference?.projectName,
+        },
+        address: {
+          title: address?.title ?? '',
+          streetAddress: address?.streetAddress,
+          suburb: address?.suburb,
+          state: address?.state,
+          postcode: address?.postcode,
+        },
+        recipientInfo: {
+          recipientName: address?.recipientName ?? '',
+          recipientMobile: address?.recipientMobile ?? 0,
+        },
+      })
+      router.push(`/o/${orderId}/delivery-ship`)
+    }
   }
 
   return (
@@ -137,6 +147,25 @@ export default function jobReferencePage() {
           </Button>
         </Link>
       </Footer>
+
+      <AlertModal
+        open={addAddressModal}
+        title="Address Required for Delivery"
+        description="You’ve switched from Pickup to Delivery, but no address is set for this job. Add an address now or stay with Pickup?"
+        cancelButtonText="Cancel"
+        actionButtonText="Add Address"
+        actionButtonVariant="secondary"
+        cancleButtonVariant="secondary"
+        dismissible
+        onAction={() => {
+          router.push(
+            `/o/${orderId}/delivery-ship/j/${jobId}/${selectedAddressIdRef.current}/add-address?editAddr=true`,
+          )
+        }}
+        onCancle={() => {
+          setAddAddressModal(false)
+        }}
+      />
     </>
   )
 }

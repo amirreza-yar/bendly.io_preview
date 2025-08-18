@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ArrowLeft, ChevronRight, Pencil, RightArrow } from '@/components/uikit/icons'
 import { Separator } from '@/components/uikit/separator'
 import BottomNav from '@/components/dashboard/bottomNav'
-import { apiGetProfile } from '@/utilities/api/user_auth/auth'
+import { apiGetProfile } from '@/utilities/api/auth'
 // import { apiGetProfile } from '@/utilities/api/user_auth/auth'
 
 export default function ProfilePage() {

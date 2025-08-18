@@ -1,4 +1,4 @@
-import { userAuthApiUrl } from '../utils'
+import { userAuthApiUrl } from './utils'
 
 export async function apiCheckEmail(email: string) {
   try {

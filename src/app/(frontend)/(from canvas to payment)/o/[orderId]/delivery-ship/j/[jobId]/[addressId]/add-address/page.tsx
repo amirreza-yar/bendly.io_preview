@@ -78,6 +78,8 @@ export default function JobReferencesPage({}) {
     addressId: string
   }>()
 
+  const editAddr = useSearchParams().get('editAddr')
+
   const jobReference = getJobRefById(jobId)
 
   const order = getOrderById(Number(orderId))
@@ -86,10 +88,12 @@ export default function JobReferencesPage({}) {
   const router = useRouter()
 
   const onAddressFormSubmit = async (data: AddAddressFormValues) => {
+    const addressIdToUse = editAddr ? addressId : generateRandomId({ length: 4 })
+
     await updateJobReference(jobReference?.id ?? '', {
       addresses: [
         {
-          id: generateRandomId({ length: 4 }),
+          id: addressIdToUse,
           title: address?.title ?? '',
           streetAddress: data.streetAddress,
           suburb: data.suburb,
@@ -101,16 +105,27 @@ export default function JobReferencesPage({}) {
       ],
     })
 
-    await upsertPartialOrder(Number(orderId), {
-      deliveryType: 'delivery',
-      address: {
-        title: order?.address?.title ?? '',
-        streetAddress: data.streetAddress,
-        suburb: data.suburb,
-        state: data.state,
-        postcode: Number(data.postcode),
-      },
-    })
+    if (editAddr) {
+      await upsertPartialOrder(Number(orderId), {
+        deliveryType: 'delivery',
+        jobRefrence: {
+          id: jobReference?.id ?? '',
+          code: jobReference?.code ?? 0,
+          projectName: jobReference?.projectName,
+        },
+        recipientInfo: {
+          recipientName: address?.recipientName ?? '',
+          recipientMobile: address?.recipientMobile ?? 0,
+        },
+        address: {
+          title: order?.address?.title ?? '',
+          streetAddress: data.streetAddress,
+          suburb: data.suburb,
+          state: data.state,
+          postcode: Number(data.postcode),
+        },
+      })
+    }
 
     toast('New Address Added')
 

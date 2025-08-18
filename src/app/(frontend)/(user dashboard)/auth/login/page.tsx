@@ -6,7 +6,7 @@ import { notFound, useRouter, useSearchParams } from 'next/navigation'
 import { HeaderWithCenterTitle } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import DividerWithText from '@/components/uikit/dividerWithText'
-import { apiLogin, apiSendEmailCode } from '@/utilities/api/user_auth/auth'
+import { apiLogin, apiSendEmailCode } from '@/utilities/api/auth'
 import { toast } from 'sonner'
 import {
   AuthEmailForm,
