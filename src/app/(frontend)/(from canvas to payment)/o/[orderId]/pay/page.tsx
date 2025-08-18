@@ -57,6 +57,7 @@ export default function PaymentOptionPage() {
           transactionId: payResponse.transactionId,
           via: payResponse.via,
         },
+        completed: true,
       })
 
       toast('Successful')

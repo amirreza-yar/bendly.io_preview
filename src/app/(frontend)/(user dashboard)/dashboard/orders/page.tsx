@@ -1,3 +1,4 @@
+'use client'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { Header } from '@/components/dashboard/header'
 import { OrderCard, RequestCard } from '@/components/dashboard/order/cards'
@@ -6,59 +7,86 @@ import { Box2, Building, ChevronRight, DateIcon, Delivery } from '@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/uikit/tabs'
 import Link from 'next/link'
 import { Order } from '@/types/orders/orderType'
-import { orders, replacementRequests } from '@/utilities/demo_datas/demoOrderData'
+import { replacementRequests } from '@/utilities/demo_datas/demoOrderData'
+import { getAllOrders } from '@/lib/db/helpers/orderHelpers'
 
 export default function OrdersPage() {
+  const orders = getAllOrders()
+
   return (
     <>
       <Header title="Orders" returnHref="/dashboard/profile" />
-      <ContentWrapper className="bg-surface-page-body pb-4 no-scrollbar">
+      <ContentWrapper className="bg-surface-page-body pb-4 pt-14 no-scrollbar">
         <Tabs defaultValue="current">
           <TabsList className="sticky top-4 bg-white z-20">
-            <TabsTrigger className value="current">
-              Current
-            </TabsTrigger>
-            <TabsTrigger className value="past">
-              Past
-            </TabsTrigger>
-            <TabsTrigger className value="replacement">
-              Replacement
-            </TabsTrigger>
+            <TabsTrigger value="current">Current</TabsTrigger>
+            <TabsTrigger value="past">Past</TabsTrigger>
+            <TabsTrigger value="replacement">Replacement</TabsTrigger>
           </TabsList>
-          <TabsContent className value="current">
+          <TabsContent value="current">
             <div className="grid grid-cols-1 pt-6 gap-4">
-              {orders
-                .filter(
-                  (o) =>
-                    o.orderStatus === 'Pending' ||
-                    o.orderStatus === 'In Production' ||
-                    o.orderStatus === 'Ready for pickup' ||
-                    o.orderStatus === 'On the way',
-                )
-                .map((order, index) => (
-                  <OrderCard key={index} order={order} />
-                ))}
+              {orders &&
+                (() => {
+                  const filteredOrders = orders.filter(
+                    (o) =>
+                      o.status === 'Pending' ||
+                      o.status === 'In Production' ||
+                      o.status === 'Ready for pickup' ||
+                      o.status === 'On the way',
+                  )
+
+                  if (filteredOrders.length === 0)
+                    return (
+                      <>
+                        <div className="grid items-center justify-center h-[70vh] opacity-60">
+                          <h6>No orders here</h6>
+                        </div>
+                      </>
+                    )
+
+                  return filteredOrders.map((o, index) => <OrderCard key={index} order={o} />)
+                })()}
             </div>
           </TabsContent>
-          <TabsContent className value="past">
+          <TabsContent value="past">
             <div className="grid grid-cols-1 pt-6 gap-4">
-              {orders
-                .filter(
-                  (o) =>
-                    o.orderStatus === 'Completed' ||
-                    o.orderStatus === 'Rejected' ||
-                    o.orderStatus === 'Cancelled',
-                )
-                .map((order: Order, index) => (
-                  <OrderCard key={index} order={order} />
-                ))}
+              {orders &&
+                (() => {
+                  const filteredOrders = orders.filter(
+                    (o) =>
+                      o.status === 'Completed' ||
+                      o.status === 'Rejected' ||
+                      o.status === 'Cancelled',
+                  )
+
+                  if (filteredOrders.length === 0)
+                    return (
+                      <>
+                        <div className="grid items-center justify-center h-[70vh] opacity-60">
+                          <h6>No orders here</h6>
+                        </div>
+                      </>
+                    )
+
+                  return filteredOrders.map((o, index) => <OrderCard key={index} order={o} />)
+                })()}
             </div>
           </TabsContent>
-          <TabsContent className value="replacement">
+          <TabsContent value="replacement">
             <div className="grid grid-cols-1 pt-6 gap-4">
-              {replacementRequests.map((req, index) => (
-                <RequestCard key={index} req={req} />
-              ))}
+              {replacementRequests &&
+                (() => {
+                  if (replacementRequests.length === 0)
+                    return (
+                      <>
+                        <div className="grid items-center justify-center h-[70vh] opacity-60">
+                          <h6>No requests here</h6>
+                        </div>
+                      </>
+                    )
+
+                  return replacementRequests.map((o, index) => <RequestCard key={index} req={o} />)
+                })()}
             </div>
           </TabsContent>
         </Tabs>

@@ -2,7 +2,7 @@
 import Dexie, { Table } from 'dexie'
 import type { StoredFlashing } from '@/types/flashingTypes'
 import { StoredMaterialAndProps } from '@/types/material&PropsType'
-import { Template } from '@/types/template/templateType'
+import { Template } from '@/types/templateType'
 import { StoredOrder } from '@/types/orderTypes'
 import { StoredJobReference } from '@/types/jobReferenceTypes'
 

@@ -137,6 +137,9 @@ export function OrderSummeryAccordion({ flashings }: OrderSummaryAccordionProp) 
 type NewOrderSummaryAccordionProp = {
   flashings:
     | (StoredFlashing & Pick<StoredOrderFlashing, 'code' | 'position' | 'specifications'>)[]
+    | Array<
+        Partial<StoredFlashing> & Pick<StoredOrderFlashing, 'code' | 'position' | 'specifications'>
+      >
     | undefined
 }
 
@@ -151,7 +154,7 @@ export function NewOrderSummaryAccordion({ flashings }: NewOrderSummaryAccordion
     >
       {flashings &&
         flashings.map((flash, index) => (
-          <AccordionPrimitive.Item key={index} value={flash.id}>
+          <AccordionPrimitive.Item key={index} value={flash.id ?? ''}>
             <AccordionPrimitive.Trigger
               data-slot="accordion-trigger"
               className="w-full flex justify-between text-sm font-medium transition-all outline-none [&[data-state=open]_svg]:rotate-180 pb-4"

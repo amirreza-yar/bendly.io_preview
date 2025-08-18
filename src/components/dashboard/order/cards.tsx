@@ -1,4 +1,3 @@
-import { Badge } from '@/components/uikit/badge'
 import {
   Box2,
   Building,
@@ -25,32 +24,31 @@ import { StoredFlashing } from '@/types/flashingTypes'
 import { EditFlashingDrawer } from '@/components/dashboard/order/drawers'
 import { cn } from '@/utilities/ui'
 
-export function OrderCard({ order, ...props }: { order: Order }) {
-  console.log(order.flashings[0])
+export function OrderCard({ order, ...props }: { order: StoredOrder }) {
   return (
     <Link
-      href={`/dashboard/orders/${order.orderId}`}
+      href={`/dashboard/orders/${order.id}`}
       {...props}
       className="grid gap-4 rounded-md bg-white border-1 border-border-default p-4"
     >
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
           <p className="caption-regular text-subtitle">Order Number</p>
-          <span className="label-regular text-heading">{order.orderId}</span>
+          <span className="label-regular text-heading">{order.id}</span>
         </div>
-        <OrderStatusBadge status={order.orderStatus} />
+        <OrderStatusBadge status={order.status} />
       </div>
       <div className="grid gap-1">
         <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
           <DateIcon />
-          <span className="label-small">Delivery Date: {formatDate(order.deliveryDate)}</span>
+          <span className="label-small">Delivery Date: {formatDate(order.deliveryDate ?? 0)}</span>
         </div>
         <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
           <Building />
           <span className="rounded-[900px] px-[10px] py-[2px] border-1 border-border-default">
-            JR-{order.jobRefrence.code}
+            JR-{order?.jobRefrence?.code}
           </span>
-          <span className="">{order.jobRefrence.projectName}</span>
+          <span className="">{order?.jobRefrence?.projectName}</span>
         </div>
         {order.deliveryType === 'delivery'
           ? (() => {
@@ -58,8 +56,8 @@ export function OrderCard({ order, ...props }: { order: Order }) {
                 <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
                   <Delivery />
                   <span>
-                    {order.address.streetAddress}, {order.address.suburb}, {order.address.state},{' '}
-                    {order.address.postcode}
+                    {order?.address?.streetAddress}, {order?.address?.suburb},{' '}
+                    {order?.address?.state}, {order?.address?.postcode}
                   </span>
                 </div>
               )
@@ -69,8 +67,8 @@ export function OrderCard({ order, ...props }: { order: Order }) {
                 <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
                   <WareHouse />
                   <span>
-                    {order.pickupInfo.streetAddress}, {order.pickupInfo.suburb},{' '}
-                    {order.pickupInfo.state}, {order.pickupInfo.postcode}
+                    {order?.pickupInfo?.address.streetAddress}, {order?.pickupInfo?.address.suburb},{' '}
+                    {order?.pickupInfo?.address.state}, {order?.pickupInfo?.address.postcode}
                   </span>
                 </div>
               )
@@ -79,22 +77,25 @@ export function OrderCard({ order, ...props }: { order: Order }) {
       <div className="grid auto-cols-max grid-flow-col content-center gap-2 [&_svg]:size-4 text-body label-small">
         <Box2 />
         <span className="rounded-xs border-1 border-border-default px-2 py-1">
-          {order.flashings[0].material} / {order.flashings[0].color}
+          {order?.flashings?.[0].moreDetails?.material} /{' '}
+          {order?.flashings?.[0].moreDetails?.color
+            ? order?.flashings?.[0].moreDetails?.color.name
+            : `${order?.flashings?.[0].moreDetails?.thickness?.thickness}mm`}
           <br />
-          {order.flashings[0].sepcifications.reduce(
+          {order?.flashings?.[0].specifications?.reduce(
             (sum: number, spec: any) => sum + spec.quantity,
             0,
           )}{' '}
           pcs
         </span>
-        {order.flashings.length > 1 && (
+        {(order?.flashings?.length ?? 0) > 1 && (
           <span className="flex items-center rounded-xs border-1 border-border-default px-2">
-            +{order.flashings.length - 1}
+            +{(order?.flashings?.length ?? 1) - 1}
           </span>
         )}
       </div>
       <div className="flex justify-between items-center">
-        <span className="label-regular">${order.paymentHistory.total.toFixed(2)}</span>
+        <span className="label-regular">${order?.paymentHistory?.total.toFixed(2)}</span>
         <ChevronRight />
       </div>
     </Link>

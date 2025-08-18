@@ -52,6 +52,7 @@ export type StoredOrderFlashing = {
   code?: string
   position?: string
   specifications?: Specification[]
+  moreDetails?: Omit<StoredFlashing, 'id'>
 }
 
 export interface StoredOrder {

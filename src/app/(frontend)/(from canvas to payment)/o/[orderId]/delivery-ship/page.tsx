@@ -28,7 +28,7 @@ import {
   upsertPartialOrder,
 } from '@/lib/db/helpers/orderHelpers'
 import { StoredFlashing } from '@/types/flashingTypes'
-import { DeliveryType, Specification, StoredOrder } from '@/types/orderTypes'
+import { DeliveryType, Specification, StoredOrder, StoredOrderFlashing } from '@/types/orderTypes'
 import { AvailableDatesRespose, PickupInfoResponse, PriceResponse } from '@/types/queryTypes'
 import { fetchAvailableDates, fetchPickupInfo, fetchPrices } from '@/utilities/api/order'
 import { getDayAbbrString, getDayMonthNumber } from '@/utilities/datetime'
@@ -179,6 +179,34 @@ export default function DeliveryAndShipping() {
   }
 
   const onSubmitDeliveryDate = async (date: string) => {
+    const flashingsToSave: StoredOrderFlashing[] = augmentedFlashings.map(
+      (flash: Omit<StoredOrderFlashing, 'moreDetails'> & StoredFlashing) => {
+        return {
+          id: flash.id,
+          code: flash.code,
+          position: flash.position,
+          specifications: flash.specifications,
+          moreDetails: {
+            nodes: flash.nodes,
+            startCrushFold: flash.startCrushFold,
+            endCrushFold: flash.endCrushFold,
+            crushFoldDir: flash.crushFoldDir,
+            material: flash.material,
+            createdAt: flash.createdAt,
+            updatedAt: flash.updatedAt,
+            isDraft: flash.isDraft,
+            colorSideDirection: flash.colorSideDirection,
+
+            color: flash.color,
+            thickness: flash.thickness,
+            crushFold: flash.crushFold,
+            tapered: flash.tapered,
+            totalGirth: flash.totalGirth,
+          },
+        }
+      },
+    )
+
     if (order?.deliveryType === 'pickup') {
       await upsertPartialOrder(Number(orderId), {
         deliveryDate: new Date(date).getTime(),
@@ -190,6 +218,7 @@ export default function DeliveryAndShipping() {
         GST: totalCost * GST,
         flashingTotalCost: totalCost,
         notes: orderNotesInput,
+        flashings: flashingsToSave,
       })
     } else {
       await upsertPartialOrder(Number(orderId), {
@@ -200,6 +229,7 @@ export default function DeliveryAndShipping() {
         flashingTotalCost: totalCost,
         deliveryDesc: DELIVERY_DESC,
         notes: orderNotesInput,
+        flashings: flashingsToSave,
       })
     }
 

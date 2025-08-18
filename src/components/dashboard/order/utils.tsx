@@ -1,7 +1,7 @@
 import { Flashing } from '@/types/orders/orderType'
 import { RequestPiece } from '@/types/orders/requestType'
 
-export function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string | number): string {
   return new Date(dateStr).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -17,7 +17,7 @@ export function getTotalQuantity(flashing: Flashing): number {
   return specQty
 }
 
-export function formatDateTime(dateStr: string): string {
+export function formatDateTime(dateStr: string | number): string {
   const date = new Date(dateStr)
 
   const formattedDate = date.toLocaleDateString('en-US', {
@@ -35,7 +35,7 @@ export function formatDateTime(dateStr: string): string {
   return `${formattedDate}   |  ${formattedTime}`
 }
 
-export function formatDateWithDay(input: string): string {
+export function formatDateWithDay(input: string | number): string {
   const date = new Date(input)
 
   if (isNaN(date.getTime())) {
@@ -74,12 +74,12 @@ export function groupByFlashing(requestPieces: RequestPiece[]): Flashing[] {
       }
     }
 
-    grouped[flashingId].sepcifications.push({
-      pieceId,
-      quantity,
-      length,
-      cost,
-    })
+    // grouped[flashingId].sepcifications.push({
+    //   id,
+    //   quantity,
+    //   length,
+    //   cost,
+    // })
   }
 
   return Object.values(grouped)
