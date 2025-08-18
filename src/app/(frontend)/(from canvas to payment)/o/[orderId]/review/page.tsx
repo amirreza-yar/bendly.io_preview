@@ -10,8 +10,8 @@ import { getFlashingById, initNewFlashing } from '@/lib/db/helpers/flashingHelpe
 import {
   deleteFlashingFromOrderByIds,
   deleteOrderById,
-  getFlashingsByOrderId,
-  getOrderById,
+  useGETFlashingsByOrderId,
+  useGETOrderById,
 } from '@/lib/db/helpers/orderHelpers'
 import { looksLikeGeneratedId, looksLikeGeneratedNumericId } from '@/lib/db/helpers/utils'
 import { StoredOrderFlashing } from '@/types/orderTypes'
@@ -26,18 +26,18 @@ export default function OrderReviewPage() {
 
   const router = useRouter()
 
-  if (!orderId || !looksLikeGeneratedNumericId(Number(orderId))) {
-    return notFound()
-  }
+  const order = useGETOrderById(Number(orderId))
 
-  const order = getOrderById(Number(orderId))
-
-  const flashings = getFlashingsByOrderId(Number(orderId))
+  const flashings = useGETFlashingsByOrderId(Number(orderId))
 
   const flashingsMap = useMemo(() => {
     if (!flashings || !Array.isArray(flashings)) return new Map<string, any>()
     return new Map(flashings.map((f: any) => [f?.id, f]))
   }, [flashings])
+
+  if (!orderId || !looksLikeGeneratedNumericId(Number(orderId))) {
+    return notFound()
+  }
 
   const onDeleteFlashing = async (flashingId: string) => {
     await deleteFlashingFromOrderByIds(Number(orderId), flashingId)

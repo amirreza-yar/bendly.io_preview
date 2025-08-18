@@ -1,5 +1,5 @@
 'use client'
-import { getOrderById } from '@/lib/db/helpers/orderHelpers'
+import { useGETOrderById } from '@/lib/db/helpers/orderHelpers'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { notFound, useParams } from 'next/navigation'
 import { ReactNode } from 'react'
@@ -9,7 +9,7 @@ const queryClient = new QueryClient()
 export default function NewOrderLayout({ children }: { children: ReactNode }) {
   const { orderId } = useParams<{ orderId: string }>()
 
-  const order = getOrderById(Number(orderId))
+  const order = useGETOrderById(Number(orderId))
 
   if (order && (order.completed || order.paymentHistory)) return notFound()
 

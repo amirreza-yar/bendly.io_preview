@@ -11,7 +11,7 @@ import JobRefFooter from '@/components/dashboard/jobReference/footer'
 import {
   deleteJobRefAddressByIds,
   deleteJobRefById,
-  getJobRefById,
+  useGETJobRefById,
 } from '@/lib/db/helpers/jobRefHelpers'
 import { toast } from 'sonner'
 import { useState } from 'react'
@@ -19,13 +19,13 @@ import { Footer } from '@/components/dashboard/footer'
 import { Header } from '@/components/dashboard/header'
 import { RemoveJobRefModal } from '@/components/dashboard/jobReference/modals'
 
-export default function jobReferencePage() {
+export default function OrderJobReferencePage() {
   const { jobId } = useParams<{ jobId: string }>()
 
   const router = useRouter()
   const [isDeleted, setIsDeleted] = useState<boolean>(false)
 
-  const jobReference = getJobRefById(jobId)
+  const jobReference = useGETJobRefById(jobId)
   if (!isDeleted && jobReference === undefined) {
     notFound()
   }

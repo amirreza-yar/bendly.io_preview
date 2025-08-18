@@ -84,16 +84,16 @@ export async function initNewOrder(
   }
 }
 
-export function getOrderById(orderId: number): StoredOrder | undefined | null {
+export function useGETOrderById(orderId: number): StoredOrder | undefined | null {
   return useLiveQuery(() => db.orders.get({ id: orderId }), [orderId], null)
 }
 
-export function getAllOrders(): StoredOrder[] | undefined | null {
+export function useGETAllOrders(): StoredOrder[] | undefined | null {
   return useLiveQuery(() => db.orders.toArray(), [], null)
 }
 
-export function getFlashingsByOrderId(orderId: number): (StoredFlashing | undefined)[] {
-  const flashingIds = getOrderById(orderId)?.flashings?.map((flash) => flash.id)
+export function useGETFlashingsByOrderId(orderId: number): (StoredFlashing | undefined)[] {
+  const flashingIds = useGETOrderById(orderId)?.flashings?.map((flash) => flash.id)
 
   return useLiveQuery(
     async () => {
@@ -176,7 +176,7 @@ export const deleteOrderById = async (orderId: number) => {
   }
 }
 
-export const orderExistsById = (orderId: number) => {
+export const useOrderExistsById = (orderId: number) => {
   return useLiveQuery(
     async () => {
       const order = await db.orders.get(orderId)

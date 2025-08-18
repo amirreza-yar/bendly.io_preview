@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useNewAddress } from '@/providers/data_providers/job_reference_providers/NewAddressContext'
 import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
-import { getJobRefById, updateJobReference } from '@/lib/db/helpers/jobRefHelpers'
+import { useGETJobRefById, updateJobReference } from '@/lib/db/helpers/jobRefHelpers'
 import { generateRandomId } from '@/lib/db/helpers/utils'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
@@ -23,7 +23,7 @@ import { RecipientForm } from '@/components/dashboard/jobReference/forms'
 export default function RecipientInfoPage({}) {
   const { jobId, orderId } = useParams<{ jobId: string; orderId: string }>()
 
-  const jobReference = getJobRefById(jobId)
+  const jobReference = useGETJobRefById(jobId)
 
   const { newAddress } = useNewAddress()
 

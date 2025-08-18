@@ -21,10 +21,10 @@ import {
 import { Separator } from '@/components/uikit/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/uikit/tabs'
 import { Textarea } from '@/components/uikit/textarea'
-import { getJobRefById } from '@/lib/db/helpers/jobRefHelpers'
+import { useGETJobRefById } from '@/lib/db/helpers/jobRefHelpers'
 import {
-  getFlashingsByOrderId,
-  getOrderById,
+  useGETFlashingsByOrderId,
+  useGETOrderById,
   upsertPartialOrder,
 } from '@/lib/db/helpers/orderHelpers'
 import { StoredFlashing } from '@/types/flashingTypes'
@@ -43,11 +43,11 @@ export default function DeliveryAndShipping() {
   const router = useRouter()
   const { orderId } = useParams<{ orderId: string }>()
 
-  const order = getOrderById(Number(orderId))
+  const order = useGETOrderById(Number(orderId))
 
-  const jobReference = getJobRefById(order?.jobRefrence?.id ?? '')
+  const jobReference = useGETJobRefById(order?.jobRefrence?.id ?? '')
 
-  const flashings = getFlashingsByOrderId(Number(orderId))
+  const flashings = useGETFlashingsByOrderId(Number(orderId))
 
   const [addAddressModal, setAddAddressModal] = useState<boolean>(false)
   const [deliveryTypeState, setDeliveryTypeState] = useState<DeliveryType>()

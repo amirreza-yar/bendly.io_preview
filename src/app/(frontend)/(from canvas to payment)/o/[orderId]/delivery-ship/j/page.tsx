@@ -13,7 +13,7 @@ import { Input } from '@/components/uikit/input'
 import { Button } from '@/components/uikit/buttons/button'
 import Link from 'next/link'
 import { Header } from '@/components/dashboard/header'
-import { getAllJobRefs } from '@/lib/db/helpers/jobRefHelpers'
+import { useGETAllJobRefs } from '@/lib/db/helpers/jobRefHelpers'
 import { StoredJobReference } from '@/types/jobReferenceTypes'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { JobRefCard } from '@/components/dashboard/jobReference/cards'
@@ -51,7 +51,7 @@ export default function JobReferencesPage() {
 
   const [searchResults, setSearchResults] = useState<StoredJobReference[] | null>()
 
-  const jobReferences = getAllJobRefs()
+  const jobReferences = useGETAllJobRefs()
 
   console.log(jobReferences)
 

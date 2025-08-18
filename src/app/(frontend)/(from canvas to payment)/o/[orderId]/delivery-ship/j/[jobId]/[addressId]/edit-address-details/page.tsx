@@ -14,7 +14,7 @@ import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
 import { toast } from 'sonner'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import { getJobRefAddressByIds, updateJobReference } from '@/lib/db/helpers/jobRefHelpers'
+import { useGETJobRefAddressByIds, updateJobReference } from '@/lib/db/helpers/jobRefHelpers'
 import { Footer } from '@/components/dashboard/footer'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/uikit/form'
 import { useEffect } from 'react'
@@ -27,7 +27,7 @@ export default function JobReferencesPage({}) {
     orderId: string
   }>()
 
-  const address = getJobRefAddressByIds(jobId, addressId)
+  const address = useGETJobRefAddressByIds(jobId, addressId)
 
   if (address === undefined) {
     notFound()

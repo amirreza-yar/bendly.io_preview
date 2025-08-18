@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import {
-  getJobRefById,
+  useGETJobRefById,
   jobReferCodeExists,
   updateJobReference,
 } from '@/lib/db/helpers/jobRefHelpers'
@@ -29,7 +29,7 @@ import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 export default function JobReferencesPage({}) {
   const { jobId } = useParams<{ jobId: string }>()
 
-  const jobReference = getJobRefById(jobId)
+  const jobReference = useGETJobRefById(jobId)
 
   if (jobReference === undefined) {
     // notFound()

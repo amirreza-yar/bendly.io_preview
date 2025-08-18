@@ -25,6 +25,6 @@ export async function seedMaterialsIfEmpty() {
   return
 }
 
-export function getMaterialsAndProprs(): StoredMaterialAndProps[] | undefined | null {
+export function useGETMaterialsAndProprs(): StoredMaterialAndProps[] | undefined | null {
   return useLiveQuery(() => db.materialsAndProps.toArray(), [], null)
 }

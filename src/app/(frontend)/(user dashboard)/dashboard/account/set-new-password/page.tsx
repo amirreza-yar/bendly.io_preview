@@ -57,8 +57,8 @@ export default function AccountPage() {
           <div className="grid gap-2 pt-8 px-6">
             <h5>Set a Password for Your Account</h5>
             <p className="subtitle-regular">
-              You signed up using Google. If you'd like to log in with your email and a password in
-              the future, set a password now.
+              You signed up using Google. If you would like to log in with your email and a password
+              in the future, set a password now.
             </p>
           </div>
           <div className="grid pt-8">

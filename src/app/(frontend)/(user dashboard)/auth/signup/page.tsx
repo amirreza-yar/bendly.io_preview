@@ -73,7 +73,7 @@ export default function VerifyEmailPage() {
           />
 
           <div className="flex gap-2 items-center justify-center">
-            <span className="text-xs text-gray-600">Didn't receive the code?</span>
+            <span className="text-xs text-gray-600">Did not receive the code?</span>
             <CodeResendTime ref={resendRef} onResendHandler={handleResendEmailCode} />
           </div>
         </div>

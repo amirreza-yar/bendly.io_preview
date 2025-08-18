@@ -11,7 +11,7 @@ import { Select } from '@/components/uikit/select'
 import { Separator } from '@/components/uikit/separator'
 import { useNewAddress } from '@/providers/data_providers/job_reference_providers/NewAddressContext'
 import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
-import { getJobRefById } from '@/lib/db/helpers/jobRefHelpers'
+import { useGETJobRefById } from '@/lib/db/helpers/jobRefHelpers'
 
 const existingCodes = ['3568', '4921', '5782'] // Replace with fetch/API call if needed
 
@@ -60,7 +60,7 @@ type FormValues = z.infer<typeof formSchema>
 export default function JobReferencesPage({}) {
   const { jobId } = useParams<{ jobId: string }>()
 
-  const jobReference = getJobRefById(jobId)
+  const jobReference = useGETJobRefById(jobId)
 
   const { newAddress, setNewAddress } = useNewAddress()
 

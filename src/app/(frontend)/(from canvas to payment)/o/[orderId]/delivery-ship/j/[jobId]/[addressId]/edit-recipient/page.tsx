@@ -1,7 +1,7 @@
 'use client'
 import { notFound, useParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
-import { getJobRefAddressByIds, updateJobReference } from '@/lib/db/helpers/jobRefHelpers'
+import { useGETJobRefAddressByIds, updateJobReference } from '@/lib/db/helpers/jobRefHelpers'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { RecipientForm } from '@/components/dashboard/jobReference/forms'
@@ -14,7 +14,7 @@ export default function JobReferencesPage({}) {
     orderId: string
   }>()
 
-  const address = getJobRefAddressByIds(jobId, addressId)
+  const address = useGETJobRefAddressByIds(jobId, addressId)
 
   if (address === undefined) {
     notFound()

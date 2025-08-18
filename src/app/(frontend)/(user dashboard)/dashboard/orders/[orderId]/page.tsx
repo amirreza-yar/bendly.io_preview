@@ -11,7 +11,7 @@ import { formatDateTime, formatDateWithDay } from '@/components/dashboard/order/
 import { Button } from '@/components/uikit/buttons/button'
 import { Delivery, Info, Phone, ProfileNav, WareHouse } from '@/components/uikit/icons'
 import { Separator } from '@/components/uikit/separator'
-import { getOrderById } from '@/lib/db/helpers/orderHelpers'
+import { useGETOrderById } from '@/lib/db/helpers/orderHelpers'
 import Link from 'next/link'
 import { notFound, useParams } from 'next/navigation'
 import { useMemo } from 'react'
@@ -19,7 +19,7 @@ import { useMemo } from 'react'
 export default function OrderDetails() {
   const { orderId } = useParams<{ orderId: string }>()
 
-  const order = getOrderById(Number(orderId))
+  const order = useGETOrderById(Number(orderId))
 
   const augmentedFlashings = useMemo(() => {
     if (!order?.flashings) return []

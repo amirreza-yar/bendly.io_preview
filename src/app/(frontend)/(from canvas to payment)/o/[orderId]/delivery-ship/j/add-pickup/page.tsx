@@ -30,7 +30,7 @@ import { useNewAddress } from '@/providers/data_providers/job_reference_provider
 import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
 import {
   addJobReference,
-  getJobRefById,
+  useGETJobRefById,
   jobReferCodeExists,
   updateJobReference,
 } from '@/lib/db/helpers/jobRefHelpers'

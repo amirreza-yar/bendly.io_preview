@@ -13,7 +13,7 @@ import { notFound, redirect, useParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
-import { getJobRefAddressByIds } from '@/lib/db/helpers/jobRefHelpers'
+import { useGETJobRefAddressByIds } from '@/lib/db/helpers/jobRefHelpers'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import {
@@ -49,7 +49,7 @@ type RecipientInfoFormValues = z.infer<typeof RecipientInfoFormSchema>
 export default function JobReferencesPage({}) {
   const { jobId, addressId } = useParams<{ jobId: string; addressId: string }>()
 
-  const address = getJobRefAddressByIds(jobId, addressId)
+  const address = useGETJobRefAddressByIds(jobId, addressId)
 
   if (address === undefined) {
     notFound()

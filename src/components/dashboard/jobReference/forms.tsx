@@ -13,7 +13,7 @@ import { notFound, redirect, useParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
-import { getJobRefAddressByIds } from '@/lib/db/helpers/jobRefHelpers'
+import { useGETJobRefAddressByIds } from '@/lib/db/helpers/jobRefHelpers'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import {

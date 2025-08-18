@@ -8,7 +8,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/uikit/caro
 import { Drawer } from '@/components/uikit/drawer'
 import { Delivery, Edit, MapMarker, ProfileNav, WareHouse, XIcon } from '@/components/uikit/icons'
 import { Separator } from '@/components/uikit/separator'
-import { getOrderById, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
+import { useGETOrderById, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
 import { AvailableDatesRespose, PickupInfoResponse } from '@/types/queryTypes'
 import { fetchAvailableDates, fetchPayOrder, fetchPickupInfo } from '@/utilities/api/order'
 import { getDayAbbrString, getDayMonthNumber, getDayString } from '@/utilities/datetime'
@@ -20,7 +20,7 @@ import { toast } from 'sonner'
 export default function PaymentOptionPage() {
   const { orderId } = useParams<{ orderId: string }>()
 
-  const order = getOrderById(Number(orderId))
+  const order = useGETOrderById(Number(orderId))
 
   const recipient = order?.recipientInfo
 
@@ -52,7 +52,7 @@ export default function PaymentOptionPage() {
         paymentHistory: {
           id: payResponse.id,
           orderId: orderId,
-          total: order?.totalCost!,
+          total: order?.totalCost ?? 0,
           date: payResponse.date,
           transactionId: payResponse.transactionId,
           via: payResponse.via,

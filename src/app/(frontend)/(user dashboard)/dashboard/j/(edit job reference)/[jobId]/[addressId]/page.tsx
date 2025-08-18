@@ -5,12 +5,12 @@ import Link from 'next/link'
 import { ArrowLeft } from '@/components/uikit/icons'
 import { ButtonListItem } from '@/components/uikit/buttons/buttonListItem'
 import { Separator } from '@/components/uikit/separator'
-import { getJobRefAddressByIds } from '@/lib/db/helpers/jobRefHelpers'
+import { useGETJobRefAddressByIds } from '@/lib/db/helpers/jobRefHelpers'
 
 export default function EditAddressPage() {
   const { jobId, addressId } = useParams<{ jobId: string; addressId: string }>()
 
-  const address = getJobRefAddressByIds(jobId, addressId)
+  const address = useGETJobRefAddressByIds(jobId, addressId)
 
   if (address === undefined) {
     notFound()

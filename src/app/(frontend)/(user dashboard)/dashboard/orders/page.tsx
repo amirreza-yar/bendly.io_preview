@@ -8,10 +8,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/uikit/tab
 import Link from 'next/link'
 import { Order } from '@/types/orders/orderType'
 import { replacementRequests } from '@/utilities/demo_datas/demoOrderData'
-import { getAllOrders } from '@/lib/db/helpers/orderHelpers'
+import { useGETAllOrders } from '@/lib/db/helpers/orderHelpers'
 
 export default function OrdersPage() {
-  const orders = getAllOrders()
+  const orders = useGETAllOrders()
 
   return (
     <>

@@ -8,7 +8,7 @@ import { StoredAddress, StoredJobReference } from '@/types/jobReferenceTypes'
 
 type ReturnDexieError = Promise<string | typeof Dexie.DexieError | Error>
 
-export function getJobRefById(jobRefId: string): StoredJobReference | undefined | null {
+export function useGETJobRefById(jobRefId: string): StoredJobReference | undefined | null {
   return useLiveQuery(() => db.jobReferences.get({ id: jobRefId }), [jobRefId], null)
 }
 
@@ -99,7 +99,7 @@ export const deleteJobRefAddressByIds = async (jobRefId: string, addressId: stri
   })
 }
 
-export function getAllJobRefs(): StoredJobReference[] | undefined | null {
+export function useGETAllJobRefs(): StoredJobReference[] | undefined | null {
   return useLiveQuery(() => db.jobReferences.toArray(), [], null)
 }
 
@@ -126,7 +126,7 @@ export async function jobReferCodeExists({
   }
 }
 
-export const getJobRefAddressByIds = (jobRefId: string, addressId: string) => {
+export const useGETJobRefAddressByIds = (jobRefId: string, addressId: string) => {
   return useLiveQuery(
     async () => {
       const jobRef = await db.jobReferences.get(jobRefId)

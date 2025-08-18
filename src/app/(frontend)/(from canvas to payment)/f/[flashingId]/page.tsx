@@ -19,7 +19,7 @@ export default function FlashingSlugCheckPage() {
   const doesLooksLikeGeneratedId = looksLikeGeneratedId(flashingId)
 
   if (doesLooksLikeGeneratedId) {
-    const flashing = getFlashingById(flashingId)
+    const flashing = useGETFlashingById(flashingId)
 
     if (flashing && !flashing.isDraft) {
       return redirect(`/f/${flashingId}/canvas`)

@@ -8,7 +8,7 @@ import DetailsForm from '@/components/dashboard/order/DetailsForm'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import DetailsComponent, { DetailsFormValues } from '@/components/flashing/details/detailsComponent'
-import { getOrderById, initNewOrder, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
+import { useGETOrderById, initNewOrder, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
 import {
   getFlashingById,
   removeOrderIdToBeSavedFromFlashingById,
@@ -25,11 +25,11 @@ export default function DetailsPage() {
 
   const orderId = searchParams.get('orderId')
 
-  const order = getOrderById(Number(orderId))
+  const order = useGETOrderById(Number(orderId))
 
   const router = useRouter()
 
-  const flashing = getFlashingById(flashingId)
+  const flashing = useGETFlashingById(flashingId)
 
   const onModalDiscardChanges = () => {
     router.push(`/o/${orderId}/review`)

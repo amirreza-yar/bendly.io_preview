@@ -27,7 +27,7 @@ export async function initNewFlashing(orderId?: string): ReturnDexieError {
   }
 }
 
-export function getFlashingById(flashingId: string): StoredFlashing | undefined | null {
+export function useGETFlashingById(flashingId: string): StoredFlashing | undefined | null {
   return useLiveQuery(() => db.flashings.get({ id: flashingId }), [flashingId], null)
 }
 

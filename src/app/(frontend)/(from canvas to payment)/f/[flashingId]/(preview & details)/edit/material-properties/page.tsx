@@ -11,8 +11,8 @@ import MaterialAndPropertiesSelector, {
 } from '@/components/flashing/material&PropertiesSelector'
 import { toast } from 'sonner'
 import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
-import { getMaterialsAndProprs } from '@/lib/db/helpers/materials&PropsHelpers'
-import { getOrderById } from '@/lib/db/helpers/orderHelpers'
+import { useGETMaterialsAndProprs } from '@/lib/db/helpers/materials&PropsHelpers'
+import { useGETOrderById } from '@/lib/db/helpers/orderHelpers'
 
 export default function SelectMaterialAndColorPage() {
   const searchParams = useSearchParams()
@@ -21,7 +21,7 @@ export default function SelectMaterialAndColorPage() {
 
   const next = searchParams.get('next')
 
-  const order = getOrderById(Number(orderId))
+  const order = useGETOrderById(Number(orderId))
 
   if (!(next === 'preview' || next === 'order')) return notFound()
   else if (next === 'order' && !orderId) return notFound()
@@ -29,8 +29,8 @@ export default function SelectMaterialAndColorPage() {
   const router = useRouter()
 
   const { flashingId }: { flashingId: string } = useParams()
-  const savedFlashing = getFlashingById(flashingId)
-  const materialsWithProperties = getMaterialsAndProprs()
+  const savedFlashing = useGETFlashingById(flashingId)
+  const materialsWithProperties = useGETMaterialsAndProprs()
 
   const onSubmit = (
     data: MaterialAndPropFormValues,

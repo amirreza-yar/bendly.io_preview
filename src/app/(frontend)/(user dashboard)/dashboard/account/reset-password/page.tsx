@@ -21,7 +21,7 @@ export default function ResetPasswordPage() {
         <div className="grid text-center">
           <div className="grid px-6 gap-2 pt-12">
             <h5>Reset your password</h5>
-            <p className="subtitle-regular">We'll send a reset link to your email address</p>
+            <p className="subtitle-regular">We will send a reset link to your email address</p>
             <div className="w-full flex items-center justify-center mt-4">
               <Link
                 href=""

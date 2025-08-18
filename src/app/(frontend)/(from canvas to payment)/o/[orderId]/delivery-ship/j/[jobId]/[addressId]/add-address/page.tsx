@@ -22,8 +22,8 @@ import { Separator } from '@/components/uikit/separator'
 import { useNewAddress } from '@/providers/data_providers/job_reference_providers/NewAddressContext'
 import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
 import {
-  getJobRefAddressByIds,
-  getJobRefById,
+  useGETJobRefAddressByIds,
+  useGETJobRefById,
   updateJobReference,
 } from '@/lib/db/helpers/jobRefHelpers'
 import { Header } from '@/components/dashboard/header'
@@ -32,7 +32,7 @@ import { AddressForm } from '@/components/dashboard/jobReference/forms'
 import { useEffect } from 'react'
 import { generateRandomId } from '@/lib/db/helpers/utils'
 import { toast } from 'sonner'
-import { getOrderById, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
+import { useGETOrderById, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
 
 const addAddressFormSchema = z.object({
   streetAddress: z
@@ -80,11 +80,11 @@ export default function JobReferencesPage({}) {
 
   const editAddr = useSearchParams().get('editAddr')
 
-  const jobReference = getJobRefById(jobId)
+  const jobReference = useGETJobRefById(jobId)
 
-  const order = getOrderById(Number(orderId))
+  const order = useGETOrderById(Number(orderId))
 
-  const address = getJobRefAddressByIds(jobId, addressId)
+  const address = useGETJobRefAddressByIds(jobId, addressId)
   const router = useRouter()
 
   const onAddressFormSubmit = async (data: AddAddressFormValues) => {

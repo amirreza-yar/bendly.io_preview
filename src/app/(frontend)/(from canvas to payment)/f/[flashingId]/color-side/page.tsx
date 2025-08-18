@@ -27,7 +27,7 @@ export default function ColorSidePage() {
 
   const router = useRouter()
 
-  // const flashing: StoredFlashing | undefined = getFlashingById(flashingId)
+  // const flashing: StoredFlashing | undefined = useGETFlashingById(flashingId)
 
   const flashing = useLiveQuery(
     () => db.flashings.get({ id: flashingId }),

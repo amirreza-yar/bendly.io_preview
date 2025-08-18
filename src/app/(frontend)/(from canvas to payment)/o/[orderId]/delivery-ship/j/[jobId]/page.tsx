@@ -11,8 +11,8 @@ import JobRefFooter from '@/components/dashboard/jobReference/footer'
 import {
   deleteJobRefAddressByIds,
   deleteJobRefById,
-  getJobRefAddressByIds,
-  getJobRefById,
+  useGETJobRefAddressByIds,
+  useGETJobRefById,
 } from '@/lib/db/helpers/jobRefHelpers'
 import { toast } from 'sonner'
 import { useRef, useState } from 'react'
@@ -20,7 +20,7 @@ import { Footer } from '@/components/dashboard/footer'
 import { Header } from '@/components/dashboard/header'
 import { RemoveJobRefModal } from '@/components/dashboard/jobReference/modals'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import { getOrderById, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
+import { useGETOrderById, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
 import { StoredAddress } from '@/types/jobReferenceTypes'
 import { AlertModal } from '@/components/uikit/alertModal'
 
@@ -34,8 +34,8 @@ export default function jobReferencePage() {
 
   const router = useRouter()
 
-  const jobReference = getJobRefById(jobId)
-  const order = getOrderById(Number(orderId))
+  const jobReference = useGETJobRefById(jobId)
+  const order = useGETOrderById(Number(orderId))
   if (jobReference === undefined || order === undefined) {
     notFound()
   }

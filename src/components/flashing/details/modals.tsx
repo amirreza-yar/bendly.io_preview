@@ -34,7 +34,7 @@ export const UnsavedChangesOnDetailsModal = ({
             data-slot="alert-dialog-description"
             className="text-muted-foreground text-sm"
           >
-            You've made changes that haven't been saved. If you go back now, they'll be lost.
+            You have made changes that have not been saved. If you go back now, they will be lost.
           </AlertDialogPrimitive.Description>
         </div>
         <div
