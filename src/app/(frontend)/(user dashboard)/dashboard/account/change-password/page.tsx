@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { ResetPasswordIcon, ChevronRight } from '@/components/uikit/icons'
+import { ResetPasswordIcon, ChevronRight, PasswordField } from '@/components/uikit/icons'
 import { LabeledInput } from '@/components/uikit/input'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
@@ -29,29 +29,42 @@ export default function AccountPage() {
   const { user } = useUser()
   const [isVerified, setIsVerified] = useState(false)
 
+  const form = useForm<FormValues>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      password: '',
+    },
+  })
+
   async function fakeVerifyPassword(password: string): Promise<boolean> {
     return password === user.password
   }
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(FormSchema),
-  })
-
   async function onSubmit(data: FormValues) {
-    const isPasswordCorrect = await fakeVerifyPassword(data.password)
-    if (!isPasswordCorrect) {
-      form.setError('password', {
-        type: 'data_not_verified',
-        message: 'Incorrect password. Please try again',
-      })
-    } else {
+    if (!isVerified) {
+      // Verify current password
+      const isPasswordCorrect = await fakeVerifyPassword(data.password)
+      if (!isPasswordCorrect) {
+        form.setError('password', {
+          type: 'data_not_verified',
+          message: 'Incorrect password. Please try again',
+        })
+        return
+      }
       setIsVerified(true)
+      form.reset() // Clear the form for the new password input
+    } else {
+      // Update password logic (not implemented in the original code)
+      console.log('New password submitted:', data.password)
+      // Add your password update logic here
+      form.reset()
+      setIsVerified(false) // Optionally reset to verification step
     }
   }
 
   return (
     <>
-      <Header title="Change Password" returnHref="/dashboard/account" />
+      <Header title={isVerified ? 'Change Password' : 'Confirm Your Identity'} returnHref="/dashboard/account" />
       <ContentWrapper>
         {isVerified ? (
           // ✅ UI after password verification
@@ -68,7 +81,7 @@ export default function AccountPage() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Current Password</FormLabel>
+                        <FormLabel>New Password</FormLabel>
                         <FormControl>
                           <LabeledInput
                             type="password"
@@ -80,22 +93,20 @@ export default function AccountPage() {
                       </FormItem>
                     )}
                   />
-                  <Link href="/dashboard/account">
-                    <Button type="submit" className="w-full bg-primary">
-                      Update Password
-                    </Button>
-                  </Link>
+                  <Button type="submit" className="w-full bg-primary">
+                    Update Password
+                  </Button>
                 </form>
               </Form>
+              <Link
+                href="/dashboard/account"
+                className="w-full flex items-center justify-center pt-6 text-primary gap-2"
+              >
+                <ResetPasswordIcon className="size-[15px]" />
+                <p className="label-regular">Cancel, Back to Account Page</p>
+                <ChevronRight className="size-5" />
+              </Link>
             </div>
-            <Link
-              href="/dashboard/account"
-              className="w-full flex items-center justify-center pt-6 text-primary gap-2"
-            >
-              <ResetPasswordIcon className="size-[15px]" />
-              <p className="label-regular">Cancel, Back to Account Page</p>
-              <ChevronRight className="size-5" />
-            </Link>
           </div>
         ) : (
           // ❌ UI before password verification
@@ -108,25 +119,29 @@ export default function AccountPage() {
             </div>
             <div className="grid pt-8">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
                   <FormField
                     control={form.control}
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Current Password</FormLabel>
+                        <FormLabel className="flex gap-2 label-regular">Password</FormLabel>
                         <FormControl>
                           <LabeledInput
+                            icon={PasswordField}
+                            placeholder="Your Password"
                             type="password"
-                            placeholder="Enter your current password"
                             {...field}
                           />
                         </FormControl>
                         <FormMessage />
+                        <Link href="/dashboard/account/reset-password" className="text-primary label-regular justify-self-end">
+                          Forgot password?
+                        </Link>
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full bg-primary">
+                  <Button type="submit" className="w-full">
                     Continue
                   </Button>
                 </form>

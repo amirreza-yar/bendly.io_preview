@@ -58,6 +58,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
+    "denied": "^1.0.0",
     "dexie": "^4.0.11",
     "dexie-react-hooks": "^1.1.7",
     "dotenv": "16.4.7",

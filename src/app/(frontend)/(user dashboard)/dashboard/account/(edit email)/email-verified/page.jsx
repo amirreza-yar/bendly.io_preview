@@ -30,23 +30,12 @@ export default function VerifyEmailPage() {
       otpRefs.current[idx + 1]?.focus()
     }
   }
-  const handleVerify = (e) => {
-    e.preventDefault()
-    setOtpTouched(true)
-    if (otp.join('').length < 5) {
-      setOtpError('Please enter the code.')
-      return
-    }
-    if (!isOtpValid()) {
-      setOtpError('Invalid OTP. Please try again.')
-      return
-    }
-    // Success: go to create account
-    router.push('/dashboard/account')
-  }
 
+  const handleEditEmail =() => {
+    router.push('/dashboard/account/change-email')
+  }
   const handleSendCode = () => {
-    router.push('/dashboard/account/edit-email/verify-new-email')
+    router.push('/dashboard/account/verify-new-email')
   }
 
   return (
@@ -78,7 +67,7 @@ export default function VerifyEmailPage() {
                   console.log('Edit email address')
                 }}
               >
-                <PencilIcon className="size-4 text-black" />
+                <PencilIcon className="size-4 text-black" onClick={handleEditEmail} />
               </button>
             </div>
           </div>

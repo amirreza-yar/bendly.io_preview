@@ -90,6 +90,10 @@ export default function VerifyEmailPage() {
     }
   }
 
+   const handleEditEmail =() => {
+    router.push('/dashboard/account/change-email')
+  }
+
   return (
     <div className="flex flex-col w-full h-full">
       <div className="w-full min-h-screen  bg-white shadow-md p-4 sm:p-6 md:p-8 rounded-none sm:rounded-lg">
@@ -113,7 +117,7 @@ export default function VerifyEmailPage() {
                   console.log('Edit email address')
                 }}
               >
-                <PencilIcon className="size-4 text-black" />
+                <PencilIcon className="size-4 text-black" onClick={handleEditEmail}  />
               </button>
             </div>
           </div>

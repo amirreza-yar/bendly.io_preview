@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { Button } from '@/components/uikit/buttons/button'
-import { Info } from '@/components/uikit/icons'
+import { Info, Mail } from '@/components/uikit/icons'
 import { Input, LabeledInput } from '@/components/uikit/input'
 import { Footer } from '@/components/dashboard/footer'
 import { AlertModal } from '@/components/uikit/alertModal'
@@ -20,6 +20,11 @@ import { email, z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useUser } from '@/providers/main_providers/UserContext'
+import { apiSendEmailCode } from '@/utilities/api/user_auth/auth'
+import { useSearchParams } from 'next/navigation'
+import { HeaderWithCenterTitle } from '@/components/dashboard/header'
+import { toast } from 'sonner'
+import { AuthEmailForm, EmailInputValue } from '@/components/dashboard/auth/forms'
 
 const FormSchema = z.object({
   email: z.email('Please enter a valid email').nonempty('This field is requiered'),
@@ -32,27 +37,27 @@ export default function AccountPage() {
   const { user } = useUser()
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
-  async function fakeVerifyEmail(email: string): Promise<boolean> {
-    return email === user.email
-  }
-
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     defaultValues: { email: '' },
   })
 
-  const handleVerify = async (data: FormValues) => {
-    const isEmailVarified = await fakeVerifyEmail(data.email)
+  const defaultEmail = useSearchParams().get('email')
 
-    if (isEmailVarified) {
-      setIsModalOpen(true)
+  const onSubmitEmail = async (data: EmailInputValue) => {
+    const res = await apiSendEmailCode(data.email)
+    if (res.apiCode === '100100') {
+      router.push(`/auth/signup?email=${data.email}`)
+      toast('Verification code sent')
+    } else if (res.apiCode === '100102') {
+      router.push(`/auth/login?email=${data.email}`)
+    } else if (res.apiCode === '100103') {
+      toast('Wait before sending new code')
     } else {
-      form.setError('email', {
-        type: 'data_not_verified',
-        message: 'Incorrect Email. Please try again',
-      })
+      toast('Something went wrong. Try again')
     }
-    // router.push('/dashboard/account/edit-current-mobile-number')
+
+    console.log(res)
   }
 
   return (
@@ -61,15 +66,21 @@ export default function AccountPage() {
 
       <ContentWrapper className="pt-18">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleVerify)}>
+          <form onSubmit={form.handleSubmit(onSubmitEmail)} className="grid gap-6">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Current Email</FormLabel>
+                <FormItem className="grid gap-2">
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Current Email" {...field} />
+                    <LabeledInput
+                      icon={Mail}
+                      placeholder="Enter your email"
+                      {...field}
+                      value={field.value ?? ''}
+                      error={Boolean(form.getFieldState('email').error)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

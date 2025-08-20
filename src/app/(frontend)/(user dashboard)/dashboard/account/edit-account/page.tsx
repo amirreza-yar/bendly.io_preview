@@ -26,7 +26,7 @@ export default function AccountPage() {
             <ButtonListItem text="Edit Full Name" caption="Amirreza Yarahmadi" />
             <Separator className />
           </Link>
-          <Link href="/dashboard/account/edit-mobile">
+          <Link href="/dashboard/account/edit-account/edit-current-mobile-number">
             <ButtonListItem text="Mobile Number" caption="+619876541230" badgeText="Verified" />
           </Link>
         </div>
