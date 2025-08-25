@@ -770,17 +770,29 @@ export interface Form {
  */
 export interface Flashing {
   id: string;
-  _id?: string | null;
+  flashingId: string;
   ownerId?: (string | null) | User;
-  data?: string | null;
+  data:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   revisions?:
     | {
-        id?: string | null;
-      }[]
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
     | null;
   status?: 'drafted' | null;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -788,7 +800,6 @@ export interface Flashing {
  */
 export interface Template {
   id: string;
-  _id?: string | null;
   flashingId?: (string | null) | Flashing;
   ownerId?: (string | null) | User;
   tags?: string | null;
@@ -798,8 +809,8 @@ export interface Template {
     usageCount?: number | null;
     lastAccessed?: string | null;
   };
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -807,7 +818,6 @@ export interface Template {
  */
 export interface Jobreference {
   id: string;
-  _id?: string | null;
   ownerId?: (string | null) | User;
   code?: string | null;
   projectName?: string | null;
@@ -822,8 +832,8 @@ export interface Jobreference {
     name?: string | null;
     phone?: string | null;
   };
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -831,7 +841,6 @@ export interface Jobreference {
  */
 export interface Order {
   id: string;
-  _id?: string | null;
   orderNumber?: string | null;
   clientId?: (string | null) | User;
   jobReferenceId?: (string | null) | Jobreference;
@@ -846,8 +855,12 @@ export interface Order {
   deliveryId?: string | null;
   items?:
     | {
-        id?: string | null;
-      }[]
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
     | null;
   price?: {
     itemsTotal?: number | null;
@@ -857,10 +870,6 @@ export interface Order {
   };
   paymentHistory?: (string | null) | Paymenthistory;
   status?: ('pending' | 'in-progress' | 'delivered' | 'cancelled' | 'indexed') | null;
-  metadata?: {
-    createdAt?: string | null;
-    updatedAt?: string | null;
-  };
   updatedAt: string;
   createdAt: string;
 }
@@ -870,13 +879,12 @@ export interface Order {
  */
 export interface Paymenthistory {
   id: string;
-  _id?: string | null;
   transactionId?: string | null;
   totalPrice?: number | null;
   date?: string | null;
   method?: ('card' | 'bank' | 'cash') | null;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -884,20 +892,28 @@ export interface Paymenthistory {
  */
 export interface Factory {
   id: string;
-  _id?: string | null;
+  factoryId?: string | null;
   name?: string | null;
   materials?:
     | {
-        id?: string | null;
-      }[]
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
     | null;
   customFormulas?:
     | {
-        id?: string | null;
-      }[]
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
     | null;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -905,7 +921,7 @@ export interface Factory {
  */
 export interface Supportrequest {
   id: string;
-  _id?: string | null;
+  requestId?: string | null;
   userId?: (string | null) | User;
   fullname?: string | null;
   email?: string | null;
@@ -913,8 +929,8 @@ export interface Supportrequest {
   message?: string | null;
   media?: string | null;
   status?: ('open' | 'resolved') | null;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -922,15 +938,15 @@ export interface Supportrequest {
  */
 export interface Adjustrequest {
   id: string;
-  _id?: string | null;
+  requestId?: string | null;
   orderId?: (string | null) | Order;
   items?: string | null;
   reason?: string | null;
   description?: string | null;
   media?: string | null;
   status?: ('pending' | 'approved' | 'rejected') | null;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -938,19 +954,24 @@ export interface Adjustrequest {
  */
 export interface Appsetting {
   id: string;
-  _id?: string | null;
-  setting?: string | null;
-  appDefaults?: {
-    materialOptions?: string | null;
-    foldStyles?: string | null;
-    statusOptions?: string | null;
-  };
-  permissions?: {
-    read?: boolean | null;
-    write?: boolean | null;
-  };
-  createdAt: string;
+  GroupSetting: string;
+  settings?:
+    | {
+        settingName: string;
+        value:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -958,7 +979,6 @@ export interface Appsetting {
  */
 export interface Log {
   id: string;
-  _id?: string | null;
   entityType?: ('order' | 'request' | 'flashing') | null;
   entityId?: string | null;
   action?: string | null;
@@ -1584,24 +1604,19 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "flashings_select".
  */
 export interface FlashingsSelect<T extends boolean = true> {
-  _id?: T;
+  flashingId?: T;
   ownerId?: T;
   data?: T;
-  revisions?:
-    | T
-    | {
-        id?: T;
-      };
+  revisions?: T;
   status?: T;
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "templates_select".
  */
 export interface TemplatesSelect<T extends boolean = true> {
-  _id?: T;
   flashingId?: T;
   ownerId?: T;
   tags?: T;
@@ -1613,15 +1628,14 @@ export interface TemplatesSelect<T extends boolean = true> {
         usageCount?: T;
         lastAccessed?: T;
       };
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jobreferences_select".
  */
 export interface JobreferencesSelect<T extends boolean = true> {
-  _id?: T;
   ownerId?: T;
   code?: T;
   projectName?: T;
@@ -1640,15 +1654,14 @@ export interface JobreferencesSelect<T extends boolean = true> {
         name?: T;
         phone?: T;
       };
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders_select".
  */
 export interface OrdersSelect<T extends boolean = true> {
-  _id?: T;
   orderNumber?: T;
   clientId?: T;
   jobReferenceId?: T;
@@ -1663,11 +1676,7 @@ export interface OrdersSelect<T extends boolean = true> {
         contact?: T;
       };
   deliveryId?: T;
-  items?:
-    | T
-    | {
-        id?: T;
-      };
+  items?: T;
   price?:
     | T
     | {
@@ -1678,12 +1687,6 @@ export interface OrdersSelect<T extends boolean = true> {
       };
   paymentHistory?: T;
   status?: T;
-  metadata?:
-    | T
-    | {
-        createdAt?: T;
-        updatedAt?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1692,27 +1695,19 @@ export interface OrdersSelect<T extends boolean = true> {
  * via the `definition` "factories_select".
  */
 export interface FactoriesSelect<T extends boolean = true> {
-  _id?: T;
+  factoryId?: T;
   name?: T;
-  materials?:
-    | T
-    | {
-        id?: T;
-      };
-  customFormulas?:
-    | T
-    | {
-        id?: T;
-      };
-  createdAt?: T;
+  materials?: T;
+  customFormulas?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "supportrequests_select".
  */
 export interface SupportrequestsSelect<T extends boolean = true> {
-  _id?: T;
+  requestId?: T;
   userId?: T;
   fullname?: T;
   email?: T;
@@ -1720,66 +1715,57 @@ export interface SupportrequestsSelect<T extends boolean = true> {
   message?: T;
   media?: T;
   status?: T;
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "adjustrequests_select".
  */
 export interface AdjustrequestsSelect<T extends boolean = true> {
-  _id?: T;
+  requestId?: T;
   orderId?: T;
   items?: T;
   reason?: T;
   description?: T;
   media?: T;
   status?: T;
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "appsettings_select".
  */
 export interface AppsettingsSelect<T extends boolean = true> {
-  _id?: T;
-  setting?: T;
-  appDefaults?:
+  GroupSetting?: T;
+  settings?:
     | T
     | {
-        materialOptions?: T;
-        foldStyles?: T;
-        statusOptions?: T;
+        settingName?: T;
+        value?: T;
+        id?: T;
       };
-  permissions?:
-    | T
-    | {
-        read?: T;
-        write?: T;
-      };
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "paymenthistory_select".
  */
 export interface PaymenthistorySelect<T extends boolean = true> {
-  _id?: T;
   transactionId?: T;
   totalPrice?: T;
   date?: T;
   method?: T;
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "logs_select".
  */
 export interface LogsSelect<T extends boolean = true> {
-  _id?: T;
   entityType?: T;
   entityId?: T;
   action?: T;

@@ -11,12 +11,19 @@ export const Logs: CollectionConfig = {
     delete: authenticated,
   },
   admin: {
-    useAsTitle: '_id',
-    defaultColumns: ['_id'],
+    useAsTitle: 'entityId',
+    defaultColumns: ['id', 'entityType', 'entityId', 'action', 'performedBy', 'timestamp'],
   },
   fields: [
-    { name: '_id', type: 'text' },
-    { name: 'entityType', type: 'select', options: [{ label: 'Order', value: 'order' }, { label: 'Request', value: 'request' }, { label: 'Flashing', value: 'flashing' }] },
+    {
+      name: 'entityType',
+      type: 'select',
+      options: [
+        { label: 'Order', value: 'order' },
+        { label: 'Request', value: 'request' },
+        { label: 'Flashing', value: 'flashing' },
+      ],
+    },
     { name: 'entityId', type: 'text' },
     { name: 'action', type: 'text' },
     { name: 'performedBy', type: 'relationship', relationTo: 'users' },

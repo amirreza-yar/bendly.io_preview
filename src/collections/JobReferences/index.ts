@@ -11,26 +11,32 @@ export const JobReferences: CollectionConfig = {
     delete: authenticated,
   },
   admin: {
-    useAsTitle: '_id',
-    defaultColumns: ['_id'],
+    useAsTitle: 'code',
+    defaultColumns: ['id', 'code', 'ownerId', 'projectName'],
   },
   fields: [
-    { name: '_id', type: 'text' },
     { name: 'ownerId', type: 'relationship', relationTo: 'users' },
     { name: 'code', type: 'text' },
     { name: 'projectName', type: 'text' },
-    { name: 'address', type: 'group', fields: [
-      { name: 'street', type: 'text' },
-      { name: 'suburb', type: 'text' },
-      { name: 'state', type: 'text' },
-      { name: 'postcode', type: 'text' },
-      { name: 'addressName', type: 'text' },
-    ] },
-    { name: 'recipient', type: 'group', fields: [
-      { name: 'name', type: 'text' },
-      { name: 'phone', type: 'text' },
-    ] },
-    { name: 'createdAt', type: 'date' },
+    {
+      name: 'address',
+      type: 'group',
+      fields: [
+        { name: 'street', type: 'text' },
+        { name: 'suburb', type: 'text' },
+        { name: 'state', type: 'text' },
+        { name: 'postcode', type: 'text' },
+        { name: 'addressName', type: 'text' },
+      ],
+    },
+    {
+      name: 'recipient',
+      type: 'group',
+      fields: [
+        { name: 'name', type: 'text' },
+        { name: 'phone', type: 'text' },
+      ],
+    },
   ],
   timestamps: true,
 }

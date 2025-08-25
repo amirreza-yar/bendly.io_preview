@@ -11,37 +11,31 @@ export const AppSettings: CollectionConfig = {
     delete: authenticated,
   },
   admin: {
-    useAsTitle: '_id',
-    defaultColumns: ['_id'],
+    useAsTitle: 'GroupSetting',
+    defaultColumns: ['GroupSetting', 'createdAt', 'updatedAt'],
   },
   fields: [
-    { name: '_id', type: 'text' },
-    { name: 'setting', type: 'text' },
     {
-      name: 'appDefaults',
-      type: 'group',
-      fields: [
-        { name: 'materialOptions', type: 'text' },
-        { name: 'foldStyles', type: 'text' },
-        { name: 'statusOptions', type: 'text' },
-      ],
+      name: 'GroupSetting',
+      type: 'text',
+      required: true,
     },
     {
-      name: 'permissions',
-      type: 'group',
+      name: 'settings',
+      type: 'array',
       fields: [
         {
-          name: 'read',
-          type: 'checkbox',
+          name: 'settingName',
+          type: 'text',
+          required: true,
         },
         {
-          name: 'write',
-          type: 'checkbox',
+          name: 'value',
+          type: 'json',
+          required: true,
         },
       ],
     },
-    { name: 'createdAt', type: 'date' },
-    { name: 'updatedAt', type: 'date' },
   ],
   timestamps: true,
 }

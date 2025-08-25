@@ -11,22 +11,31 @@ export const Templates: CollectionConfig = {
     delete: authenticated,
   },
   admin: {
-    useAsTitle: '_id',
-    defaultColumns: ['_id'],
+    useAsTitle: 'name',
+    defaultColumns: ['id', 'name', 'scope', 'createdAt'],
   },
   fields: [
-    { name: '_id', type: 'text' },
     { name: 'flashingId', type: 'relationship', relationTo: 'flashings' },
     { name: 'ownerId', type: 'relationship', relationTo: 'users' },
     { name: 'tags', type: 'text' },
-    { name: 'scope', type: 'select', options: [{ label: 'Private', value: 'private' }, { label: 'Shared', value: 'shared' }, { label: 'App', value: 'app' }] },
+    {
+      name: 'scope',
+      type: 'select',
+      options: [
+        { label: 'Private', value: 'private' },
+        { label: 'Shared', value: 'shared' },
+        { label: 'App', value: 'app' },
+      ],
+    },
     { name: 'name', type: 'text' },
-    { name: 'accessStats', type: 'group', fields: [
-      { name: 'usageCount', type: 'number' },
-      { name: 'lastAccessed', type: 'date' },
-    ] },
-    { name: 'createdAt', type: 'date' },
-    { name: 'updatedAt', type: 'date' },
+    {
+      name: 'accessStats',
+      type: 'group',
+      fields: [
+        { name: 'usageCount', type: 'number' },
+        { name: 'lastAccessed', type: 'date' },
+      ],
+    },
   ],
   timestamps: true,
 }

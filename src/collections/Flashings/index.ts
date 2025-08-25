@@ -11,17 +11,15 @@ export const Flashings: CollectionConfig = {
     delete: authenticated,
   },
   admin: {
-    useAsTitle: '_id',
-    defaultColumns: ['_id'],
+    useAsTitle: 'flashingId',
+    defaultColumns: ['id', 'flashingId', 'ownerId', 'status', 'createdAt'],
   },
   fields: [
-    { name: '_id', type: 'text' },
+    { name: 'flashingId', type: 'text', required: true },
     { name: 'ownerId', type: 'relationship', relationTo: 'users' },
     { name: 'data', type: 'json', required: true },
-    { name: 'revisions', type: 'array', fields: [] },
+    { name: 'revisions', type: 'json' },
     { name: 'status', type: 'select', options: [{ label: 'Drafted', value: 'drafted' }] },
-    { name: 'createdAt', type: 'date' },
-    { name: 'updatedAt', type: 'date' },
   ],
   timestamps: true,
 }
