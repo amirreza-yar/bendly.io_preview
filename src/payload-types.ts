@@ -954,19 +954,27 @@ export interface Adjustrequest {
  */
 export interface Appsetting {
   id: string;
-  GroupSetting: string;
+  /**
+   * Setting group scope (e.g., materialOptions, foldStyles)
+   */
+  groupName: string;
+  /**
+   * Dynamic key-value pairs for this group
+   */
   settings?:
     | {
-        settingName: string;
-        value:
-          | {
-              [k: string]: unknown;
-            }
-          | unknown[]
-          | string
-          | number
-          | boolean
-          | null;
+        /**
+         * Setting key name
+         */
+        key: string;
+        /**
+         * Setting value type
+         */
+        blockType: 'boolean' | 'string' | 'number' | 'json' | 'array';
+        /**
+         * Setting value (format depends on type)
+         */
+        value: string;
         id?: string | null;
       }[]
     | null;
@@ -1738,11 +1746,12 @@ export interface AdjustrequestsSelect<T extends boolean = true> {
  * via the `definition` "appsettings_select".
  */
 export interface AppsettingsSelect<T extends boolean = true> {
-  GroupSetting?: T;
+  groupName?: T;
   settings?:
     | T
     | {
-        settingName?: T;
+        key?: T;
+        blockType?: T;
         value?: T;
         id?: T;
       };
