@@ -21,6 +21,8 @@ import { AdjustRequests } from './collections/AdjustRequests'
 import { AppSettings } from './collections/AppSettings'
 import { PaymentHistory } from './collections/PaymentHistory'
 import { Logs } from './collections/Logs'
+import { Permissions } from './collections/Permissions'
+import { Roles } from './collections/Roles'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
@@ -89,6 +91,8 @@ export default buildConfig({
     AppSettings,
     PaymentHistory,
     Logs,
+    Permissions,
+    Roles,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],

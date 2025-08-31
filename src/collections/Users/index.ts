@@ -20,17 +20,8 @@ export const Users: CollectionConfig = {
   fields: [
     { name: 'fullname', type: 'text', required: true },
     { name: 'phone', type: 'text' },
-    {
-      name: 'role',
-      type: 'select',
-      required: true,
-      defaultValue: 'client',
-      options: [
-        { label: 'Client', value: 'client' },
-        { label: 'Factory', value: 'factory' },
-        { label: 'Superadmin', value: 'superadmin' },
-      ],
-    },
+
+    { name: 'roleId', type: 'relationship', relationTo: 'roles' },
     {
       name: 'status',
       type: 'select',

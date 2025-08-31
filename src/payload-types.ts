@@ -82,6 +82,8 @@ export interface Config {
     appsettings: Appsetting;
     paymenthistory: Paymenthistory;
     logs: Log;
+    permissions: Permission;
+    roles: Role;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -108,6 +110,8 @@ export interface Config {
     appsettings: AppsettingsSelect<false> | AppsettingsSelect<true>;
     paymenthistory: PaymenthistorySelect<false> | PaymenthistorySelect<true>;
     logs: LogsSelect<false> | LogsSelect<true>;
+    permissions: PermissionsSelect<false> | PermissionsSelect<true>;
+    roles: RolesSelect<false> | RolesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -395,7 +399,7 @@ export interface User {
   id: string;
   fullname: string;
   phone?: string | null;
-  role: 'client' | 'factory' | 'superadmin';
+  roleId?: (string | null) | Role;
   status?: ('active' | 'deactivated' | 'blocked') | null;
   settings?: {
     measurementMode?: ('metric' | 'imperial') | null;
@@ -421,6 +425,64 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles".
+ */
+export interface Role {
+  id: string;
+  name: string;
+  description?: string | null;
+  type: 'system' | 'factory' | 'client';
+  permissions?: (string | Permission)[] | null;
+  inheritsFrom?: (string | Role)[] | null;
+  settings?: {
+    canManageUsers?: boolean | null;
+    canManageRoles?: boolean | null;
+    canViewLogs?: boolean | null;
+    canExportData?: boolean | null;
+    canImportData?: boolean | null;
+    canManageSystem?: boolean | null;
+  };
+  isActive?: boolean | null;
+  isDefault?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "permissions".
+ */
+export interface Permission {
+  id: string;
+  name: string;
+  description?: string | null;
+  resource:
+    | 'users'
+    | 'flashings'
+    | 'templates'
+    | 'jobreferences'
+    | 'orders'
+    | 'factories'
+    | 'supportrequests'
+    | 'adjustrequests'
+    | 'appsettings'
+    | 'paymenthistory'
+    | 'logs'
+    | 'permissions'
+    | 'roles'
+    | 'system';
+  action: 'create' | 'read' | 'update' | 'delete' | 'list' | 'approve' | 'reject' | 'export' | 'import' | 'manage';
+  conditions?: {
+    ownDataOnly?: boolean | null;
+    factoryOnly?: boolean | null;
+    statusFilter?: string | null;
+    dateRange?: boolean | null;
+  };
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -972,17 +1034,15 @@ export interface Factory {
   name?: string | null;
   materials?:
     | {
-        materialProperty?: string | null;
-        thicknessOptions?:
+        material?: string | null;
+        options?:
           | {
-              thickness?: number | null;
+              name?: string | null;
+              value?: string | null;
+              type?: ('color' | 'thickness' | 'other') | null;
               id?: string | null;
             }[]
           | null;
-        otherProps?: {
-          key?: string | null;
-          value?: string | null;
-        };
         id?: string | null;
       }[]
     | null;
@@ -1338,6 +1398,14 @@ export interface PayloadLockedDocument {
         value: string | Log;
       } | null)
     | ({
+        relationTo: 'permissions';
+        value: string | Permission;
+      } | null)
+    | ({
+        relationTo: 'roles';
+        value: string | Role;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1685,7 +1753,7 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface UsersSelect<T extends boolean = true> {
   fullname?: T;
   phone?: T;
-  role?: T;
+  roleId?: T;
   status?: T;
   settings?:
     | T
@@ -1928,18 +1996,14 @@ export interface FactoriesSelect<T extends boolean = true> {
   materials?:
     | T
     | {
-        materialProperty?: T;
-        thicknessOptions?:
+        material?: T;
+        options?:
           | T
           | {
-              thickness?: T;
-              id?: T;
-            };
-        otherProps?:
-          | T
-          | {
-              key?: T;
+              name?: T;
               value?: T;
+              type?: T;
+              id?: T;
             };
         id?: T;
       };
@@ -2039,6 +2103,52 @@ export interface LogsSelect<T extends boolean = true> {
   performedBy?: T;
   timestamp?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "permissions_select".
+ */
+export interface PermissionsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  resource?: T;
+  action?: T;
+  conditions?:
+    | T
+    | {
+        ownDataOnly?: T;
+        factoryOnly?: T;
+        statusFilter?: T;
+        dateRange?: T;
+      };
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles_select".
+ */
+export interface RolesSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  type?: T;
+  permissions?: T;
+  inheritsFrom?: T;
+  settings?:
+    | T
+    | {
+        canManageUsers?: T;
+        canManageRoles?: T;
+        canViewLogs?: T;
+        canExportData?: T;
+        canImportData?: T;
+        canManageSystem?: T;
+      };
+  isActive?: T;
+  isDefault?: T;
   updatedAt?: T;
   createdAt?: T;
 }

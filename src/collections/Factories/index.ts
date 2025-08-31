@@ -21,25 +21,27 @@ export const Factories: CollectionConfig = {
       name: 'materials',
       type: 'array',
       fields: [
-        { name: 'materialProperty', type: 'text' },
+        { name: 'material', type: 'text' },
         {
-          name: 'thicknessOptions',
+          name: 'options',
           type: 'array',
           fields: [
-            { name: 'thickness', type: 'number' },
-          ],
-        },
-        {
-          name: 'otherProps',
-          type: 'group',
-          fields: [
-            { name: 'key', type: 'text' },
+            { name: 'name', type: 'text' },
             { name: 'value', type: 'text' },
+            {
+              name: 'type',
+              type: 'select',
+              defaultValue: 'color',
+              options: [
+                { label: 'Color', value: 'color' },
+                { label: 'Thickness', value: 'thickness' },
+                { label: 'Other', value: 'other' },
+              ],
+            },
           ],
         },
       ],
     },
-
   ],
   timestamps: true,
 }
