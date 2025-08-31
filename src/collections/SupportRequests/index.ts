@@ -21,7 +21,13 @@ export const SupportRequests: CollectionConfig = {
     { name: 'email', type: 'text' },
     { name: 'subject', type: 'text' },
     { name: 'message', type: 'text' },
-    { name: 'media', type: 'text' },
+    {
+      name: 'media',
+      type: 'array',
+      fields: [
+        { name: 'url', type: 'text' },
+      ],
+    },
     {
       name: 'status',
       type: 'select',

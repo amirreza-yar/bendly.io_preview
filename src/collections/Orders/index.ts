@@ -19,26 +19,62 @@ export const Orders: CollectionConfig = {
     { name: 'clientId', type: 'relationship', relationTo: 'users' },
     { name: 'jobReferenceId', type: 'relationship', relationTo: 'jobreferences' },
     { name: 'projectName', type: 'text' },
-    { name: 'deliveryDate', type: 'date' },
     {
-      name: 'deliveryType',
-      type: 'select',
-      options: [
-        { label: 'Delivery', value: 'delivery' },
-        { label: 'Pickup', value: 'pickup' },
-      ],
-    },
-    { name: 'deliveryAddress', type: 'text' },
-    {
-      name: 'driver',
+      name: 'delivery',
       type: 'group',
       fields: [
-        { name: 'name', type: 'text' },
-        { name: 'contact', type: 'text' },
+        { name: 'date', type: 'date' },
+        {
+          name: 'type',
+          type: 'select',
+          options: [
+            { label: 'Delivery', value: 'delivery' },
+            { label: 'Pickup', value: 'pickup' },
+          ],
+        },
+        { name: 'address', type: 'text' },
+        {
+          name: 'driver',
+          type: 'group',
+          fields: [
+            { name: 'name', type: 'text' },
+            { name: 'contact', type: 'text' },
+          ],
+        },
+        { name: 'id', type: 'text' },
       ],
     },
-    { name: 'deliveryId', type: 'text' },
-    { name: 'items', type: 'json' },
+    {
+      name: 'items',
+      type: 'array',
+      fields: [
+        { name: 'flashingId', type: 'relationship', relationTo: 'flashings' },
+        {
+          name: 'material',
+          type: 'group',
+          fields: [
+            { name: 'type', type: 'text' },
+            { name: 'property', type: 'text' },
+          ],
+        },
+        { name: 'thickness', type: 'number' },
+        { name: 'girth', type: 'number' },
+        { name: 'tapered', type: 'checkbox' },
+        { name: 'crushfold', type: 'checkbox' },
+        { name: 'code', type: 'text' },
+        { name: 'position', type: 'text' },
+        {
+          name: 'subItems',
+          type: 'array',
+          fields: [
+            { name: 'quantity', type: 'number' },
+            { name: 'length', type: 'number' },
+            { name: 'price', type: 'number' },
+          ],
+        },
+        { name: 'itemTotal', type: 'number' },
+      ],
+    },
     {
       name: 'price',
       type: 'group',

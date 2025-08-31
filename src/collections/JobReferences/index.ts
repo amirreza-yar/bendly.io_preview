@@ -19,8 +19,8 @@ export const JobReferences: CollectionConfig = {
     { name: 'code', type: 'text' },
     { name: 'projectName', type: 'text' },
     {
-      name: 'address',
-      type: 'group',
+      name: 'addresses',
+      type: 'array',
       fields: [
         { name: 'street', type: 'text' },
         { name: 'suburb', type: 'text' },
@@ -30,8 +30,8 @@ export const JobReferences: CollectionConfig = {
       ],
     },
     {
-      name: 'recipient',
-      type: 'group',
+      name: 'recipients',
+      type: 'array',
       fields: [
         { name: 'name', type: 'text' },
         { name: 'phone', type: 'text' },

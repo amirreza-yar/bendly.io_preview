@@ -395,7 +395,7 @@ export interface User {
   id: string;
   fullname: string;
   phone?: string | null;
-  role: 'designer' | 'factory' | 'supplier' | 'superadmin';
+  role: 'client' | 'factory' | 'superadmin';
   status?: ('active' | 'deactivated' | 'blocked') | null;
   settings?: {
     measurementMode?: ('metric' | 'imperial') | null;
@@ -772,25 +772,72 @@ export interface Flashing {
   id: string;
   flashingId: string;
   ownerId?: (string | null) | User;
-  data:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
+  data: {
+    nodes?:
+      | {
+          node_id?: string | null;
+          left?: number | null;
+          top?: number | null;
+          next_node_id?: string | null;
+          prev_node_id?: string | null;
+          next_line_bside_length?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+    startCrushFold?: boolean | null;
+    endCrushFold?: boolean | null;
+    crushFoldDir?: boolean | null;
+    material?: string | null;
+    color?: {
+      name?: string | null;
+      code?: string | null;
+    };
+    thickness?: {
+      code?: string | null;
+      thickness?: number | null;
+    };
+    isDraft?: boolean | null;
+    colorSideDirection?: boolean | null;
+    crushFold?: boolean | null;
+    tapered?: boolean | null;
+    totalGirth?: number | null;
+    orderIdToBeSaved?: string | null;
+  };
   revisions?:
     | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
+        revisionId?: string | null;
+        notes?: string | null;
+        timestamp?: string | null;
+        data?: {
+          nodes?:
+            | {
+                node_id?: string | null;
+                left?: number | null;
+                top?: number | null;
+                next_node_id?: string | null;
+                prev_node_id?: string | null;
+                next_line_bside_length?: number | null;
+                id?: string | null;
+              }[]
+            | null;
+          startCrushFold?: boolean | null;
+          endCrushFold?: boolean | null;
+          crushFoldDir?: boolean | null;
+          material?: string | null;
+          color?: {
+            name?: string | null;
+            code?: string | null;
+          };
+          thickness?: {
+            code?: string | null;
+            thickness?: number | null;
+          };
+          isDraft?: boolean | null;
+          colorSideDirection?: boolean | null;
+        };
+        id?: string | null;
+      }[]
     | null;
-  status?: 'drafted' | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -802,7 +849,12 @@ export interface Template {
   id: string;
   flashingId?: (string | null) | Flashing;
   ownerId?: (string | null) | User;
-  tags?: string | null;
+  tags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   scope?: ('private' | 'shared' | 'app') | null;
   name?: string | null;
   accessStats?: {
@@ -821,17 +873,23 @@ export interface Jobreference {
   ownerId?: (string | null) | User;
   code?: string | null;
   projectName?: string | null;
-  address?: {
-    street?: string | null;
-    suburb?: string | null;
-    state?: string | null;
-    postcode?: string | null;
-    addressName?: string | null;
-  };
-  recipient?: {
-    name?: string | null;
-    phone?: string | null;
-  };
+  addresses?:
+    | {
+        street?: string | null;
+        suburb?: string | null;
+        state?: string | null;
+        postcode?: string | null;
+        addressName?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  recipients?:
+    | {
+        name?: string | null;
+        phone?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -845,22 +903,40 @@ export interface Order {
   clientId?: (string | null) | User;
   jobReferenceId?: (string | null) | Jobreference;
   projectName?: string | null;
-  deliveryDate?: string | null;
-  deliveryType?: ('delivery' | 'pickup') | null;
-  deliveryAddress?: string | null;
-  driver?: {
-    name?: string | null;
-    contact?: string | null;
+  delivery?: {
+    date?: string | null;
+    type?: ('delivery' | 'pickup') | null;
+    address?: string | null;
+    driver?: {
+      name?: string | null;
+      contact?: string | null;
+    };
+    id?: string | null;
   };
-  deliveryId?: string | null;
   items?:
     | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
+        flashingId?: (string | null) | Flashing;
+        material?: {
+          type?: string | null;
+          property?: string | null;
+        };
+        thickness?: number | null;
+        girth?: number | null;
+        tapered?: boolean | null;
+        crushfold?: boolean | null;
+        code?: string | null;
+        position?: string | null;
+        subItems?:
+          | {
+              quantity?: number | null;
+              length?: number | null;
+              price?: number | null;
+              id?: string | null;
+            }[]
+          | null;
+        itemTotal?: number | null;
+        id?: string | null;
+      }[]
     | null;
   price?: {
     itemsTotal?: number | null;
@@ -896,21 +972,19 @@ export interface Factory {
   name?: string | null;
   materials?:
     | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  customFormulas?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
+        materialProperty?: string | null;
+        thicknessOptions?:
+          | {
+              thickness?: number | null;
+              id?: string | null;
+            }[]
+          | null;
+        otherProps?: {
+          key?: string | null;
+          value?: string | null;
+        };
+        id?: string | null;
+      }[]
     | null;
   updatedAt: string;
   createdAt: string;
@@ -927,7 +1001,12 @@ export interface Supportrequest {
   email?: string | null;
   subject?: string | null;
   message?: string | null;
-  media?: string | null;
+  media?:
+    | {
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   status?: ('open' | 'resolved') | null;
   updatedAt: string;
   createdAt: string;
@@ -940,10 +1019,25 @@ export interface Adjustrequest {
   id: string;
   requestId?: string | null;
   orderId?: (string | null) | Order;
-  items?: string | null;
+  items?:
+    | {
+        itemId?: string | null;
+        reason?: string | null;
+        changes?: {
+          key?: string | null;
+          value?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
   reason?: string | null;
   description?: string | null;
-  media?: string | null;
+  media?:
+    | {
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   status?: ('pending' | 'approved' | 'rejected') | null;
   updatedAt: string;
   createdAt: string;
@@ -987,7 +1081,21 @@ export interface Appsetting {
  */
 export interface Log {
   id: string;
-  entityType?: ('order' | 'request' | 'flashing') | null;
+  entityType?:
+    | (
+        | 'user'
+        | 'flashing'
+        | 'template'
+        | 'jobreference'
+        | 'order'
+        | 'factory'
+        | 'supportrequest'
+        | 'adjustrequest'
+        | 'appsettings'
+        | 'paymenthistory'
+        | 'system'
+      )
+    | null;
   entityId?: string | null;
   action?: string | null;
   performedBy?: (string | null) | User;
@@ -1614,9 +1722,84 @@ export interface UsersSelect<T extends boolean = true> {
 export interface FlashingsSelect<T extends boolean = true> {
   flashingId?: T;
   ownerId?: T;
-  data?: T;
-  revisions?: T;
-  status?: T;
+  data?:
+    | T
+    | {
+        nodes?:
+          | T
+          | {
+              node_id?: T;
+              left?: T;
+              top?: T;
+              next_node_id?: T;
+              prev_node_id?: T;
+              next_line_bside_length?: T;
+              id?: T;
+            };
+        startCrushFold?: T;
+        endCrushFold?: T;
+        crushFoldDir?: T;
+        material?: T;
+        color?:
+          | T
+          | {
+              name?: T;
+              code?: T;
+            };
+        thickness?:
+          | T
+          | {
+              code?: T;
+              thickness?: T;
+            };
+        isDraft?: T;
+        colorSideDirection?: T;
+        crushFold?: T;
+        tapered?: T;
+        totalGirth?: T;
+        orderIdToBeSaved?: T;
+      };
+  revisions?:
+    | T
+    | {
+        revisionId?: T;
+        notes?: T;
+        timestamp?: T;
+        data?:
+          | T
+          | {
+              nodes?:
+                | T
+                | {
+                    node_id?: T;
+                    left?: T;
+                    top?: T;
+                    next_node_id?: T;
+                    prev_node_id?: T;
+                    next_line_bside_length?: T;
+                    id?: T;
+                  };
+              startCrushFold?: T;
+              endCrushFold?: T;
+              crushFoldDir?: T;
+              material?: T;
+              color?:
+                | T
+                | {
+                    name?: T;
+                    code?: T;
+                  };
+              thickness?:
+                | T
+                | {
+                    code?: T;
+                    thickness?: T;
+                  };
+              isDraft?: T;
+              colorSideDirection?: T;
+            };
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1627,7 +1810,12 @@ export interface FlashingsSelect<T extends boolean = true> {
 export interface TemplatesSelect<T extends boolean = true> {
   flashingId?: T;
   ownerId?: T;
-  tags?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
   scope?: T;
   name?: T;
   accessStats?:
@@ -1647,7 +1835,7 @@ export interface JobreferencesSelect<T extends boolean = true> {
   ownerId?: T;
   code?: T;
   projectName?: T;
-  address?:
+  addresses?:
     | T
     | {
         street?: T;
@@ -1655,12 +1843,14 @@ export interface JobreferencesSelect<T extends boolean = true> {
         state?: T;
         postcode?: T;
         addressName?: T;
+        id?: T;
       };
-  recipient?:
+  recipients?:
     | T
     | {
         name?: T;
         phone?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1674,17 +1864,47 @@ export interface OrdersSelect<T extends boolean = true> {
   clientId?: T;
   jobReferenceId?: T;
   projectName?: T;
-  deliveryDate?: T;
-  deliveryType?: T;
-  deliveryAddress?: T;
-  driver?:
+  delivery?:
     | T
     | {
-        name?: T;
-        contact?: T;
+        date?: T;
+        type?: T;
+        address?: T;
+        driver?:
+          | T
+          | {
+              name?: T;
+              contact?: T;
+            };
+        id?: T;
       };
-  deliveryId?: T;
-  items?: T;
+  items?:
+    | T
+    | {
+        flashingId?: T;
+        material?:
+          | T
+          | {
+              type?: T;
+              property?: T;
+            };
+        thickness?: T;
+        girth?: T;
+        tapered?: T;
+        crushfold?: T;
+        code?: T;
+        position?: T;
+        subItems?:
+          | T
+          | {
+              quantity?: T;
+              length?: T;
+              price?: T;
+              id?: T;
+            };
+        itemTotal?: T;
+        id?: T;
+      };
   price?:
     | T
     | {
@@ -1705,8 +1925,24 @@ export interface OrdersSelect<T extends boolean = true> {
 export interface FactoriesSelect<T extends boolean = true> {
   factoryId?: T;
   name?: T;
-  materials?: T;
-  customFormulas?: T;
+  materials?:
+    | T
+    | {
+        materialProperty?: T;
+        thicknessOptions?:
+          | T
+          | {
+              thickness?: T;
+              id?: T;
+            };
+        otherProps?:
+          | T
+          | {
+              key?: T;
+              value?: T;
+            };
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1721,7 +1957,12 @@ export interface SupportrequestsSelect<T extends boolean = true> {
   email?: T;
   subject?: T;
   message?: T;
-  media?: T;
+  media?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
   status?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1733,10 +1974,27 @@ export interface SupportrequestsSelect<T extends boolean = true> {
 export interface AdjustrequestsSelect<T extends boolean = true> {
   requestId?: T;
   orderId?: T;
-  items?: T;
+  items?:
+    | T
+    | {
+        itemId?: T;
+        reason?: T;
+        changes?:
+          | T
+          | {
+              key?: T;
+              value?: T;
+            };
+        id?: T;
+      };
   reason?: T;
   description?: T;
-  media?: T;
+  media?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
   status?: T;
   updatedAt?: T;
   createdAt?: T;

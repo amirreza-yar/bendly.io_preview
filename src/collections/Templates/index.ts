@@ -17,7 +17,13 @@ export const Templates: CollectionConfig = {
   fields: [
     { name: 'flashingId', type: 'relationship', relationTo: 'flashings' },
     { name: 'ownerId', type: 'relationship', relationTo: 'users' },
-    { name: 'tags', type: 'text' },
+    {
+      name: 'tags',
+      type: 'array',
+      fields: [
+        { name: 'tag', type: 'text' },
+      ],
+    },
     {
       name: 'scope',
       type: 'select',

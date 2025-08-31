@@ -24,11 +24,10 @@ export const Users: CollectionConfig = {
       name: 'role',
       type: 'select',
       required: true,
-      defaultValue: 'designer',
+      defaultValue: 'client',
       options: [
-        { label: 'Designer', value: 'designer' },
+        { label: 'Client', value: 'client' },
         { label: 'Factory', value: 'factory' },
-        { label: 'Supplier', value: 'supplier' },
         { label: 'Superadmin', value: 'superadmin' },
       ],
     },
