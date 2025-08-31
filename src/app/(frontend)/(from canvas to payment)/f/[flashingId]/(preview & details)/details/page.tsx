@@ -1,23 +1,15 @@
 'use client'
 import React from 'react'
-import Link from 'next/link'
-import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
-import { Button } from '@/components/uikit/buttons/button'
-import { ArrowLeft } from '@/components/uikit/icons'
-import DetailsForm from '@/components/dashboard/order/DetailsForm'
-import { Header } from '@/components/dashboard/header'
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import DetailsComponent, { DetailsFormValues } from '@/components/flashing/details/detailsComponent'
 import { useGETOrderById, initNewOrder, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
 import {
-  getFlashingById,
+  useGETFlashingById,
   removeOrderIdToBeSavedFromFlashingById,
 } from '@/lib/db/helpers/flashingHelpers'
 import { Specification, StoredOrder, StoredOrderFlashing } from '@/types/orderTypes'
 import { generateRandomId } from '@/lib/db/helpers/utils'
 import { toast } from 'sonner'
-import { db } from '@/lib/db/appDB'
-import Dexie from 'dexie'
 
 export default function DetailsPage() {
   const { flashingId }: { flashingId: string } = useParams()

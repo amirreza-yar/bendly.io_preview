@@ -58,11 +58,11 @@ export const VerifyEmailOTPForm = ({
                 <FormControl>
                   <InputOTP maxLength={5} {...field}>
                     <InputOTPGroup className="w-fit flex justify-center">
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
+                      <InputOTPSlot className="border-border-dark" index={0} />
+                      <InputOTPSlot className="border-border-dark" index={1} />
+                      <InputOTPSlot className="border-border-dark" index={2} />
+                      <InputOTPSlot className="border-border-dark" index={3} />
+                      <InputOTPSlot className="border-border-dark" index={4} />
                     </InputOTPGroup>
                   </InputOTP>
                 </FormControl>

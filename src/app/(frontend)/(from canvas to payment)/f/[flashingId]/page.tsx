@@ -1,7 +1,7 @@
 'use client'
 
 import { usePageNavigationAppRouter } from '@/hooks/usePageNavigationRouter'
-import { getFlashingById } from '@/lib/db/helpers/flashingHelpers'
+import { useGETFlashingById } from '@/lib/db/helpers/flashingHelpers'
 import { looksLikeGeneratedId } from '@/lib/db/helpers/utils'
 import { notFound, redirect, useParams, useSearchParams } from 'next/navigation'
 

@@ -4,7 +4,7 @@ import { Button } from '@/components/uikit/buttons/button'
 import { Info, Mail } from '@/components/uikit/icons'
 import { Input, LabeledInput } from '@/components/uikit/input'
 import { Footer } from '@/components/dashboard/footer'
-import { AlertModal } from '@/components/uikit/alertModal'
+import { AlertDialogContent, AlertModal } from '@/components/uikit/alertModal'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { useRouter } from 'next/navigation'
@@ -16,15 +16,18 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/uikit/form'
-import { email, z } from 'zod'
+import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useUser } from '@/providers/main_providers/UserContext'
-import { apiSendEmailCode } from '@/utilities/api/user_auth/auth'
+import { apiSendEmailCode } from '@/utilities/api/auth'
 import { useSearchParams } from 'next/navigation'
-import { HeaderWithCenterTitle } from '@/components/dashboard/header'
 import { toast } from 'sonner'
-import { AuthEmailForm, EmailInputValue } from '@/components/dashboard/auth/forms'
+import { EmailInputValue } from '@/components/dashboard/auth/forms'
+import { XIcon } from '@/components/uikit/icons'
+import { cva } from 'class-variance-authority'
+import * as React from 'react'
+import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 
 const FormSchema = z.object({
   email: z.email('Please enter a valid email').nonempty('This field is requiered'),
@@ -39,25 +42,28 @@ export default function AccountPage() {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
-    defaultValues: { email: '' },
+    defaultValues: { email: user.email },
   })
 
-  const defaultEmail = useSearchParams().get('email')
+  const { isDirty } = form.formState
 
-  const onSubmitEmail = async (data: EmailInputValue) => {
-    const res = await apiSendEmailCode(data.email)
-    if (res.apiCode === '100100') {
-      router.push(`/auth/signup?email=${data.email}`)
-      toast('Verification code sent')
-    } else if (res.apiCode === '100102') {
-      router.push(`/auth/login?email=${data.email}`)
-    } else if (res.apiCode === '100103') {
-      toast('Wait before sending new code')
-    } else {
-      toast('Something went wrong. Try again')
-    }
+  const onSendVerifyCode = async (data: EmailInputValue) => {
+    // const res = await apiSendEmailCode(data.email)
+    // if (res.apiCode === '100100') {
+    //   router.push(`/auth/signup?email=${data.email}`)
+    //   toast('Verification code sent')
+    // } else if (res.apiCode === '100102') {
+    //   router.push(`/auth/login?email=${data.email}`)
+    // } else if (res.apiCode === '100103') {
+    //   toast('Wait before sending new code')
+    // } else {
+    //   toast('Something went wrong. Try again')
+    // }
+    // console.log(res)
 
-    console.log(res)
+    console.log('form submited', data.email, isDirty)
+
+    router.push(`/dashboard/account/verify-current-email?email=${data.email}`)
   }
 
   return (
@@ -66,7 +72,11 @@ export default function AccountPage() {
 
       <ContentWrapper className="pt-18">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmitEmail)} className="grid gap-6">
+          <form
+            id="change-email-form"
+            onSubmit={form.handleSubmit(onSendVerifyCode)}
+            className="grid gap-6"
+          >
             <FormField
               control={form.control}
               name="email"
@@ -86,11 +96,6 @@ export default function AccountPage() {
                 </FormItem>
               )}
             />
-            <Footer>
-              <Button type="submit" className="w-full bg-primary">
-                Send Verify Code
-              </Button>
-            </Footer>
           </form>
         </Form>
         <div className="mt-6 border-border-seprator border p-3 rounded-lg flex gap-3 ">
@@ -101,19 +106,55 @@ export default function AccountPage() {
         </div>
       </ContentWrapper>
 
-      <AlertModal
-        title="Verify you identity"
-        description="To change your email address, you first need to confirm your current one."
-        cancelButtonText="Cencel"
-        actionButtonText="Send Verification code"
-        open={isModalOpen}
-        onAction={() => {
-          setIsModalOpen(false)
-        }}
-        onCancle={() => {
-          setIsModalOpen(false)
-        }}
-      />
+      <Footer>
+        <Button disabled={!isDirty} className="w-full" onClick={() => setIsModalOpen(true)}>
+          Send Verify Code
+        </Button>
+      </Footer>
+
+      <AlertDialogPrimitive.Root data-slot="alert-dialog" open={isModalOpen}>
+        <AlertDialogPrimitive.Trigger
+          data-slot="alert-dialog-trigger"
+          asChild
+        ></AlertDialogPrimitive.Trigger>
+        <AlertDialogContent className="font-roboto">
+          <div data-slot="alert-dialog-header" className="flex flex-col gap-4">
+            <AlertDialogPrimitive.Cancel className="absolute top-4 end-4 [&_svg:not([class*='size-'])]:size-6">
+              <XIcon
+                onClick={() => setIsModalOpen(false)}
+                className="text-neutral-dark"
+                variant="secondary"
+              />
+            </AlertDialogPrimitive.Cancel>
+            <AlertDialogPrimitive.Title
+              data-slot="alert-dialog-title"
+              className="text-sm/[19px] font-semibold"
+            >
+              Verify Your Identity
+            </AlertDialogPrimitive.Title>
+
+            <AlertDialogPrimitive.Description
+              data-slot="alert-dialog-description"
+              className="text-muted-foreground text-sm"
+            >
+              To change your email address, you first need to confirm your current one.
+            </AlertDialogPrimitive.Description>
+          </div>
+          <div data-slot="alert-dialog-footer" className="grid gap-4">
+            <AlertDialogPrimitive.Action asChild>
+              <Button type="submit" form="change-email-form">
+                Send Verify Code
+              </Button>
+            </AlertDialogPrimitive.Action>
+
+            <AlertDialogPrimitive.Cancel asChild>
+              <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </Button>
+            </AlertDialogPrimitive.Cancel>
+          </div>
+        </AlertDialogContent>
+      </AlertDialogPrimitive.Root>
     </>
   )
 }
