@@ -81,13 +81,9 @@ export default function VerifyEmailPage() {
             <p className="subtitle-regular">
               We've sent a 5-digit code to your current email address:
             </p>
-            <Link
-              href={`/auth?email=${email}`}
-              className="flex gap-2 items-center rounded-full border border-border-default bg-surface-disable w-fit justify-self-center py-2 px-4 text-[16px]/[24px] font-regular"
-            >
+            <div className="flex gap-2 items-center rounded-full border border-border-default bg-surface-disable w-fit justify-self-center py-2 px-4 text-[16px]/[24px] font-regular">
               {email}
-              <Edit className="size-5" />
-            </Link>
+            </div>
           </div>
 
           <VerifyEmailOTPForm
