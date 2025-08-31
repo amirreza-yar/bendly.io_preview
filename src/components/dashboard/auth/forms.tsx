@@ -18,6 +18,8 @@ import { useEffect } from 'react'
 import { Select } from '@/components/uikit/select'
 import { Checkbox } from '@/components/uikit/checkbox'
 import Link from 'next/link'
+import { useMutation } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 const VerifyEmailOTPSchema = z.object({
   emailOTP: z.string().min(5, {
@@ -101,8 +103,35 @@ export const AuthEmailForm = ({
     },
   })
 
+  // const mutation = useMutation({
+  //   mutationFn: async (data: EmailInputValue) => {
+  //     const res = await fetch('/api/auth', {
+  //       method: 'POST',
+  //       body: JSON.stringify({ email: data.email }),
+  //       headers: { 'Content-Type': 'application/json' },
+  //     })
+
+  //     if (!res.ok) {
+  //       throw new Error('Failed to send email')
+  //     }
+  //     return res.json()
+  //   },
+  //   onSuccess: (_, variables) => {
+  //     toast(`Code sent to ${variables.email}`)
+  //   },
+  //   onError: (err: any) => {
+  //     toast(err.message || 'Something went wrong')
+  //   },
+  // })
+
   return (
     <Form {...form}>
+      {/* <form
+        onSubmit={form.handleSubmit((data: EmailInputValue) => {
+          mutation.mutate(data)
+        })}
+        className="grid gap-6"
+      > */}
       <form onSubmit={form.handleSubmit(onSubmitEmail)} className="grid gap-6">
         <FormField
           control={form.control}
@@ -123,8 +152,11 @@ export const AuthEmailForm = ({
             </FormItem>
           )}
         />
+        {/* <Button type="submit" className="w-full" disabled={mutation.isPending}>
+          {mutation.isPending ? 'Sending...' : 'Countinue'}
+        </Button> */}
         <Button type="submit" className="w-full">
-          Continue
+          Countinue
         </Button>
       </form>
     </Form>

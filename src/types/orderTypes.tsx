@@ -28,7 +28,7 @@ export type PaymentHistory = {
   id?: string
   orderId?: string
   total: number
-  date: string
+  date: number
   transactionId: string
   via: PaymentMethod
 }
@@ -47,10 +47,12 @@ export type Specification = {
   cost?: number
 }
 
-export type StoredOrderFlashing = Pick<StoredFlashing, 'id'> & {
-  code: string
+export type StoredOrderFlashing = {
+  id: string
+  code?: string
   position?: string
-  specifications: Specification[]
+  specifications?: Specification[]
+  moreDetails?: Omit<StoredFlashing, 'id'>
 }
 
 export interface StoredOrder {
@@ -63,16 +65,34 @@ export interface StoredOrder {
 
   jobRefrence?: Pick<StoredJobReference, 'id' | 'projectName' | 'code'>
 
-  address?: Address & { description?: string }
+  address?: Address
 
   flashings?: StoredOrderFlashing[]
   recipientInfo?: RecipientInfo
-  deliveryDate?: string
+  deliveryDate?: number
+  deliveryDesc?: string
   deliveryId?: number
   driverInfo?: DriverInfo
   deliveryCost?: number
   GST?: number
   paymentHistory?: PaymentHistory
+  pickupInfo?: {
+    desc: string
+    address: {
+      streetAddress: string
+      suburb: string
+      state: string
+      postcode: number
+    }
+  }
+
+  notes?: string
+
+  flashingTotalCost?: number
+
+  totalCost?: number
 
   rejectionDesc?: string
+
+  completed: boolean
 }

@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { HeaderWithCenterTitle } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import DividerWithText from '@/components/uikit/dividerWithText'
-import { apiSendEmailCode } from '@/utilities/api/user_auth/auth'
+import { apiSendEmailCode } from '@/utilities/api/auth'
 import { toast } from 'sonner'
 import { AuthEmailForm, EmailInputValue } from '@/components/dashboard/auth/forms'
 
@@ -26,7 +26,6 @@ const AuthPage = () => {
     } else {
       toast('Something went wrong. Try again')
     }
-
     console.log(res)
   }
 

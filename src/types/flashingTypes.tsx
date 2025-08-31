@@ -40,4 +40,5 @@ export type StoredFlashing = BaseFlashing & {
   crushFold: boolean
   tapered: boolean
   totalGirth: number
+  orderIdToBeSaved?: string
 }

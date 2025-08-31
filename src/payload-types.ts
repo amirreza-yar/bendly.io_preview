@@ -82,6 +82,8 @@ export interface Config {
     appsettings: Appsetting;
     paymenthistory: Paymenthistory;
     logs: Log;
+    permissions: Permission;
+    roles: Role;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -108,6 +110,8 @@ export interface Config {
     appsettings: AppsettingsSelect<false> | AppsettingsSelect<true>;
     paymenthistory: PaymenthistorySelect<false> | PaymenthistorySelect<true>;
     logs: LogsSelect<false> | LogsSelect<true>;
+    permissions: PermissionsSelect<false> | PermissionsSelect<true>;
+    roles: RolesSelect<false> | RolesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -395,7 +399,7 @@ export interface User {
   id: string;
   fullname: string;
   phone?: string | null;
-  role: 'designer' | 'factory' | 'supplier' | 'superadmin';
+  roleId?: (string | null) | Role;
   status?: ('active' | 'deactivated' | 'blocked') | null;
   settings?: {
     measurementMode?: ('metric' | 'imperial') | null;
@@ -421,6 +425,64 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles".
+ */
+export interface Role {
+  id: string;
+  name: string;
+  description?: string | null;
+  type: 'system' | 'factory' | 'client';
+  permissions?: (string | Permission)[] | null;
+  inheritsFrom?: (string | Role)[] | null;
+  settings?: {
+    canManageUsers?: boolean | null;
+    canManageRoles?: boolean | null;
+    canViewLogs?: boolean | null;
+    canExportData?: boolean | null;
+    canImportData?: boolean | null;
+    canManageSystem?: boolean | null;
+  };
+  isActive?: boolean | null;
+  isDefault?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "permissions".
+ */
+export interface Permission {
+  id: string;
+  name: string;
+  description?: string | null;
+  resource:
+    | 'users'
+    | 'flashings'
+    | 'templates'
+    | 'jobreferences'
+    | 'orders'
+    | 'factories'
+    | 'supportrequests'
+    | 'adjustrequests'
+    | 'appsettings'
+    | 'paymenthistory'
+    | 'logs'
+    | 'permissions'
+    | 'roles'
+    | 'system';
+  action: 'create' | 'read' | 'update' | 'delete' | 'list' | 'approve' | 'reject' | 'export' | 'import' | 'manage';
+  conditions?: {
+    ownDataOnly?: boolean | null;
+    factoryOnly?: boolean | null;
+    statusFilter?: string | null;
+    dateRange?: boolean | null;
+  };
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -770,17 +832,76 @@ export interface Form {
  */
 export interface Flashing {
   id: string;
-  _id?: string | null;
+  flashingId: string;
   ownerId?: (string | null) | User;
-  data?: string | null;
+  data: {
+    nodes?:
+      | {
+          node_id?: string | null;
+          left?: number | null;
+          top?: number | null;
+          next_node_id?: string | null;
+          prev_node_id?: string | null;
+          next_line_bside_length?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+    startCrushFold?: boolean | null;
+    endCrushFold?: boolean | null;
+    crushFoldDir?: boolean | null;
+    material?: string | null;
+    color?: {
+      name?: string | null;
+      code?: string | null;
+    };
+    thickness?: {
+      code?: string | null;
+      thickness?: number | null;
+    };
+    isDraft?: boolean | null;
+    colorSideDirection?: boolean | null;
+    crushFold?: boolean | null;
+    tapered?: boolean | null;
+    totalGirth?: number | null;
+    orderIdToBeSaved?: string | null;
+  };
   revisions?:
     | {
+        revisionId?: string | null;
+        notes?: string | null;
+        timestamp?: string | null;
+        data?: {
+          nodes?:
+            | {
+                node_id?: string | null;
+                left?: number | null;
+                top?: number | null;
+                next_node_id?: string | null;
+                prev_node_id?: string | null;
+                next_line_bside_length?: number | null;
+                id?: string | null;
+              }[]
+            | null;
+          startCrushFold?: boolean | null;
+          endCrushFold?: boolean | null;
+          crushFoldDir?: boolean | null;
+          material?: string | null;
+          color?: {
+            name?: string | null;
+            code?: string | null;
+          };
+          thickness?: {
+            code?: string | null;
+            thickness?: number | null;
+          };
+          isDraft?: boolean | null;
+          colorSideDirection?: boolean | null;
+        };
         id?: string | null;
       }[]
     | null;
-  status?: 'drafted' | null;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -788,18 +909,22 @@ export interface Flashing {
  */
 export interface Template {
   id: string;
-  _id?: string | null;
   flashingId?: (string | null) | Flashing;
   ownerId?: (string | null) | User;
-  tags?: string | null;
+  tags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   scope?: ('private' | 'shared' | 'app') | null;
   name?: string | null;
   accessStats?: {
     usageCount?: number | null;
     lastAccessed?: string | null;
   };
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -807,23 +932,28 @@ export interface Template {
  */
 export interface Jobreference {
   id: string;
-  _id?: string | null;
   ownerId?: (string | null) | User;
   code?: string | null;
   projectName?: string | null;
-  address?: {
-    street?: string | null;
-    suburb?: string | null;
-    state?: string | null;
-    postcode?: string | null;
-    addressName?: string | null;
-  };
-  recipient?: {
-    name?: string | null;
-    phone?: string | null;
-  };
-  createdAt: string;
+  addresses?:
+    | {
+        street?: string | null;
+        suburb?: string | null;
+        state?: string | null;
+        postcode?: string | null;
+        addressName?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  recipients?:
+    | {
+        name?: string | null;
+        phone?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -831,21 +961,42 @@ export interface Jobreference {
  */
 export interface Order {
   id: string;
-  _id?: string | null;
   orderNumber?: string | null;
   clientId?: (string | null) | User;
   jobReferenceId?: (string | null) | Jobreference;
   projectName?: string | null;
-  deliveryDate?: string | null;
-  deliveryType?: ('delivery' | 'pickup') | null;
-  deliveryAddress?: string | null;
-  driver?: {
-    name?: string | null;
-    contact?: string | null;
+  delivery?: {
+    date?: string | null;
+    type?: ('delivery' | 'pickup') | null;
+    address?: string | null;
+    driver?: {
+      name?: string | null;
+      contact?: string | null;
+    };
+    id?: string | null;
   };
-  deliveryId?: string | null;
   items?:
     | {
+        flashingId?: (string | null) | Flashing;
+        material?: {
+          type?: string | null;
+          property?: string | null;
+        };
+        thickness?: number | null;
+        girth?: number | null;
+        tapered?: boolean | null;
+        crushfold?: boolean | null;
+        code?: string | null;
+        position?: string | null;
+        subItems?:
+          | {
+              quantity?: number | null;
+              length?: number | null;
+              price?: number | null;
+              id?: string | null;
+            }[]
+          | null;
+        itemTotal?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -857,10 +1008,6 @@ export interface Order {
   };
   paymentHistory?: (string | null) | Paymenthistory;
   status?: ('pending' | 'in-progress' | 'delivered' | 'cancelled' | 'indexed') | null;
-  metadata?: {
-    createdAt?: string | null;
-    updatedAt?: string | null;
-  };
   updatedAt: string;
   createdAt: string;
 }
@@ -870,13 +1017,12 @@ export interface Order {
  */
 export interface Paymenthistory {
   id: string;
-  _id?: string | null;
   transactionId?: string | null;
   totalPrice?: number | null;
   date?: string | null;
   method?: ('card' | 'bank' | 'cash') | null;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -884,20 +1030,24 @@ export interface Paymenthistory {
  */
 export interface Factory {
   id: string;
-  _id?: string | null;
+  factoryId?: string | null;
   name?: string | null;
   materials?:
     | {
+        material?: string | null;
+        options?:
+          | {
+              name?: string | null;
+              value?: string | null;
+              type?: ('color' | 'thickness' | 'other') | null;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
-  customFormulas?:
-    | {
-        id?: string | null;
-      }[]
-    | null;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -905,16 +1055,21 @@ export interface Factory {
  */
 export interface Supportrequest {
   id: string;
-  _id?: string | null;
+  requestId?: string | null;
   userId?: (string | null) | User;
   fullname?: string | null;
   email?: string | null;
   subject?: string | null;
   message?: string | null;
-  media?: string | null;
+  media?:
+    | {
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   status?: ('open' | 'resolved') | null;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -922,15 +1077,30 @@ export interface Supportrequest {
  */
 export interface Adjustrequest {
   id: string;
-  _id?: string | null;
+  requestId?: string | null;
   orderId?: (string | null) | Order;
-  items?: string | null;
+  items?:
+    | {
+        itemId?: string | null;
+        reason?: string | null;
+        changes?: {
+          key?: string | null;
+          value?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
   reason?: string | null;
   description?: string | null;
-  media?: string | null;
+  media?:
+    | {
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   status?: ('pending' | 'approved' | 'rejected') | null;
-  createdAt: string;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -938,19 +1108,32 @@ export interface Adjustrequest {
  */
 export interface Appsetting {
   id: string;
-  _id?: string | null;
-  setting?: string | null;
-  appDefaults?: {
-    materialOptions?: string | null;
-    foldStyles?: string | null;
-    statusOptions?: string | null;
-  };
-  permissions?: {
-    read?: boolean | null;
-    write?: boolean | null;
-  };
-  createdAt: string;
+  /**
+   * Setting group scope (e.g., materialOptions, foldStyles)
+   */
+  groupName: string;
+  /**
+   * Dynamic key-value pairs for this group
+   */
+  settings?:
+    | {
+        /**
+         * Setting key name
+         */
+        key: string;
+        /**
+         * Setting value type
+         */
+        blockType: 'boolean' | 'string' | 'number' | 'json' | 'array';
+        /**
+         * Setting value (format depends on type)
+         */
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -958,8 +1141,21 @@ export interface Appsetting {
  */
 export interface Log {
   id: string;
-  _id?: string | null;
-  entityType?: ('order' | 'request' | 'flashing') | null;
+  entityType?:
+    | (
+        | 'user'
+        | 'flashing'
+        | 'template'
+        | 'jobreference'
+        | 'order'
+        | 'factory'
+        | 'supportrequest'
+        | 'adjustrequest'
+        | 'appsettings'
+        | 'paymenthistory'
+        | 'system'
+      )
+    | null;
   entityId?: string | null;
   action?: string | null;
   performedBy?: (string | null) | User;
@@ -1200,6 +1396,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'logs';
         value: string | Log;
+      } | null)
+    | ({
+        relationTo: 'permissions';
+        value: string | Permission;
+      } | null)
+    | ({
+        relationTo: 'roles';
+        value: string | Role;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1549,7 +1753,7 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface UsersSelect<T extends boolean = true> {
   fullname?: T;
   phone?: T;
-  role?: T;
+  roleId?: T;
   status?: T;
   settings?:
     | T
@@ -1584,27 +1788,102 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "flashings_select".
  */
 export interface FlashingsSelect<T extends boolean = true> {
-  _id?: T;
+  flashingId?: T;
   ownerId?: T;
-  data?: T;
+  data?:
+    | T
+    | {
+        nodes?:
+          | T
+          | {
+              node_id?: T;
+              left?: T;
+              top?: T;
+              next_node_id?: T;
+              prev_node_id?: T;
+              next_line_bside_length?: T;
+              id?: T;
+            };
+        startCrushFold?: T;
+        endCrushFold?: T;
+        crushFoldDir?: T;
+        material?: T;
+        color?:
+          | T
+          | {
+              name?: T;
+              code?: T;
+            };
+        thickness?:
+          | T
+          | {
+              code?: T;
+              thickness?: T;
+            };
+        isDraft?: T;
+        colorSideDirection?: T;
+        crushFold?: T;
+        tapered?: T;
+        totalGirth?: T;
+        orderIdToBeSaved?: T;
+      };
   revisions?:
     | T
     | {
+        revisionId?: T;
+        notes?: T;
+        timestamp?: T;
+        data?:
+          | T
+          | {
+              nodes?:
+                | T
+                | {
+                    node_id?: T;
+                    left?: T;
+                    top?: T;
+                    next_node_id?: T;
+                    prev_node_id?: T;
+                    next_line_bside_length?: T;
+                    id?: T;
+                  };
+              startCrushFold?: T;
+              endCrushFold?: T;
+              crushFoldDir?: T;
+              material?: T;
+              color?:
+                | T
+                | {
+                    name?: T;
+                    code?: T;
+                  };
+              thickness?:
+                | T
+                | {
+                    code?: T;
+                    thickness?: T;
+                  };
+              isDraft?: T;
+              colorSideDirection?: T;
+            };
         id?: T;
       };
-  status?: T;
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "templates_select".
  */
 export interface TemplatesSelect<T extends boolean = true> {
-  _id?: T;
   flashingId?: T;
   ownerId?: T;
-  tags?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
   scope?: T;
   name?: T;
   accessStats?:
@@ -1613,19 +1892,18 @@ export interface TemplatesSelect<T extends boolean = true> {
         usageCount?: T;
         lastAccessed?: T;
       };
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jobreferences_select".
  */
 export interface JobreferencesSelect<T extends boolean = true> {
-  _id?: T;
   ownerId?: T;
   code?: T;
   projectName?: T;
-  address?:
+  addresses?:
     | T
     | {
         street?: T;
@@ -1633,39 +1911,66 @@ export interface JobreferencesSelect<T extends boolean = true> {
         state?: T;
         postcode?: T;
         addressName?: T;
+        id?: T;
       };
-  recipient?:
+  recipients?:
     | T
     | {
         name?: T;
         phone?: T;
+        id?: T;
       };
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders_select".
  */
 export interface OrdersSelect<T extends boolean = true> {
-  _id?: T;
   orderNumber?: T;
   clientId?: T;
   jobReferenceId?: T;
   projectName?: T;
-  deliveryDate?: T;
-  deliveryType?: T;
-  deliveryAddress?: T;
-  driver?:
+  delivery?:
     | T
     | {
-        name?: T;
-        contact?: T;
+        date?: T;
+        type?: T;
+        address?: T;
+        driver?:
+          | T
+          | {
+              name?: T;
+              contact?: T;
+            };
+        id?: T;
       };
-  deliveryId?: T;
   items?:
     | T
     | {
+        flashingId?: T;
+        material?:
+          | T
+          | {
+              type?: T;
+              property?: T;
+            };
+        thickness?: T;
+        girth?: T;
+        tapered?: T;
+        crushfold?: T;
+        code?: T;
+        position?: T;
+        subItems?:
+          | T
+          | {
+              quantity?: T;
+              length?: T;
+              price?: T;
+              id?: T;
+            };
+        itemTotal?: T;
         id?: T;
       };
   price?:
@@ -1678,12 +1983,6 @@ export interface OrdersSelect<T extends boolean = true> {
       };
   paymentHistory?: T;
   status?: T;
-  metadata?:
-    | T
-    | {
-        createdAt?: T;
-        updatedAt?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1692,100 +1991,164 @@ export interface OrdersSelect<T extends boolean = true> {
  * via the `definition` "factories_select".
  */
 export interface FactoriesSelect<T extends boolean = true> {
-  _id?: T;
+  factoryId?: T;
   name?: T;
   materials?:
     | T
     | {
+        material?: T;
+        options?:
+          | T
+          | {
+              name?: T;
+              value?: T;
+              type?: T;
+              id?: T;
+            };
         id?: T;
       };
-  customFormulas?:
-    | T
-    | {
-        id?: T;
-      };
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "supportrequests_select".
  */
 export interface SupportrequestsSelect<T extends boolean = true> {
-  _id?: T;
+  requestId?: T;
   userId?: T;
   fullname?: T;
   email?: T;
   subject?: T;
   message?: T;
-  media?: T;
+  media?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
   status?: T;
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "adjustrequests_select".
  */
 export interface AdjustrequestsSelect<T extends boolean = true> {
-  _id?: T;
+  requestId?: T;
   orderId?: T;
-  items?: T;
+  items?:
+    | T
+    | {
+        itemId?: T;
+        reason?: T;
+        changes?:
+          | T
+          | {
+              key?: T;
+              value?: T;
+            };
+        id?: T;
+      };
   reason?: T;
   description?: T;
-  media?: T;
+  media?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
   status?: T;
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "appsettings_select".
  */
 export interface AppsettingsSelect<T extends boolean = true> {
-  _id?: T;
-  setting?: T;
-  appDefaults?:
+  groupName?: T;
+  settings?:
     | T
     | {
-        materialOptions?: T;
-        foldStyles?: T;
-        statusOptions?: T;
+        key?: T;
+        blockType?: T;
+        value?: T;
+        id?: T;
       };
-  permissions?:
-    | T
-    | {
-        read?: T;
-        write?: T;
-      };
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "paymenthistory_select".
  */
 export interface PaymenthistorySelect<T extends boolean = true> {
-  _id?: T;
   transactionId?: T;
   totalPrice?: T;
   date?: T;
   method?: T;
-  createdAt?: T;
   updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "logs_select".
  */
 export interface LogsSelect<T extends boolean = true> {
-  _id?: T;
   entityType?: T;
   entityId?: T;
   action?: T;
   performedBy?: T;
   timestamp?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "permissions_select".
+ */
+export interface PermissionsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  resource?: T;
+  action?: T;
+  conditions?:
+    | T
+    | {
+        ownDataOnly?: T;
+        factoryOnly?: T;
+        statusFilter?: T;
+        dateRange?: T;
+      };
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles_select".
+ */
+export interface RolesSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  type?: T;
+  permissions?: T;
+  inheritsFrom?: T;
+  settings?:
+    | T
+    | {
+        canManageUsers?: T;
+        canManageRoles?: T;
+        canViewLogs?: T;
+        canExportData?: T;
+        canImportData?: T;
+        canManageSystem?: T;
+      };
+  isActive?: T;
+  isDefault?: T;
   updatedAt?: T;
   createdAt?: T;
 }

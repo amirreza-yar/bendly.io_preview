@@ -6,7 +6,7 @@ import { notFound, useRouter, useSearchParams } from 'next/navigation'
 import { HeaderWithCenterTitle } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import DividerWithText from '@/components/uikit/dividerWithText'
-import { apiLogin, apiSendEmailCode } from '@/utilities/api/user_auth/auth'
+import { apiLogin, apiSendEmailCode } from '@/utilities/api/auth'
 import { toast } from 'sonner'
 import {
   AuthEmailForm,
@@ -32,7 +32,7 @@ export default function LoginPage() {
     const res = await apiLogin(email, data.password)
     if (res?.apiCode === '100600') {
       toast('Welcome')
-      router.push('/dashboard')
+      // router.push('/dashboard')
     } else if (res?.apiCode === '100602' || res?.apiCode === '100603') {
       setErrorText('Incorrect password, Please try again')
     } else {

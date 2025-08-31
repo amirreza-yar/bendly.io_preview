@@ -25,7 +25,7 @@ import { ColorType, ThicknessType } from '@/types/material&PropsType'
 import { db } from '@/lib/db/appDB'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { FeaturedCheckSmall } from '@/components/uikit/icons'
-import { notFound, useParams, useRouter } from 'next/navigation'
+import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
 import { upsertPartialFlashing } from '@/lib/db/helpers/flashingHelpers'
 import { useEffect, useState } from 'react'
 
@@ -36,6 +36,8 @@ export default function SelectMaterialAndColorPage() {
   const materialsWithProperties = useLiveQuery(() => db.materialsAndProps.toArray(), [])
 
   const { flashingId }: { flashingId: string } = useParams()
+
+  const orderId = useSearchParams().get('orderId')
 
   const savedFlashing = useLiveQuery(() => db.flashings.get({ id: flashingId }), [flashingId], null)
 
@@ -54,19 +56,6 @@ export default function SelectMaterialAndColorPage() {
     }
   }, [savedFlashing, isNavigating])
 
-  // Helper function to get allowed colors for a material:
-  function getColorNames(material: string): string[] {
-    const mat = materialsWithProperties?.find((m) => m.material === material)
-    return mat?.colors?.map((c) => c.name) || []
-  }
-
-  // Helper function to get allowed thickness codes for a material:
-  function getThicknessCodes(material: string) {
-    const mat = materialsWithProperties?.find((m) => m.material === material)
-    return mat?.thicknesses?.map((t) => t.code) || []
-  }
-
-  // Extract all material names for basic validation:
   const materialNames = materialsWithProperties?.map((m) => m.material)
 
   const FormSchema = z.object({
@@ -180,7 +169,7 @@ export default function SelectMaterialAndColorPage() {
 
     setIsNavigating(true)
 
-    window.location.assign(`/f/${flashingId}/canvas`)
+    window.location.assign(`/f/${flashingId}/canvas?orderId=${orderId}`)
   }
 
   if (savedFlashing) {

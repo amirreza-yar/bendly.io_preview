@@ -11,37 +11,90 @@ export const AppSettings: CollectionConfig = {
     delete: authenticated,
   },
   admin: {
-    useAsTitle: '_id',
-    defaultColumns: ['_id'],
+    useAsTitle: 'groupName',
+    defaultColumns: ['id', 'groupName', 'createdAt'],
+    group: 'System',
   },
   fields: [
-    { name: '_id', type: 'text' },
-    { name: 'setting', type: 'text' },
     {
-      name: 'appDefaults',
-      type: 'group',
-      fields: [
-        { name: 'materialOptions', type: 'text' },
-        { name: 'foldStyles', type: 'text' },
-        { name: 'statusOptions', type: 'text' },
-      ],
+      name: 'groupName',
+      type: 'text',
+      required: true,
+      unique: true,
+      admin: {
+        description: 'Setting group scope (e.g., materialOptions, foldStyles)'
+      }
     },
     {
-      name: 'permissions',
-      type: 'group',
+      name: 'settings',
+      type: 'array',
       fields: [
-        {
-          name: 'read',
-          type: 'checkbox',
+        { 
+          name: 'key', 
+          type: 'text',
+          required: true,
+          admin: {
+            description: 'Setting key name'
+          }
         },
-        {
-          name: 'write',
-          type: 'checkbox',
+        { 
+          name: 'blockType', 
+          type: 'select',
+          required: true,
+          options: [
+            { label: 'Boolean', value: 'boolean' },
+            { label: 'String', value: 'string' },
+            { label: 'Number', value: 'number' },
+            { label: 'JSON', value: 'json' },
+            { label: 'Array', value: 'array' }
+          ],
+          admin: {
+            description: 'Setting value type'
+          }
         },
+        { 
+          name: 'value', 
+          type: 'text',
+          required: true,
+          validate: (value: string | null | undefined, { siblingData }: { siblingData?: { blockType?: string } }) => {
+            if (!value) return 'Value is required'
+            
+            switch (siblingData?.blockType) {
+              case 'boolean':
+                if (!['true', 'false', '0', '1'].includes(value.toLowerCase())) {
+                  return 'Boolean value must be true, false, 0, or 1'
+                }
+                break
+              case 'number':
+                if (isNaN(Number(value))) {
+                  return 'Value must be a valid number'
+                }
+                break
+              case 'json':
+                try {
+                  JSON.parse(value)
+                } catch {
+                  return 'Value must be valid JSON'
+                }
+                break
+              case 'array':
+                // Arrays are comma-separated strings
+                break
+              case 'string':
+                // Any string is valid
+                break
+            }
+            return true
+          },
+          admin: {
+            description: 'Setting value (format depends on type)'
+          }
+        }
       ],
+      admin: {
+        description: 'Dynamic key-value pairs for this group'
+      }
     },
-    { name: 'createdAt', type: 'date' },
-    { name: 'updatedAt', type: 'date' },
   ],
   timestamps: true,
 }

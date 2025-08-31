@@ -8,11 +8,16 @@ import DetailsForm from '@/components/dashboard/order/DetailsForm'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import DetailsComponent, { DetailsFormValues } from '@/components/flashing/details/detailsComponent'
-import { getOrderById, initNewOrder, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
-import { getFlashingById } from '@/lib/db/helpers/flashingHelpers'
+import { useGETOrderById, initNewOrder, upsertPartialOrder } from '@/lib/db/helpers/orderHelpers'
+import {
+  getFlashingById,
+  removeOrderIdToBeSavedFromFlashingById,
+} from '@/lib/db/helpers/flashingHelpers'
 import { Specification, StoredOrder, StoredOrderFlashing } from '@/types/orderTypes'
 import { generateRandomId } from '@/lib/db/helpers/utils'
 import { toast } from 'sonner'
+import { db } from '@/lib/db/appDB'
+import Dexie from 'dexie'
 
 export default function DetailsPage() {
   const { flashingId }: { flashingId: string } = useParams()
@@ -20,14 +25,14 @@ export default function DetailsPage() {
 
   const orderId = searchParams.get('orderId')
 
-  const order = getOrderById(Number(orderId))
+  const order = useGETOrderById(Number(orderId))
 
   const router = useRouter()
 
-  const flashing = getFlashingById(flashingId)
+  const flashing = useGETFlashingById(flashingId)
 
   const onModalDiscardChanges = () => {
-    router.push(`/new-order/${orderId}`)
+    router.push(`/o/${orderId}/review`)
   }
 
   const onDetailsFormSubmit = async (data: DetailsFormValues) => {
@@ -36,6 +41,12 @@ export default function DetailsPage() {
       id: generateRandomId({ length: 4 }),
       flashingId: flashing?.id ?? '',
     }))
+
+    const orderIdToBeSaved = flashing?.orderIdToBeSaved
+
+    if (flashing?.orderIdToBeSaved) {
+      removeOrderIdToBeSavedFromFlashingById(flashing.id)
+    }
 
     const newFlashing: StoredOrderFlashing = {
       id: flashing?.id ?? '',
@@ -48,15 +59,20 @@ export default function DetailsPage() {
       flashings: [newFlashing],
     }
 
-    if (order) {
+    if (orderIdToBeSaved) {
+      upsertPartialOrder(Number(orderIdToBeSaved), newOrderFlashing).then((orderId) => {
+        router.push(`/o/${orderIdToBeSaved}/review`)
+        toast('New flashing added')
+      })
+    } else if (order) {
       console.log(order, orderId)
       upsertPartialOrder(Number(orderId), newOrderFlashing).then((orderId) => {
-        router.push(`/new-order/${order.id}`)
+        router.push(`/o/${order.id}/review`)
         toast('Your changes have been saved')
       })
     } else {
       initNewOrder(newOrderFlashing).then((orderId) => {
-        router.push(`/new-order/${orderId}`)
+        router.push(`/o/${orderId}/review`)
       })
     }
   }

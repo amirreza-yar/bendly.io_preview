@@ -11,18 +11,46 @@ export const AdjustRequests: CollectionConfig = {
     delete: authenticated,
   },
   admin: {
-    useAsTitle: '_id',
-    defaultColumns: ['_id'],
+    useAsTitle: 'requestId',
+    defaultColumns: ['requestId', 'orderId', 'status', 'createdAt'],
   },
   fields: [
-    { name: '_id', type: 'text' },
+    { name: 'requestId', type: 'text', unique: true },
     { name: 'orderId', type: 'relationship', relationTo: 'orders' },
-    { name: 'items', type: 'text' },
+    {
+      name: 'items',
+      type: 'array',
+      fields: [
+        { name: 'itemId', type: 'text' },
+        { name: 'reason', type: 'text' },
+        {
+          name: 'changes',
+          type: 'group',
+          fields: [
+            { name: 'key', type: 'text' },
+            { name: 'value', type: 'text' },
+          ],
+        },
+      ],
+    },
     { name: 'reason', type: 'text' },
     { name: 'description', type: 'text' },
-    { name: 'media', type: 'text' },
-    { name: 'status', type: 'select', options: [{ label: 'Pending', value: 'pending' }, { label: 'Approved', value: 'approved' }, { label: 'Rejected', value: 'rejected' }] },
-    { name: 'createdAt', type: 'date' },
+    {
+      name: 'media',
+      type: 'array',
+      fields: [
+        { name: 'url', type: 'text' },
+      ],
+    },
+    {
+      name: 'status',
+      type: 'select',
+      options: [
+        { label: 'Pending', value: 'pending' },
+        { label: 'Approved', value: 'approved' },
+        { label: 'Rejected', value: 'rejected' },
+      ],
+    },
   ],
   timestamps: true,
 }

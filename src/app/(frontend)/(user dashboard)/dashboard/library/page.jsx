@@ -39,7 +39,7 @@ export default function LibraryPage() {
           <Magnifier />
         </Link>
       </Header>
-      <ContentWrapper className="no-scrollbar">
+      <ContentWrapper className="no-scrollbar pt-14">
         <div className="flex flex-col items-start self-stretch flex-grow-0 flex-shrink-0 gap-4 pt-4">
           <Tabs defaultValue="my-templates">
             <TabsList className="sticky top-4 bg-white z-20">

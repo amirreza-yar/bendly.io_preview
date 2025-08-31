@@ -10,7 +10,7 @@ import {
   apiSendEmailCode,
   apiVerifyEmailCode,
   apiVerifyMobileCode,
-} from '@/utilities/api/user_auth/auth'
+} from '@/utilities/api/auth'
 import { toast } from 'sonner'
 import { VerifyPhoneOTPForm, VerifyPhoneOTPValue } from '@/components/dashboard/auth/forms'
 import { CodeResendTime, CodeResendTimeHandle } from '@/components/dashboard/auth/resendTime'
@@ -86,7 +86,7 @@ export default function VerifyMobilePage() {
           />
 
           <div className="flex gap-2 items-center justify-center">
-            <span className="text-xs text-gray-600">Didn't receive the code?</span>
+            <span className="text-xs text-gray-600">Did not receive the code?</span>
             <CodeResendTime ref={resendRef} onResendHandler={handleResendPhoneCode} />
           </div>
         </div>

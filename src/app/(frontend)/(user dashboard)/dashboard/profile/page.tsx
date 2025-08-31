@@ -1,15 +1,30 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ChevronRight, Pencil, RightArrow } from '@/components/uikit/icons'
 import { Separator } from '@/components/uikit/separator'
 import BottomNav from '@/components/dashboard/bottomNav'
+import { apiGetProfile } from '@/utilities/api/auth'
+// import { apiGetProfile } from '@/utilities/api/user_auth/auth'
 
 export default function ProfilePage() {
-  const [userInfo] = useState({
-    name: 'Davod Osanlo',
-    email: 'davod.osanlo@gmail.com',
-  })
+  const [userInfo, setUserInfo] = useState<{ name: string; email: string }>()
+
+  const getUserInfo = async () => {
+    const res = await apiGetProfile()
+
+    if (res?.ok && res?.apiCode === '100700') {
+      const user = res?.user
+      setUserInfo({
+        name: user.fullName,
+        email: user.email,
+      })
+    }
+  }
+
+  useEffect(() => {
+    getUserInfo()
+  }, [])
 
   return (
     <>
@@ -27,8 +42,8 @@ export default function ProfilePage() {
             className="flex items-center justify-between rounded-md border-2 border-border-default px-4 py-[10px]"
           >
             <div className="grid gap-2">
-              <p className="label-regular text-body">{userInfo.name}</p>
-              <p className="caption-small text-subtitle">{userInfo.email}</p>
+              <p className="label-regular text-body">{userInfo?.name}</p>
+              <p className="caption-small text-subtitle">{userInfo?.email}</p>
             </div>
             <Pencil className="size-6 text-icon-body" />
           </Link>
@@ -38,8 +53,8 @@ export default function ProfilePage() {
               <span className="label-regular">Orders</span>
               <ChevronRight className="size-6" />
             </Link>
-            <Separator className />
-            <Link href="/dashboard/job-references" className="flex items-center justify-between">
+            <Separator />
+            <Link href="/dashboard/j" className="flex items-center justify-between">
               <span className="label-regular">Job Refrences</span>
               <ChevronRight className="size-6" />
             </Link>

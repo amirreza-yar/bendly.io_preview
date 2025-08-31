@@ -1,4 +1,3 @@
-import { Badge } from '@/components/uikit/badge'
 import {
   Box2,
   Building,
@@ -21,33 +20,35 @@ import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 import { AlertDialogContent } from '@/components/uikit/alertModal'
 import { Button } from '@/components/uikit/buttons/button'
 import { ReactNode } from 'react'
+import { StoredFlashing } from '@/types/flashingTypes'
+import { EditFlashingDrawer } from '@/components/dashboard/order/drawers'
+import { cn } from '@/utilities/ui'
 
-export function OrderCard({ order, ...props }: { order: Order }) {
-  console.log(order.flashings[0])
+export function OrderCard({ order, ...props }: { order: StoredOrder }) {
   return (
     <Link
-      href={`/dashboard/orders/${order.orderId}`}
+      href={`/dashboard/orders/${order.id}`}
       {...props}
       className="grid gap-4 rounded-md bg-white border-1 border-border-default p-4"
     >
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
           <p className="caption-regular text-subtitle">Order Number</p>
-          <span className="label-regular text-heading">{order.orderId}</span>
+          <span className="label-regular text-heading">{order.id}</span>
         </div>
-        <OrderStatusBadge status={order.orderStatus} />
+        <OrderStatusBadge status={order.status} />
       </div>
       <div className="grid gap-1">
         <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
           <DateIcon />
-          <span className="label-small">Delivery Date: {formatDate(order.deliveryDate)}</span>
+          <span className="label-small">Delivery Date: {formatDate(order.deliveryDate ?? 0)}</span>
         </div>
         <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
           <Building />
           <span className="rounded-[900px] px-[10px] py-[2px] border-1 border-border-default">
-            JR-{order.jobRefrence.code}
+            JR-{order?.jobRefrence?.code}
           </span>
-          <span className="">{order.jobRefrence.projectName}</span>
+          <span className="">{order?.jobRefrence?.projectName}</span>
         </div>
         {order.deliveryType === 'delivery'
           ? (() => {
@@ -55,8 +56,8 @@ export function OrderCard({ order, ...props }: { order: Order }) {
                 <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
                   <Delivery />
                   <span>
-                    {order.address.streetAddress}, {order.address.suburb}, {order.address.state},{' '}
-                    {order.address.postcode}
+                    {order?.address?.streetAddress}, {order?.address?.suburb},{' '}
+                    {order?.address?.state}, {order?.address?.postcode}
                   </span>
                 </div>
               )
@@ -66,8 +67,8 @@ export function OrderCard({ order, ...props }: { order: Order }) {
                 <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
                   <WareHouse />
                   <span>
-                    {order.pickupInfo.streetAddress}, {order.pickupInfo.suburb},{' '}
-                    {order.pickupInfo.state}, {order.pickupInfo.postcode}
+                    {order?.pickupInfo?.address.streetAddress}, {order?.pickupInfo?.address.suburb},{' '}
+                    {order?.pickupInfo?.address.state}, {order?.pickupInfo?.address.postcode}
                   </span>
                 </div>
               )
@@ -76,22 +77,25 @@ export function OrderCard({ order, ...props }: { order: Order }) {
       <div className="grid auto-cols-max grid-flow-col content-center gap-2 [&_svg]:size-4 text-body label-small">
         <Box2 />
         <span className="rounded-xs border-1 border-border-default px-2 py-1">
-          {order.flashings[0].material} / {order.flashings[0].color}
+          {order?.flashings?.[0].moreDetails?.material} /{' '}
+          {order?.flashings?.[0].moreDetails?.color
+            ? order?.flashings?.[0].moreDetails?.color.name
+            : `${order?.flashings?.[0].moreDetails?.thickness?.thickness}mm`}
           <br />
-          {order.flashings[0].sepcifications.reduce(
+          {order?.flashings?.[0].specifications?.reduce(
             (sum: number, spec: any) => sum + spec.quantity,
             0,
           )}{' '}
           pcs
         </span>
-        {order.flashings.length > 1 && (
+        {(order?.flashings?.length ?? 0) > 1 && (
           <span className="flex items-center rounded-xs border-1 border-border-default px-2">
-            +{order.flashings.length - 1}
+            +{(order?.flashings?.length ?? 1) - 1}
           </span>
         )}
       </div>
       <div className="flex justify-between items-center">
-        <span className="label-regular">${order.paymentHistory.total.toFixed(2)}</span>
+        <span className="label-regular">${order?.paymentHistory?.total.toFixed(2)}</span>
         <ChevronRight />
       </div>
     </Link>
@@ -143,25 +147,50 @@ export function NewOrderCard({
   onDeleteFlashing,
   onSaveFlashing,
   orderId,
+  className,
   ...props
 }: {
-  flashing: StoredOrderFlashing
+  flashing:
+    | (StoredFlashing & Pick<StoredOrderFlashing, 'code' | 'position' | 'specifications'>)
+    | undefined
   onDeleteFlashing: (flashingId: string) => void
   onSaveFlashing: (flashingId: string) => void
-  orderId: string | string[]
+  orderId: string
+  className?: string
 }) {
+  if (!flashing) return
+
   return (
-    <div {...props} className="grid gap-2 bg-white p-3 rounded-xs border border-border-default">
-      <Link href="" className="grid grid-cols-2 p-3 rounded-xs border border-border-default">
-        <div>Canvas here</div>
-        <div className="grid gap-1">
-          <Edit className="justify-self-end size-5 mb-4" />
-          <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>
-          <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
-        </div>
-      </Link>
+    <div
+      {...props}
+      className={cn('grid gap-2 bg-white p-3 rounded-xs border border-border-default', className)}
+    >
+      {flashing.color && !flashing.startCrushFold && !flashing.endCrushFold ? (
+        <EditFlashingDrawer flashingId={flashing.id} orderId={orderId}>
+          <div className="grid grid-cols-2 p-3 rounded-xs border border-border-default">
+            <div>Canvas here</div>
+            <div className="grid gap-1">
+              <Edit className="size-5 justify-self-end" />
+              <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>
+              <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
+            </div>
+          </div>
+        </EditFlashingDrawer>
+      ) : (
+        <Link
+          href={`/f/${flashing.id}/edit/canvas?next=order&orderId=${orderId}`}
+          className="grid grid-cols-2 p-3 rounded-xs border border-border-default"
+        >
+          <div>Canvas here</div>
+          <div className="grid gap-1">
+            <Edit className="size-5 justify-self-end" />
+            <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>
+            <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
+          </div>
+        </Link>
+      )}
       <Link
-        href={`/f/${flashing.id}/preview/edit-material-properties?orderId=${orderId}`}
+        href={`/f/${flashing.id}/edit/material-properties?next=order&orderId=${orderId}`}
         className="flex justify-between items-start p-3 rounded-xs border border-border-default"
       >
         <div className="grid gap-2">
@@ -193,7 +222,7 @@ export function NewOrderCard({
         <div className="flex justify-between pr-11">
           <div className="grid gap-2">
             <p className="label-regular border-b pb-1 pr-2">Quantity</p>
-            {flashing.specifications.map((spec, index) => (
+            {flashing?.specifications?.map((spec, index) => (
               <p key={index} className="caption-small">
                 {spec.quantity} pcs
               </p>
@@ -201,7 +230,7 @@ export function NewOrderCard({
           </div>
           <div className="grid gap-2 pr-6">
             <p className="label-regular border-b pb-1 pr-2">Length</p>
-            {flashing.specifications.map((spec, index) => (
+            {flashing?.specifications?.map((spec, index) => (
               <p key={index} className="caption-small">
                 {spec.length} mm
               </p>
@@ -216,7 +245,7 @@ export function NewOrderCard({
             <Remove className="size-5" />
           </div>
         </DeleteFlashingModalOnOrderReview>
-        <div className="flex label-regular items-center gap-2 pl-4 pr-2">
+        <div className="flex label-regular items-center gap-2 pl-4 pr-2 opacity-40">
           PDF
           <Download className="size-5" />
         </div>
@@ -246,14 +275,14 @@ export const DeleteFlashingModalOnOrderReview = ({
             data-slot="alert-dialog-title"
             className="text-sm/[19px] font-semibold"
           >
-            Delete Flashing?
+            Delete Flashing
           </AlertDialogPrimitive.Title>
 
           <AlertDialogPrimitive.Description
             data-slot="alert-dialog-description"
             className="text-muted-foreground text-sm"
           >
-            Are you sure you want to delete this Flashing? This action cannot be undone.
+            Are you sure you want to delete this Flashing This action cannot be undone.
           </AlertDialogPrimitive.Description>
         </div>
         <div data-slot="alert-dialog-footer" className="flex gap-4 justify-end pt-4">

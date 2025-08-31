@@ -14,14 +14,14 @@ const buttonVariants = cva('button_style', {
       ghost: 'button_style_ghost',
     },
     size: {
-      default: '',
-      large: '',
+      default: 'px-4 py-0 h-9 font-roboto text-[14px] font-semibold',
+      large: 'px-4 py-0 h-11 font-roboto text-[14px]/[19px] font-semibold',
       // Extend sizes as needed
     },
   },
   defaultVariants: {
     variant: 'default',
-    size: 'default',
+    size: 'large',
   },
 })
 

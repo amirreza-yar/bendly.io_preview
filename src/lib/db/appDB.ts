@@ -2,8 +2,9 @@
 import Dexie, { Table } from 'dexie'
 import type { StoredFlashing } from '@/types/flashingTypes'
 import { StoredMaterialAndProps } from '@/types/material&PropsType'
-import { Template } from '@/types/template/templateType'
+import { Template } from '@/types/templateType'
 import { StoredOrder } from '@/types/orderTypes'
+import { StoredJobReference } from '@/types/jobReferenceTypes'
 
 export interface User {
   id?: string
@@ -16,6 +17,7 @@ export class AppDB extends Dexie {
   materialsAndProps!: Table<StoredMaterialAndProps, number>
   templates!: Table<Template, string>
   orders!: Table<StoredOrder, number>
+  jobReferences!: Table<StoredJobReference, string>
 
   constructor() {
     super('AppDB')
@@ -26,6 +28,7 @@ export class AppDB extends Dexie {
       materialsAndProps: 'material',
       templates: 'name, owner',
       orders: 'id, status, progress, deliveryType',
+      jobReferences: 'id, code, projectName',
     })
   }
 }

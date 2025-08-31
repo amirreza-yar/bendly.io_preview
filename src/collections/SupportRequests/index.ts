@@ -11,19 +11,31 @@ export const SupportRequests: CollectionConfig = {
     delete: authenticated,
   },
   admin: {
-    useAsTitle: '_id',
-    defaultColumns: ['_id'],
+    useAsTitle: 'requestId',
+    defaultColumns: ['id', 'userId', 'subject', 'status', 'createdAt'],
   },
   fields: [
-    { name: '_id', type: 'text' },
+    { name: 'requestId', type: 'text', unique: true },
     { name: 'userId', type: 'relationship', relationTo: 'users' },
     { name: 'fullname', type: 'text' },
     { name: 'email', type: 'text' },
     { name: 'subject', type: 'text' },
     { name: 'message', type: 'text' },
-    { name: 'media', type: 'text' },
-    { name: 'status', type: 'select', options: [{ label: 'Open', value: 'open' }, { label: 'Resolved', value: 'resolved' }] },
-    { name: 'createdAt', type: 'date' },
+    {
+      name: 'media',
+      type: 'array',
+      fields: [
+        { name: 'url', type: 'text' },
+      ],
+    },
+    {
+      name: 'status',
+      type: 'select',
+      options: [
+        { label: 'Open', value: 'open' },
+        { label: 'Resolved', value: 'resolved' },
+      ],
+    },
   ],
   timestamps: true,
 }

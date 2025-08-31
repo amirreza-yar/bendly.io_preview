@@ -107,7 +107,7 @@ export default function ReplacementRequestIssuePage() {
       />
 
       <ContentWrapper className="pt-18">
-        <h6 className="pb-6">What's the issue?</h6>
+        <h6 className="pb-6">What is the issue?</h6>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="">

@@ -1,7 +1,7 @@
 import Dexie from 'dexie'
 
 import { db } from '../appDB'
-import { Template } from '@/types/template/templateType'
+import { Template } from '@/types/templateType'
 import { StoredFlashing } from '@/types/flashingTypes'
 
 export const addTemplate = async (

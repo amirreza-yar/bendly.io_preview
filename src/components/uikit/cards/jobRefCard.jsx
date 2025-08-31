@@ -13,7 +13,7 @@ export default function JobRefCard({
 }) {
   return (
     <Link
-      href={`/dashboard/job-references/${jobRefrenceCode}`}
+      href={`/dashboard/j/${jobRefrenceCode}`}
       data-slot="card"
       className={cn(
         'flex flex-col rounded-md border-1 border-border-default bg-surface-card py-3 px-4 w-[280px]',

@@ -60,10 +60,11 @@ export interface AlertModalProps
   alignmentVariant?: 'stacked' | 'justify' | 'right'
   cancelButtonText?: string
   actionButtonText?: string
-  onCancleButtonVariant?: 'default' | 'secondary' | 'ghost'
+  actionButtonVariant?: 'default' | 'secondary' | 'ghost'
+  cancleButtonVariant?: 'default' | 'secondary' | 'ghost'
   actionButtonClassName?: string
   dismissible?: boolean
-  onAction?: () => void
+  onAction?: any
   onCancle?: () => void
   defaultOpen?: boolean
 }
@@ -75,7 +76,8 @@ export function AlertModal({
   alignmentVariant = 'stacked',
   cancelButtonText,
   actionButtonText = 'Confirm',
-  onCancleButtonVariant = 'secondary',
+  actionButtonVariant = 'default',
+  cancleButtonVariant = 'secondary',
   actionButtonClassName,
   dismissible = false,
   onAction,
@@ -99,7 +101,7 @@ export function AlertModal({
         <div data-slot="alert-dialog-header" className="flex flex-col gap-4">
           {dismissible && (
             <AlertDialogPrimitive.Cancel className="absolute top-4 end-4 [&_svg:not([class*='size-'])]:size-6">
-              <XIcon className="text-neutral-dark" variant="secondary" />
+              <XIcon onClick={onCancle} className="text-neutral-dark" variant="secondary" />
             </AlertDialogPrimitive.Cancel>
           )}
           {Icon && <Icon />}
@@ -123,14 +125,18 @@ export function AlertModal({
           className={cn(buttonAlignVariants({ alignmentVariant }))}
         >
           <AlertDialogPrimitive.Action asChild>
-            <Button className={actionButtonClassName} onClick={onAction}>
+            <Button
+              className={actionButtonClassName}
+              variant={actionButtonVariant}
+              onClick={onAction}
+            >
               {actionButtonText}
             </Button>
           </AlertDialogPrimitive.Action>
 
           {cancelButtonText && (
             <AlertDialogPrimitive.Cancel asChild>
-              <Button variant={onCancleButtonVariant} onClick={onCancle}>
+              <Button variant={cancleButtonVariant} onClick={onCancle}>
                 {cancelButtonText}
               </Button>
             </AlertDialogPrimitive.Cancel>

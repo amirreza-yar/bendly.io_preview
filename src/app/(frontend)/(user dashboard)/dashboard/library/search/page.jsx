@@ -1,6 +1,6 @@
 'use client'
 import { ArrowLeft, Delete, Edit, Info, Magnifier, More, XIcon } from '@/components/uikit/icons'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/uikit/tabs'
+import { Tabs, TabsTrigger, TabsContent } from '@/components/uikit/tabs'
 import { LibraryTemplateItem } from '@/components/dashboard/library/libraryTemplateItem'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
@@ -68,7 +68,7 @@ export default function LibrarySearchPage() {
           </div>
         </div>
       </header>
-      <ContentWrapper>
+      <ContentWrapper className='pt-14'>
         {searchResults.length !== 0 ? (
           <div className="flex flex-col items-start self-stretch flex-grow-0 flex-shrink-0 gap-4 pt-4">
             <Tabs defaultValue="all-filtered">

@@ -22,7 +22,10 @@ type NewJobReferenceContextType = {
 const NewJobReferenceContext = createContext<NewJobReferenceContextType | undefined>(undefined)
 
 export function NewJobReferenceProvider({ children }: { children: ReactNode }) {
-  const [newJobReference, setNewJobReferenceState] = useState<Partial<NewJobReferenceData>>({})
+  const [newJobReference, setNewJobReferenceState] = useState<Partial<NewJobReferenceData>>({
+    // recipientFullName: 'Amirreza Yarahmadi',
+    // recipientMobileNumber: '9897654123',
+  })
 
   const setNewJobReference = (data: Partial<NewJobReferenceData>) => {
     setNewJobReferenceState((prev) => ({ ...prev, ...data }))

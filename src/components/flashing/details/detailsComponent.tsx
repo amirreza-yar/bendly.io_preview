@@ -55,12 +55,12 @@ export default function DetailsComponent({
 }) {
   const form = useForm<DetailsFormValues>({
     resolver: zodResolver(DetailsFormSchema),
-    defaultValues: { specifications: [{ quantity: 2, length: 250 }] },
+    defaultValues: { specifications: [{ quantity: undefined, length: undefined }] },
   })
 
   useEffect(() => {
     if (order?.flashings?.length) {
-      const lastFlashing = order.flashings[order.flashings.length - 1]
+      const lastFlashing = order.flashings.find((flash) => flash.id === flashingId)
       form.reset({
         code: lastFlashing.code,
         position: lastFlashing.position,
@@ -80,7 +80,7 @@ export default function DetailsComponent({
 
   return (
     <>
-      {isDirty ? (
+      {order && isDirty ? (
         <UnsavedChangesOnDetailsModal
           onDiscardChanges={onModalDiscardChanges}
           onSaveChanges={() => form.handleSubmit(onDetailsFormSubmit)()}
@@ -95,7 +95,7 @@ export default function DetailsComponent({
           </header>
         </UnsavedChangesOnDetailsModal>
       ) : order ? (
-        <Header title={title} returnHref={`/new-order/${order.id}`} />
+        <Header title={title} returnHref={`/o/${order.id}/review`} />
       ) : (
         <Header title={title} returnHref={`/f/${flashingId}/preview`} />
       )}

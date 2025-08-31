@@ -3,7 +3,15 @@ import { ReactNode } from 'react'
 import { Edit, TransferHorizontaly, XIcon } from '@/components/uikit/icons'
 import { Separator } from '@/components/uikit/separator'
 
-export function EditFlashingDrawer({ flashingId }: { flashingId: string }): ReactNode {
+export function EditFlashingDrawer({
+  flashingId,
+  next,
+  orderId,
+}: {
+  flashingId: string
+  next: string
+  orderId?: string | undefined
+}): ReactNode {
   return (
     <Drawer trigger={<Edit />}>
       <div className="flex flex-col p-6">
@@ -14,7 +22,7 @@ export function EditFlashingDrawer({ flashingId }: { flashingId: string }): Reac
           </DrawerClose>
         </div>
         <a
-          href={`/f/${flashingId}/preview/edit-canvas`}
+          href={`/f/${flashingId}/edit/canvas?next=${next}&orderId=${orderId}`}
           className="flex items-center gap-4 p-4 h-16"
         >
           <Edit />
@@ -24,7 +32,7 @@ export function EditFlashingDrawer({ flashingId }: { flashingId: string }): Reac
           <Separator className="" />
         </div>
         <a
-          href={`/f/${flashingId}/preview/edit-color-side?return=preview`}
+          href={`/f/${flashingId}/edit/color-side?next=${next}`}
           className="flex items-center gap-4 p-4 h-16"
         >
           <TransferHorizontaly />
