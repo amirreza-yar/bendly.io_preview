@@ -12,8 +12,8 @@ export default function ResetPasswordPage() {
           <Link href={''} className="absolute">
             <ArrowLeft />
           </Link>
-          <div className="w-full flex items-center justify-center">
-            <h6 className="">Logo</h6>
+          <div className="w-full flex ml-12 ">
+            <h6 className="">Reset Password</h6>
           </div>
         </div>
       </header>

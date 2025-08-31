@@ -7,7 +7,6 @@ import { LabeledInputWithCode } from '@/components/uikit/input'
 import { XIcon } from '@/components/uikit/icons'
 import { cn } from '@/utilities/ui'
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
-import { toast } from 'sonner'
 
 function AlertDialogContent({ ...props }) {
   return (
@@ -36,8 +35,8 @@ export default function AccountPage() {
     phone: '+1 234 567 8900',
   })
 
-    const handleVerify = () => {
-    router.push('/dashboard/account/edit-current-mobile-number') 
+  const handleVerify = () => {
+    router.push('/dashboard/account/edit-current-mobile-number')
   }
 
   return (
@@ -87,7 +86,7 @@ export default function AccountPage() {
                 </div>
                 <div data-slot="alert-dialog-footer" className="grid gap-4">
                   <AlertDialogPrimitive.Action asChild>
-                    <Button >Send Verify Code</Button>
+                    <Button onClick={handleVerify}>Send Verify Code</Button>
                   </AlertDialogPrimitive.Action>
 
                   <AlertDialogPrimitive.Cancel asChild>

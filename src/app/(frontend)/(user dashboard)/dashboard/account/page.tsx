@@ -1,10 +1,9 @@
 'use client'
-import { useState } from 'react'
+
 import Link from 'next/link'
 
 import {
-  AlertTriangle,
-  ArrowLeft,
+
   Logout,
   Mail,
   PasswordField,
@@ -19,13 +18,10 @@ import { LogoutModal } from '@/components/dashboard/auth/modals'
 import { apiLogout } from '@/utilities/api/user_auth/auth'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { useUser } from '@/providers/main_providers/UserContext'
 
 export default function AccountPage() {
-  const [userInfo] = useState({
-    name: 'Davod Osanlo',
-    email: 'davod.osanlo@gmail.com',
-    phone: '+1 234 567 8900',
-  })
+  const {user} = useUser()
 
   const router = useRouter()
 
@@ -64,20 +60,7 @@ export default function AccountPage() {
               <ButtonListItem text="Logout" icon={Logout} />
             </LogoutModal>
           </div>
-          <div className="flex gap-3 rounded-md border-border-attention border-1 text-attention-default p-3">
-            <AlertTriangle className="size-5 mt-1" />
-            <div className="pb-2">
-              <p className="body-small pb-4">
-                Permanently delete your account and all associated data.
-              </p>
-              <Link
-                href=""
-                className="border-border-attention border-2 rounded-md px-4 py-2 button-medium text-attention-default"
-              >
-                Delete Account
-              </Link>
-            </div>
-          </div>
+
         </ContentWrapper>
       </>
       {/* The main content of page ends here */}
