@@ -1,23 +1,49 @@
+'use client'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import { ArrowLeft, Pencil } from '@/components/uikit/icons'
+import { Pencil, ResetPasswordIcon, ChevronRight, PasswordField } from '@/components/uikit/icons'
 import Link from 'next/link'
 import { Button } from '@/components/uikit/buttons/button'
-import { ResetPasswordIcon, ChevronRight } from '@/components/uikit/icons'
+import { Header } from '@/components/dashboard/header'
+import { LabeledInput } from '@/components/uikit/input'
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/uikit/form'
+
+// --- Validation Schema ---
+const ResetPasswordSchema = z.object({
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Must include an uppercase letter')
+    .regex(/[0-9]/, 'Must include a number')
+    .regex(/[^A-Za-z0-9]/, 'Must include a symbol'),
+})
+
+type ResetPasswordFormValues = z.infer<typeof ResetPasswordSchema>
 
 export default function ResetPasswordPage() {
+  const form = useForm<ResetPasswordFormValues>({
+    resolver: zodResolver(ResetPasswordSchema),
+    defaultValues: { password: '' },
+  })
+
+  const handleResetPassword = (data: ResetPasswordFormValues) => {
+    console.log('Send reset link with password:', data.password)
+    // Add API call or next steps here
+  }
+
   return (
     <>
-      <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white">
-        <div className={'flex items-center justify-between h-full w-full px-4 relative'}>
-          <Link href={''} className="absolute">
-            <ArrowLeft />
-          </Link>
-          <div className="w-full flex ml-12 ">
-            <h6 className="">Reset Password</h6>
-          </div>
-        </div>
-      </header>
-      <ContentWrapper className="">
+      <Header title="Reset Password" returnHref="/dashboard/account" />
+      <ContentWrapper>
         <div className="grid text-center">
           <div className="grid px-6 gap-2 pt-12">
             <h5>Reset your password</h5>
@@ -33,20 +59,47 @@ export default function ResetPasswordPage() {
             </div>
           </div>
         </div>
-        <div className="mt-16 mb-16">
-          <Link href="/dashboard/account">
+
+        <Form {...form}>
+          <form className="grid gap-6 mt-10" onSubmit={form.handleSubmit(handleResetPassword)}>
+            {/* Password Field */}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex gap-2 label-regular">
+                    Password
+                    <span className="text-[#E50000]">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <LabeledInput
+                      icon={PasswordField}
+                      placeholder="Your Password"
+                      type="password"
+                      {...field}
+                      value={field.value ?? ''}
+                    />
+                  </FormControl>
+                  <FormMessage>Use 8+ characters with letters, numbers, and symbols</FormMessage>
+                </FormItem>
+              )}
+            />
+
             <Button type="submit" className="w-full bg-primary">
               Send Reset Link
             </Button>
-          </Link>
+          </form>
+        </Form>
 
+        <div className="w-full flex items-center justify-center pt-6 gap-2">
+          <p className="text-caption-regular">Remembered your password?</p>
+          <ResetPasswordIcon className="size-[15px] text-primary" />
           <Link
             href="/dashboard/account"
-            className="w-full flex items-center justify-center pt-6  gap-2"
+            className="label-regular text-primary flex items-center gap-1"
           >
-            <p className="text-caption-regular">Remembered your password?</p>
-            <ResetPasswordIcon className="size-[15px] text-primary" />
-            <p className="label-regular text-primary">Back to Login</p>
+            Back to Login
             <ChevronRight className="size-5 text-primary" />
           </Link>
         </div>

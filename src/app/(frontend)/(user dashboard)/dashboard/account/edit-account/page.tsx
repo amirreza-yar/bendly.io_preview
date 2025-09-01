@@ -8,13 +8,10 @@ import { Separator } from '@/components/ui/separator'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { Footer } from '@/components/dashboard/footer'
+import { useUser } from '@/providers/main_providers/UserContext'
 
 export default function AccountPage() {
-  const [userInfo] = useState({
-    name: 'Davod Osanlo',
-    email: 'davod.osanlo@gmail.com',
-    phone: '+1 234 567 8900',
-  })
+  const {user} = useUser()
 
   return (
     <>
