@@ -8,6 +8,7 @@ const NEXT_PUBLIC_BACKEND_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   allowedDevOrigins: ['127.0.0.1', 'local-origin.dev', '*.local-origin.dev'],
   images: {
     remotePatterns: [
