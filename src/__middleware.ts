@@ -22,26 +22,22 @@ async function verifyJWT(token: string) {
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
-  const token = req.cookies.get('auth_token')?.value ?? ''
-
+  console.log('🔒 Middleware running for path:', path)
+  
   const rule = routeRules.find((r) => r.matcher.test(path))
-  if (!rule) return NextResponse.next()
+  console.log('🔍 Found rule:', rule)
+  
+  if (!rule) {
+    console.log('✅ No rule found, allowing request')
+    return NextResponse.next()
+  }
 
   if (rule.authRequired) {
-    const user = token ? await verifyJWT(token) : null
-
-    if (!user) {
-      // Redirect to login if not authenticated
-      const loginUrl = new URL('/login', req.url)
-      return NextResponse.redirect(loginUrl)
-    }
-
-    // Check role-based access
-    if (rule.roles && !rule.roles.includes(user.roleId)) {
-      // Redirect to unauthorized page
-      const unauthorizedUrl = new URL('/unauthorized', req.url)
-      return NextResponse.redirect(unauthorizedUrl)
-    }
+    console.log('🚫 Auth required, redirecting to /auth')
+    // For now, redirect all dashboard requests to auth page
+    // In production, you'd check for valid JWT tokens
+    const authUrl = new URL('/auth', req.url)
+    return NextResponse.redirect(authUrl)
   }
 
   const res = NextResponse.next()

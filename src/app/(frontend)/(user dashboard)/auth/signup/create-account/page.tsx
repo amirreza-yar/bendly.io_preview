@@ -28,13 +28,13 @@ export default function SignupPage() {
   const onCreateAccountSubmit = async (data: CreateAccountFormValues) => {
     console.log(data)
     const res = await apiCreateAccount(email, data.fullName, data.phone, data.password)
-    if (res?.ok) {
-      toast('Phone code is sent')
-      router.push(`/auth/signup/verify-mobile?phone=${data.phone}&email=${email}`)
+    if (res?.success) {
+      toast('Account created successfully! Redirecting to dashboard...')
+      router.push('/dashboard')
       console.log('working')
-    } else if (!res?.ok && res?.apiCode === '100302') {
+    } else if (!res?.success && res?.apiCode === '100302') {
       toast('Email is not verified')
-    } else if (!res?.ok && res?.apiCode === '100303') {
+    } else if (!res?.success && res?.apiCode === '100303') {
       toast('Email already registered')
       // router.push('/auth/login')
     } else {
