@@ -17,15 +17,15 @@ export default function OrdersPage() {
   return (
     <>
       <Header title="Orders" returnHref="/dashboard/profile" />
-      <ContentWrapper className="bg-surface-page-body pb-4 pt-14 no-scrollbar">
+      <ContentWrapper className="pb-4 pt-14 no-scrollbar">
         <Tabs defaultValue="current">
-          <TabsList className="sticky top-4 bg-white z-20">
+          <TabsList className="sticky top-4 bg-white z-20 mx-auto max-w-110 w-full">
             <TabsTrigger value="current">Current</TabsTrigger>
             <TabsTrigger value="past">Past</TabsTrigger>
             <TabsTrigger value="replacement">Replacement</TabsTrigger>
           </TabsList>
           <TabsContent value="current">
-            <div className="grid grid-cols-1 pt-6 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 pt-6 gap-4 lg:grid-cols-3">
               {orders &&
                 (() => {
                   const filteredOrders = orders.filter(
@@ -76,11 +76,15 @@ export default function OrdersPage() {
           <TabsContent value="replacement">
             <div className="grid grid-cols-1 pt-6 gap-4">
               {replacementRequests && replacementRequests.length > 0 ? (
-                replacementRequests.map((req, index) => <RequestCard key={req.requestId || index} req={req} />)
+                replacementRequests.map((req, index) => (
+                  <RequestCard key={req.requestId || index} req={req} />
+                ))
               ) : (
                 <div className="grid items-center justify-center h-[70vh] opacity-60">
                   <h6>No replacement requests</h6>
-                  <p className="text-sm text-gray-400 mt-1">Your replacement requests will appear here</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Your replacement requests will appear here
+                  </p>
                 </div>
               )}
             </div>

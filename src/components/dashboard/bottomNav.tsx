@@ -30,8 +30,8 @@ export default function BottomNav() {
   }, [pathname])
 
   return (
-    <div className="fixed bottom-0 left-0 w-full h-16 z-50 bg-white border-t-1 border-border-dark">
-      <div className="w-full h-full">
+    <div className="fixed bottom-0 left-0 w-full h-16 z-50 bg-white border-t-1 border-border-dark flex justify-center">
+      <div className="w-full h-full max-w-120">
         <div className="flex justify-around items-center h-full">
           <Link
             href="/dashboard"

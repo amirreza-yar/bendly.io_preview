@@ -41,8 +41,6 @@ export default function Page() {
     }
   }, [])
 
-
-
   const newFlashing = () => {
     initNewFlashing().then((flashingId) => {
       router.push(`/f/${flashingId}`)
@@ -64,7 +62,7 @@ export default function Page() {
           <p className="label-small pb-2">
             Start a new order from scratch and add project details later
           </p>
-          <Button className="w-full" onClick={newFlashing}>
+          <Button className="w-full max-w-82" onClick={newFlashing}>
             <span>New Order</span>
             <NewOrder />
           </Button>
@@ -75,7 +73,7 @@ export default function Page() {
 
           {jobReferences && jobReferences.length > 0 && (
             <>
-              <DividerWithText text="OR" className="py-8" />
+              <DividerWithText text="OR" className="py-8 max-w-82" />
 
               <p className="label-small">
                 Continue with an existing project and create a new order for it
@@ -106,9 +104,10 @@ export default function Page() {
                           jobRefrenceCode={item.code}
                           jobRefrenceText={item.projectName}
                           locationName={item.addresses?.[0]?.title || 'No address'}
-                          locationAddress={item.addresses?.[0] 
-                            ? `${item.addresses[0].streetAddress}, ${item.addresses[0].suburb}, ${item.addresses[0].state}, ${item.addresses[0].postcode}`
-                            : 'No address available'
+                          locationAddress={
+                            item.addresses?.[0]
+                              ? `${item.addresses[0].streetAddress}, ${item.addresses[0].suburb}, ${item.addresses[0].state}, ${item.addresses[0].postcode}`
+                              : 'No address available'
                           }
                         />
                       </div>

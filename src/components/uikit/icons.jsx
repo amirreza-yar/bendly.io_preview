@@ -1594,7 +1594,26 @@ const FeaturedAlert = ({ ...props }) => {
     </svg>
   )
 }
-
+const Bullish1 = ({ ...props }) => {
+  return (
+    <svg
+      {...props}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M5.25 21.5027V19.0027M12.3008 21.5V15.5M18.75 11.5027V21.5027M3.19922 13.0027C9.69922 14.0027 17.0492 9.50269 19.0492 3.50269M15.6172 3.73479L18.8598 2.51509C19.4566 2.29049 20.1297 2.66992 20.2465 3.29683L20.8812 6.70217"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
 export {
   Account,
   CrushFold,
@@ -1686,4 +1705,5 @@ export {
   ResetPasswordIcon,
   TransferVerticaly,
   FeaturedAlert,
+  Bullish1,
 }
