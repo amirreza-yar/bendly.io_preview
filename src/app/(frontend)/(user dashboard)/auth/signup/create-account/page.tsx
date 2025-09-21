@@ -28,10 +28,14 @@ export default function SignupPage() {
   const onCreateAccountSubmit = async (data: CreateAccountFormValues) => {
     console.log(data)
     const res = await apiCreateAccount(email, data.fullName, data.phone, data.password)
+    console.log('Registration response:', res)
+    
     if (res?.success) {
       toast('Account created successfully! Redirecting to dashboard...')
-      router.push('/dashboard')
-      console.log('working')
+      // Small delay to ensure cookies are set
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 100)
     } else if (!res?.success && res?.apiCode === '100302') {
       toast('Email is not verified')
     } else if (!res?.success && res?.apiCode === '100303') {
@@ -39,8 +43,8 @@ export default function SignupPage() {
       // router.push('/auth/login')
     } else {
       toast('Something went wrong')
+      console.error('Registration failed:', res)
     }
-    console.log(res)
   }
 
   return (

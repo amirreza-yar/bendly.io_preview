@@ -29,16 +29,27 @@ export default function LoginPage() {
   }
 
   const onSubmitLogin = async (data: LoginFormValue) => {
-    const res = await apiLogin(email, data.password)
-    if (res?.apiCode === '100600') {
-      toast('Welcome')
-      // router.push('/dashboard')
-    } else if (res?.apiCode === '100602' || res?.apiCode === '100603') {
-      setErrorText('Incorrect password, Please try again')
-    } else {
+    try {
+      const res = await apiLogin(email, data.password)
+      console.log('Login response:', res)
+      
+      if (res.success) {
+        toast('Welcome!')
+        // Small delay to ensure cookies are set
+        setTimeout(() => {
+          router.push('/dashboard')
+        }, 100)
+      } else if (res.error?.includes('password') || res.error?.includes('credentials')) {
+        setErrorText('Incorrect password, Please try again')
+      } else {
+        toast('Something went wrong')
+        setErrorText(res.error || 'Login failed')
+      }
+    } catch (error) {
+      console.error('Login error:', error)
       toast('Something went wrong')
+      setErrorText('Network error occurred')
     }
-    console.log(res)
   }
 
   return (

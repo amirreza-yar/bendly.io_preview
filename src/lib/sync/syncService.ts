@@ -115,7 +115,7 @@ export class SyncService {
   // Get sync status
   async getSyncStatus() {
     try {
-      const result = await urqlClient.query(SYNC_STATUS_QUERY).toPromise()
+      const result = await urqlClient.query(SYNC_STATUS_QUERY, {}).toPromise()
       
       if (result.error) {
         console.error('Sync status error:', result.error)

@@ -20,9 +20,9 @@ export default function AccountPage() {
 
   const onLogoutHandler = async () => {
     const res = await apiLogout()
-    if (res.ok) {
-      toast('Signed out successfuly')
-      router.push('/dashboard')
+    if (res.success) {
+      toast('Signed out successfully')
+      router.push('/auth')
     } else {
       toast('Something went wrong')
     }

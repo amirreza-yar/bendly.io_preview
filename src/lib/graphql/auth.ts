@@ -1,5 +1,6 @@
 import { gql } from '@urql/core'
 import { urqlClient } from '../urqlClient'
+import { setAuthToken, clearAuthToken, getAuthToken, isAuthenticated } from '@/utilities/cookieUtils'
 
 // GraphQL Mutations and Queries for Authentication
 export const loginMutation = gql`
@@ -43,8 +44,8 @@ export const registerMutation = gql`
 `
 
 export const refreshTokenMutation = gql`
-  mutation RefreshToken {
-    refreshToken {
+  mutation RefreshToken($currentToken: String!) {
+    refreshToken(refreshToken: $currentToken) {
       user {
         _id
         email
@@ -81,24 +82,23 @@ export async function graphqlLogin(email: string, password: string) {
     }
 
     if (result.data?.login) {
-      const { user, accessToken, refreshToken } = result.data.login
+      const { user, accessToken, refreshToken, expiresIn } = result.data.login
       
-      // Store tokens in localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', refreshToken)
-        localStorage.setItem('user', JSON.stringify(user))
-      }
+      // Use the access token directly from backend (now Payload-compatible)
+      const authToken = accessToken
+      
+      setAuthToken(authToken)
 
       return { 
         success: true, 
         user, 
         accessToken, 
-        refreshToken 
+        refreshToken,
+        apiCode: '100600' // Success code
       }
     }
 
-    return { success: false, error: 'Login failed' }
+    return { success: false, error: 'Login failed', apiCode: '100602' }
   } catch (error) {
     console.error('Login error:', error)
     return { success: false, error: 'Network error' }
@@ -129,24 +129,23 @@ export async function graphqlRegister(
     }
 
     if (result.data?.register) {
-      const { user, accessToken, refreshToken } = result.data.register
+      const { user, accessToken, refreshToken, expiresIn } = result.data.register
       
-      // Store tokens in localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', refreshToken)
-        localStorage.setItem('user', JSON.stringify(user))
-      }
+      // Use the access token directly from backend (now Payload-compatible)
+      const authToken = accessToken
+      
+      setAuthToken(authToken)
 
       return { 
         success: true, 
         user, 
         accessToken, 
-        refreshToken 
+        refreshToken,
+        apiCode: '100600' // Success code
       }
     }
 
-    return { success: false, error: 'Registration failed' }
+    return { success: false, error: 'Registration failed', apiCode: '100301' }
   } catch (error) {
     console.error('Register error:', error)
     return { success: false, error: 'Network error' }
@@ -155,7 +154,14 @@ export async function graphqlRegister(
 
 export async function graphqlRefreshToken() {
   try {
-    const result = await urqlClient.mutation(refreshTokenMutation).toPromise()
+    const currentToken = getAuthToken()
+    if (!currentToken) {
+      return { success: false, error: 'No token available' }
+    }
+
+    const result = await urqlClient.mutation(refreshTokenMutation, { 
+      currentToken 
+    }).toPromise()
 
     if (result.error) {
       console.error('Refresh token error:', result.error)
@@ -163,20 +169,16 @@ export async function graphqlRefreshToken() {
     }
 
     if (result.data?.refreshToken) {
-      const { user, accessToken, refreshToken } = result.data.refreshToken
+      const { user, accessToken, refreshToken: newToken, expiresIn } = result.data.refreshToken
       
-      // Update tokens in localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('accessToken', accessToken)
-        localStorage.setItem('refreshToken', refreshToken)
-        localStorage.setItem('user', JSON.stringify(user))
-      }
+      // Use the new token as the ff-token
+      setAuthToken(newToken)
 
       return { 
         success: true, 
         user, 
-        accessToken, 
-        refreshToken 
+        accessToken: newToken, 
+        refreshToken: newToken 
       }
     }
 
@@ -189,12 +191,8 @@ export async function graphqlRefreshToken() {
 
 export async function graphqlLogout() {
   try {
-    // Clear tokens from localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
-      localStorage.removeItem('user')
-    }
+    // Clear tokens from cookies
+    clearAuthToken()
 
     return { success: true }
   } catch (error) {
@@ -205,12 +203,20 @@ export async function graphqlLogout() {
 
 export async function graphqlGetProfile() {
   try {
-    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null
-    if (!userStr) {
-      return { success: false, error: 'No user data found' }
+    const token = getAuthToken()
+    if (!token) {
+      return { success: false, error: 'No token found' }
     }
 
-    const user = JSON.parse(userStr)
+    // Decode the JWT token to get user info
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    const user = {
+      _id: payload.id,
+      email: payload.email,
+      collection: payload.collection,
+      sid: payload.sid
+    }
+
     return { success: true, user }
   } catch (error) {
     console.error('Get profile error:', error)

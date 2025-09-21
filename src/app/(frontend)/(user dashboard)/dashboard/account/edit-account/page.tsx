@@ -20,11 +20,15 @@ export default function AccountPage() {
       <ContentWrapper>
         <div className="grid pt-4">
           <Link href="/dashboard/account/edit-account/edit-fullname">
-            <ButtonListItem text="Edit Full Name" caption="Amirreza Yarahmadi" />
+            <ButtonListItem text="Edit Full Name" caption={user?.fullname || 'Not set'} />
             <Separator className />
           </Link>
-          <Link href="/dashboard/account/edit-account/change-mobile-number">
-            <ButtonListItem text="Mobile Number" caption="+619876541230" badgeText="Verified" />
+          <Link href="/dashboard/account/edit-account/edit-mobile">
+            <ButtonListItem 
+              text="Mobile Number" 
+              caption={user?.mobile ? `+${user.mobile}` : 'Not set'} 
+              badgeText={user?.mobile ? "Verified" : undefined} 
+            />
           </Link>
         </div>
       </ContentWrapper>
