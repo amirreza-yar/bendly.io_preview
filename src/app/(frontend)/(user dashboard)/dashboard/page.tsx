@@ -7,14 +7,13 @@ import { ChevronRight, HomeMenu, Info, NewOrder } from '@/components/uikit/icons
 import Link from 'next/link'
 import BottomNav from '@/components/dashboard/bottomNav'
 import { useEffect, useRef } from 'react'
-import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
+import { useGETAllJobRefs } from '@/lib/db/helpers/jobRefHelpers'
 import { deleteAllDraftFlashings, initNewFlashing } from '@/lib/db/helpers/flashingHelpers'
-import { redirect, useRouter } from 'next/navigation'
-import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '@/lib/db/appDB'
+import { useRouter } from 'next/navigation'
 
 export default function Page() {
   const router = useRouter()
+  const jobReferences = useGETAllJobRefs()
 
   const didRunRef = useRef(false)
 
@@ -42,32 +41,7 @@ export default function Page() {
     }
   }, [])
 
-  const jobRefsList = [
-    {
-      jobRefrenceCode: 'JR-1234',
-      jobRefrenceText: 'Downtown Office Renovation',
-      locationName: 'Main Building',
-      locationAddress: '123 Collins Street, Melbourne, VIC 3000',
-    },
-    {
-      jobRefrenceCode: 'JR-1234',
-      jobRefrenceText: 'Downtown Office Renovation',
-      locationName: 'Main Building',
-      locationAddress: '123 Collins Street, Melbourne, VIC 3000',
-    },
-    {
-      jobRefrenceCode: 'JR-1234',
-      jobRefrenceText: 'Downtown Office Renovation',
-      locationName: 'Main Building',
-      locationAddress: '123 Collins Street, Melbourne, VIC 3000',
-    },
-    {
-      jobRefrenceCode: 'JR-1234',
-      jobRefrenceText: 'Downtown Office Renovation',
-      locationName: 'Main Building',
-      locationAddress: '123 Collins Street, Melbourne, VIC 3000',
-    },
-  ]
+
 
   const newFlashing = () => {
     initNewFlashing().then((flashingId) => {
@@ -99,44 +73,51 @@ export default function Page() {
             <p>Each Job Reference can include multiple delivery addresses</p>
           </div>
 
-          <DividerWithText text="OR" className="py-8" />
+          {jobReferences && jobReferences.length > 0 && (
+            <>
+              <DividerWithText text="OR" className="py-8" />
 
-          <p className="label-small">
-            Continue with an existing project and create a new order for it
-          </p>
+              <p className="label-small">
+                Continue with an existing project and create a new order for it
+              </p>
 
-          <div className="flex justify-between items-center w-full py-4">
-            <h6>Recent Job Reference</h6>
-            <Link
-              href="/dashboard/j"
-              className="flex items-center [&_svg]:size-5 gap-2 text-sm/[17px] font-semibold text-primary"
-            >
-              <span>View All</span>
-              <ChevronRight />
-            </Link>
-          </div>
+              <div className="flex justify-between items-center w-full py-4">
+                <h6>Recent Job Reference</h6>
+                <Link
+                  href="/dashboard/j"
+                  className="flex items-center [&_svg]:size-5 gap-2 text-sm/[17px] font-semibold text-primary"
+                >
+                  <span>View All</span>
+                  <ChevronRight />
+                </Link>
+              </div>
 
-          <Carousel
-            opts={{
-              align: 'start',
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="">
-              {jobReferences.slice(0, 5).map((item, index) => (
-                <CarouselItem key={index} className="pt-1">
-                  <div className="">
-                    <JobRefCard
-                      jobRefrenceCode={item.code}
-                      jobRefrenceText={item.projectName}
-                      locationName={item.addresses[0].title}
-                      locationAddress={`${item.addresses[0].streetAddress}, ${item.addresses[0].suburb}, ${item.addresses[0].state}, ${item.addresses[0].postcode}`}
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
+              <Carousel
+                opts={{
+                  align: 'start',
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="">
+                  {jobReferences.slice(0, 5).map((item, index) => (
+                    <CarouselItem key={index} className="pt-1">
+                      <div className="">
+                        <JobRefCard
+                          jobRefrenceCode={item.code}
+                          jobRefrenceText={item.projectName}
+                          locationName={item.addresses?.[0]?.title || 'No address'}
+                          locationAddress={item.addresses?.[0] 
+                            ? `${item.addresses[0].streetAddress}, ${item.addresses[0].suburb}, ${item.addresses[0].state}, ${item.addresses[0].postcode}`
+                            : 'No address available'
+                          }
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </>
+          )}
         </div>
       </div>
       <BottomNav />

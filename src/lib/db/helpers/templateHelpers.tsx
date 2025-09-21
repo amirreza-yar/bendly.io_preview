@@ -1,4 +1,5 @@
 import Dexie from 'dexie'
+import { useLiveQuery } from 'dexie-react-hooks'
 
 import { db } from '../appDB'
 import { Template } from '@/types/templateType'
@@ -26,4 +27,19 @@ export const addTemplate = async (
       return new Error(String(err))
     }
   }
+}
+
+// Hook to get all templates
+export function useGETAllTemplates(): Template[] | undefined | null {
+  return useLiveQuery(() => db.templates.toArray())
+}
+
+// Hook to get templates by owner
+export function useGETTemplatesByOwner(owner: string): Template[] | undefined | null {
+  return useLiveQuery(() => db.templates.where('owner').equals(owner).toArray())
+}
+
+// Hook to get app templates (templates not owned by current user)
+export function useGETAppTemplates(currentUserId: string): Template[] | undefined | null {
+  return useLiveQuery(() => db.templates.where('owner').notEqual(currentUserId).toArray())
 }

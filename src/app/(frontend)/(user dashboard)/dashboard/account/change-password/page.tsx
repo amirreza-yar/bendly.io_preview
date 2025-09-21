@@ -36,14 +36,18 @@ export default function AccountPage() {
     },
   })
 
-  async function fakeVerifyPassword(password: string): Promise<boolean> {
-    return password === user.password
+  async function verifyCurrentPassword(password: string): Promise<boolean> {
+    // TODO: Implement proper password verification via API
+    // This should call the backend to verify the current password
+    // Never store or compare passwords in plain text on the frontend
+    console.log('Password verification should be handled by backend API')
+    return false // Placeholder - implement proper API call
   }
 
   async function onSubmit(data: FormValues) {
     if (!isVerified) {
       // Verify current password
-      const isPasswordCorrect = await fakeVerifyPassword(data.password)
+      const isPasswordCorrect = await verifyCurrentPassword(data.password)
       if (!isPasswordCorrect) {
         form.setError('password', {
           type: 'data_not_verified',
