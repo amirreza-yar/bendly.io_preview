@@ -8,29 +8,15 @@ import { Input } from '@/components/uikit/input'
 import BottomNav from '@/components/dashboard/bottomNav'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
+import { useGETTemplatesByOwner, useGETAppTemplates } from '@/lib/db/helpers/templateHelpers'
 
 export default function LibraryPage() {
-  // Simulate fetching data (replace with DB/API)
-  const templates = [
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-03', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-03', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-03', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-03', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'Flashing 2025-02', imageSrc: 'rectangle-10.png', isMyTemplate: true },
-    { title: 'App Template 1', imageSrc: 'rectangle-10.png', isMyTemplate: false },
-    { title: 'App Template 2', imageSrc: 'rectangle-10.png', isMyTemplate: false },
-  ]
+  // TODO: Get current user ID from auth context
+  const currentUserId = 'current-user-id' // This should come from auth context
+  
+  // Load templates from IndexedDB (offline-first)
+  const myTemplates = useGETTemplatesByOwner(currentUserId) || []
+  const appTemplates = useGETAppTemplates(currentUserId) || []
 
   return (
     <>
@@ -48,29 +34,39 @@ export default function LibraryPage() {
             </TabsList>
             <TabsContent value="my-templates">
               <div className="grid grid-cols-2 pt-2 gap-4">
-                {templates
-                  .filter((t) => t.isMyTemplate)
-                  .map((template, index) => (
+                {myTemplates.length > 0 ? (
+                  myTemplates.map((template, index) => (
                     <LibraryTemplateItem
-                      key={index}
-                      title={template.title}
-                      image={template.imageSrc}
+                      key={template.name + index}
+                      title={template.name}
+                      image="rectangle-10.png" // TODO: Add image field to Template type
                       isMyTemplate
                     />
-                  ))}
+                  ))
+                ) : (
+                  <div className="col-span-2 flex flex-col items-center justify-center py-8 text-center">
+                    <p className="text-subtitle">No templates found</p>
+                    <p className="text-sm text-gray-400 mt-1">Create your first template to get started</p>
+                  </div>
+                )}
               </div>
             </TabsContent>
             <TabsContent value="app-templates">
               <div className="grid grid-cols-2 pt-2 gap-4">
-                {templates
-                  .filter((t) => !t.isMyTemplate)
-                  .map((template, index) => (
+                {appTemplates.length > 0 ? (
+                  appTemplates.map((template, index) => (
                     <LibraryTemplateItem
-                      key={index}
-                      title={template.title}
-                      image={template.imageSrc}
+                      key={template.name + index}
+                      title={template.name}
+                      image="rectangle-10.png" // TODO: Add image field to Template type
                     />
-                  ))}
+                  ))
+                ) : (
+                  <div className="col-span-2 flex flex-col items-center justify-center py-8 text-center">
+                    <p className="text-subtitle">No app templates available</p>
+                    <p className="text-sm text-gray-400 mt-1">Check back later for new templates</p>
+                  </div>
+                )}
               </div>
             </TabsContent>
           </Tabs>

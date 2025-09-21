@@ -7,11 +7,12 @@ import { Box2, Building, ChevronRight, DateIcon, Delivery } from '@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/uikit/tabs'
 import Link from 'next/link'
 import { Order } from '@/types/orders/orderType'
-import { replacementRequests } from '@/utilities/demo_datas/demoOrderData'
 import { useGETAllOrders } from '@/lib/db/helpers/orderHelpers'
+import { useGETAllReplacementRequests } from '@/lib/db/helpers/replacementRequestHelpers'
 
 export default function OrdersPage() {
   const orders = useGETAllOrders()
+  const replacementRequests = useGETAllReplacementRequests()
 
   return (
     <>
@@ -74,19 +75,14 @@ export default function OrdersPage() {
           </TabsContent>
           <TabsContent value="replacement">
             <div className="grid grid-cols-1 pt-6 gap-4">
-              {replacementRequests &&
-                (() => {
-                  if (replacementRequests.length === 0)
-                    return (
-                      <>
-                        <div className="grid items-center justify-center h-[70vh] opacity-60">
-                          <h6>No requests here</h6>
-                        </div>
-                      </>
-                    )
-
-                  return replacementRequests.map((o, index) => <RequestCard key={index} req={o} />)
-                })()}
+              {replacementRequests && replacementRequests.length > 0 ? (
+                replacementRequests.map((req, index) => <RequestCard key={req.requestId || index} req={req} />)
+              ) : (
+                <div className="grid items-center justify-center h-[70vh] opacity-60">
+                  <h6>No replacement requests</h6>
+                  <p className="text-sm text-gray-400 mt-1">Your replacement requests will appear here</p>
+                </div>
+              )}
             </div>
           </TabsContent>
         </Tabs>

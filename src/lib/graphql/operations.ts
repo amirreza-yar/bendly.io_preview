@@ -1,12 +1,29 @@
 import { gql } from '@urql/core'
 import { urqlClient } from '../urqlClient'
 import { syncService } from '../sync/syncService'
+import {
+  CreateFlashingInput,
+  UpdateFlashingInput,
+  CreateOrderInput,
+  UpdateOrderInput,
+  CreateTemplateInput,
+  UpdateTemplateInput,
+  CreateJobReferenceInput,
+  UpdateJobReferenceInput,
+  UpdateUserInput,
+} from '@/types/queryTypes'
 
 // Flashings GraphQL Operations
-export const GET_FLASHINGS_QUERY = gql`
+export const getFlashingsQuery = gql`
   query GetFlashings($userId: String!) {
     flashings(userId: $userId) {
       _id
+      ownerId {
+        _id
+        email
+        fullname
+      }
+      status
       material
       color
       thickness
@@ -17,10 +34,16 @@ export const GET_FLASHINGS_QUERY = gql`
   }
 `
 
-export const CREATE_FLASHING_MUTATION = gql`
+export const createFlashingMutation = gql`
   mutation CreateFlashing($input: CreateFlashingInput!) {
     createFlashing(input: $input) {
       _id
+      ownerId {
+        _id
+        email
+        fullname
+      }
+      status
       material
       color
       thickness
@@ -31,10 +54,16 @@ export const CREATE_FLASHING_MUTATION = gql`
   }
 `
 
-export const UPDATE_FLASHING_MUTATION = gql`
+export const updateFlashingMutation = gql`
   mutation UpdateFlashing($id: String!, $input: UpdateFlashingInput!) {
     updateFlashing(id: $id, input: $input) {
       _id
+      ownerId {
+        _id
+        email
+        fullname
+      }
+      status
       material
       color
       thickness
@@ -45,17 +74,33 @@ export const UPDATE_FLASHING_MUTATION = gql`
   }
 `
 
-export const DELETE_FLASHING_MUTATION = gql`
+export const deleteFlashingMutation = gql`
   mutation DeleteFlashing($id: String!) {
     deleteFlashing(id: $id)
   }
 `
 
 // Orders GraphQL Operations
-export const GET_ORDERS_QUERY = gql`
+export const getOrdersQuery = gql`
   query GetOrders($userId: String!) {
     orders(userId: $userId) {
       _id
+      orderNumber
+      clientId {
+        _id
+        email
+        fullname
+      }
+      items {
+        flashingId {
+          _id
+        }
+        subItems {
+          quantity
+          length
+          price
+        }
+      }
       status
       progress
       deliveryType
@@ -66,10 +111,26 @@ export const GET_ORDERS_QUERY = gql`
   }
 `
 
-export const CREATE_ORDER_MUTATION = gql`
+export const createOrderMutation = gql`
   mutation CreateOrder($input: CreateOrderInput!) {
     createOrder(input: $input) {
       _id
+      orderNumber
+      clientId {
+        _id
+        email
+        fullname
+      }
+      items {
+        flashingId {
+          _id
+        }
+        subItems {
+          quantity
+          length
+          price
+        }
+      }
       status
       progress
       deliveryType
@@ -80,7 +141,7 @@ export const CREATE_ORDER_MUTATION = gql`
   }
 `
 
-export const UPDATE_ORDER_MUTATION = gql`
+export const updateOrderMutation = gql`
   mutation UpdateOrder($id: String!, $input: UpdateOrderInput!) {
     updateOrder(id: $id, input: $input) {
       _id
@@ -95,7 +156,7 @@ export const UPDATE_ORDER_MUTATION = gql`
 `
 
 // Templates GraphQL Operations
-export const GET_TEMPLATES_QUERY = gql`
+export const getTemplatesQuery = gql`
   query GetTemplates($userId: String!) {
     templates(userId: $userId) {
       _id
@@ -109,7 +170,7 @@ export const GET_TEMPLATES_QUERY = gql`
   }
 `
 
-export const CREATE_TEMPLATE_MUTATION = gql`
+export const createTemplateMutation = gql`
   mutation CreateTemplate($input: CreateTemplateInput!) {
     createTemplate(input: $input) {
       _id
@@ -123,7 +184,7 @@ export const CREATE_TEMPLATE_MUTATION = gql`
   }
 `
 
-export const UPDATE_TEMPLATE_MUTATION = gql`
+export const updateTemplateMutation = gql`
   mutation UpdateTemplate($id: String!, $input: UpdateTemplateInput!) {
     updateTemplate(id: $id, input: $input) {
       _id
@@ -137,14 +198,14 @@ export const UPDATE_TEMPLATE_MUTATION = gql`
   }
 `
 
-export const DELETE_TEMPLATE_MUTATION = gql`
+export const deleteTemplateMutation = gql`
   mutation DeleteTemplate($id: String!) {
     deleteTemplate(id: $id)
   }
 `
 
 // Job References GraphQL Operations
-export const GET_JOB_REFERENCES_QUERY = gql`
+export const getJobReferencesQuery = gql`
   query GetJobReferences($userId: String!) {
     jobReferences(userId: $userId) {
       _id
@@ -157,7 +218,7 @@ export const GET_JOB_REFERENCES_QUERY = gql`
   }
 `
 
-export const CREATE_JOB_REFERENCE_MUTATION = gql`
+export const createJobReferenceMutation = gql`
   mutation CreateJobReference($input: CreateJobReferenceInput!) {
     createJobReference(input: $input) {
       _id
@@ -170,7 +231,7 @@ export const CREATE_JOB_REFERENCE_MUTATION = gql`
   }
 `
 
-export const UPDATE_JOB_REFERENCE_MUTATION = gql`
+export const updateJobReferenceMutation = gql`
   mutation UpdateJobReference($id: String!, $input: UpdateJobReferenceInput!) {
     updateJobReference(id: $id, input: $input) {
       _id
@@ -183,14 +244,14 @@ export const UPDATE_JOB_REFERENCE_MUTATION = gql`
   }
 `
 
-export const DELETE_JOB_REFERENCE_MUTATION = gql`
+export const deleteJobReferenceMutation = gql`
   mutation DeleteJobReference($id: String!) {
     deleteJobReference(id: $id)
   }
 `
 
 // Users GraphQL Operations
-export const GET_USERS_QUERY = gql`
+export const getUsersQuery = gql`
   query GetUsers {
     users {
       _id
@@ -205,7 +266,7 @@ export const GET_USERS_QUERY = gql`
   }
 `
 
-export const GET_USER_QUERY = gql`
+export const getUserQuery = gql`
   query GetUser($id: String!) {
     user(id: $id) {
       _id
@@ -220,7 +281,7 @@ export const GET_USER_QUERY = gql`
   }
 `
 
-export const UPDATE_USER_MUTATION = gql`
+export const updateUserMutation = gql`
   mutation UpdateUser($id: String!, $input: UpdateUserInput!) {
     updateUser(id: $id, input: $input) {
       _id
@@ -257,7 +318,7 @@ export class GraphQLOperations {
     if (!userId) return { success: false, error: 'No user ID' }
 
     try {
-      const result = await urqlClient.query(GET_FLASHINGS_QUERY, { userId }).toPromise()
+      const result = await urqlClient.query(getFlashingsQuery, { userId }).toPromise()
       
       if (result.error) {
         console.error('Get flashings error:', result.error)
@@ -271,9 +332,9 @@ export class GraphQLOperations {
     }
   }
 
-  async createFlashing(input: any) {
+  async createFlashing(input: CreateFlashingInput) {
     try {
-      const result = await urqlClient.mutation(CREATE_FLASHING_MUTATION, { input }).toPromise()
+      const result = await urqlClient.mutation(createFlashingMutation, { input }).toPromise()
       
       if (result.error) {
         console.error('Create flashing error:', result.error)
@@ -298,9 +359,9 @@ export class GraphQLOperations {
     }
   }
 
-  async updateFlashing(id: string, input: any) {
+  async updateFlashing(id: string, input: UpdateFlashingInput) {
     try {
-      const result = await urqlClient.mutation(UPDATE_FLASHING_MUTATION, { id, input }).toPromise()
+      const result = await urqlClient.mutation(updateFlashingMutation, { id, input }).toPromise()
       
       if (result.error) {
         console.error('Update flashing error:', result.error)
@@ -327,7 +388,7 @@ export class GraphQLOperations {
 
   async deleteFlashing(id: string) {
     try {
-      const result = await urqlClient.mutation(DELETE_FLASHING_MUTATION, { id }).toPromise()
+      const result = await urqlClient.mutation(deleteFlashingMutation, { id }).toPromise()
       
       if (result.error) {
         console.error('Delete flashing error:', result.error)
@@ -355,7 +416,7 @@ export class GraphQLOperations {
     if (!userId) return { success: false, error: 'No user ID' }
 
     try {
-      const result = await urqlClient.query(GET_ORDERS_QUERY, { userId }).toPromise()
+      const result = await urqlClient.query(getOrdersQuery, { userId }).toPromise()
       
       if (result.error) {
         console.error('Get orders error:', result.error)
@@ -369,9 +430,9 @@ export class GraphQLOperations {
     }
   }
 
-  async createOrder(input: any) {
+  async createOrder(input: CreateOrderInput) {
     try {
-      const result = await urqlClient.mutation(CREATE_ORDER_MUTATION, { input }).toPromise()
+      const result = await urqlClient.mutation(createOrderMutation, { input }).toPromise()
       
       if (result.error) {
         console.error('Create order error:', result.error)
@@ -396,9 +457,9 @@ export class GraphQLOperations {
     }
   }
 
-  async updateOrder(id: string, input: any) {
+  async updateOrder(id: string, input: UpdateOrderInput) {
     try {
-      const result = await urqlClient.mutation(UPDATE_ORDER_MUTATION, { id, input }).toPromise()
+      const result = await urqlClient.mutation(updateOrderMutation, { id, input }).toPromise()
       
       if (result.error) {
         console.error('Update order error:', result.error)
@@ -429,7 +490,7 @@ export class GraphQLOperations {
     if (!userId) return { success: false, error: 'No user ID' }
 
     try {
-      const result = await urqlClient.query(GET_TEMPLATES_QUERY, { userId }).toPromise()
+      const result = await urqlClient.query(getTemplatesQuery, { userId }).toPromise()
       
       if (result.error) {
         console.error('Get templates error:', result.error)
@@ -443,9 +504,9 @@ export class GraphQLOperations {
     }
   }
 
-  async createTemplate(input: any) {
+  async createTemplate(input: CreateTemplateInput) {
     try {
-      const result = await urqlClient.mutation(CREATE_TEMPLATE_MUTATION, { input }).toPromise()
+      const result = await urqlClient.mutation(createTemplateMutation, { input }).toPromise()
       
       if (result.error) {
         console.error('Create template error:', result.error)
@@ -470,9 +531,9 @@ export class GraphQLOperations {
     }
   }
 
-  async updateTemplate(id: string, input: any) {
+  async updateTemplate(id: string, input: UpdateTemplateInput) {
     try {
-      const result = await urqlClient.mutation(UPDATE_TEMPLATE_MUTATION, { id, input }).toPromise()
+      const result = await urqlClient.mutation(updateTemplateMutation, { id, input }).toPromise()
       
       if (result.error) {
         console.error('Update template error:', result.error)
@@ -499,7 +560,7 @@ export class GraphQLOperations {
 
   async deleteTemplate(id: string) {
     try {
-      const result = await urqlClient.mutation(DELETE_TEMPLATE_MUTATION, { id }).toPromise()
+      const result = await urqlClient.mutation(deleteTemplateMutation, { id }).toPromise()
       
       if (result.error) {
         console.error('Delete template error:', result.error)
@@ -527,7 +588,7 @@ export class GraphQLOperations {
     if (!userId) return { success: false, error: 'No user ID' }
 
     try {
-      const result = await urqlClient.query(GET_JOB_REFERENCES_QUERY, { userId }).toPromise()
+      const result = await urqlClient.query(getJobReferencesQuery, { userId }).toPromise()
       
       if (result.error) {
         console.error('Get job references error:', result.error)
@@ -541,9 +602,9 @@ export class GraphQLOperations {
     }
   }
 
-  async createJobReference(input: any) {
+  async createJobReference(input: CreateJobReferenceInput) {
     try {
-      const result = await urqlClient.mutation(CREATE_JOB_REFERENCE_MUTATION, { input }).toPromise()
+      const result = await urqlClient.mutation(createJobReferenceMutation, { input }).toPromise()
       
       if (result.error) {
         console.error('Create job reference error:', result.error)
@@ -568,9 +629,9 @@ export class GraphQLOperations {
     }
   }
 
-  async updateJobReference(id: string, input: any) {
+  async updateJobReference(id: string, input: UpdateJobReferenceInput) {
     try {
-      const result = await urqlClient.mutation(UPDATE_JOB_REFERENCE_MUTATION, { id, input }).toPromise()
+      const result = await urqlClient.mutation(updateJobReferenceMutation, { id, input }).toPromise()
       
       if (result.error) {
         console.error('Update job reference error:', result.error)
@@ -597,7 +658,7 @@ export class GraphQLOperations {
 
   async deleteJobReference(id: string) {
     try {
-      const result = await urqlClient.mutation(DELETE_JOB_REFERENCE_MUTATION, { id }).toPromise()
+      const result = await urqlClient.mutation(deleteJobReferenceMutation, { id }).toPromise()
       
       if (result.error) {
         console.error('Delete job reference error:', result.error)
@@ -622,7 +683,7 @@ export class GraphQLOperations {
   // Users Operations
   async getUsers() {
     try {
-      const result = await urqlClient.query(GET_USERS_QUERY).toPromise()
+      const result = await urqlClient.query(getUsersQuery, {}).toPromise()
       
       if (result.error) {
         console.error('Get users error:', result.error)
@@ -638,7 +699,7 @@ export class GraphQLOperations {
 
   async getUser(id: string) {
     try {
-      const result = await urqlClient.query(GET_USER_QUERY, { id }).toPromise()
+      const result = await urqlClient.query(getUserQuery, { id }).toPromise()
       
       if (result.error) {
         console.error('Get user error:', result.error)
@@ -652,9 +713,9 @@ export class GraphQLOperations {
     }
   }
 
-  async updateUser(id: string, input: any) {
+  async updateUser(id: string, input: UpdateUserInput) {
     try {
-      const result = await urqlClient.mutation(UPDATE_USER_MUTATION, { id, input }).toPromise()
+      const result = await urqlClient.mutation(updateUserMutation, { id, input }).toPromise()
       
       if (result.error) {
         console.error('Update user error:', result.error)
