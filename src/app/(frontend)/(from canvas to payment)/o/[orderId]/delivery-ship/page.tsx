@@ -21,6 +21,7 @@ import {
 import { Separator } from '@/components/uikit/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/uikit/tabs'
 import { Textarea } from '@/components/uikit/textarea'
+import { db } from '@/lib/db/appDB'
 import { useGETJobRefById } from '@/lib/db/helpers/jobRefHelpers'
 import {
   useGETFlashingsByOrderId,
@@ -148,7 +149,26 @@ export default function DeliveryAndShipping() {
       )
     ) {
       if (order?.jobRefrence) {
-        setAddAddressModal(true)
+        const jobReference = await db.jobReferences.get(order.jobRefrence.id)
+
+        const address = jobReference?.addresses?.find((addr) => addr.title === order.address?.title)
+
+        if (address) {
+          await upsertPartialOrder(Number(orderId), {
+            deliveryType: 'delivery',
+            address: {
+              title: order?.address?.title ?? '',
+              streetAddress: address?.streetAddress,
+              state: address?.state,
+              suburb: address?.suburb,
+              postcode: address?.postcode,
+            },
+          })
+
+          setDeliveryTypeState('delivery')
+        } else {
+          setAddAddressModal(true)
+        }
       } else {
         await upsertPartialOrder(Number(orderId), {
           deliveryType: 'delivery',
@@ -327,7 +347,9 @@ export default function DeliveryAndShipping() {
                           className="justify-self-end pr-0"
                         >
                           <Button size="default" variant="ghost" className="pr-0">
-                            Edit or Change Address
+                            {order.deliveryType === 'delivery'
+                              ? 'Edit or Change Address'
+                              : 'Edit or Change'}
                             <ChevronRight className="size-5" />
                           </Button>
                         </Link>

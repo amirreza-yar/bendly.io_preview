@@ -57,6 +57,7 @@ export async function upsertPartialOrder(id: number, partial: Partial<StoredOrde
       createdAt: now,
       updatedAt: now,
       completed: false,
+      hasSeenPayResult: false,
     }
 
     const merged: StoredOrder = {

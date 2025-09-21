@@ -11,7 +11,8 @@ export default function NewOrderLayout({ children }: { children: ReactNode }) {
 
   const order = useGETOrderById(Number(orderId))
 
-  if (order && (order.completed || order.paymentHistory)) return notFound()
+  if (order && (order.completed || order.paymentHistory) && order.hasSeenPayResult)
+    return notFound()
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  if (order) return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 }

@@ -12,6 +12,7 @@ import { useGETOrderById, upsertPartialOrder } from '@/lib/db/helpers/orderHelpe
 import { AvailableDatesRespose, PickupInfoResponse } from '@/types/queryTypes'
 import { fetchAvailableDates, fetchPayOrder, fetchPickupInfo } from '@/utilities/api/order'
 import { getDayAbbrString, getDayMonthNumber, getDayString } from '@/utilities/datetime'
+import { cn } from '@/utilities/ui'
 import { useQuery } from '@tanstack/react-query'
 import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -35,6 +36,15 @@ export default function PaymentOptionPage() {
   })
 
   const AVAILABLE_DATES = availableDatesData?.availableDates
+  console.log(
+    order?.deliveryDate,
+    AVAILABLE_DATES,
+    new Date(order?.deliveryDate ?? 0).getDate(),
+    new Date(AVAILABLE_DATES?.[0] ?? 0).getDate(),
+    order &&
+      new Date(order?.deliveryDate ?? 0).getDate() ===
+        new Date(AVAILABLE_DATES?.[0] ?? 0).getDate(),
+  )
 
   const onSubmitDeliveryDate = async (date: string) => {
     await upsertPartialOrder(Number(orderId), {
@@ -57,12 +67,11 @@ export default function PaymentOptionPage() {
           transactionId: payResponse.transactionId,
           via: payResponse.via,
         },
-        completed: true,
+        completed: false,
+        hasSeenPayResult: false,
       })
 
-      toast('Successful')
-
-      router.push('/dashboard')
+      router.push(`/o/${orderId}/pay/result`)
     }
   }
 
@@ -233,9 +242,16 @@ export default function PaymentOptionPage() {
                   className="last:pr-6"
                   onClick={() => onSubmitDeliveryDate(date)}
                 >
-                  <div className="grid items-center text-center gap-1.5 rounded-md border border-border-default p-2">
+                  <div
+                    className={cn(
+                      'grid items-center text-center gap-1.5 rounded-md p-2',
+                      new Date(order?.deliveryDate ?? 0).getDate() === new Date(date).getDate()
+                        ? 'border-primary border-2 text-primary-dark'
+                        : 'border-border-default border',
+                    )}
+                  >
                     <p className="label-small">{getDayAbbrString(date)}</p>
-                    <p className="caption-small text-subtitle">{getDayMonthNumber(date)}</p>
+                    <p className="caption-small opacity-60">{getDayMonthNumber(date)}</p>
                   </div>
                 </CarouselItem>
               ))}

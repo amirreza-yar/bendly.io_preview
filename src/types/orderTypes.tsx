@@ -95,4 +95,6 @@ export interface StoredOrder {
   rejectionDesc?: string
 
   completed: boolean
+
+  hasSeenPayResult: boolean
 }

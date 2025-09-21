@@ -11,6 +11,7 @@ import {
   getTotalGirth,
 } from '@/hooks/canvas/useFlashingLoader'
 import type { StoredFlashing } from '@/types/flashingTypes'
+import { createCrushFoldObject } from '@/utilities/canvas/crushFoldUtils'
 
 export function usePreviewCanvas(
   flashing: StoredFlashing | null | undefined,
@@ -60,6 +61,19 @@ export function usePreviewCanvas(
         0.8 * Math.sqrt(groupHeight),
         8 * Math.sqrt(groupHeight),
       )
+    } else {
+      if (flashing.startCrushFold) {
+        const startCircle = canvas.getObjects().find((obj) => obj.line2 && !obj.line1)
+
+        canvas.add(createCrushFoldObject(startCircle, flashing.crushFoldDir, 'start'))
+        console.log(startCircle)
+      }
+      if (flashing.endCrushFold) {
+        const endCircle = canvas.getObjects().find((obj) => !obj.line2 && obj.line1)
+
+        canvas.add(createCrushFoldObject(endCircle, flashing.crushFoldDir, 'end'))
+        console.log(endCircle)
+      }
     }
 
     if (view === '3D') {

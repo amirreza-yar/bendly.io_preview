@@ -32,7 +32,7 @@ export default function PreviewPage() {
 
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState<boolean>(false)
 
-  const [canvasView, setCanvasView] = useState<'2D' | '3D'>('2D')
+  const [canvasView, setCanvasView] = useState<'2D' | '3D'>('3D')
 
   const [totalGirth, setTotalGirth] = useState<number>()
 
