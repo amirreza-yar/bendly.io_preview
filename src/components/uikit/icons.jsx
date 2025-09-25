@@ -1614,6 +1614,47 @@ const Bullish1 = ({ ...props }) => {
     </svg>
   )
 }
+const ArrowLeft2 = ({ ...props }) => {
+  return (
+    <svg
+      {...props}
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12.2917 15L7.89835 11.3167C7.08955 10.6387 7.08955 9.36008 7.89835 8.68225L12.2917 5"
+        stroke="#262626"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+const ArrowRight2 = ({ ...props }) => {
+  return (
+    <svg
+      {...props}
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.70825 15L12.1017 11.3167C12.9104 10.6387 12.9104 9.36008 12.1017 8.68225L7.70825 5"
+        stroke="#262626"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
 export {
   Account,
   CrushFold,
@@ -1706,4 +1747,6 @@ export {
   TransferVerticaly,
   FeaturedAlert,
   Bullish1,
+  ArrowRight2,
+  ArrowLeft2
 }
