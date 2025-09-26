@@ -51,7 +51,7 @@ export default function RevenueChartCard() {
     period === 'weekly' ? weeklyData : period === 'monthly' ? monthlyData : yearlyData
 
   return (
-    <div className="rounded-2xl border bg-white p-6 w-137 h-140 shadow-sm dark:bg-neutral-900">
+    <div className="rounded-2xl border bg-white p-6 h-140 shadow-sm dark:bg-neutral-900">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -122,7 +122,7 @@ export default function RevenueChartCard() {
       {/* Footer Tabs */}
       <div className="mt-13 flex items-center justify-center">
         <Tabs defaultValue="weekly" onValueChange={(v) => setPeriod(v as typeof period)}>
-          <TabsList className="w-125 grid grid-cols-3 rounded-md border bg-neutral-100 dark:bg-neutral-800">
+          <TabsList className="grid grid-cols-3 rounded-md border bg-neutral-100 dark:bg-neutral-800">
             <TabsTrigger value="weekly">Weekly</TabsTrigger>
             <TabsTrigger value="monthly">Monthly</TabsTrigger>
             <TabsTrigger value="yearly">Yearly</TabsTrigger>
