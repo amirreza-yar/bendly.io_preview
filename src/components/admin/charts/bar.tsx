@@ -87,35 +87,24 @@ export default function OrdersChartCard() {
 
       {/* Chart */}
       <div className="mt-6 w-full min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px] max-h-[400px]">
-        <ChartContainer config={chartConfig}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 10, right: 12, bottom: 10, left: 0 }}>
-              <CartesianGrid vertical={false} stroke="#e5e7eb" />
-              <XAxis
-                dataKey="day"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={10}
-                fontSize={12}
-              />
-              <YAxis tickLine={false} axisLine={false} tickMargin={10} fontSize={12} />
-              <Tooltip content={<ChartTooltipContent />} />
-              <Bar
-                dataKey="orders"
-                radius={[6, 6, 0, 0]}
-                barSize={Math.max(20, 40 / (chartData.length / 7))} // Responsive bar size
-                onMouseOver={(_, index) => setActiveIndex(index)}
-                onMouseOut={() => setActiveIndex(null)}
-              >
-                {chartData.map((_, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={activeIndex === index ? '#B592F3' : '#9253EA'}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        <ChartContainer config={chartConfig} className="aspect-auto h-[350px] w-full">
+          <BarChart data={chartData} margin={{ top: 10, right: 12, bottom: 10, left: 0 }}>
+            <CartesianGrid vertical={false} stroke="#e5e7eb" />
+            <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={10} fontSize={12} />
+            <YAxis tickLine={false} axisLine={false} tickMargin={10} fontSize={12} />
+            <Tooltip content={<ChartTooltipContent />} />
+            <Bar
+              dataKey="orders"
+              radius={[6, 6, 0, 0]}
+              barSize={Math.max(20, 40 / (chartData.length / 7))} // Responsive bar size
+              onMouseOver={(_, index) => setActiveIndex(index)}
+              onMouseOut={() => setActiveIndex(null)}
+            >
+              {chartData.map((_, index) => (
+                <Cell key={`cell-${index}`} fill={activeIndex === index ? '#B592F3' : '#9253EA'} />
+              ))}
+            </Bar>
+          </BarChart>
         </ChartContainer>
       </div>
 

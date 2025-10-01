@@ -9,11 +9,13 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { Bar, BarChart, Cell } from 'recharts'
 import { useState } from 'react'
 
 import { ChartConfig, ChartContainer, ChartTooltipContent } from '@/components/ui/chart'
 import { Bullish1, ArrowLeft2, ArrowRight2 } from '@/components/uikit/icons'
 import { Tabs, TabsList, TabsTrigger } from '@/components/uikit/tabs'
+import { Select } from '@/components/uikit/select'
 
 // Demo data
 const weeklyData = [
@@ -24,6 +26,16 @@ const weeklyData = [
   { day: 'Fri', revenue: 22000 },
   { day: 'Sat', revenue: 5000 },
   { day: 'Sun', revenue: 2000 },
+]
+
+const weeklyData2 = [
+  { day: 'Mon', orders: 380 },
+  { day: 'Tue', orders: 490 },
+  { day: 'Wed', orders: 210 },
+  { day: 'Thu', orders: 340 },
+  { day: 'Fri', orders: 280 },
+  { day: 'Sat', orders: 90 },
+  { day: 'Sun', orders: 40 },
 ]
 
 const monthlyData = Array.from({ length: 30 }, (_, i) => ({
@@ -46,6 +58,8 @@ const chartConfig = {
 export default function RevenueChartCard() {
   const [period, setPeriod] = useState<'weekly' | 'monthly' | 'yearly'>('weekly')
 
+  const [chartType, setChartType] = useState('AR')
+
   const chartData =
     period === 'weekly' ? weeklyData : period === 'monthly' ? monthlyData : yearlyData
 
@@ -59,20 +73,16 @@ export default function RevenueChartCard() {
 
         {/* Controls */}
         <div className="flex items-center gap-2">
-          <select className="rounded-md border bg-transparent pl-3 pr-7 py-2 text-xs md:text-sm">
-            <option>Spline</option>
-            <option>Line</option>
-            <option>Area</option>
-          </select>
-
-          <div className="flex rounded-md border divide-x">
-            <button className="p-2">
-              <ArrowLeft2 className="h-4 w-4" />
-            </button>
-            <button className="p-2">
-              <ArrowRight2 className="h-4 w-4" />
-            </button>
-          </div>
+          <Select
+            items={[
+              { value: 'AR', label: 'Area' },
+              { value: 'BA', label: 'Bar' },
+            ]}
+            defaultValue="AR"
+            onValueChange={(val) => {
+              setChartType(val)
+            }}
+          />
         </div>
       </div>
 
@@ -86,9 +96,9 @@ export default function RevenueChartCard() {
       </div>
 
       {/* Chart */}
-      <div className="mt-6 w-full h-64 sm:h-72 md:h-80 lg:h-96">
-        <ChartContainer config={chartConfig}>
-          <ResponsiveContainer width="100%" height="100%">
+      <div className="mt-6 w-full">
+        {chartType === 'AR' ? (
+          <ChartContainer config={chartConfig} className="aspect-auto h-[350px] w-full">
             <AreaChart data={chartData} margin={{ left: 12, right: 12 }}>
               <CartesianGrid vertical={false} stroke="#e5e7eb" />
               <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={10} />
@@ -108,8 +118,32 @@ export default function RevenueChartCard() {
                 strokeWidth={2}
               />
             </AreaChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+          </ChartContainer>
+        ) : (
+          <ChartContainer config={chartConfig} className="aspect-auto h-[350px] w-full">
+            <BarChart data={weeklyData2} margin={{ top: 10, right: 12, bottom: 10, left: 0 }}>
+              <CartesianGrid vertical={false} stroke="#e5e7eb" />
+              <XAxis
+                dataKey="day"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={10}
+                fontSize={12}
+              />
+              <YAxis tickLine={false} axisLine={false} tickMargin={10} fontSize={12} />
+              <Tooltip content={<ChartTooltipContent />} />
+              <Bar
+                dataKey="orders"
+                radius={[6, 6, 0, 0]}
+                barSize={Math.max(20, 40 / (weeklyData2.length / 7))} // Responsive bar size
+              >
+                {weeklyData2.map((_, index) => (
+                  <Cell key={`cell-${index}`} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ChartContainer>
+        )}
       </div>
 
       {/* Footer Tabs */}
