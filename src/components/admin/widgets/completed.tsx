@@ -10,7 +10,7 @@ export default function CompletedWidget() {
       }}
     >
       <div className="flex flex-col">
-        <div className="flex items-center gap-2">
+        <div className="flex  items-center gap-2">
           <div className="flex items-center justify-center bg-white rounded-full w-10 h-10 sm:w-14 sm:h-14 flex-shrink-0">
             <CheckedBold />
           </div>

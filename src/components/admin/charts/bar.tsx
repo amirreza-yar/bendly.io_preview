@@ -1,13 +1,14 @@
 'use client'
 
 import {
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
+  Cell,
 } from 'recharts'
 import { useState } from 'react'
 
@@ -17,50 +18,49 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/uikit/tabs'
 
 // Demo data
 const weeklyData = [
-  { day: 'Mon', revenue: 21000 },
-  { day: 'Tue', revenue: 18000 },
-  { day: 'Wed', revenue: 25000 },
-  { day: 'Thu', revenue: 39850 },
-  { day: 'Fri', revenue: 22000 },
-  { day: 'Sat', revenue: 5000 },
-  { day: 'Sun', revenue: 2000 },
+  { day: 'Mon', orders: 380 },
+  { day: 'Tue', orders: 490 },
+  { day: 'Wed', orders: 210 },
+  { day: 'Thu', orders: 340 },
+  { day: 'Fri', orders: 280 },
+  { day: 'Sat', orders: 90 },
+  { day: 'Sun', orders: 40 },
 ]
 
 const monthlyData = Array.from({ length: 30 }, (_, i) => ({
   day: `Day ${i + 1}`,
-  revenue: Math.floor(Math.random() * 40000),
+  orders: Math.floor(Math.random() * 500),
 }))
 
 const yearlyData = Array.from({ length: 12 }, (_, i) => ({
   day: new Date(0, i).toLocaleString('default', { month: 'short' }),
-  revenue: Math.floor(Math.random() * 50000),
+  orders: Math.floor(Math.random() * 600),
 }))
 
 const chartConfig = {
-  revenue: {
-    label: 'Revenue',
-    color: '#22c55e',
+  orders: {
+    label: 'Orders',
+    color: '#9253EA',
   },
 } satisfies ChartConfig
 
-export default function RevenueChartCard() {
+export default function OrdersChartCard() {
   const [period, setPeriod] = useState<'weekly' | 'monthly' | 'yearly'>('weekly')
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   const chartData =
     period === 'weekly' ? weeklyData : period === 'monthly' ? monthlyData : yearlyData
 
   return (
-    <div className="w-full rounded-2xl border bg-white p-4 sm:p-6 lg:p-8 shadow-sm dark:bg-neutral-900 h-auto">
+    <div className="flex flex-col w-full min-h-[400px] rounded-2xl border bg-white p-4 sm:p-6 lg:p-8 shadow-sm dark:bg-neutral-900">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
-        <div>
-          <h6 className="text-sm md:text-base text-subtitle">Total Revenue</h6>
-        </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h6 className="text-sm md:text-base text-subtitle">Total Orders</h6>
 
-        {/* Controls */}
+        {/* Controls aligned right */}
         <div className="flex items-center gap-2">
           <select className="rounded-md border bg-transparent pl-3 pr-7 py-2 text-xs md:text-sm">
-            <option>Spline</option>
+            <option>Bar</option>
             <option>Line</option>
             <option>Area</option>
           </select>
@@ -78,36 +78,43 @@ export default function RevenueChartCard() {
 
       {/* Stats */}
       <div className="mt-4">
-        <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold">$45,577.00</h2>
-        <div className="mt-2 flex items-center gap-1 text-green-600">
+        <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold">1,583</h2>
+        <div className="mt-2 flex items-center gap-1 text-purple-600">
           <Bullish1 className="h-4 w-4" />
-          <span className="text-xs sm:text-sm">+4.2% from previous period</span>
+          <span className="text-xs sm:text-sm">+8.2% from previous period</span>
         </div>
       </div>
 
       {/* Chart */}
-      <div className="mt-6 w-full h-64 sm:h-72 md:h-80 lg:h-96">
+      <div className="mt-6 w-full min-h-[200px] sm:min-h-[250px] md:min-h-[300px] lg:min-h-[350px] max-h-[400px]">
         <ChartContainer config={chartConfig}>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ left: 12, right: 12 }}>
+            <BarChart data={chartData} margin={{ top: 10, right: 12, bottom: 10, left: 0 }}>
               <CartesianGrid vertical={false} stroke="#e5e7eb" />
-              <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={10} />
-              <YAxis tickLine={false} axisLine={false} />
-              <Tooltip content={<ChartTooltipContent />} />
-              <defs>
-                <linearGradient id="fillRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--color-revenue)" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="var(--color-revenue)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <Area
-                type="monotone"
-                dataKey="revenue"
-                stroke="var(--color-revenue)"
-                fill="url(#fillRevenue)"
-                strokeWidth={2}
+              <XAxis
+                dataKey="day"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={10}
+                fontSize={12}
               />
-            </AreaChart>
+              <YAxis tickLine={false} axisLine={false} tickMargin={10} fontSize={12} />
+              <Tooltip content={<ChartTooltipContent />} />
+              <Bar
+                dataKey="orders"
+                radius={[6, 6, 0, 0]}
+                barSize={Math.max(20, 40 / (chartData.length / 7))} // Responsive bar size
+                onMouseOver={(_, index) => setActiveIndex(index)}
+                onMouseOut={() => setActiveIndex(null)}
+              >
+                {chartData.map((_, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={activeIndex === index ? '#B592F3' : '#9253EA'}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
       </div>
