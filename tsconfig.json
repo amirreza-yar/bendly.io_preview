@@ -35,6 +35,6 @@
     "next.config.js",
     "next-sitemap.config.cjs",
     "src/app/(frontend)/(user dashboard)/dashboard/library/page.jsx"
-, "src/hooks/canvas/useFlashingLoader.jsx", "src/components/flashing/canvas/canvasUI/canvasController.jsx", "src/components/flashing/canvas/canvasUI/canvasController.jsx", "src/providers/.dev/indexDB.tsx", "src/app/(frontend)/(user dashboard)/dashboard/account/edit-account/(edit mobile)/edit-current-mobile-number/page.jsx"  ],
+, "src/hooks/canvas/useFlashingLoader.jsx", "src/components/flashing/canvas/canvasUI/canvasController.jsx", "src/components/flashing/canvas/canvasUI/canvasController.jsx", "src/providers/.dev/indexDB.tsx", "src/app/(frontend)/(user dashboard)/dashboard/account/edit-account/(edit mobile)/edit-current-mobile-number/page.jsx", "src/components/admin/tables/page.jsx"  ],
   "exclude": ["node_modules"]
 }
