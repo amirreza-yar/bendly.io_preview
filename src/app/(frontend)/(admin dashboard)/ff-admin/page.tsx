@@ -4,6 +4,9 @@ import CompletedWidget from '@/components/admin/widgets/completed'
 import PendingWidget from '@/components/admin/widgets/pending'
 import ReadyWidget from '@/components/admin/widgets/ready'
 import ProductionWidget from '@/components/admin/widgets/production'
+import RecentOrderTable from '@/components/admin/cards/tables/recentorder'
+import RecentActivity from '@/components/admin/cards/recentactivity'
+import ReplacementRequestTable from '@/components/admin/cards/tables/recplacementrequest'
 
 export default function AdminDashboardOverview() {
   return (
@@ -14,6 +17,17 @@ export default function AdminDashboardOverview() {
           <ProductionWidget number={4} />
           <ReadyWidget number={10} />
           <CompletedWidget number={8} />
+        </div>
+        <div className="w-full h-[498px] border rounded-lg border-border-default bg-white">
+          <RecentOrderTable />
+        </div>
+        <div className="w-full flex gap-5 flex-col md:flex-row">
+          <div className=" border rounded-lg border-border-default bg-white  ">
+            <RecentActivity />
+          </div>
+          <div className="w-full border rounded-lg border-border-default bg-white">
+            <ReplacementRequestTable />
+          </div>
         </div>
         <div className="grid auto-rows-min gap-8 md:grid-cols-2">
           <OrdersChartCard totalorders={1543} changes={4.2} />
