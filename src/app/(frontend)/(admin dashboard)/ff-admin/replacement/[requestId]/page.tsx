@@ -1,5 +1,6 @@
 'use client'
 
+import ImageGalleryAdvanced from '@/components/admin/imageGallery'
 import { CurrentStatusSelect, PrioritySelect } from '@/components/admin/select/badgeSelect'
 import { formatDateWithDay } from '@/components/dashboard/order/utils'
 import {
@@ -13,9 +14,12 @@ import {
 import { Button } from '@/components/uikit/buttons/button'
 import {
   Check,
+  ChevronRight,
   Close,
   HomeNav,
+  Mail,
   Maximize,
+  Phone,
   Plus,
   ProfileNav,
   Remove,
@@ -238,13 +242,13 @@ const orderData = {
 const tags = ['Production', 'Sample']
 
 export default function AdminDashboardOrderDetails() {
-  const { orderId, flashingId } = useParams()
+  const { requestId, orderId, flashingId } = useParams()
   const [showInternalNote, setShowInternalNote] = useState<boolean>(false)
   const [internalNoteTags, setInternalNoteTags] = useState<string[]>([])
   const [baseInternalNoteTags, setBaseInternalNoteTags] = useState<string[]>(tags)
 
   return (
-    <div className="bg-[#F1F5F9] h-full p-6">
+    <div className="bg-[#F1F5F9] p-6">
       <Breadcrumb>
         <BreadcrumbList className="">
           <BreadcrumbItem>
@@ -257,164 +261,83 @@ export default function AdminDashboardOrderDetails() {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/ff-admin/order" className="text-primary label-regular">
-                Orders
+              <Link href="/ff-admin/replacement" className="text-primary label-regular">
+                Replacements
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="label-regular">Order: {orderId}</BreadcrumbPage>
+            <BreadcrumbPage className="label-regular">Request: Rec-{requestId}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
       <div className="grid grid-cols-3 gap-5 pt-6">
-        <div className="col-span-2 grid gap-6">
-          <div className="bg-white rounded-lg col-span-2">
-            <h5 className="w-full border-b border-border-default p-6">
-              Flashing #{orderData.flashings.findIndex((flash) => flash.id === flashingId) + 1}{' '}
-              Detail
-            </h5>
-
-            <div className="flex flex-col items-center justify-center">
-              <div className="relative flex flex-col items-center justify-center p-6 w-full">
-                <Tabs defaultValue="measures" onValueChange={(v) => {}}>
-                  <TabsList className="mx-auto max-w-110 w-full">
-                    <TabsTrigger value="measures" className="text-xs sm:text-sm">
-                      Measures
-                    </TabsTrigger>
-                    <TabsTrigger value="color-side" className="text-xs sm:text-sm">
-                      Color Side
-                    </TabsTrigger>
-                    <TabsTrigger value="taper" className="text-xs sm:text-sm">
-                      Taper
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
-                <div className="w-full h-64 flex justify-center items-center">Canvas here</div>
-                <span className="text-[14px]/[17px] self-start">Unit: mm</span>
-                <Maximize className="absolute right-12 bottom-11" />
-              </div>
-              <div className="w-full px-6">
-                <Separator className="" />
-              </div>
-              <div className="grid grid-cols-2 p-6 gap-6 w-full">
-                <div className="border border-border-default rounded-md flex flex-col p-4 gap-3">
-                  <h5>Specifications</h5>
-                  <div className="flex items-center justify-between pt-3">
-                    <span className="body-regular">Total Girth</span>
-                    <span className="body-regular font-bold">
-                      {
-                        orderData.flashings.find((flash) => flash.id === flashingId)?.moreDetails
-                          .totalGirth
-                      }{' '}
-                      mm
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="body-regular">Material</span>
-                    <span className="body-regular font-bold">
-                      {
-                        orderData.flashings.find((flash) => flash.id === flashingId)?.moreDetails
-                          .material
-                      }
-                    </span>
-                  </div>
-                  {orderData.flashings.find((flash) => flash.id === flashingId)?.moreDetails
-                    .color ? (
-                    <div className="flex items-center justify-between">
-                      <span className="body-regular">Color</span>
-                      <span className="body-regular font-bold">
-                        {
-                          orderData.flashings.find((flash) => flash.id === flashingId)?.moreDetails
-                            .color?.name
-                        }
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between">
-                      <span className="body-regular">Thickness</span>
-                      <span className="body-regular font-bold">
-                        {
-                          orderData.flashings.find((flash) => flash.id === flashingId)?.moreDetails
-                            .thickness?.thickness
-                        }{' '}
-                        mm
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between">
-                    <span className="body-regular">Tapered</span>
-                    <span className="body-regular font-bold">
-                      {orderData.flashings.find((flash) => flash.id === flashingId)?.moreDetails
-                        .tapered
-                        ? 'Yes'
-                        : 'No'}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="body-regular">Crush Fold</span>
-                    <span className="body-regular font-bold">
-                      {orderData.flashings.find((flash) => flash.id === flashingId)?.moreDetails
-                        .crushFold
-                        ? 'Yes'
-                        : 'No'}
-                    </span>
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <span className="body-regular">Code</span>
-                    <span className="body-regular font-bold">
-                      {orderData.flashings.find((flash) => flash.id === flashingId)?.code}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="body-regular">Position</span>
-                    <span className="body-regular font-bold">
-                      {orderData.flashings.find((flash) => flash.id === flashingId)?.position}
-                    </span>
-                  </div>
+        <div className="col-span-2 grid auto-rows-max gap-6">
+          <div className="bg-white rounded-lg p-6">
+            <h5>Requested Products</h5>
+            <div className="grid gap-3 pt-6">
+              <div className="flex items-center justify-start gap-2">
+                <div className="h-16 w-16 border border-border-default flex items-center justify-center rounded-md">
+                  Flash
                 </div>
-                <div>
-                  <div className="border border-border-default rounded-md flex flex-col p-4 gap-3">
-                    <h5>Dimensions & Quantity</h5>
-                    <div className="flex items-center justify-between pt-3">
-                      <div className="grid gap-1">
-                        <span className="body-regular font-bold border-b border-black pr-2 mb-2">
-                          Quantity
-                        </span>
-                        {orderData.flashings
-                          .find((flash) => flash.id === flashingId)
-                          ?.specifications.map((spec, index) => {
-                            return (
-                              <span key={index} className="font-regular">
-                                {spec.quantity} pcs
-                              </span>
-                            )
-                          })}
-                      </div>
-                      <div className="grid gap-1">
-                        <span className="body-regular font-bold border-b border-black pr-2 mb-2">
-                          Length
-                        </span>
-                        {orderData.flashings
-                          .find((flash) => flash.id === flashingId)
-                          ?.specifications.map((spec, index) => {
-                            return (
-                              <span key={index} className="font-regular">
-                                {spec.length}mm
-                              </span>
-                            )
-                          })}
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex flex-col justify-start items-start h-full gap-2 pt-1">
+                  <p className="label-regular">Color Bound / Black Matte</p>
+                  <p className="body-small">5 pcs x 1000 mm</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-start gap-2">
+                <div className="h-16 w-16 border border-border-default flex items-center justify-center rounded-md">
+                  Flash
+                </div>
+                <div className="flex flex-col justify-start items-start h-full gap-2 pt-1">
+                  <p className="label-regular">Color Bound / Black Matte</p>
+                  <p className="body-small">5 pcs x 1000 mm</p>
                 </div>
               </div>
             </div>
           </div>
-          <div className="rounded-lg col-span-2 p-6 pb-3 bg-white">
+          <div className="bg-white rounded-lg p-6 grid gap-3">
+            <h5>Reason for Replacement</h5>
+            <span className="px-4 py-2 mb-2 mt-3 label-regular rounded-full bg-surface-disable border border-border-default w-fit">
+              Wrong size or dimensions
+            </span>
+            <h6>Customer Notes:</h6>
+            <span className="p-4 body-regular rounded-md bg-surface-disable border border-border-default w-fit">
+              I received my order, but one item doesn't match the specified measurements{' '}
+            </span>
+          </div>
+
+          <div className="bg-white rounded-lg p-6 grid gap-3">
+            <h5 className="pb-2">Attachments</h5>
+            <ImageGalleryAdvanced
+              images={[
+                {
+                  id: '1',
+                  src: '/admin-sidebar.png',
+                  alt: 'img1',
+                },
+                {
+                  id: '2',
+                  src: '/badge.png',
+                  alt: 'img2',
+                },
+                {
+                  id: '3',
+                  src: '/website-template-OG.webp',
+                  alt: 'img3',
+                },
+                {
+                  id: '4',
+                  src: '/admin-sidebar.png',
+                  alt: 'img1',
+                },
+              ]}
+            />
+          </div>
+
+          <div className="rounded-lg p-6 pb-3 bg-white">
             <h5 className="pb-6">Audit trail</h5>
             <div className="grid divide-y">
               <div className="grid gap-3 py-3">
@@ -528,44 +451,46 @@ export default function AdminDashboardOrderDetails() {
           </div>
 
           <div className="bg-white rounded-lg flex flex-col p-6 gap-3">
-            <h5>Order Information</h5>
+            <h5>Request Information</h5>
             <div className="flex items-center justify-between pt-3">
-              <span className="body-regular">Order ID</span>
-              <span className="body-regular font-bold">{orderData.id}</span>
+              <span className="body-regular">Request ID</span>
+              <span className="body-regular font-bold">Rec-{orderData.id}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="body-regular">Due Date</span>
+              <span className="body-regular">Request Date</span>
               <span className="body-regular font-bold">
                 {formatDateWithDay(orderData.deliveryDate)}
               </span>
             </div>
-
-            <div className="flex items-center justify-between">
-              <span className="body-regular">Amount Paid</span>
-              <span className="body-regular font-bold">
-                $ {Math.round(orderData.totalCost).toLocaleString()}
-              </span>
+            <div className="grid gap-3 rounded-md border border-border-default p-3">
+              <div className="flex items-center justify-between body-small">
+                Original Order ID
+                <span className="font-bold">12345678</span>
+              </div>
+              <div className="flex items-center justify-between body-small">
+                Order Date
+                <span className="font-bold">{formatDateWithDay(orderData.deliveryDate)}</span>
+              </div>
+              <Button variant="secondary" className="pt-1">
+                View Original Order
+                <ChevronRight />
+              </Button>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="body-regular">Delivery Type</span>
-              <span className="body-regular font-bold">
-                {orderData.deliveryType.charAt(0).toUpperCase() + orderData.deliveryType.slice(1)}
-              </span>
-            </div>
-            <Separator />
-            <p>{orderData.deliveryType === 'delivery' ? 'Deliver to' : 'Pickup Detail'}</p>
-            <div className="flex items-start justify-start gap-1">
-              <WareHouse className="size-5" />
-              <span className="body-regular">
-                {orderData.pickupInfo.address.streetAddress}, {orderData.pickupInfo.address.suburb},{' '}
-                {orderData.pickupInfo.address.state} {orderData.pickupInfo.address.postcode}
-              </span>
-            </div>
-            <div className="flex items-start justify-start gap-1">
-              <ProfileNav className="size-5" />
-              <span className="body-regular">
-                {orderData.recipientInfo.recipientName} - {orderData.recipientInfo.recipientMobile}
-              </span>
+          </div>
+          <div className="bg-white rounded-lg flex flex-col p-6 gap-3">
+            <div className="grid gap-3 body-small">
+              <h5 className="py-2">Customer Information</h5>
+              <p>John Smith</p>
+              <p>john.smith@domain.co</p>
+              <p>++61234567890</p>
+              <Button variant="secondary">
+                <Phone />
+                Call
+              </Button>
+              <Button variant="secondary">
+                <Mail />
+                Send Mail
+              </Button>
             </div>
           </div>
         </div>

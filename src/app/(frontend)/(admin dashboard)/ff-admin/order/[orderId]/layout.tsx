@@ -328,7 +328,7 @@ export default function AdminDashboardOrderDetailsLayout({ children }: { childre
         <SidebarRail />
       </Sidebar>
       <SidebarInset>
-        <header className="flex h-20 shrink-0 items-center justify-between gap-2">
+        <header className="flex h-20 shrink-0 items-center justify-between gap-2 sticky top-0 z-10 bg-white border-b border-border-default">
           <div className="flex items-center gap-4 px-4">
             <Link href="/ff-admin/order">
               <ArrowLeft className="size-8" />

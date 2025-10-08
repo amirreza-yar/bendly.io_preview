@@ -1,6 +1,7 @@
 'use client'
 import { ReactNode, useEffect, useState } from 'react'
 import {
+  ArrowLeft,
   ChevronDown,
   Clipboard,
   ClipboardBold,
@@ -93,7 +94,7 @@ const data = {
 export default function AdminDashbaordLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const [navIndex, setNavIndex] = useState(-1)
-  const { orderId } = useParams()
+  const { orderId, requestId } = useParams()
 
   useEffect(() => {
     if (pathname.startsWith('/ff-admin/order')) {
@@ -189,25 +190,29 @@ export default function AdminDashbaordLayout({ children }: { children: ReactNode
           <SidebarRail />
         </Sidebar>
         <SidebarInset>
-          <header className="flex h-20 shrink-0 items-center justify-between gap-2">
+          <header className="flex h-20 shrink-0 items-center justify-between gap-2 sticky top-0 z-10 bg-white border-b border-border-default">
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1 block md:hidden" />
-              {/* <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4 block md:hidden"
-            /> */}
-              <h4 className="font-semibold text-[24px]/[33px]">
-                {navIndex === 0
-                  ? 'Overview'
-                  : navIndex === 1
-                    ? 'Orders Management'
-                    : navIndex === 2
-                      ? 'Replacement'
-                      : navIndex === 3
-                        ? 'Customers'
-                        : navIndex === 4 && 'Settings'}
-                {isMobile}
-              </h4>
+              {requestId ? (
+                <h4 className="font-semibold text-[24px]/[33px] flex items-center gap-6">
+                  <Link href="/ff-admin/replacement">
+                    <ArrowLeft className="size-8" />
+                  </Link>
+                  Request: Rec-{requestId}
+                </h4>
+              ) : (
+                <h4 className="font-semibold text-[24px]/[33px]">
+                  {navIndex === 0
+                    ? 'Overview'
+                    : navIndex === 1
+                      ? 'Orders Management'
+                      : navIndex === 2
+                        ? 'Replacement'
+                        : navIndex === 3
+                          ? 'Customers'
+                          : navIndex === 4 && 'Settings'}
+                </h4>
+              )}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
