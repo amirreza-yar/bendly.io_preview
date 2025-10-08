@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Select } from '@/components/ui/select'
+import { Select } from '@/components/uikit/select'
 import { Badge } from '@/components/uikit/badge'
 
 const data: RequestDetails[] = [
@@ -53,7 +53,7 @@ interface CustomTableMeta<TData> extends TableMeta<TData> {
   updateData: (updatedData: TData[]) => void
 }
 
-const statusOptions = [
+const statusOptions: { value: RequestDetails['status']; label: string }[] = [
   { value: 'PE', label: 'Pending' },
   { value: 'IP', label: 'In Production' },
   { value: 'RFP', label: 'Ready for pickup' },
@@ -129,7 +129,7 @@ export const columns: ColumnDef<RequestDetails>[] = [
             <Badge
               text={getStatusLabel(row.getValue('status'))}
               variant={getStatusVariant(row.getValue('status'))}
-              className="capitalize flex items-center gap-1 px-2 py-1 rounded-full cursor-pointer"
+              className="capitalize flex items-center gap-1 px-2 py-1 rounded-full cursor-pointer "
             >
               <ChevronDown className="ml-1 h-3 w-3 opacity-70" />
             </Badge>

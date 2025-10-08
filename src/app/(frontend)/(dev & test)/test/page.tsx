@@ -1,11 +1,12 @@
-import React from 'react'
-import { CheckedBold, CheckedBold2 } from '@/components/uikit/icons'
-import ReplacementRequestTable from '@/components/admin/cards/tables/recplacementrequest'
+'use client'
 
-export default function CompletedWidget() {
+import * as React from 'react'
+import { OrderManagementTable } from '@/components/admin/cards/tables/ordermanagement'
+
+export default function test() {
   return (
     <>
-      <ReplacementRequestTable />
+      <OrderManagementTable />
     </>
   )
 }
