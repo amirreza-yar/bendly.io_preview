@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Select } from '@/components/ui/select'
+import { Select } from '@/components/uikit/select'
 import { Badge } from '@/components/uikit/badge'
 
 const data: OrderDetails[] = [
@@ -73,7 +73,7 @@ interface CustomTableMeta<TData> extends TableMeta<TData> {
   updateData: (updatedData: TData[]) => void
 }
 
-const statusOptions = [
+const statusOptions: { value: OrderDetails['status']; label: string }[] = [
   { value: 'PE', label: 'Pending' },
   { value: 'IP', label: 'In Production' },
   { value: 'RFP', label: 'Ready for pickup' },
@@ -232,6 +232,9 @@ export default function RecentOrderTable() {
   const table = useReactTable({
     data: fetchedData,
     columns,
+    state: {
+      sorting, // ✅ add this
+    },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
