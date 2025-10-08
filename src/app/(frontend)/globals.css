@@ -512,6 +512,10 @@
     @apply font-regular text-[13px]/[20px];
   }
 
+  .body-regular {
+    @apply text-[16px]/[26px];
+  }
+
   .caption-small {
     @apply font-regular text-2xs/[14px];
   }

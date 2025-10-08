@@ -9,9 +9,11 @@ import {
   GearSetting,
   GearSettingBold,
   Logout,
+  Mail,
   MainLogo,
   Overview,
   OverviewBold,
+  Phone,
   Replacement,
   ReplacementBold,
   User,
@@ -261,7 +263,7 @@ export default function AdminDashboardOrderDetailsLayout({ children }: { childre
 
   return (
     <>
-      <Sidebar collapsible="icon" className="bg-white">
+      <Sidebar collapsible="offcanvas" className="bg-white border-r">
         <SidebarHeader className="bg-white px-6 pt-8">
           <SidebarMenuItem className="flex items-center justify-between md:pt-0 pt-4">
             <div className="flex items-center justify-start rounded-lg gap-4">
@@ -306,7 +308,23 @@ export default function AdminDashboardOrderDetailsLayout({ children }: { childre
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="bg-white flex-1 items-center justify-end">Support</SidebarFooter>
+        <SidebarFooter className="bg-white flex-1 justify-end p-5">
+          <div className="grid gap-3 body-small">
+            <Separator />
+            <h5 className="py-2">Customer Information</h5>
+            <p>John Smith</p>
+            <p>john.smith@domain.co</p>
+            <p>++61234567890</p>
+            <Button variant="secondary">
+              <Phone />
+              Call
+            </Button>
+            <Button variant="secondary">
+              <Mail />
+              Send Mail
+            </Button>
+          </div>
+        </SidebarFooter>
         <SidebarRail />
       </Sidebar>
       <SidebarInset>
