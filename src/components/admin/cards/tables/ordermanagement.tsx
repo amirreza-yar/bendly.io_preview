@@ -15,19 +15,16 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table'
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown, ChevronDown } from 'lucide-react'
+import { PaginationDemo } from '@/components/admin/pagination/paginationcustom'
 
 import { Button } from '@/components/ui/button'
 import { Select } from '@/components/uikit/select'
 import { Badge } from '@/components/uikit/badge'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
@@ -40,6 +37,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { EyeIcon } from '@/components/uikit/icons'
+import { StatusCell } from './statuscell'
 
 const data: OrderDetails[] = [
   {
@@ -98,6 +96,30 @@ const statusOptions: { value: OrderDetails['status']; label: string }[] = [
   { value: 'RE', label: 'Rejected' },
 ]
 
+const timeOptions = [
+  { value: 'today', label: 'Today' },
+  { value: 'this_week', label: 'This Week' },
+  { value: 'last_week', label: 'Last Week' },
+  { value: 'this_month', label: 'This Month' },
+  { value: 'last_month', label: 'Last Month' },
+  { value: 'this_year', label: 'This Year' },
+  { value: 'custom_range', label: 'Custom Range' },
+  { value: 'all_time', label: 'All Time' },
+]
+
+const materialOptions = [
+  { value: 'Steel', label: 'Steel' },
+  { value: 'gold', label: 'Gold' },
+  { value: 'Aluminum', label: 'Aluminum' },
+  { value: 'Brass', label: 'Brass' },
+]
+
+const priorityOptions = [
+  { value: 'Normal', label: 'Normal' },
+  { value: 'Urgent', label: 'Urgent' },
+  { value: 'High', label: 'High' },
+]
+
 const formatDueDate = (dateString: string) => {
   const date = new Date(dateString)
   const day = date.toLocaleDateString('en-US', { weekday: 'long' })
@@ -150,7 +172,7 @@ export const columns: ColumnDef<OrderDetails>[] = [
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => <div className="pl-6 ">{row.getValue('OrderID')}</div>,
+    cell: ({ row }) => <div className="pl-6">{row.getValue('OrderID')}</div>,
   },
   {
     accessorKey: 'Customer',
@@ -189,21 +211,11 @@ export const columns: ColumnDef<OrderDetails>[] = [
       }
 
       return (
-        <Select
-          items={statusOptions}
+        <StatusCell
           value={row.getValue('status')}
-          onValueChange={handleStatusChange}
-        >
-          <div className="flex items-center">
-            <Badge
-              text={getStatusLabel(row.getValue('status'))}
-              variant={getStatusVariant(row.getValue('status'))}
-              className="capitalize flex items-center gap-1 px-2 py-1 rounded-full cursor-pointer"
-            >
-              <ChevronDown className="ml-1 h-3 w-3 opacity-70" />
-            </Badge>
-          </div>
-        </Select>
+          onChange={handleStatusChange}
+          items={statusOptions}
+        />
       )
     },
   },
@@ -231,7 +243,6 @@ export const columns: ColumnDef<OrderDetails>[] = [
           className="h-8 w-8 p-0 pr-6"
           onClick={() => router.push(`/ff-admin/order/${row.original.OrderID}`)}
         >
-          {/* Add your custom icon here */}
           <EyeIcon />
           <span className="sr-only">View order details</span>
         </Button>
@@ -245,153 +256,247 @@ export function OrderManagementTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [fetchedData, setFetchedData] = React.useState<OrderDetails[]>(data)
+  const [selectedTime, setSelectedTime] = React.useState<string[]>(['all_time'])
+  const [selectedMaterials, setSelectedMaterials] = React.useState<string[]>([])
+  const [selectedStatuses, setSelectedStatuses] = React.useState<string[]>([])
+  const [selectedPriorities, setSelectedPriorities] = React.useState<string[]>([])
+
+  const filterData = () => {
+    let filteredData = data
+
+    // Time filter
+    if (selectedTime.length > 0 && !selectedTime.includes('all_time')) {
+      const today = new Date('2025-10-08') // Using provided date
+      filteredData = filteredData.filter((item) => {
+        const dueDate = new Date(item.DueDate)
+        return selectedTime.some((time) => {
+          if (time === 'today') {
+            return dueDate.toDateString() === today.toDateString()
+          }
+          if (time === 'this_week') {
+            const startOfWeek = new Date(today)
+            startOfWeek.setDate(today.getDate() - today.getDay())
+            const endOfWeek = new Date(startOfWeek)
+            endOfWeek.setDate(startOfWeek.getDate() + 6)
+            return dueDate >= startOfWeek && dueDate <= endOfWeek
+          }
+          if (time === 'last_week') {
+            const startOfLastWeek = new Date(today)
+            startOfLastWeek.setDate(today.getDate() - today.getDay() - 7)
+            const endOfLastWeek = new Date(startOfLastWeek)
+            endOfLastWeek.setDate(startOfLastWeek.getDate() + 6)
+            return dueDate >= startOfLastWeek && dueDate <= endOfLastWeek
+          }
+          if (time === 'this_month') {
+            return (
+              dueDate.getMonth() === today.getMonth() &&
+              dueDate.getFullYear() === today.getFullYear()
+            )
+          }
+          if (time === 'last_month') {
+            const lastMonth = new Date(today)
+            lastMonth.setMonth(today.getMonth() - 1)
+            return (
+              dueDate.getMonth() === lastMonth.getMonth() &&
+              dueDate.getFullYear() === lastMonth.getFullYear()
+            )
+          }
+          if (time === 'this_year') {
+            return dueDate.getFullYear() === today.getFullYear()
+          }
+          if (time === 'custom_range') {
+            // Placeholder for custom range
+            return true
+          }
+          return false
+        })
+      })
+    }
+
+    // Material filter
+    if (selectedMaterials.length > 0) {
+      filteredData = filteredData.filter((item) => selectedMaterials.includes(item.Material))
+    } else {
+      filteredData = [] // If no materials selected, show no rows
+    }
+
+    // Status filter
+    if (selectedStatuses.length > 0) {
+      filteredData = filteredData.filter((item) => selectedStatuses.includes(item.status))
+    } else {
+      filteredData = [] // If no statuses selected, show no rows
+    }
+
+    // Priority filter
+    if (selectedPriorities.length > 0) {
+      filteredData = filteredData.filter((item) => selectedPriorities.includes(item.priority))
+    } else {
+      filteredData = [] // If no priorities selected, show no rows
+    }
+
+    setFetchedData(filteredData)
+  }
 
   const table = useReactTable({
-    data,
+    data: fetchedData,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
     },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    meta: {
+      updateData: (updatedData: OrderDetails[]) => {
+        setFetchedData(updatedData)
+      },
+    } as CustomTableMeta<OrderDetails>,
   })
 
   return (
-    <div className="w-full">
-      <div className="flex items-center my-6 h-11">
+    <div className=" mx-6 my-6">
+      <div className="flex items-center h-11 my-6 gap-6">
         <Input
           placeholder="Filter by customer or order id"
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
+          value={(table.getColumn('OrderID')?.getFilterValue() as string) ?? ''}
+          onChange={(event) => table.getColumn('OrderID')?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+            <Button variant="outline" className="ml-auto w-[130px]">
+              Time Filter <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
+            {timeOptions.map((option) => (
+              <DropdownMenuCheckboxItem
+                key={option.value}
+                className="capitalize"
+                checked={selectedTime.includes(option.value)}
+                onCheckedChange={(checked) => {
+                  setSelectedTime((prev) =>
+                    checked
+                      ? [...prev.filter((val) => val !== 'all_time'), option.value]
+                      : prev.filter((val) => val !== option.value),
+                  )
+                }}
+              >
+                {option.label}
+              </DropdownMenuCheckboxItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+            <Button variant="outline" className="ml-auto w-[190px]">
+              All Materials <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
+            {materialOptions.map((option) => (
+              <DropdownMenuCheckboxItem
+                key={option.value}
+                className="capitalize"
+                checked={selectedMaterials.includes(option.value)}
+                onCheckedChange={(checked) => {
+                  setSelectedMaterials((prev) =>
+                    checked ? [...prev, option.value] : prev.filter((val) => val !== option.value),
+                  )
+                }}
+              >
+                {option.label}
+              </DropdownMenuCheckboxItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+            <Button variant="outline" className="ml-auto w-[175px]">
+              All Statuses <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
+            {statusOptions.map((option) => (
+              <DropdownMenuCheckboxItem
+                key={option.value}
+                className="capitalize"
+                checked={selectedStatuses.includes(option.value)}
+                onCheckedChange={(checked) => {
+                  setSelectedStatuses((prev) =>
+                    checked ? [...prev, option.value] : prev.filter((val) => val !== option.value),
+                  )
+                }}
+              >
+                {option.label}
+              </DropdownMenuCheckboxItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+            <Button variant="outline" className="ml-auto w-[140px]">
+              All Priorities <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
+            {priorityOptions.map((option) => (
+              <DropdownMenuCheckboxItem
+                key={option.value}
+                className="capitalize"
+                checked={selectedPriorities.includes(option.value)}
+                onCheckedChange={(checked) => {
+                  setSelectedPriorities((prev) =>
+                    checked ? [...prev, option.value] : prev.filter((val) => val !== option.value),
+                  )
+                }}
+              >
+                {option.label}
+              </DropdownMenuCheckboxItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        <div>
+          <Button
+            onClick={filterData}
+            className="w-[74px] h-[44px] min-w-[64px] rounded-md px-3 py-2 gap-2 bg-[#3355FF] border border-border-primary text-white hover:bg-[#2a44cc]"
+          >
+            Apply
+          </Button>
+        </div>
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className="border-none h-24"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -409,28 +514,9 @@ export function OrderManagementTable() {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+      <div className="flex items-center justify-center mt-8">
         <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+          <PaginationDemo />
         </div>
       </div>
     </div>

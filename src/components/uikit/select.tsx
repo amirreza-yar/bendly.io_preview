@@ -23,7 +23,9 @@ type SelectProps = {
   label?: string
   error?: boolean
   required?: boolean
-  children?: ReactNode // ✅ allow children
+  children?: ReactNode
+  className?: string
+  borderless?: boolean // ✅ new prop
 }
 
 export function Select({
@@ -36,7 +38,9 @@ export function Select({
   error,
   label,
   required,
-  children, // ✅ include children
+  children,
+  className,
+  borderless,
   ...props
 }: SelectProps) {
   return (
@@ -54,9 +58,14 @@ export function Select({
       )}
       <SelectPrimitive.Trigger
         data-slot="select-trigger"
-        className={`${error ? 'border-border-attention' : 'border-border-default'} border-2 text-sm data-[placeholder]:text-placeholder [&_svg:not([class*='text-'])]:text-muted-foreground focus:border-primary flex items-center justify-between gap-2 rounded-md px-3 transition-[color,box-shadow] disabled:cursor-not-allowed h-11 w-full`}
+        className={cn(
+          'text-sm flex items-center justify-between gap-2 rounded-md px-3 transition-[color,box-shadow] disabled:cursor-not-allowed h-11 w-full',
+          borderless
+            ? 'border-none outline-none shadow-none focus:ring-0 focus:outline-none'
+            : `${error ? 'border-border-attention' : 'border-border-default'} border-2 focus:border-primary`,
+          className,
+        )}
       >
-        {/* ✅ Render children (custom display) OR fallback to default Value */}
         {children ? (
           children
         ) : (

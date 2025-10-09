@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/table'
 import { Select } from '@/components/uikit/select'
 import { Badge } from '@/components/uikit/badge'
+import { StatusCell } from './statuscell'
 
 const data: RequestDetails[] = [
   {
@@ -120,21 +121,11 @@ export const columns: ColumnDef<RequestDetails>[] = [
       }
 
       return (
-        <Select
-          items={statusOptions}
+        <StatusCell
           value={row.getValue('status')}
-          onValueChange={handleStatusChange}
-        >
-          <div className="flex items-center">
-            <Badge
-              text={getStatusLabel(row.getValue('status'))}
-              variant={getStatusVariant(row.getValue('status'))}
-              className="capitalize flex items-center gap-1 px-2 py-1 rounded-full cursor-pointer "
-            >
-              <ChevronDown className="ml-1 h-3 w-3 opacity-70" />
-            </Badge>
-          </div>
-        </Select>
+          onChange={handleStatusChange}
+          items={statusOptions}
+        />
       )
     },
   },
