@@ -6,7 +6,7 @@ import { ReactNode } from 'react'
 import { cva } from 'class-variance-authority'
 import { cn } from '@/utilities/ui'
 
-type SelectValue = 'PE' | 'IP' | 'RFP' | 'SI' | 'CO' | 'RE'
+type SelectValue = 'PE' | 'IP' | 'RFP' | 'SI' | 'CO' | 'RE' | string
 
 type SelectItem = {
   value: SelectValue
