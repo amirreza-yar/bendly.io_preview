@@ -337,6 +337,8 @@ export default function AdminDashboardOrderDetails() {
             />
           </div>
 
+          {/* Audit trail starts here */}
+
           <div className="rounded-lg p-6 pb-3 bg-white">
             <h5 className="pb-6">Audit trail</h5>
             <div className="grid divide-y">
@@ -372,6 +374,8 @@ export default function AdminDashboardOrderDetails() {
               </div>
             </div>
           </div>
+
+          {/* Audit trail ends here */}
         </div>
         <div className="grid gap-6 auto-rows-min">
           <div className="bg-white rounded-lg p-6 grid gap-4">
