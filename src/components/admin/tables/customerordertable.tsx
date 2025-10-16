@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useRouter } from 'next/navigation'
+import type { DateRange } from 'react-day-picker'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -17,9 +17,7 @@ import {
 } from '@tanstack/react-table'
 import { ArrowUpDown, ChevronDown } from 'lucide-react'
 import { PaginationDemo } from '@/components/admin/pagination/paginationcustom'
-
 import { Button } from '@/components/ui/button'
-import { Select } from '@/components/uikit/select'
 import { Badge } from '@/components/uikit/badge'
 import {
   DropdownMenu,
@@ -28,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
+import { useRouter } from 'next/navigation'
 import {
   Table,
   TableBody,
@@ -36,8 +35,27 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { EyeIcon } from '@/components/uikit/icons'
 import { StatusCell } from './statuscell'
+import { Calendar } from '@/components/uikit/calendar'
+import { EyeIcon, Plus } from '@/components/uikit/icons'
+
+export type OrderDetails = {
+  OrderID: number
+  Customer: string
+  DueDate: string
+  Material: string
+  priority: 'Normal' | 'Urgent' | 'High'
+  status: 'PE' | 'IP' | 'RFP' | 'SI' | 'CO' | 'RE'
+}
+
+interface CustomTableMeta<TData> extends TableMeta<TData> {
+  updateData: (updatedData: TData[]) => void
+}
+
+interface DateRangePickerProps {
+  onChange?: (range: { start: Date; end: Date }) => void
+  onCancel?: () => void
+}
 
 const data: OrderDetails[] = [
   {
@@ -53,7 +71,7 @@ const data: OrderDetails[] = [
     Customer: 'Joe Biden',
     DueDate: '2025-10-15',
     Material: 'gold',
-    priority: 'Normal',
+    priority: 'High',
     status: 'RFP',
   },
   {
@@ -72,22 +90,17 @@ const data: OrderDetails[] = [
     priority: 'Normal',
     status: 'RE',
   },
+  {
+    OrderID: 5638787,
+    Customer: 'Sarah Wilson',
+    DueDate: '2025-10-22',
+    Material: 'Brass',
+    priority: 'High',
+    status: 'IP',
+  },
 ]
 
-export type OrderDetails = {
-  OrderID: number
-  Customer: string
-  DueDate: string
-  Material: string
-  priority: 'Normal' | 'Urgent' | 'High'
-  status: 'PE' | 'IP' | 'RFP' | 'SI' | 'CO' | 'RE'
-}
-
-interface CustomTableMeta<TData> extends TableMeta<TData> {
-  updateData: (updatedData: TData[]) => void
-}
-
-const statusOptions: { value: OrderDetails['status']; label: string }[] = [
+const statusOptions = [
   { value: 'PE', label: 'Pending' },
   { value: 'IP', label: 'In Production' },
   { value: 'RFP', label: 'Ready for pickup' },
@@ -128,36 +141,14 @@ const formatDueDate = (dateString: string) => {
   return `${day} - ${month}/${dayNum}`
 }
 
-const getStatusVariant = (status: string): 'green' | 'orange' | 'red' | 'blue' | 'gray' => {
-  switch (status) {
-    case 'CO':
-    case 'RFP':
-      return 'green'
-    case 'PE':
-      return 'orange'
-    case 'IP':
-      return 'blue'
-    case 'SI':
-      return 'gray'
-    case 'RE':
-      return 'red'
-    default:
-      return 'gray'
-  }
-}
-
-const getStatusLabel = (status: string): string => {
-  const option = statusOptions.find((opt) => opt.value === status)
-  return option ? option.label : status
-}
-
-const getPriorityVariant = (priority: string): 'gray' | 'orange' | 'red' => {
+const getPriorityVariant = (priority: string) => {
   switch (priority) {
     case 'Urgent':
       return 'orange'
     case 'High':
       return 'red'
     case 'Normal':
+      return 'gray'
     default:
       return 'gray'
   }
@@ -168,30 +159,26 @@ export const columns: ColumnDef<OrderDetails>[] = [
     accessorKey: 'OrderID',
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-        Order ID
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        Order ID <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => <div className="pl-6">{row.getValue('OrderID')}</div>,
+    filterFn: (row, columnId, filterValue) => String(row.getValue('OrderID')).includes(filterValue),
   },
   {
     accessorKey: 'Customer',
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-        Customer
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        Customer <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
     cell: ({ row }) => <div>{row.getValue('Customer')}</div>,
+    filterFn: (row, columnId, filterValue) =>
+      String(row.getValue('Customer')).toLowerCase().includes(String(filterValue).toLowerCase()),
   },
   {
     accessorKey: 'DueDate',
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-        Due Date
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: 'Due Date',
     cell: ({ row }) => <div>{formatDueDate(row.getValue('DueDate'))}</div>,
   },
   {
@@ -209,12 +196,11 @@ export const columns: ColumnDef<OrderDetails>[] = [
         )
         ;(table.options.meta as CustomTableMeta<OrderDetails>)?.updateData(updatedData)
       }
-
       return (
         <StatusCell
           value={row.getValue('status')}
           onChange={handleStatusChange}
-          items={statusOptions}
+          items={statusOptions as any}
         />
       )
     },
@@ -243,6 +229,7 @@ export const columns: ColumnDef<OrderDetails>[] = [
           className="h-8 w-8 p-0 pr-6"
           onClick={() => router.push(`/ff-admin/order/${row.original.OrderID}`)}
         >
+          {/* Add your custom icon here */}
           <EyeIcon />
           <span className="sr-only">View order details</span>
         </Button>
@@ -251,29 +238,123 @@ export const columns: ColumnDef<OrderDetails>[] = [
   },
 ]
 
-export function OrderManagementTable() {
+interface CancelButtonProps {
+  onClick?: () => void
+  label?: string
+  disabled?: boolean
+}
+
+const CancelButton: React.FC<CancelButtonProps> = ({
+  onClick,
+  label = 'Cancel',
+  disabled = false,
+}) => {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className="px-3 py-1 text-xs border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {label}
+    </button>
+  )
+}
+
+const DateRangePicker: React.FC<DateRangePickerProps> = ({ onChange, onCancel }) => {
+  const [range, setRange] = React.useState<DateRange | undefined>()
+
+  return (
+    <div className="w-fit rounded-xl border border-gray-200 bg-white shadow-sm p-4 flex flex-col gap-3">
+      <Calendar
+        mode="range"
+        selected={range}
+        onSelect={setRange}
+        numberOfMonths={2}
+        captionLayout="dropdown"
+        className="rounded-md"
+      />
+
+      <div className="flex justify-between items-center text-sm text-gray-700 px-1">
+        {range?.from && range?.to ? (
+          <p>
+            Selected: <strong>{range.from.toLocaleDateString()}</strong> →{' '}
+            <strong>{range.to.toLocaleDateString()}</strong>
+          </p>
+        ) : range?.from ? (
+          <p>
+            Start: <strong>{range.from.toLocaleDateString()}</strong>
+          </p>
+        ) : (
+          <p>Select a start and end date</p>
+        )}
+
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs"
+            onClick={() => setRange(undefined)}
+          >
+            Clear
+          </Button>
+
+          <CancelButton
+            onClick={() => {
+              setRange(undefined)
+              onCancel?.()
+            }}
+            label="Cancel"
+          />
+
+          <Button
+            variant="default"
+            size="sm"
+            className="bg-[#3355FF] text-white hover:bg-[#2a44cc]"
+            onClick={() => {
+              if (range?.from && range?.to && onChange) {
+                onChange({ start: range.from, end: range.to })
+              }
+            }}
+          >
+            Apply
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function CustomerOrderTable() {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [fetchedData, setFetchedData] = React.useState<OrderDetails[]>(data)
+
   const [selectedTime, setSelectedTime] = React.useState<string[]>(['all_time'])
   const [selectedMaterials, setSelectedMaterials] = React.useState<string[]>([])
   const [selectedStatuses, setSelectedStatuses] = React.useState<string[]>([])
   const [selectedPriorities, setSelectedPriorities] = React.useState<string[]>([])
+  const [globalFilter, setGlobalFilter] = React.useState('')
 
-  const filterData = () => {
+  const [customRange, setCustomRange] = React.useState<{ start: Date; end: Date } | null>(null)
+  const [showDatePicker, setShowDatePicker] = React.useState(false)
+  const router = useRouter()
+
+  const filterData = React.useCallback(() => {
     let filteredData = data
 
     // Time filter
     if (selectedTime.length > 0 && !selectedTime.includes('all_time')) {
-      const today = new Date('2025-10-08') // Using provided date
+      const today = new Date('2025-10-08')
       filteredData = filteredData.filter((item) => {
         const dueDate = new Date(item.DueDate)
         return selectedTime.some((time) => {
-          if (time === 'today') {
-            return dueDate.toDateString() === today.toDateString()
+          if (time === 'custom_range' && customRange) {
+            return dueDate >= customRange.start && dueDate <= customRange.end
           }
+          if (time === 'today') return dueDate.toDateString() === today.toDateString()
           if (time === 'this_week') {
             const startOfWeek = new Date(today)
             startOfWeek.setDate(today.getDate() - today.getDay())
@@ -288,12 +369,11 @@ export function OrderManagementTable() {
             endOfLastWeek.setDate(startOfLastWeek.getDate() + 6)
             return dueDate >= startOfLastWeek && dueDate <= endOfLastWeek
           }
-          if (time === 'this_month') {
+          if (time === 'this_month')
             return (
               dueDate.getMonth() === today.getMonth() &&
               dueDate.getFullYear() === today.getFullYear()
             )
-          }
           if (time === 'last_month') {
             const lastMonth = new Date(today)
             lastMonth.setMonth(today.getMonth() - 1)
@@ -302,13 +382,7 @@ export function OrderManagementTable() {
               dueDate.getFullYear() === lastMonth.getFullYear()
             )
           }
-          if (time === 'this_year') {
-            return dueDate.getFullYear() === today.getFullYear()
-          }
-          if (time === 'custom_range') {
-            // Placeholder for custom range
-            return true
-          }
+          if (time === 'this_year') return dueDate.getFullYear() === today.getFullYear()
           return false
         })
       })
@@ -317,63 +391,65 @@ export function OrderManagementTable() {
     // Material filter
     if (selectedMaterials.length > 0) {
       filteredData = filteredData.filter((item) => selectedMaterials.includes(item.Material))
-    } else {
-      filteredData = [] // If no materials selected, show no rows
     }
 
     // Status filter
     if (selectedStatuses.length > 0) {
       filteredData = filteredData.filter((item) => selectedStatuses.includes(item.status))
-    } else {
-      filteredData = [] // If no statuses selected, show no rows
     }
 
     // Priority filter
     if (selectedPriorities.length > 0) {
       filteredData = filteredData.filter((item) => selectedPriorities.includes(item.priority))
-    } else {
-      filteredData = [] // If no priorities selected, show no rows
     }
 
     setFetchedData(filteredData)
-  }
+  }, [selectedTime, selectedMaterials, selectedStatuses, selectedPriorities, customRange])
 
   const table = useReactTable({
     data: fetchedData,
     columns,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
+    state: { sorting, columnFilters, columnVisibility, rowSelection, globalFilter },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    meta: {
-      updateData: (updatedData: OrderDetails[]) => {
-        setFetchedData(updatedData)
-      },
-    } as CustomTableMeta<OrderDetails>,
+    globalFilterFn: (row, columnId, filterValue) => {
+      const search = String(filterValue).toLowerCase()
+      return (
+        row.original.Customer.toLowerCase().includes(search) ||
+        String(row.original.OrderID).includes(search)
+      )
+    },
+    meta: { updateData: setFetchedData } as CustomTableMeta<OrderDetails>,
   })
 
   return (
-    <div className=" mx-6 my-6">
-      <div className="flex items-center h-11 my-6 gap-6">
+    <div className="mx-6 my-6">
+      <div className="w-fill flex justify-between mb-4 h-11 pl-2">
+        <h5 className="">Orders</h5>
+        <button className="flex gap-2 border border-border-primary rounded-md text-primary text-sm py-3 px-4 ">
+          <Plus />
+          Add New Order
+        </button>
+      </div>
+      <div className="flex my-6 w-full justify-between h-11 gap-6">
         <Input
           placeholder="Filter by customer or order id"
-          value={(table.getColumn('OrderID')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('OrderID')?.setFilterValue(event.target.value)}
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
           className="max-w-sm"
         />
+
+        {/* Time Filter */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto w-[130px]">
+            <Button variant="outline" className="w-[130px]">
               Time Filter <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -381,14 +457,15 @@ export function OrderManagementTable() {
             {timeOptions.map((option) => (
               <DropdownMenuCheckboxItem
                 key={option.value}
-                className="capitalize"
+                className="capitalize my-1"
                 checked={selectedTime.includes(option.value)}
                 onCheckedChange={(checked) => {
                   setSelectedTime((prev) =>
                     checked
-                      ? [...prev.filter((val) => val !== 'all_time'), option.value]
-                      : prev.filter((val) => val !== option.value),
+                      ? [...prev.filter((v) => v !== 'all_time'), option.value]
+                      : prev.filter((v) => v !== option.value),
                   )
+                  if (option.value === 'custom_range' && checked) setShowDatePicker(true)
                 }}
               >
                 {option.label}
@@ -396,9 +473,11 @@ export function OrderManagementTable() {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Material Filter */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto w-[190px]">
+            <Button variant="outline" className="w-[190px]">
               All Materials <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -406,22 +485,24 @@ export function OrderManagementTable() {
             {materialOptions.map((option) => (
               <DropdownMenuCheckboxItem
                 key={option.value}
-                className="capitalize"
+                className="capitalize my-1"
                 checked={selectedMaterials.includes(option.value)}
-                onCheckedChange={(checked) => {
+                onCheckedChange={(checked) =>
                   setSelectedMaterials((prev) =>
-                    checked ? [...prev, option.value] : prev.filter((val) => val !== option.value),
+                    checked ? [...prev, option.value] : prev.filter((v) => v !== option.value),
                   )
-                }}
+                }
               >
                 {option.label}
               </DropdownMenuCheckboxItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Status Filter */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto w-[175px]">
+            <Button variant="outline" className="w-[175px]">
               All Statuses <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -429,22 +510,24 @@ export function OrderManagementTable() {
             {statusOptions.map((option) => (
               <DropdownMenuCheckboxItem
                 key={option.value}
-                className="capitalize"
+                className="capitalize my-1"
                 checked={selectedStatuses.includes(option.value)}
-                onCheckedChange={(checked) => {
+                onCheckedChange={(checked) =>
                   setSelectedStatuses((prev) =>
-                    checked ? [...prev, option.value] : prev.filter((val) => val !== option.value),
+                    checked ? [...prev, option.value] : prev.filter((v) => v !== option.value),
                   )
-                }}
+                }
               >
                 {option.label}
               </DropdownMenuCheckboxItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Priority Filter */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto w-[140px]">
+            <Button variant="outline" className="w-[140px]">
               All Priorities <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -452,28 +535,42 @@ export function OrderManagementTable() {
             {priorityOptions.map((option) => (
               <DropdownMenuCheckboxItem
                 key={option.value}
-                className="capitalize"
+                className="capitalize my-1"
                 checked={selectedPriorities.includes(option.value)}
-                onCheckedChange={(checked) => {
+                onCheckedChange={(checked) =>
                   setSelectedPriorities((prev) =>
-                    checked ? [...prev, option.value] : prev.filter((val) => val !== option.value),
+                    checked ? [...prev, option.value] : prev.filter((v) => v !== option.value),
                   )
-                }}
+                }
               >
                 {option.label}
               </DropdownMenuCheckboxItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-        <div>
-          <Button
-            onClick={filterData}
-            className="w-[74px] h-[44px] min-w-[64px] rounded-md px-3 py-2 gap-2 bg-[#3355FF] border border-border-primary text-white hover:bg-[#2a44cc]"
-          >
-            Apply
-          </Button>
-        </div>
+
+        <Button
+          onClick={filterData}
+          className="w-[74px] rounded-md bg-[#3355FF] text-white hover:bg-[#2a44cc]"
+        >
+          Apply
+        </Button>
       </div>
+
+      {/* Date Range Picker Overlay */}
+      {showDatePicker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md bg-opacity-50">
+          <DateRangePicker
+            onChange={(range: { start: Date; end: Date }) => {
+              setCustomRange(range)
+              setShowDatePicker(false)
+              filterData()
+            }}
+            onCancel={() => setShowDatePicker(false)}
+          />
+        </div>
+      )}
+
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
@@ -490,7 +587,7 @@ export function OrderManagementTable() {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -514,6 +611,7 @@ export function OrderManagementTable() {
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-center mt-8">
         <div className="space-x-2">
           <PaginationDemo />

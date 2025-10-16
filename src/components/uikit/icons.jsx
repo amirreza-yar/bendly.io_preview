@@ -2249,10 +2249,81 @@ const Close = ({ ...props }) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M7 17L17 7M7 7L17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path
+        d="M7 17L17 7M7 7L17 17"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
     </svg>
   )
 }
+
+const Search = ({ ...props }) => {
+  return (
+    <svg
+      {...props}
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M8.92415 16.2995C12.8362 16.2995 16.0075 13.1282 16.0075 9.21615C16.0075 5.30413 12.8362 2.13281 8.92415 2.13281C5.01214 2.13281 1.84082 5.30413 1.84082 9.21615C1.84082 13.1282 5.01214 16.2995 8.92415 16.2995Z"
+        stroke="#262626"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M15.4606 17.1611L14.1057 14.9028C13.9182 14.5902 13.9674 14.1902 14.2252 13.9325C14.4828 13.6747 14.883 13.6255 15.1956 13.813L17.4537 15.1679C18.2642 15.6543 18.4017 16.7726 17.7335 17.4409C17.0652 18.1091 15.9469 17.9714 15.4606 17.1611Z"
+        stroke="#262626"
+        strokeWidth="1.5"
+      />
+    </svg>
+  )
+}
+
+const PlusIcon = ({ ...props }) => {
+  return (
+    <svg
+      {...props}
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M10 16.25V3.75M3.75 10H16.25"
+        stroke="#3355FF"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+const Call2 = ({ ...props }) => {
+  return (
+    <svg
+      {...props}
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M16.469 12.6333C15.3117 11.6612 14.435 11.5242 13.765 12.7508C13.0995 13.982 12.5751 14.8364 10.7929 14.0281C8.49153 12.9803 7.01692 11.5082 5.96768 9.20278C5.15764 7.423 6.01679 6.901 7.2431 6.22883C8.46945 5.55667 8.33803 4.68272 7.36206 3.52642C5.62494 1.46836 4.66712 2.04049 4.12062 2.63307C1.65423 5.38307 0.811541 10.4774 5.19498 14.8608C9.51645 19.1823 14.6156 18.3444 17.3598 15.8785C17.9538 15.3272 18.5246 14.368 16.469 12.6333Z"
+        stroke="#3355FF"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+
 
 export {
   Account,
@@ -2261,10 +2332,13 @@ export {
   Drawing,
   Factory,
   BoxDeliverd,
+  Search,
+  PlusIcon,
   Checked,
   Production1,
   Factorybold,
   SquareClockBold2,
+  Call2,
   SquareClockBold,
   BoxDeliverdBold,
   BoxDeliverdBold2,
@@ -2374,5 +2448,5 @@ export {
   UserAvatar,
   Maximize,
   SquareClock,
-  Close
+  Close,
 }

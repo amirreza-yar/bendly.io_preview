@@ -5,10 +5,9 @@ import { ChevronDown, Check, ChevronUp } from '@/components/uikit/icons'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { cn } from '@/utilities/ui'
 
-// Types for statuses
-type StatusValue = 'PE' | 'IP' | 'RFP' | 'SI' | 'CO' | 'RE'
+export type StatusValue = 'PE' | 'IP' | 'RFP' | 'SI' | 'CO' | 'RE'
 
-type StatusItem = {
+export type StatusItem = {
   value: StatusValue
   label: string
 }
@@ -19,20 +18,18 @@ interface StatusCellProps {
   items: StatusItem[]
 }
 
-// Helper: label by status code
 function getStatusLabel(status: StatusValue): string {
   const map: Record<StatusValue, string> = {
     PE: 'Pending',
-    IP: 'In Progress',
-    RFP: 'Request for Payment',
-    SI: 'Sent Invoice',
+    IP: 'In Production',
+    RFP: 'Ready for pickup',
+    SI: 'Shipped',
     CO: 'Completed',
     RE: 'Rejected',
   }
   return map[status]
 }
 
-// Helper: color variant
 function getStatusColors(status: StatusValue) {
   const variants: Record<StatusValue, string> = {
     PE: 'bg-surface-warning-subtle text-warning-dark',
@@ -45,7 +42,6 @@ function getStatusColors(status: StatusValue) {
   return variants[status] || 'bg-gray-100 text-gray-800'
 }
 
-// ✅ Main component
 export function StatusCell({ value, onChange, items }: StatusCellProps) {
   return (
     <SelectPrimitive.Root value={value} onValueChange={onChange}>

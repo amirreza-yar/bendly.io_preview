@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/table'
 import { Select } from '@/components/uikit/select'
 import { Badge } from '@/components/uikit/badge'
-import { StatusCell } from '@/components/admin/cards/tables/statuscell'
+import { StatusCell } from '@/components/admin/tables/statuscell'
 
 const data: OrderDetails[] = [
   {

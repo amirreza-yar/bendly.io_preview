@@ -4,9 +4,9 @@ import CompletedWidget from '@/components/admin/widgets/completed'
 import PendingWidget from '@/components/admin/widgets/pending'
 import ReadyWidget from '@/components/admin/widgets/ready'
 import ProductionWidget from '@/components/admin/widgets/production'
-import RecentOrderTable from '@/components/admin/cards/tables/recentorder'
+import RecentOrderTable from '@/components/admin/tables/recentorder'
 import RecentActivity from '@/components/admin/cards/recentactivity'
-import ReplacementRequestTable from '@/components/admin/cards/tables/recplacementrequest'
+import ReplacementRequestTable from '@/components/admin/tables/recplacementrequest'
 
 export default function AdminDashboardOverview() {
   return (
