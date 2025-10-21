@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Canvas, util, Object, Line, Circle, Text, Rect, Group, Gradient, Path } from 'fabric'
 import { StoredFlashing } from '@/types/flashingTypes'
+import { calculateLineLength } from '@/utilities/canvas/canvasUtils'
 
 function sortFlashingNodes(flashing) {
   const nodeMap = new Map(flashing?.nodes.map((node) => [node.node_id, node]))
@@ -731,7 +732,7 @@ const offset3D = { x: 180, y: -145 }
 const drawConnectingLines = true // Flag to control drawing connecting lines
 const annotationOffset = 22 // Distance of annotations from lines
 
-export function create3DFlashing(canvas) {
+export function create3DFlashing(canvas, showAnnos = false) {
   // Clear existing 3D elements
   const existingElements = canvas
     .getObjects()
@@ -845,6 +846,167 @@ export function create3DFlashing(canvas) {
     // bLines,
     drawConnectingLines,
   )
+
+  // 6. Add length annotations for A and B sides
+  showAnnos && aLines.forEach((line, idx) => {
+    addLengthAnnotation(canvas, line, 'A', !negativeOffset)
+    //console.log(`Added annotation for A side line ${idx}`)
+  })
+  showAnnos && bLines.forEach((line, idx) => {
+    addLengthAnnotation(canvas, line, 'B', negativeOffset)
+    //console.log(`Added annotation for B side line ${idx}`)
+  })
+}
+
+export // Helper: Add a length annotation to a line
+function addLengthAnnotation(canvas, line, side, negativeOffset, showTaperedFlag = true) {
+  const length = Math.round(calculateLineLength(line))
+  const isHorizontal = isLineHorizontal(line)
+
+  let mx = (line.x1 + line.x2) / 2
+  let my = (line.y1 + line.y2) / 2
+  let myf, mxf
+
+  if (negativeOffset) {
+    if (isHorizontal) {
+      my -= annotationOffset
+    } else {
+      mx -= annotationOffset
+    }
+  } else {
+    if (isHorizontal) {
+      my += annotationOffset
+    } else {
+      mx += annotationOffset
+    }
+  }
+
+  const color = line.isActive ? '#3355FF' : line.side === 'A' ? '#E50000' : '#475569'
+  const label = `${side}-${length}`
+
+  const txt = new Text(label, {
+    left: mx,
+    top: my,
+    originX: 'center',
+    originY: 'center',
+    fontFamily: 'Roboto Flex',
+    fontWeight: '500',
+    fontSize: 8,
+    lineHeight: 10 / 8,
+    fill: 'white',
+    selectable: false,
+  })
+
+  const bg = new Rect({
+    left: mx,
+    top: my,
+    originX: 'center',
+    originY: 'center',
+    width: txt.width + 8,
+    height: 10,
+    rx: 4,
+    fill: color,
+    selectable: false,
+    evented: false,
+  })
+
+  const group = new Group([bg, txt], {
+    selectable: false,
+    opacity: 1,
+  })
+  group._isMeasurement = true
+  canvas.add(group)
+
+  line.tapperAnno = group
+
+  let isLineTapered = false
+
+  if (line.side === 'A') {
+    Math.round(Math.round(calculateLineLength(line.bSideLine))) !==
+      Math.round(calculateLineLength(line)) && (isLineTapered = true)
+  }
+
+  // ======= Tapered Flag (custom path) ========
+  if (isLineTapered) {
+    const x1 = line.x1
+    const y1 = line.y1
+    const x2 = line.x2
+    const y2 = line.y2
+
+    // Compute 3/4 point on the line
+    const px = x1 + 0.75 * (x2 - x1)
+    const py = y1 + 0.75 * (y2 - y1)
+
+    const dx = x2 - x1
+    const dy = y2 - y1
+    const length = Math.sqrt(dx * dx + dy * dy)
+
+    // Perpendicular unit vector for offsetting the flag
+    const ux = -dy / length
+    const uy = dx / length
+
+    // Offsets to avoid overlap with line
+    const flagOffset = -20
+    const textOffsetX = ux * flagOffset
+    const textOffsetY = uy * flagOffset
+
+    // Final flag position
+    const fx = px + textOffsetX
+    const fy = py + textOffsetY
+
+    const flagText = new Text('Tapered', {
+      fontSize: 8,
+      fontFamily: 'Roboto Flex',
+      fontWeight: 500,
+      fill: 'white',
+      originX: 'center',
+      originY: 'center',
+      left: fx,
+      top: fy,
+      selectable: false,
+    })
+
+    const flagBg = new Rect({
+      left: fx,
+      top: fy,
+      rx: 4,
+      originX: 'center',
+      originY: 'center',
+      height: 10,
+      width: flagText.width + 6,
+      fill: '#F97316',
+      selectable: false,
+      evented: false,
+    })
+
+    const circle = new Circle({
+      radius: 3,
+      fill: '#F97316',
+      left: px,
+      top: py,
+      originX: 'center',
+      originY: 'center',
+      selectable: false,
+      evented: false,
+    })
+
+    const lineConnector = new Line([px, py, fx, fy], {
+      stroke: '#F97316',
+      strokeWidth: 1,
+      selectable: false,
+      evented: false,
+    })
+
+    const flagGroup = new Group([flagBg, lineConnector, circle, flagText], {
+      selectable: false,
+      evented: false,
+    })
+
+    flagGroup._isMeasurement = true
+    canvas.add(flagGroup)
+
+    line.taperedAnno = flagGroup
+  }
 }
 
 export const drawingBounds = (canvas) => {

@@ -1,6 +1,11 @@
 import { gql } from '@urql/core'
 import { urqlClient } from '../urqlClient'
-import { setAuthToken, clearAuthToken, getAuthToken, isAuthenticated } from '@/utilities/cookieUtils'
+import {
+  setAuthToken,
+  clearAuthToken,
+  getAuthToken,
+  isAuthenticated,
+} from '@/utilities/cookieUtils'
 
 // GraphQL Mutations and Queries for Authentication
 export const loginMutation = gql`
@@ -72,9 +77,11 @@ export const meQuery = gql`
 // Authentication API functions using GraphQL
 export async function graphqlLogin(email: string, password: string) {
   try {
-    const result = await urqlClient.mutation(loginMutation, {
-      input: { email, password }
-    }).toPromise()
+    const result = await urqlClient
+      .mutation(loginMutation, {
+        input: { email, password },
+      })
+      .toPromise()
 
     if (result.error) {
       console.error('Login error:', result.error)
@@ -83,18 +90,18 @@ export async function graphqlLogin(email: string, password: string) {
 
     if (result.data?.login) {
       const { user, accessToken, refreshToken, expiresIn } = result.data.login
-      
+
       // Use the access token directly from backend (now Payload-compatible)
       const authToken = accessToken
-      
+
       setAuthToken(authToken)
 
-      return { 
-        success: true, 
-        user, 
-        accessToken, 
+      return {
+        success: true,
+        user,
+        accessToken,
         refreshToken,
-        apiCode: '100600' // Success code
+        apiCode: '100600', // Success code
       }
     }
 
@@ -106,22 +113,24 @@ export async function graphqlLogin(email: string, password: string) {
 }
 
 export async function graphqlRegister(
-  email: string, 
-  fullname: string, 
-  phone: string, 
+  email: string,
+  fullname: string,
+  phone: string,
   password: string,
-  roleId?: string
+  roleId?: string,
 ) {
   try {
-    const result = await urqlClient.mutation(registerMutation, {
-      input: { 
-        email, 
-        fullname, 
-        phone, 
-        password,
-        roleId: roleId || 'user' // Default role
-      }
-    }).toPromise()
+    const result = await urqlClient
+      .mutation(registerMutation, {
+        input: {
+          email,
+          fullname,
+          phone,
+          password,
+          roleId: roleId || 'user', // Default role
+        },
+      })
+      .toPromise()
 
     if (result.error) {
       console.error('Register error:', result.error)
@@ -130,18 +139,18 @@ export async function graphqlRegister(
 
     if (result.data?.register) {
       const { user, accessToken, refreshToken, expiresIn } = result.data.register
-      
+
       // Use the access token directly from backend (now Payload-compatible)
       const authToken = accessToken
-      
+
       setAuthToken(authToken)
 
-      return { 
-        success: true, 
-        user, 
-        accessToken, 
+      return {
+        success: true,
+        user,
+        accessToken,
         refreshToken,
-        apiCode: '100600' // Success code
+        apiCode: '100600', // Success code
       }
     }
 
@@ -159,9 +168,11 @@ export async function graphqlRefreshToken() {
       return { success: false, error: 'No token available' }
     }
 
-    const result = await urqlClient.mutation(refreshTokenMutation, { 
-      currentToken 
-    }).toPromise()
+    const result = await urqlClient
+      .mutation(refreshTokenMutation, {
+        currentToken,
+      })
+      .toPromise()
 
     if (result.error) {
       console.error('Refresh token error:', result.error)
@@ -170,15 +181,15 @@ export async function graphqlRefreshToken() {
 
     if (result.data?.refreshToken) {
       const { user, accessToken, refreshToken: newToken, expiresIn } = result.data.refreshToken
-      
+
       // Use the new token as the ff-token
       setAuthToken(newToken)
 
-      return { 
-        success: true, 
-        user, 
-        accessToken: newToken, 
-        refreshToken: newToken 
+      return {
+        success: true,
+        user,
+        accessToken: newToken,
+        refreshToken: newToken,
       }
     }
 
@@ -214,8 +225,32 @@ export async function graphqlGetProfile() {
       _id: payload.id,
       email: payload.email,
       collection: payload.collection,
-      sid: payload.sid
+      sid: payload.sid,
     }
+
+    const result = await urqlClient
+      .query(
+        gql`
+          query GetUser($id: String!) {
+            user(id: $id) {
+              _id
+              email
+              fullname
+              phone
+              roleId
+              status
+              createdAt
+              updatedAt
+            }
+          }
+        `,
+        {
+          id: '68f764ce0a53875bd53006a1',
+        },
+      )
+      .toPromise()
+
+    console.log(result, payload.id)
 
     return { success: true, user }
   } catch (error) {
@@ -227,11 +262,18 @@ export async function graphqlGetProfile() {
 // Legacy compatibility functions - now implemented with GraphQL
 export async function apiCheckEmail(email: string) {
   try {
-    const result = await urqlClient.mutation(gql`
-      mutation CheckEmail($email: String!) {
-        checkEmail(email: $email)
-      }
-    `, { email }).toPromise()
+    const result = await urqlClient
+      .mutation(
+        gql`
+          mutation CheckEmail($email: String!) {
+            checkEmail(email: $email)
+          }
+        `,
+        { email },
+      )
+      .toPromise()
+
+    console.log(result, email)
 
     if (result.error) {
       console.error('Check email error:', result.error)
@@ -243,7 +285,7 @@ export async function apiCheckEmail(email: string) {
       ok: true,
       apiCode: data.exists ? '100102' : '100101',
       email: data.email,
-      exists: data.exists
+      exists: data.exists,
     }
   } catch (error) {
     console.error('Check email error:', error)
@@ -253,11 +295,16 @@ export async function apiCheckEmail(email: string) {
 
 export async function apiSendEmailCode(email: string) {
   try {
-    const result = await urqlClient.mutation(gql`
-      mutation SendEmailCode($email: String!) {
-        sendEmailCode(email: $email)
-      }
-    `, { email }).toPromise()
+    const result = await urqlClient
+      .mutation(
+        gql`
+          mutation SendEmailCode($email: String!) {
+            sendEmailCode(email: $email)
+          }
+        `,
+        { email },
+      )
+      .toPromise()
 
     if (result.error) {
       console.error('Send email code error:', result.error)
@@ -268,7 +315,7 @@ export async function apiSendEmailCode(email: string) {
     return {
       ok: data.success,
       apiCode: data.apiCode || '100100',
-      message: data.message
+      message: data.message,
     }
   } catch (error) {
     console.error('Send email code error:', error)
@@ -278,11 +325,16 @@ export async function apiSendEmailCode(email: string) {
 
 export async function apiVerifyEmailCode(email: string, code: string) {
   try {
-    const result = await urqlClient.mutation(gql`
-      mutation VerifyEmailCode($email: String!, $code: String!) {
-        verifyEmailCode(email: $email, code: $code)
-      }
-    `, { email, code }).toPromise()
+    const result = await urqlClient
+      .mutation(
+        gql`
+          mutation VerifyEmailCode($email: String!, $code: String!) {
+            verifyEmailCode(email: $email, code: $code)
+          }
+        `,
+        { email, code },
+      )
+      .toPromise()
 
     if (result.error) {
       console.error('Verify email code error:', result.error)
@@ -293,7 +345,7 @@ export async function apiVerifyEmailCode(email: string, code: string) {
     return {
       ok: data.verified,
       apiCode: data.apiCode || '100200',
-      message: data.message
+      message: data.message,
     }
   } catch (error) {
     console.error('Verify email code error:', error)
@@ -303,11 +355,16 @@ export async function apiVerifyEmailCode(email: string, code: string) {
 
 export async function apiVerifyMobileCode(phone: string, code: string) {
   try {
-    const result = await urqlClient.mutation(gql`
-      mutation VerifyPhoneCode($phone: String!, $code: String!) {
-        verifyPhoneCode(phone: $phone, code: $code)
-      }
-    `, { phone, code }).toPromise()
+    const result = await urqlClient
+      .mutation(
+        gql`
+          mutation VerifyPhoneCode($phone: String!, $code: String!) {
+            verifyPhoneCode(phone: $phone, code: $code)
+          }
+        `,
+        { phone, code },
+      )
+      .toPromise()
 
     if (result.error) {
       console.error('Verify mobile code error:', result.error)
@@ -318,7 +375,7 @@ export async function apiVerifyMobileCode(phone: string, code: string) {
     return {
       ok: data.verified,
       apiCode: data.apiCode || '100500',
-      message: data.message
+      message: data.message,
     }
   } catch (error) {
     console.error('Verify mobile code error:', error)
@@ -328,11 +385,16 @@ export async function apiVerifyMobileCode(phone: string, code: string) {
 
 export async function apiResendMobileCode(phone: string, email: string) {
   try {
-    const result = await urqlClient.mutation(gql`
-      mutation ResendPhoneCode($phone: String!, $email: String!) {
-        resendPhoneCode(phone: $phone, email: $email)
-      }
-    `, { phone, email }).toPromise()
+    const result = await urqlClient
+      .mutation(
+        gql`
+          mutation ResendPhoneCode($phone: String!, $email: String!) {
+            resendPhoneCode(phone: $phone, email: $email)
+          }
+        `,
+        { phone, email },
+      )
+      .toPromise()
 
     if (result.error) {
       console.error('Resend mobile code error:', result.error)
@@ -343,7 +405,7 @@ export async function apiResendMobileCode(phone: string, email: string) {
     return {
       ok: data.success,
       apiCode: data.apiCode || '100400',
-      message: data.message
+      message: data.message,
     }
   } catch (error) {
     console.error('Resend mobile code error:', error)

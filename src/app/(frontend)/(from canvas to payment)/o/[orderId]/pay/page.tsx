@@ -55,17 +55,23 @@ export default function PaymentOptionPage() {
   }
 
   const onSubmitPay = async (data: PaymentMethodFormValues) => {
-    const payResponse = await fetchPayOrder({ orderId: orderId, payVia: data.method })
+    // const payResponse = await fetchPayOrder({ orderId: orderId, payVia: data.method })
 
-    if (payResponse) {
+    if (true) {
       await upsertPartialOrder(Number(orderId), {
         paymentHistory: {
-          id: payResponse.id,
+          // id: payResponse.id,
+          // orderId: orderId,
+          // total: order?.totalCost ?? 0,
+          // date: payResponse.date,
+          // transactionId: payResponse.transactionId,
+          // via: payResponse.via,
+          id: '1234',
           orderId: orderId,
           total: order?.totalCost ?? 0,
-          date: payResponse.date,
-          transactionId: payResponse.transactionId,
-          via: payResponse.via,
+          date: new Date().getTime(),
+          transactionId: '1234',
+          via: 'Visa',
         },
         completed: false,
         hasSeenPayResult: false,

@@ -16,6 +16,8 @@ import { createCrushFoldObject } from '@/utilities/canvas/crushFoldUtils'
 export function usePreviewCanvas(
   flashing: StoredFlashing | null | undefined,
   view: '2D' | '3D',
+  height?: number,
+  width?: number,
 ): { canvasRef: RefObject<HTMLCanvasElement | null>; totalGirth: number | undefined } {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const canvasInstance = useRef<Canvas | null>(null)
@@ -30,9 +32,14 @@ export function usePreviewCanvas(
       selection: false,
     })
 
-    // prefer container width / ResizeObserver in real app
-    canvas.setWidth(window.innerWidth - 64)
-    canvas.setHeight(160)
+    if (height || width) {
+      height && canvas.setHeight(height)
+      width && canvas.setWidth(width)
+    } else {
+      // prefer container width / ResizeObserver in real app
+      canvas.setWidth(window.innerWidth - 64)
+      canvas.setHeight(160)
+    }
 
     canvasInstance.current = canvas
 

@@ -6,12 +6,16 @@ export default function PreviewCanvas({
   flashing,
   view,
   setTotalGirth,
+  height,
+  width,
 }: {
   flashing: StoredFlashing | null | undefined
   view: '2D' | '3D'
   setTotalGirth: (totalGirth: number) => void
+  height?: number
+  width?: number
 }): React.ReactNode {
-  const { canvasRef, totalGirth } = usePreviewCanvas(flashing, view)
+  const { canvasRef, totalGirth } = usePreviewCanvas(flashing, view, height, width)
 
   useEffect(() => {
     if (setTotalGirth) {

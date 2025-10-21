@@ -1,4 +1,5 @@
 export function setAuthToken(token: string) {
+  console.log('Access token is: ', token)
   if (typeof window === 'undefined') return
   document.cookie = `ff-token=${token}; path=/; max-age=${24 * 60 * 60}; secure; samesite=strict`
 }
@@ -7,7 +8,7 @@ export function getAuthToken(): string | null {
   if (typeof window === 'undefined') return null
   try {
     const cookies = document.cookie.split(';')
-    const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('ff-token='))
+    const tokenCookie = cookies.find((cookie) => cookie.trim().startsWith('ff-token='))
     if (tokenCookie) {
       return tokenCookie.split('=')[1]
     }
@@ -44,7 +45,7 @@ export function getRefreshToken(): string | null {
   if (typeof window === 'undefined') return null
   try {
     const cookies = document.cookie.split(';')
-    const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('ff-refresh-token='))
+    const tokenCookie = cookies.find((cookie) => cookie.trim().startsWith('ff-refresh-token='))
     if (tokenCookie) {
       return tokenCookie.split('=')[1]
     }
@@ -61,7 +62,7 @@ export function getRefreshToken(): string | null {
 export function isTokenExpired(): boolean {
   const token = getAuthToken()
   if (!token) return true
-  
+
   try {
     // Decode JWT token to check expiration
     const payload = JSON.parse(atob(token.split('.')[1]))
@@ -79,7 +80,7 @@ export function isTokenExpired(): boolean {
 export function getTokenExpirationTime(): number | null {
   const token = getAuthToken()
   if (!token) return null
-  
+
   try {
     // Decode JWT token to get expiration
     const payload = JSON.parse(atob(token.split('.')[1]))
@@ -89,4 +90,3 @@ export function getTokenExpirationTime(): number | null {
     return null
   }
 }
-

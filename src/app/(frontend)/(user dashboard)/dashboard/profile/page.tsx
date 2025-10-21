@@ -13,13 +13,15 @@ export default function ProfilePage() {
   const getUserInfo = async () => {
     const res = await apiGetProfile()
 
-    if (res?.ok && res?.apiCode === '100700') {
-      const user = res?.user
-      setUserInfo({
-        name: user.fullName,
-        email: user.email,
-      })
-    }
+    console.log(res.user)
+
+    // if (res.success) {
+    //   const user = res.user
+    //   setUserInfo({
+    //     name: user.,
+    //     email: user.email,
+    //   })
+    // }
   }
 
   useEffect(() => {
