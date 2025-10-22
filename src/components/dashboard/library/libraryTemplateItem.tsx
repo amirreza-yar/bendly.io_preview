@@ -1,6 +1,6 @@
 'use client'
 import { Delete, Edit, Info, More } from '@/components/uikit/icons'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { cn } from '@/utilities/ui'
 import { Separator } from '@/components/uikit/separator'
 import { Drawer, DrawerClose } from '@/components/uikit/drawer'
@@ -9,8 +9,16 @@ import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 import { Button } from '@/components/uikit/buttons/button'
 import { Input } from '@/components/uikit/input'
 import { toast } from 'sonner'
+import FlashingSVG from '@/components/utils/flashingSVG'
 
-function AlertDialogContent({ className, ...props }) {
+function AlertDialogContent({
+  className,
+  children,
+  ...props
+}: {
+  className?: string
+  children: ReactNode
+}) {
   return (
     <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal">
       <AlertDialogPrimitive.Overlay
@@ -27,19 +35,30 @@ function AlertDialogContent({ className, ...props }) {
           className,
         )}
         {...props}
-      />
+      >
+        {children}
+      </AlertDialogPrimitive.Content>
     </AlertDialogPrimitive.Portal>
   )
 }
 
-export function LibraryTemplateItem({ title, image, isMyTemplate = false, ...props }) {
+export function LibraryTemplateItem({
+  title,
+  isMyTemplate = false,
+  children,
+  ...props
+}: {
+  title: string
+  isMyTemplate?: boolean
+  children: ReactNode
+}) {
   const [inputValueRepititive, setInputValueRepititive] = useState(false)
   const [inputValue, setInputValue] = useState(title)
   return (
     <div {...props} className="rounded-md border-1 border-border-default px-2 h-39">
       <div className="h-full flex-col">
         <div className=" h-29 justify-center flex items-center relative">
-          IMG
+          {children}
           {isMyTemplate && (
             <Drawer trigger={<More className="absolute -right-1 top-2" />}>
               <div className="flex flex-col p-6">
@@ -151,7 +170,7 @@ export function LibraryTemplateItem({ title, image, isMyTemplate = false, ...pro
             </Drawer>
           )}
         </div>
-        <Separator className />
+        <Separator />
         <div className=" p-2 text-center label-regular truncate">{title}</div>
       </div>
     </div>

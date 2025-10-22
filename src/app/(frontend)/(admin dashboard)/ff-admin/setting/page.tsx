@@ -1,13 +1,19 @@
+import { Edit, ProfileNav } from '@/components/uikit/icons'
+
 export default function AdminDashboardSettings() {
   return (
     <>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          <div className="bg-muted/50 aspect-video rounded-xl" />
-          <div className="bg-muted/50 aspect-video rounded-xl" />
-          <div className="bg-muted/50 aspect-video rounded-xl" />
+      <div className="grid grid-cols-5 p-6 gap-6 bg-[#F1F5F9]">
+        <div className="col-span-1 h-200 bg-white flex flex-col items-center border border-border-default rounded-lg pt-16">
+          <div className="h-25 w-25 rounded-full bg-gray-100 flex items-center justify-center relative">
+            <ProfileNav className="size-15 text-gray-500" />
+            <div className="absolute top-1 right-1 shadow-sm rounded-full bg-white p-1 border border-border-dark">
+              <Edit className="size-4" />
+            </div>
+          </div>
+          <p className=" font-bold">Amirreza Yarahmadi</p>
         </div>
-        <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
+        <div className="col-span-4 h-200 bg-blue-200"></div>
       </div>
     </>
   )

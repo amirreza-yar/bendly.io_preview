@@ -9,11 +9,12 @@ import BottomNav from '@/components/dashboard/bottomNav'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { useGETTemplatesByOwner, useGETAppTemplates } from '@/lib/db/helpers/templateHelpers'
+import FlashingSVG from '@/components/utils/flashingSVG'
 
 export default function LibraryPage() {
   // TODO: Get current user ID from auth context
-  const currentUserId = 'current-user-id' // This should come from auth context
-  
+  const currentUserId = 'user' // This should come from auth context
+
   // Load templates from IndexedDB (offline-first)
   const myTemplates = useGETTemplatesByOwner(currentUserId) || []
   const appTemplates = useGETAppTemplates(currentUserId) || []
@@ -39,14 +40,17 @@ export default function LibraryPage() {
                     <LibraryTemplateItem
                       key={template.name + index}
                       title={template.name}
-                      image="rectangle-10.png" // TODO: Add image field to Template type
-                      isMyTemplate
-                    />
+                      isMyTemplate={true}
+                    >
+                      <FlashingSVG flashing={template.flashing} className="h-20" />
+                    </LibraryTemplateItem>
                   ))
                 ) : (
                   <div className="col-span-2 flex flex-col items-center justify-center py-8 text-center">
                     <p className="text-subtitle">No templates found</p>
-                    <p className="text-sm text-gray-400 mt-1">Create your first template to get started</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Create your first template to get started
+                    </p>
                   </div>
                 )}
               </div>
@@ -55,11 +59,9 @@ export default function LibraryPage() {
               <div className="grid grid-cols-2 pt-2 gap-4">
                 {appTemplates.length > 0 ? (
                   appTemplates.map((template, index) => (
-                    <LibraryTemplateItem
-                      key={template.name + index}
-                      title={template.name}
-                      image="rectangle-10.png" // TODO: Add image field to Template type
-                    />
+                    <LibraryTemplateItem key={template.name + index} title={template.name}>
+                      <FlashingSVG flashing={template.flashing} className="h-20" />
+                    </LibraryTemplateItem>
                   ))
                 ) : (
                   <div className="col-span-2 flex flex-col items-center justify-center py-8 text-center">

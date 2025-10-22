@@ -23,6 +23,7 @@ import { ReactNode } from 'react'
 import { StoredFlashing } from '@/types/flashingTypes'
 import { EditFlashingDrawer } from '@/components/dashboard/order/drawers'
 import { cn } from '@/utilities/ui'
+import FlashingSVG from '@/components/utils/flashingSVG'
 
 export function OrderCard({ order, ...props }: { order: StoredOrder }) {
   return (
@@ -168,7 +169,7 @@ export function NewOrderCard({
       {flashing.color && !flashing.startCrushFold && !flashing.endCrushFold ? (
         <EditFlashingDrawer flashingId={flashing.id} orderId={orderId}>
           <div className="grid grid-cols-2 p-3 rounded-xs border border-border-default">
-            <div>Canvas here</div>
+            <FlashingSVG flashing={flashing} className="pl-2 h-18" path3DOffsetCoeff={0.8} />
             <div className="grid gap-1">
               <Edit className="size-5 justify-self-end" />
               <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>
@@ -181,7 +182,7 @@ export function NewOrderCard({
           href={`/f/${flashing.id}/edit/canvas?next=order&orderId=${orderId}`}
           className="grid grid-cols-2 p-3 rounded-xs border border-border-default"
         >
-          <div>Canvas here</div>
+          <FlashingSVG flashing={flashing} className="pl-2 h-18" path3DOffsetCoeff={0.8} />
           <div className="grid gap-1">
             <Edit className="size-5 justify-self-end" />
             <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>

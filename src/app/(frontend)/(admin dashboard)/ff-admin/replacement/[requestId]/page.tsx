@@ -30,6 +30,7 @@ import { BadgeSelect } from '@/components/uikit/select'
 import { Separator } from '@/components/uikit/separator'
 import { Tabs, TabsList, TabsTrigger } from '@/components/uikit/tabs'
 import { Textarea } from '@/components/uikit/textarea'
+import FlashingSVG from '@/components/utils/flashingSVG'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { useState } from 'react'
@@ -278,24 +279,29 @@ export default function AdminDashboardOrderDetails() {
           <div className="bg-white rounded-lg p-6">
             <h5>Requested Products</h5>
             <div className="grid gap-3 pt-6">
-              <div className="flex items-center justify-start gap-2">
-                <div className="h-16 w-16 border border-border-default flex items-center justify-center rounded-md">
-                  Flash
+              {orderData.flashings.map((flash, index) => (
+                <div key={index} className="flex items-center justify-start gap-2">
+                  <div className="h-16 w-16 border border-border-default flex items-center justify-center rounded-md">
+                    <FlashingSVG
+                      flashing={flash.moreDetails}
+                      path3DOffsetCoeff={0.8}
+                      strokeWidthCoeff={30}
+                      className="px-1"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-start items-start h-full gap-2 pt-1">
+                    <p className="label-regular">
+                      {flash.moreDetails.material}
+                      {flash.moreDetails.color
+                        ? ` / ${flash.moreDetails.color.name}`
+                        : ` / ${flash.moreDetails.thickness.thickness} mm`}
+                    </p>
+                    <p className="body-small">
+                      {flash.specifications[0].quantity} pcs x {flash.specifications[0].length} mm
+                    </p>
+                  </div>
                 </div>
-                <div className="flex flex-col justify-start items-start h-full gap-2 pt-1">
-                  <p className="label-regular">Color Bound / Black Matte</p>
-                  <p className="body-small">5 pcs x 1000 mm</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-start gap-2">
-                <div className="h-16 w-16 border border-border-default flex items-center justify-center rounded-md">
-                  Flash
-                </div>
-                <div className="flex flex-col justify-start items-start h-full gap-2 pt-1">
-                  <p className="label-regular">Color Bound / Black Matte</p>
-                  <p className="body-small">5 pcs x 1000 mm</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
           <div className="bg-white rounded-lg p-6 grid gap-3">

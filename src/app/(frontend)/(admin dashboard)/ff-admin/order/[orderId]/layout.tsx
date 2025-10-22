@@ -52,6 +52,7 @@ import { Button } from '@/components/uikit/buttons/button'
 import { DropdownMenuGroup } from '@/components/uikit/dropdown-menu'
 import Image from 'next/image'
 import { useIsMobile } from '@/hooks/use-mobile'
+import FlashingSVG from '@/components/utils/flashingSVG'
 
 const orderData = {
   id: 11969514,
@@ -290,7 +291,9 @@ export default function AdminDashboardOrderDetailsLayout({ children }: { childre
                     className="w-full h-full p-2 flex items-center justify-between"
                   >
                     <SidebarMenuButton className="gap-4 h-full flex items-center">
-                      <div className="h-16 w-16 rounded-md border border-border-default bg-white" />
+                      <div className="h-16 w-16 rounded-md border border-border-default bg-white flex items-center justify-center p-1">
+                        <FlashingSVG flashing={flash.moreDetails} path3DOffsetCoeff={1} />
+                      </div>
                       <div className="flex flex-col justify-between items-start label-regular transition-all">
                         <span className="font-bold text-sm/[26px]">Flashing #{index + 1}</span>
                         <span className="body-small pt-1">
