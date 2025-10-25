@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { saveDrawing, getDrawings } from "@/lib/(dev)/db";
+// import { saveDrawing, getDrawings } from "@/lib/(dev)/db";
 
 export default function CanvasPage() {
     const [name, setName] = useState("");
@@ -9,14 +9,14 @@ export default function CanvasPage() {
 
     useEffect(() => {
         // Load saved drawings on component mount
-        getDrawings().then(setDrawings);
+        // getDrawings().then(setDrawings);
     }, []);
 
     const handleSave = () => {
         const fakeCanvasData = "base64-image-data"; // Replace with actual Fabric.js canvas data
-        saveDrawing(name, fakeCanvasData).then(() => {
-            getDrawings().then(setDrawings); // Refresh list
-        });
+        // saveDrawing(name, fakeCanvasData).then(() => {
+        //     getDrawings().then(setDrawings); // Refresh list
+        // });
     };
 
     return (

@@ -11,8 +11,25 @@ export interface User {
   name: string
 }
 
+// User profile data for authenticated users (non-sensitive data only)
+export interface UserProfile {
+  id: string // Primary key - user ID
+  email: string
+  fullname: string
+  phone?: string
+  roleId: string
+  status: string
+  createdAt: string
+  updatedAt: string
+  lastLogin?: string
+  // Note: Passwords, tokens, and sensitive data are NEVER stored here
+}
+
 export class AppDB extends Dexie {
+  // Demo users table (existing)
   users!: Table<User, string | number>
+  // User profile table for authenticated user data
+  userProfiles!: Table<UserProfile, string>
   flashings!: Table<StoredFlashing, string>
   materialsAndProps!: Table<StoredMaterialAndProps, number>
   templates!: Table<Template, string>
@@ -21,14 +38,16 @@ export class AppDB extends Dexie {
 
   constructor() {
     super('AppDB')
-    this.version(1).stores({
-      // only index fields you actually query
+    this.version(2).stores({
+      // Existing tables
       users: '++id, name',
       flashings: 'id, material, color, thickness, createdAt, updatedAt',
       materialsAndProps: 'material',
       templates: 'name, owner',
       orders: 'id, status, progress, deliveryType',
       jobReferences: 'id, code, projectName',
+      // New user profile table for authenticated user data
+      userProfiles: 'id, email, roleId, status',
     })
   }
 }

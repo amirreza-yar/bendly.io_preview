@@ -96,6 +96,17 @@ export async function graphqlLogin(email: string, password: string) {
 
       setAuthToken(authToken)
 
+      // Store user profile data in IndexedDB (professional client-side storage)
+      if (typeof window !== 'undefined' && user) {
+        try {
+          const { storeUserProfile } = await import('@/lib/db/helpers/userProfileHelpers')
+          await storeUserProfile(user)
+        } catch (error) {
+          console.error('Failed to store user profile in IndexedDB:', error)
+          // Don't fail login if storage fails, but log the error
+        }
+      }
+
       return {
         success: true,
         user,
@@ -144,6 +155,17 @@ export async function graphqlRegister(
       const authToken = accessToken
 
       setAuthToken(authToken)
+
+      // Store user profile data in IndexedDB (same as login)
+      if (typeof window !== 'undefined' && user) {
+        try {
+          const { storeUserProfile } = await import('@/lib/db/helpers/userProfileHelpers')
+          await storeUserProfile(user)
+        } catch (error) {
+          console.error('Failed to store user profile in IndexedDB:', error)
+          // Don't fail registration if storage fails, but log the error
+        }
+      }
 
       return {
         success: true,
@@ -205,6 +227,17 @@ export async function graphqlLogout() {
     // Clear tokens from cookies
     clearAuthToken()
 
+    // Clear user profile data from IndexedDB
+    if (typeof window !== 'undefined') {
+      try {
+        const { clearUserProfile } = await import('@/lib/db/helpers/userProfileHelpers')
+        await clearUserProfile()
+      } catch (error) {
+        console.error('Failed to clear user profile from IndexedDB:', error)
+        // Don't fail logout if clearing fails, but log the error
+      }
+    }
+
     return { success: true }
   } catch (error) {
     console.error('Logout error:', error)
@@ -214,48 +247,14 @@ export async function graphqlLogout() {
 
 export async function graphqlGetProfile() {
   try {
-    const token = getAuthToken()
-    if (!token) {
-      return { success: false, error: 'No token found' }
-    }
-
-    // Decode the JWT token to get user info
-    const payload = JSON.parse(atob(token.split('.')[1]))
-    const user = {
-      _id: payload.id,
-      email: payload.email,
-      collection: payload.collection,
-      sid: payload.sid,
-    }
-
-    const result = await urqlClient
-      .query(
-        gql`
-          query GetUser($id: String!) {
-            user(id: $id) {
-              _id
-              email
-              fullname
-              phone
-              roleId
-              status
-              createdAt
-              updatedAt
-            }
-          }
-        `,
-        {
-          id: '68f764ce0a53875bd53006a1',
-        },
-      )
-      .toPromise()
-
-    console.log(result, payload.id)
+    // Use the universal getMeUser resolver - it validates tokens and provides user data
+    const result = await import('@/utilities/getMeUser')
+    const { user } = await result.getMeUser()
 
     return { success: true, user }
   } catch (error) {
     console.error('Get profile error:', error)
-    return { success: false, error: 'Failed to get profile' }
+    return { success: false, error: error instanceof Error ? error.message : 'Failed to get profile' }
   }
 }
 

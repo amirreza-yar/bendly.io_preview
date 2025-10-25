@@ -106,8 +106,7 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - images (image files)
-     * - admin (Payload admin panel)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|images|admin).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|images).*)',
   ],
 }
