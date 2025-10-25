@@ -1,5 +1,3 @@
-import { withPayload } from '@payloadcms/next/withPayload'
-
 import redirects from './redirects.js'
 
 const NEXT_PUBLIC_BACKEND_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
@@ -35,4 +33,4 @@ const nextConfig = {
   redirects,
 }
 
-export default withPayload(nextConfig, { devBundleServerPackages: false })
+export default nextConfig
