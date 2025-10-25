@@ -11,7 +11,7 @@ export default function AdminDashboardSettings() {
               <Edit className="size-4" />
             </div>
           </div>
-          <p className=" font-bold">Amirreza Yarahmadi</p>
+          <p className="label-small font-bold">Amirreza Yarahmadi</p>
         </div>
         <div className="col-span-4 h-200 bg-blue-200"></div>
       </div>
