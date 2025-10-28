@@ -17,7 +17,12 @@ export function Header({ title, children, className, returnHref }: HeaderProps) 
         className,
       )}
     >
-      <div className={cn('flex items-center justify-between h-full w-full px-4', className)}>
+      <div
+        className={cn(
+          'flex items-center justify-between h-full w-full px-4 max-w-[800px] mx-auto',
+          className,
+        )}
+      >
         <div className="flex items-center gap-[18px] pr-3">
           {returnHref && (
             <Link href={returnHref}>
