@@ -9,35 +9,29 @@ import * as React from 'react'
 
 export default function CustomerDetails() {
   return (
-    <div className="flex flex-1 flex-col gap-5 p-6 bg-slate-lightest justify-between">
+    <div className="flex flex-col min-h-screen gap-4 p-4 sm:p-6 bg-slate-100">
       {/* ====== Row 1 ====== */}
-      <div className="flex flex-col md:flex-row gap-6 h-100">
+      <div className="flex flex-col lg:flex-row gap-4">
         {/* Left item */}
-        <div className="flex-1 w-full h-full">
+        <div className="flex-1 w-full">
           <CustomerDetailsCard />
         </div>
 
         {/* Middle item */}
-        <div className="flex-1 bg-white rounded-lg border p-4 flex items-center justify-center w-113 ">
+        <div className="flex-1 w-full bg-white rounded-lg border p-4 flex items-center justify-center">
           <p className="text-gray-500 text-sm">Middle section (placeholder)</p>
         </div>
 
-        {/* Right item (has 3 stacked sections) */}
-        <div className="flex-1 flex flex-col gap-5 items-end w-[259px]">
-          <div className="">
-            <TotalOrders />
-          </div>
-          <div className="">
-            <TotalSpend />
-          </div>
-          <div className="">
-            <AvgOrder />
-          </div>
+        {/* Right item (stacked cards) */}
+        <div className="flex-1 w-full flex flex-col gap-4 lg:max-w-[300px]">
+          <TotalOrders />
+          <TotalSpend />
+          <AvgOrder />
         </div>
       </div>
 
       {/* ====== Row 2 ====== */}
-      <div className="bg-white rounded-lg border p-4 mt-8">
+      <div className="w-full mt-6 bg-white border rounded-lg">
         <CustomerOrderTable />
       </div>
     </div>

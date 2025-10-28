@@ -104,7 +104,7 @@ export default function AdminDashboardCustomers() {
               displayData.map((customer, index) => (
                 <div
                   key={index}
-                  onClick={() => router.push(`/ff-admin/customer/customerdetails/customerdetails/`)}
+                  onClick={() => router.push(`/ff-admin/customer/customerdetails`)}
                   className="w-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
                 >
                   <CustomerCard data={customer} />

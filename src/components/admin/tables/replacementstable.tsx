@@ -1,5 +1,4 @@
 'use client'
-
 import * as React from 'react'
 import type { DateRange } from 'react-day-picker'
 import {
@@ -40,10 +39,10 @@ import { Calendar } from '@/components/uikit/calendar'
 import { EyeIcon } from '@/components/uikit/icons'
 
 export type OrderDetails = {
-  OrderID: number
+  RequestID: string
+  OriginalOrder: string
   Customer: string
-  DueDate: string
-  Material: string
+  Reason: string
   priority: 'Normal' | 'Urgent' | 'High'
   status: 'PE' | 'IP' | 'RFP' | 'SI' | 'CO' | 'RE'
 }
@@ -59,42 +58,42 @@ interface DateRangePickerProps {
 
 const data: OrderDetails[] = [
   {
-    OrderID: 5849453,
+    RequestID: 'Rec-5849453',
+    OriginalOrder: '5849451',
     Customer: 'Ali Smith',
-    DueDate: '2025-10-15',
-    Material: 'Steel',
+    Reason: 'Defective product',
     priority: 'Normal',
     status: 'CO',
   },
   {
-    OrderID: 9657475,
+    RequestID: 'Rec-9657475',
+    OriginalOrder: '9657473',
     Customer: 'Joe Biden',
-    DueDate: '2025-10-15',
-    Material: 'gold',
+    Reason: 'Wrong item shipped',
     priority: 'High',
     status: 'RFP',
   },
   {
-    OrderID: 3144123,
+    RequestID: 'Rec-3144123',
+    OriginalOrder: '3144121',
     Customer: 'Jane Doe',
-    DueDate: '2025-10-20',
-    Material: 'Aluminum',
+    Reason: 'Quality issue',
     priority: 'Urgent',
     status: 'PE',
   },
   {
-    OrderID: 5638677,
+    RequestID: 'Rec-5638677',
+    OriginalOrder: '5638675',
     Customer: 'Emma Wilson',
-    DueDate: '2025-10-22',
-    Material: 'Brass',
+    Reason: 'Customer return',
     priority: 'Normal',
     status: 'RE',
   },
   {
-    OrderID: 5638787,
+    RequestID: 'Rec-5638787',
+    OriginalOrder: '5638785',
     Customer: 'Sarah Wilson',
-    DueDate: '2025-10-22',
-    Material: 'Brass',
+    Reason: 'Damaged in transit',
     priority: 'High',
     status: 'IP',
   },
@@ -120,26 +119,11 @@ const timeOptions = [
   { value: 'all_time', label: 'All Time' },
 ]
 
-const materialOptions = [
-  { value: 'Steel', label: 'Steel' },
-  { value: 'gold', label: 'Gold' },
-  { value: 'Aluminum', label: 'Aluminum' },
-  { value: 'Brass', label: 'Brass' },
-]
-
 const priorityOptions = [
   { value: 'Normal', label: 'Normal' },
   { value: 'Urgent', label: 'Urgent' },
   { value: 'High', label: 'High' },
 ]
-
-const formatDueDate = (dateString: string) => {
-  const date = new Date(dateString)
-  const day = date.toLocaleDateString('en-US', { weekday: 'long' })
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const dayNum = String(date.getDate()).padStart(2, '0')
-  return `${day} - ${month}/${dayNum}`
-}
 
 const priorityImportance: Record<string, number> = {
   urgent: 4,
@@ -170,43 +154,64 @@ const getPriorityVariant = (priority: string) => {
 
 export const columns: ColumnDef<OrderDetails>[] = [
   {
-    accessorKey: 'OrderID',
+    accessorKey: 'RequestID',
     header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-        Order ID <ArrowUpDown className="ml-2 h-4 w-4" />
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className="text-xs sm:text-sm"
+      >
+        Request ID <ArrowUpDown className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
       </Button>
     ),
-    cell: ({ row }) => <div className="pl-4">{row.getValue('OrderID')}</div>,
-    filterFn: (row, columnId, filterValue) => String(row.getValue('OrderID')).includes(filterValue),
+    cell: ({ row }) => (
+      <div className="pl-2 sm:pl-4 text-xs sm:text-sm">{row.getValue('RequestID')}</div>
+    ),
+    filterFn: (row, columnId, filterValue) =>
+      String(row.getValue('RequestID')).includes(filterValue),
+  },
+  {
+    accessorKey: 'OriginalOrder',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className="text-xs sm:text-sm"
+      >
+        Original Order <ArrowUpDown className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => <div className="text-xs sm:text-sm">{row.getValue('OriginalOrder')}</div>,
+    filterFn: (row, columnId, filterValue) =>
+      String(row.getValue('OriginalOrder')).includes(filterValue),
   },
   {
     accessorKey: 'Customer',
     header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-        Customer <ArrowUpDown className="ml-2 h-4 w-4" />
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className="text-xs sm:text-sm"
+      >
+        Customer <ArrowUpDown className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
       </Button>
     ),
-    cell: ({ row }) => <div>{row.getValue('Customer')}</div>,
+    cell: ({ row }) => <div className="text-xs sm:text-sm">{row.getValue('Customer')}</div>,
     filterFn: (row, columnId, filterValue) =>
       String(row.getValue('Customer')).toLowerCase().includes(String(filterValue).toLowerCase()),
   },
   {
-    accessorKey: 'DueDate',
-    header: 'Due Date',
-    cell: ({ row }) => <div>{formatDueDate(row.getValue('DueDate'))}</div>,
-  },
-  {
-    accessorKey: 'Material',
-    header: 'Material',
-    cell: ({ row }) => <div>{row.getValue('Material')}</div>,
+    accessorKey: 'Reason',
+    header: () => <div className="text-xs sm:text-sm">Reason</div>,
+    cell: ({ row }) => <div className="text-xs sm:text-sm">{row.getValue('Reason')}</div>,
   },
   {
     accessorKey: 'status',
-    header: 'Status',
+    header: () => <div className="text-xs sm:text-sm">Status</div>,
     cell: ({ row, table }) => {
       const handleStatusChange = (value: 'PE' | 'IP' | 'RFP' | 'SI' | 'CO' | 'RE') => {
         const updatedData = table.options.data.map((item) =>
-          item.OrderID === row.original.OrderID ? { ...item, status: value } : item,
+          item.RequestID === row.original.RequestID ? { ...item, status: value } : item,
         )
         ;(table.options.meta as CustomTableMeta<OrderDetails>)?.updateData(updatedData)
       }
@@ -221,18 +226,18 @@ export const columns: ColumnDef<OrderDetails>[] = [
   },
   {
     accessorKey: 'priority',
-    header: 'Priority',
+    header: () => <div className="text-xs sm:text-sm">Priority</div>,
     cell: ({ row }) => (
       <Badge
         text={row.getValue('priority')}
         variant={getPriorityVariant(row.getValue('priority'))}
-        className="capitalize"
+        className="capitalize text-xs sm:text-sm"
       />
     ),
   },
   {
     accessorKey: 'Action',
-    header: 'Action',
+    header: () => <div className="text-xs sm:text-sm">Action</div>,
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
@@ -240,8 +245,8 @@ export const columns: ColumnDef<OrderDetails>[] = [
       return (
         <Button
           variant="ghost"
-          className="h-8 w-8 p-0 pr-4"
-          onClick={() => router.push(`/ff-admin/order/${row.original.OrderID}`)}
+          className="h-8 w-8 p-0 pr-2 sm:pr-4"
+          onClick={() => router.push(`/ff-admin/order/${row.original.RequestID}`)}
         >
           <EyeIcon />
           <span className="sr-only">View order details</span>
@@ -267,7 +272,7 @@ const CancelButton: React.FC<CancelButtonProps> = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="px-3 py-1 text-xs border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="px-2 sm:px-3 py-1 text-xs border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {label}
     </button>
@@ -276,9 +281,8 @@ const CancelButton: React.FC<CancelButtonProps> = ({
 
 const DateRangePicker: React.FC<DateRangePickerProps> = ({ onChange, onCancel }) => {
   const [range, setRange] = React.useState<DateRange | undefined>()
-
   return (
-    <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white shadow-sm p-4 flex flex-col gap-3">
+    <div className="w-[90vw] max-w-md sm:max-w-lg rounded-xl border border-gray-200 bg-white shadow-sm p-3 sm:p-4 flex flex-col gap-3">
       <Calendar
         mode="range"
         selected={range}
@@ -287,24 +291,24 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ onChange, onCancel })
         captionLayout="dropdown"
         className="rounded-md w-full"
       />
-      <div className="flex justify-between items-center text-sm text-gray-700 px-1">
+      <div className="flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm text-gray-700 px-1 gap-2">
         {range?.from && range?.to ? (
-          <p>
+          <p className="text-center sm:text-left">
             Selected: <strong>{range.from.toLocaleDateString()}</strong> →{' '}
             <strong>{range.to.toLocaleDateString()}</strong>
           </p>
         ) : range?.from ? (
-          <p>
+          <p className="text-center sm:text-left">
             Start: <strong>{range.from.toLocaleDateString()}</strong>
           </p>
         ) : (
-          <p>Select a start and end date</p>
+          <p className="text-center sm:text-left">Select a start and end date</p>
         )}
         <div className="flex gap-2">
           <Button
             variant="outline"
             size="sm"
-            className="text-xs"
+            className="text-xs sm:text-sm"
             onClick={() => setRange(undefined)}
           >
             Clear
@@ -319,7 +323,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ onChange, onCancel })
           <Button
             variant="default"
             size="sm"
-            className="bg-[#3355FF] text-white hover:bg-[#2a44cc]"
+            className="bg-[#3355FF] text-white hover:bg-[#2a44cc] text-xs sm:text-sm"
             onClick={() => {
               if (range?.from && range?.to && onChange) {
                 onChange({ start: range.from, end: range.to })
@@ -334,14 +338,34 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({ onChange, onCancel })
   )
 }
 
-export function CustomerOrderTable() {
+// Helper function to get filter display text
+const getFilterDisplayText = (
+  selectedItems: string[],
+  options: { value: string; label: string }[],
+) => {
+  if (selectedItems.length === 0) return ''
+  if (selectedItems.length === 1) {
+    const selectedOption = options.find((opt) => opt.value === selectedItems[0])
+    return selectedOption ? selectedOption.label : ''
+  }
+  const firstSelected = options.find((opt) => opt.value === selectedItems[0])
+  return firstSelected
+    ? `${firstSelected.label} & ${selectedItems.length - 1} more filter${selectedItems.length > 2 ? 's' : ''}`
+    : ''
+}
+
+export function ReplacementTable() {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+    Reason: true,
+    status: true,
+    priority: true,
+    actions: true,
+  })
   const [rowSelection, setRowSelection] = React.useState({})
   const [fetchedData, setFetchedData] = React.useState<OrderDetails[]>(data)
   const [selectedTime, setSelectedTime] = React.useState<string[]>(['all_time'])
-  const [selectedMaterials, setSelectedMaterials] = React.useState<string[]>([])
   const [selectedStatuses, setSelectedStatuses] = React.useState<string[]>([])
   const [selectedPriorities, setSelectedPriorities] = React.useState<string[]>([])
   const [globalFilter, setGlobalFilter] = React.useState('')
@@ -349,51 +373,59 @@ export function CustomerOrderTable() {
   const [showDatePicker, setShowDatePicker] = React.useState(false)
   const router = useRouter()
 
+  // Responsive column visibility
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setColumnVisibility({
+          RequestID: true,
+          OriginalOrder: true,
+          Customer: true,
+          Reason: false,
+          status: true,
+          priority: false,
+          actions: true,
+        })
+      } else if (window.innerWidth < 1024) {
+        setColumnVisibility({
+          RequestID: true,
+          OriginalOrder: true,
+          Customer: true,
+          Reason: true,
+          status: true,
+          priority: true,
+          actions: true,
+        })
+      } else {
+        setColumnVisibility({
+          RequestID: true,
+          OriginalOrder: true,
+          Customer: true,
+          Reason: true,
+          status: true,
+          priority: true,
+          actions: true,
+        })
+      }
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const filterData = React.useCallback(() => {
     let filteredData = data
     if (selectedTime.length > 0 && !selectedTime.includes('all_time')) {
       const today = new Date('2025-10-08')
       filteredData = filteredData.filter((item) => {
-        const dueDate = new Date(item.DueDate)
         return selectedTime.some((time) => {
           if (time === 'custom_range' && customRange) {
-            return dueDate >= customRange.start && dueDate <= customRange.end
+            return true
           }
-          if (time === 'today') return dueDate.toDateString() === today.toDateString()
-          if (time === 'this_week') {
-            const startOfWeek = new Date(today)
-            startOfWeek.setDate(today.getDate() - today.getDay())
-            const endOfWeek = new Date(startOfWeek)
-            endOfWeek.setDate(startOfWeek.getDate() + 6)
-            return dueDate >= startOfWeek && dueDate <= endOfWeek
-          }
-          if (time === 'last_week') {
-            const startOfLastWeek = new Date(today)
-            startOfLastWeek.setDate(today.getDate() - today.getDay() - 7)
-            const endOfLastWeek = new Date(startOfLastWeek)
-            endOfLastWeek.setDate(startOfLastWeek.getDate() + 6)
-            return dueDate >= startOfLastWeek && dueDate <= endOfLastWeek
-          }
-          if (time === 'this_month')
-            return (
-              dueDate.getMonth() === today.getMonth() &&
-              dueDate.getFullYear() === today.getFullYear()
-            )
-          if (time === 'last_month') {
-            const lastMonth = new Date(today)
-            lastMonth.setMonth(today.getMonth() - 1)
-            return (
-              dueDate.getMonth() === lastMonth.getMonth() &&
-              dueDate.getFullYear() === lastMonth.getFullYear()
-            )
-          }
-          if (time === 'this_year') return dueDate.getFullYear() === today.getFullYear()
-          return false
+          return true
         })
       })
-    }
-    if (selectedMaterials.length > 0) {
-      filteredData = filteredData.filter((item) => selectedMaterials.includes(item.Material))
     }
     if (selectedStatuses.length > 0) {
       filteredData = filteredData.filter((item) => selectedStatuses.includes(item.status))
@@ -402,7 +434,7 @@ export function CustomerOrderTable() {
       filteredData = filteredData.filter((item) => selectedPriorities.includes(item.priority))
     }
     setFetchedData(filteredData)
-  }, [selectedTime, selectedMaterials, selectedStatuses, selectedPriorities, customRange])
+  }, [selectedTime, selectedStatuses, selectedPriorities, customRange])
 
   const table = useReactTable({
     data: fetchedData,
@@ -421,32 +453,43 @@ export function CustomerOrderTable() {
       const search = String(filterValue).toLowerCase()
       return (
         row.original.Customer.toLowerCase().includes(search) ||
-        String(row.original.OrderID).includes(search)
+        String(row.original.RequestID).includes(search) ||
+        String(row.original.OriginalOrder).includes(search)
       )
     },
     meta: { updateData: setFetchedData } as CustomTableMeta<OrderDetails>,
   })
 
+  const timeFilterText = getFilterDisplayText(selectedTime, timeOptions)
+  const statusFilterText = getFilterDisplayText(selectedStatuses, statusOptions)
+  const priorityFilterText = getFilterDisplayText(selectedPriorities, priorityOptions)
+
   return (
-    <div className="mx-4 my-6 sm:mx-6 md:mx-8 lg:mx-10">
-      <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-3 items-start sm:items-center mb-6">
+    <div className="mx-2 sm:mx-4 md:mx-6 lg:mx-8 my-4 sm:my-6">
+      <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:flex-wrap sm:items-center mb-4 sm:mb-6">
         <Input
-          placeholder="Filter by customer or order id"
+          placeholder="Filter by customer, request id, or original order"
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="w-full sm:w-auto sm:flex-1 min-w-[200px] max-w-[300px]"
+          className="w-full sm:w-auto sm:flex-1 min-w-[180px] max-w-[280px] text-xs sm:text-sm h-9 sm:h-10"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-full sm:w-[120px] h-10">
-              Time Filter <ChevronDown className="ml-2 h-4 w-4" />
+            <Button
+              variant="outline"
+              className="w-full sm:w-[120px] md:w-[140px] h-9 sm:h-10 text-ellipsis overflow-hidden whitespace-nowrap text-xs sm:text-sm"
+            >
+              <span className="text-ellipsis overflow-hidden">
+                {timeFilterText || 'Time Filter'}
+              </span>
+              <ChevronDown className="ml-1 h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent className="w-[180px] sm:w-[200px]">
             {timeOptions.map((option) => (
               <DropdownMenuCheckboxItem
                 key={option.value}
-                className="capitalize my-1"
+                className="capitalize my-1 text-xs sm:text-sm"
                 checked={selectedTime.includes(option.value)}
                 onCheckedChange={(checked) => {
                   setSelectedTime((prev) =>
@@ -464,38 +507,21 @@ export function CustomerOrderTable() {
         </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-full sm:w-[140px] h-10">
-              Materials <ChevronDown className="ml-2 h-4 w-4" />
+            <Button
+              variant="outline"
+              className="w-full sm:w-[120px] md:w-[140px] h-9 sm:h-10 text-ellipsis overflow-hidden whitespace-nowrap text-xs sm:text-sm"
+            >
+              <span className="text-ellipsis overflow-hidden">
+                {statusFilterText || 'Statuses'}
+              </span>
+              <ChevronDown className="ml-1 h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {materialOptions.map((option) => (
-              <DropdownMenuCheckboxItem
-                key={option.value}
-                className="capitalize my-1"
-                checked={selectedMaterials.includes(option.value)}
-                onCheckedChange={(checked) =>
-                  setSelectedMaterials((prev) =>
-                    checked ? [...prev, option.value] : prev.filter((v) => v !== option.value),
-                  )
-                }
-              >
-                {option.label}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-full sm:w-[140px] h-10">
-              Statuses <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent className="w-[180px] sm:w-[200px]">
             {statusOptions.map((option) => (
               <DropdownMenuCheckboxItem
                 key={option.value}
-                className="capitalize my-1"
+                className="capitalize my-1 text-xs sm:text-sm"
                 checked={selectedStatuses.includes(option.value)}
                 onCheckedChange={(checked) =>
                   setSelectedStatuses((prev) =>
@@ -510,15 +536,21 @@ export function CustomerOrderTable() {
         </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-full sm:w-[120px] h-10">
-              Priorities <ChevronDown className="ml-2 h-4 w-4" />
+            <Button
+              variant="outline"
+              className="w-full sm:w-[120px] md:w-[140px] h-9 sm:h-10 text-ellipsis overflow-hidden whitespace-nowrap text-xs sm:text-sm"
+            >
+              <span className="text-ellipsis overflow-hidden">
+                {priorityFilterText || 'Priorities'}
+              </span>
+              <ChevronDown className="ml-1 h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent className="w-[180px] sm:w-[200px]">
             {priorityOptions.map((option) => (
               <DropdownMenuCheckboxItem
                 key={option.value}
-                className="capitalize my-1"
+                className="capitalize my-1 text-xs sm:text-sm"
                 checked={selectedPriorities.includes(option.value)}
                 onCheckedChange={(checked) =>
                   setSelectedPriorities((prev) =>
@@ -533,14 +565,13 @@ export function CustomerOrderTable() {
         </DropdownMenu>
         <Button
           onClick={filterData}
-          className="w-full sm:w-[80px] h-10 bg-[#3355FF] text-white hover:bg-[#2a44cc]"
+          className="w-full sm:w-[80px] h-9 sm:h-10 bg-[#3355FF] text-white hover:bg-[#2a44cc] text-xs sm:text-sm"
         >
           Apply
         </Button>
       </div>
-
       {showDatePicker && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-2 sm:px-4">
           <DateRangePicker
             onChange={(range: { start: Date; end: Date }) => {
               setCustomRange(range)
@@ -551,14 +582,13 @@ export function CustomerOrderTable() {
           />
         </div>
       )}
-
       <div className="overflow-x-auto rounded-md border">
-        <Table className="w-full">
+        <Table className="w-full min-w-[600px] sm:min-w-[700px]">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="px-4 py-3">
+                  <TableHead key={header.id} className="px-2 sm:px-4 py-2 sm:py-3">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -573,10 +603,10 @@ export function CustomerOrderTable() {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="border-none h-16"
+                  className="border-none h-12 sm:h-16"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-4 py-3">
+                    <TableCell key={cell.id} className="px-2 sm:px-4 py-2 sm:py-3">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -584,7 +614,10 @@ export function CustomerOrderTable() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-20 sm:h-24 text-center text-xs sm:text-sm"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -592,8 +625,7 @@ export function CustomerOrderTable() {
           </TableBody>
         </Table>
       </div>
-
-      <div className="flex items-center justify-center mt-6">
+      <div className="flex items-center justify-center mt-4 sm:mt-6">
         <PaginationDemo
           currentPage={table.getState().pagination.pageIndex + 1}
           totalPages={table.getPageCount()}
