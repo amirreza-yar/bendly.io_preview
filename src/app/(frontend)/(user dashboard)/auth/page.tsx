@@ -18,7 +18,7 @@ const AuthPage = () => {
     // First check if email exists
     const checkRes = await apiCheckEmail(data.email)
     console.log('Email check result:', checkRes)
-    
+
     if (checkRes.apiCode === '100102') {
       // Email exists, go to login
       router.push(`/auth/login?email=${data.email}`)
@@ -39,8 +39,8 @@ const AuthPage = () => {
   return (
     <>
       <HeaderWithCenterTitle title="Logo" />
-      <ContentWrapper className="pt-30">
-        <div className="grid gap-6">
+      <ContentWrapper className="pt-30 md:pt-0 md:flex items-center">
+        <div className="grid gap-6 max-w-[450px] mx-auto h-fit grow">
           <div className="grid items-center text-center gap-2">
             <h5>Welcome to Flashing Factory</h5>
             <p className="subtitle-regular">Please log in to your account</p>

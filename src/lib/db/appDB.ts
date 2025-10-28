@@ -6,12 +6,6 @@ import { Template } from '@/types/templateType'
 import { StoredOrder } from '@/types/orderTypes'
 import { StoredJobReference } from '@/types/jobReferenceTypes'
 
-export interface User {
-  id?: string
-  name: string
-}
-
-// User profile data for authenticated users (non-sensitive data only)
 export interface UserProfile {
   id: string // Primary key - user ID
   email: string
@@ -22,14 +16,10 @@ export interface UserProfile {
   createdAt: string
   updatedAt: string
   lastLogin?: string
-  // Note: Passwords, tokens, and sensitive data are NEVER stored here
 }
 
 export class AppDB extends Dexie {
-  // Demo users table (existing)
-  users!: Table<User, string | number>
-  // User profile table for authenticated user data
-  userProfiles!: Table<UserProfile, string>
+  userProfile!: Table<UserProfile, string>
   flashings!: Table<StoredFlashing, string>
   materialsAndProps!: Table<StoredMaterialAndProps, number>
   templates!: Table<Template, string>
@@ -40,14 +30,13 @@ export class AppDB extends Dexie {
     super('AppDB')
     this.version(2).stores({
       // Existing tables
-      users: '++id, name',
       flashings: 'id, material, color, thickness, createdAt, updatedAt',
       materialsAndProps: 'material',
       templates: 'name, owner',
       orders: 'id, status, progress, deliveryType',
       jobReferences: 'id, code, projectName',
       // New user profile table for authenticated user data
-      userProfiles: 'id, email, roleId, status',
+      userProfile: 'id, email, roleId, status',
     })
   }
 }

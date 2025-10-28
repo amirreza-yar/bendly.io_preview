@@ -67,7 +67,7 @@ export default function JobReferencesPage() {
         <>
           <div className="overflow-scroll h-full pt-14 pb-22 px-4 no-scrollbar">
             <div className="grid">
-              <div className="w-full py-4 flex items-center relative sticky top-0 z-10">
+              <div className="w-full py-4 flex items-center relative sticky top-0 z-10 max-w-[500px] mx-auto">
                 <Magnifier className="size-5 absolute left-4" />
 
                 <Input
@@ -96,7 +96,7 @@ export default function JobReferencesPage() {
                 )}
               </div>
 
-              <div className="grid w-full gap-4">
+              <div className="grid w-full gap-4 lg:grid-cols-3 md:grid-cols-2 max-w-[900px] mx-auto">
                 {searchResults?.map((job) => (
                   <Link
                     href={`/dashboard/j/${job?.id}`}
@@ -178,7 +178,7 @@ export default function JobReferencesPage() {
           </div>
 
           <div className="fixed bottom-0 left-0 w-full h-19 z-10 bg-white border-t-1 border-border-dark px-4">
-            <div className="w-full h-full">
+            <div className="w-full h-full max-w-[500px] mx-auto">
               <div className="flex justify-around items-center h-full">
                 <Link className="w-full" href="/dashboard/j/add">
                   <Button className="w-full">
@@ -191,7 +191,7 @@ export default function JobReferencesPage() {
           </div>
         </>
       ) : (
-        <div className="w-full h-full flex flex-col items-center justify-center gap-4 px-10">
+        <div className="w-full h-full flex flex-col items-center justify-center gap-4 px-10 max-w-[600px] mx-auto">
           <p className="text-center subtitle-large text-subtitle">
             No job references have been created yet{' '}
           </p>

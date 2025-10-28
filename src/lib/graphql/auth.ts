@@ -6,6 +6,7 @@ import {
   getAuthToken,
   isAuthenticated,
 } from '@/utilities/cookieUtils'
+import { GraphQLOperations } from './operations'
 
 // GraphQL Mutations and Queries for Authentication
 export const loginMutation = gql`
@@ -254,7 +255,10 @@ export async function graphqlGetProfile() {
     return { success: true, user }
   } catch (error) {
     console.error('Get profile error:', error)
-    return { success: false, error: error instanceof Error ? error.message : 'Failed to get profile' }
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to get profile',
+    }
   }
 }
 

@@ -17,6 +17,10 @@ import { addJobReference } from '@/lib/db/helpers/jobRefHelpers'
 import { generateRandomId } from '@/lib/db/helpers/utils'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
+import { useQuery } from '@apollo/client/react'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { db } from '@/lib/db/appDB'
+import { createJobReferenceMutation, getUserQuery } from '@/lib/api'
 
 const formSchema = z.object({
   recipientFullName: z
@@ -82,16 +86,23 @@ export default function JobReferencesPage() {
     setIsDrawerOpen(false)
   }
 
+  const userId = useLiveQuery(() => db.userProfile.toCollection().first())?.id
+
+  const { loading, error, data } = useQuery(getUserQuery, { variables: { id: userId } })
+
+  const meFullname = data?.user?.fullname
+  const mePhone = data?.user?.phone
+
   const handleNextClick = async () => {
     console.log(newJobReference)
 
     const recipientName = newJobReference.recipientFullName
       ? newJobReference.recipientFullName
-      : 'Amirreza Yarahmadi'
+      : meFullname
 
     const recipientMobile = newJobReference.recipientMobileNumber
       ? Number(newJobReference.recipientMobileNumber)
-      : 8987654123
+      : mePhone
 
     await addJobReference({
       code: Number(newJobReference.jobReferenceCode),
@@ -108,6 +119,31 @@ export default function JobReferencesPage() {
           recipientMobile: recipientMobile,
         },
       ],
+    })
+
+    const { loading, error, data } = useQuery(createJobReferenceMutation, {
+      variables: {
+        input: {
+          code: '1234',
+          projectName: 'Main Site',
+          ownerId: '68fcca256112bffdccd0e6f3',
+          addresses: [
+            {
+              street: '123 Main st.',
+              suburb: 'Melbourne',
+              state: 'Sydney',
+              postcode: '1234',
+              addressName: 'Main Site addr.',
+            },
+          ],
+          recipients: [
+            {
+              name: 'Amirreza',
+              phone: '09876541230',
+            },
+          ],
+        },
+      },
     })
 
     toast('Job Reference Created')

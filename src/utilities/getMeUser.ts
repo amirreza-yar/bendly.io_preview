@@ -19,27 +19,31 @@ export const getMeUser = async (args?: {
   // const token = cookieStore.get('ff-token')?.value
 
   // Temporary client-side token access (for now)
-  const token = typeof window !== 'undefined'
-    ? document.cookie
-        .split('; ')
-        .find(row => row.startsWith('ff-token='))
-        ?.split('=')[1]
-    : undefined
+  const token =
+    typeof window !== 'undefined'
+      ? document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('ff-token='))
+          ?.split('=')[1]
+      : undefined
 
-  const meUserReq = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'}/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      query: `
+  const meUserReq = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'}/graphql`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        query: `
         query GetCurrentUser {
           me(userId: "")
         }
-      `
-    }),
-  })
+      `,
+      }),
+    },
+  )
 
   const response = await meUserReq.json()
 
@@ -51,10 +55,12 @@ export const getMeUser = async (args?: {
     // Fallback: get user data from IndexedDB if available
     if (typeof window !== 'undefined') {
       try {
-        const { getCurrentUserId, getUserProfile } = await import('@/lib/db/helpers/userProfileHelpers')
+        const { getCurrentUserId, getUserProfile } = await import(
+          '@/lib/db/helpers/userProfileHelpers'
+        )
         const userId = await getCurrentUserId()
         if (userId) {
-          const userProfile = await getUserProfile(userId)
+          const userProfile = await getUserProfile()
           if (userProfile) {
             user = {
               _id: userProfile.id,

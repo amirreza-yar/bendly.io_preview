@@ -11,6 +11,9 @@ import { useNewJobReference } from '@/providers/data_providers/job_reference_pro
 import { jobReferCodeExists } from '@/lib/db/helpers/jobRefHelpers'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
+import { useMutation, useQuery } from '@apollo/client/react'
+import { createJobReferenceMutation } from '@/lib/api'
+import { useEffect } from 'react'
 
 const formSchema = z.object({
   jobReferenceCode: z
@@ -31,6 +34,37 @@ type FormValues = z.infer<typeof formSchema>
 
 export default function JobReferencesPage() {
   const { newJobReference, setNewJobReference } = useNewJobReference()
+
+  // const [createJobReference] = useMutation(createJobReferenceMutation)
+
+  // useEffect(() => {
+  //   createJobReference({
+  //     variables: {
+  //       input: {
+  //         code: '1234',
+  //         projectName: 'Main Site',
+  //         ownerId: '68fcca256112bffdccd0e6f3',
+  //         addresses: [
+  //           {
+  //             street: '123 Main st.',
+  //             suburb: 'Melbourne',
+  //             state: 'Sydney',
+  //             postcode: '1234',
+  //             addressName: 'Main Site addr.',
+  //           },
+  //         ],
+  //         recipients: [
+  //           {
+  //             name: 'Amirreza',
+  //             phone: '09876541230',
+  //           },
+  //         ],
+  //       },
+  //     },
+  //   })
+  //     .then((res) => console.log('Created:', res.data.createJobReference))
+  //     .catch((err) => console.error(err))
+  // }, [createJobReference])
 
   const {
     register,

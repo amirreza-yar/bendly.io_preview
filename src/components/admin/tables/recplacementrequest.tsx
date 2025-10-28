@@ -180,7 +180,7 @@ export default function ReplacementRequestTable() {
   })
 
   return (
-    <div className="mt-4 mb-6 mx-6">
+    <div className="p-6 pt-4 border rounded-lg border-border-default bg-white">
       <div className="flex items-center justify-between py-4">
         <h5 className="text-md font-semibold">Replacement Requests</h5>
         <Button

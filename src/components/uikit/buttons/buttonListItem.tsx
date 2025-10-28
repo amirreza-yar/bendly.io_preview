@@ -1,7 +1,8 @@
-import { ReactNode } from 'react'
+import { ReactNode, Suspense } from 'react'
 import { cn } from '@/utilities/ui' // Replace with your actual utility
 import { ChevronRight } from '@/components/uikit/icons'
 import { Badge } from '@/components/uikit/badge' // Adjust the path if needed
+import { Skeleton } from '../skeleton'
 
 type BadgeColor = 'green' | 'orange' | 'red' | 'blue' | 'gray'
 
@@ -11,6 +12,7 @@ interface ButtonListItemProps extends React.HTMLAttributes<HTMLDivElement> {
   badgeText?: string
   badgeColor?: BadgeColor
   caption?: string
+  loading?: boolean
 }
 
 export function ButtonListItem({
@@ -19,6 +21,7 @@ export function ButtonListItem({
   badgeText,
   badgeColor = 'green',
   caption,
+  loading = false,
   ...props
 }: ButtonListItemProps) {
   return (
@@ -31,9 +34,20 @@ export function ButtonListItem({
         <div className="grid gap-2">
           <div className="flex gap-2">
             <span>{text}</span>
-            {badgeText && <Badge text={badgeText} variant={badgeColor} />}
+
+            {badgeText &&
+              (loading ? (
+                <Skeleton className="h-[14px] w-[50px]" />
+              ) : (
+                <Badge text={badgeText!} variant={badgeColor} />
+              ))}
           </div>
-          {caption && <span className="caption-small text-subtitle truncate">{caption}</span>}
+          {caption &&
+            (loading ? (
+              <Skeleton className="h-[14px] w-[90px]" />
+            ) : (
+              <span className="caption-small text-subtitle truncate">{caption}</span>
+            ))}
         </div>
       </div>
       <div className="flex justify-start items-center flex-grow-0 flex-shrink-0 relative gap-6">

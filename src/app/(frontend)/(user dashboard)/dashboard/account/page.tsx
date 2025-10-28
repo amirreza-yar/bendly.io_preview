@@ -34,7 +34,7 @@ export default function AccountPage() {
 
       <>
         <ContentWrapper className="grid content-between">
-          <div className="pt-4 grid divide-y divide-border-seprator">
+          <div className="grid divide-y divide-border-seprator">
             <Link href="/dashboard/account/edit-account">
               <ButtonListItem
                 text="Edit Account Information"

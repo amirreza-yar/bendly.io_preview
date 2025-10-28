@@ -5,6 +5,10 @@ import { Toaster } from 'sonner'
 import { UserData, UserProvider } from '@/providers/main_providers/UserContext'
 import { DBProvider } from '@/providers/db_providers/DBContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { getUserProfile } from '@/lib/db/helpers/userProfileHelpers'
+import { db } from '@/lib/db/appDB'
+import { ApolloClient, HttpLink, InMemoryCache, gql } from '@apollo/client'
+import { ApolloProvider } from '@apollo/client/react'
 
 export const metadata = {
   title: 'Flashing Factory DEV',
@@ -15,19 +19,14 @@ const robot_flex = Roboto_Flex({
   subsets: ['latin'],
 })
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const initialData: Partial<UserData> = {
-    userId: '12ab34',
-    fullname: 'Jon Doe',
-    mobile: 9876543210,
-    email: 'demo@domain.com',
-    password: '12345678@Pass',
-  }
-
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body style={{ width: '100vw', height: '100%' }} className={robot_flex.className}>
-        <UserProvider initialData={initialData}>
+      <body
+        style={{ width: '100vw', height: '100%' }}
+        className={`${robot_flex.className} font-roboto`}
+      >
+        <UserProvider>
           <Toaster
             position="bottom-center"
             mobileOffset={{ bottom: '96px', right: '0', left: '0' }}
@@ -48,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             disableTransitionOnChange
           >
             <DBProvider>
-              <main className="h-screen relative w-screen overflow-auto no-scrollbar">
+              <main className="h-screen relative w-screen overflow-auto no-scrollbar font-roboto">
                 {children}
               </main>
             </DBProvider>

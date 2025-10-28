@@ -219,12 +219,11 @@ export const getJobReferencesQuery = gql`
 `
 
 export const createJobReferenceMutation = gql`
-  mutation CreateJobReference($input: CreateJobReferenceInput!) {
+  mutation CreateJobReference($input: CreateJobReferenceInputGQL!) {
     createJobReference(input: $input) {
       _id
       code
       projectName
-      description
       createdAt
       updatedAt
     }
@@ -300,10 +299,10 @@ export const updateUserMutation = gql`
 export class GraphQLOperations {
   private getCurrentUserId(): string {
     if (typeof window === 'undefined') return ''
-    
+
     const userStr = localStorage.getItem('user')
     if (!userStr) return ''
-    
+
     try {
       const user = JSON.parse(userStr)
       return user._id || ''
@@ -319,7 +318,7 @@ export class GraphQLOperations {
 
     try {
       const result = await urqlClient.query(getFlashingsQuery, { userId }).toPromise()
-      
+
       if (result.error) {
         console.error('Get flashings error:', result.error)
         return { success: false, error: result.error.message }
@@ -335,7 +334,7 @@ export class GraphQLOperations {
   async createFlashing(input: CreateFlashingInput) {
     try {
       const result = await urqlClient.mutation(createFlashingMutation, { input }).toPromise()
-      
+
       if (result.error) {
         console.error('Create flashing error:', result.error)
         return { success: false, error: result.error.message }
@@ -348,7 +347,7 @@ export class GraphQLOperations {
           type: 'flashing',
           action: 'create',
           data: flashing,
-          timestamp: new Date()
+          timestamp: new Date(),
         })
       }
 
@@ -362,7 +361,7 @@ export class GraphQLOperations {
   async updateFlashing(id: string, input: UpdateFlashingInput) {
     try {
       const result = await urqlClient.mutation(updateFlashingMutation, { id, input }).toPromise()
-      
+
       if (result.error) {
         console.error('Update flashing error:', result.error)
         return { success: false, error: result.error.message }
@@ -375,7 +374,7 @@ export class GraphQLOperations {
           type: 'flashing',
           action: 'update',
           data: flashing,
-          timestamp: new Date()
+          timestamp: new Date(),
         })
       }
 
@@ -389,7 +388,7 @@ export class GraphQLOperations {
   async deleteFlashing(id: string) {
     try {
       const result = await urqlClient.mutation(deleteFlashingMutation, { id }).toPromise()
-      
+
       if (result.error) {
         console.error('Delete flashing error:', result.error)
         return { success: false, error: result.error.message }
@@ -400,7 +399,7 @@ export class GraphQLOperations {
         type: 'flashing',
         action: 'delete',
         data: { id },
-        timestamp: new Date()
+        timestamp: new Date(),
       })
 
       return { success: true }
@@ -417,7 +416,7 @@ export class GraphQLOperations {
 
     try {
       const result = await urqlClient.query(getOrdersQuery, { userId }).toPromise()
-      
+
       if (result.error) {
         console.error('Get orders error:', result.error)
         return { success: false, error: result.error.message }
@@ -433,7 +432,7 @@ export class GraphQLOperations {
   async createOrder(input: CreateOrderInput) {
     try {
       const result = await urqlClient.mutation(createOrderMutation, { input }).toPromise()
-      
+
       if (result.error) {
         console.error('Create order error:', result.error)
         return { success: false, error: result.error.message }
@@ -446,7 +445,7 @@ export class GraphQLOperations {
           type: 'order',
           action: 'create',
           data: order,
-          timestamp: new Date()
+          timestamp: new Date(),
         })
       }
 
@@ -460,7 +459,7 @@ export class GraphQLOperations {
   async updateOrder(id: string, input: UpdateOrderInput) {
     try {
       const result = await urqlClient.mutation(updateOrderMutation, { id, input }).toPromise()
-      
+
       if (result.error) {
         console.error('Update order error:', result.error)
         return { success: false, error: result.error.message }
@@ -473,7 +472,7 @@ export class GraphQLOperations {
           type: 'order',
           action: 'update',
           data: order,
-          timestamp: new Date()
+          timestamp: new Date(),
         })
       }
 
@@ -491,7 +490,7 @@ export class GraphQLOperations {
 
     try {
       const result = await urqlClient.query(getTemplatesQuery, { userId }).toPromise()
-      
+
       if (result.error) {
         console.error('Get templates error:', result.error)
         return { success: false, error: result.error.message }
@@ -507,7 +506,7 @@ export class GraphQLOperations {
   async createTemplate(input: CreateTemplateInput) {
     try {
       const result = await urqlClient.mutation(createTemplateMutation, { input }).toPromise()
-      
+
       if (result.error) {
         console.error('Create template error:', result.error)
         return { success: false, error: result.error.message }
@@ -520,7 +519,7 @@ export class GraphQLOperations {
           type: 'template',
           action: 'create',
           data: template,
-          timestamp: new Date()
+          timestamp: new Date(),
         })
       }
 
@@ -534,7 +533,7 @@ export class GraphQLOperations {
   async updateTemplate(id: string, input: UpdateTemplateInput) {
     try {
       const result = await urqlClient.mutation(updateTemplateMutation, { id, input }).toPromise()
-      
+
       if (result.error) {
         console.error('Update template error:', result.error)
         return { success: false, error: result.error.message }
@@ -547,7 +546,7 @@ export class GraphQLOperations {
           type: 'template',
           action: 'update',
           data: template,
-          timestamp: new Date()
+          timestamp: new Date(),
         })
       }
 
@@ -561,7 +560,7 @@ export class GraphQLOperations {
   async deleteTemplate(id: string) {
     try {
       const result = await urqlClient.mutation(deleteTemplateMutation, { id }).toPromise()
-      
+
       if (result.error) {
         console.error('Delete template error:', result.error)
         return { success: false, error: result.error.message }
@@ -572,7 +571,7 @@ export class GraphQLOperations {
         type: 'template',
         action: 'delete',
         data: { id },
-        timestamp: new Date()
+        timestamp: new Date(),
       })
 
       return { success: true }
@@ -589,7 +588,7 @@ export class GraphQLOperations {
 
     try {
       const result = await urqlClient.query(getJobReferencesQuery, { userId }).toPromise()
-      
+
       if (result.error) {
         console.error('Get job references error:', result.error)
         return { success: false, error: result.error.message }
@@ -605,7 +604,7 @@ export class GraphQLOperations {
   async createJobReference(input: CreateJobReferenceInput) {
     try {
       const result = await urqlClient.mutation(createJobReferenceMutation, { input }).toPromise()
-      
+
       if (result.error) {
         console.error('Create job reference error:', result.error)
         return { success: false, error: result.error.message }
@@ -618,7 +617,7 @@ export class GraphQLOperations {
           type: 'jobReference',
           action: 'create',
           data: jobRef,
-          timestamp: new Date()
+          timestamp: new Date(),
         })
       }
 
@@ -631,8 +630,10 @@ export class GraphQLOperations {
 
   async updateJobReference(id: string, input: UpdateJobReferenceInput) {
     try {
-      const result = await urqlClient.mutation(updateJobReferenceMutation, { id, input }).toPromise()
-      
+      const result = await urqlClient
+        .mutation(updateJobReferenceMutation, { id, input })
+        .toPromise()
+
       if (result.error) {
         console.error('Update job reference error:', result.error)
         return { success: false, error: result.error.message }
@@ -645,7 +646,7 @@ export class GraphQLOperations {
           type: 'jobReference',
           action: 'update',
           data: jobRef,
-          timestamp: new Date()
+          timestamp: new Date(),
         })
       }
 
@@ -659,7 +660,7 @@ export class GraphQLOperations {
   async deleteJobReference(id: string) {
     try {
       const result = await urqlClient.mutation(deleteJobReferenceMutation, { id }).toPromise()
-      
+
       if (result.error) {
         console.error('Delete job reference error:', result.error)
         return { success: false, error: result.error.message }
@@ -670,7 +671,7 @@ export class GraphQLOperations {
         type: 'jobReference',
         action: 'delete',
         data: { id },
-        timestamp: new Date()
+        timestamp: new Date(),
       })
 
       return { success: true }
@@ -684,7 +685,7 @@ export class GraphQLOperations {
   async getUsers() {
     try {
       const result = await urqlClient.query(getUsersQuery, {}).toPromise()
-      
+
       if (result.error) {
         console.error('Get users error:', result.error)
         return { success: false, error: result.error.message }
@@ -700,7 +701,7 @@ export class GraphQLOperations {
   async getUser(id: string) {
     try {
       const result = await urqlClient.query(getUserQuery, { id }).toPromise()
-      
+
       if (result.error) {
         console.error('Get user error:', result.error)
         return { success: false, error: result.error.message }
@@ -716,7 +717,7 @@ export class GraphQLOperations {
   async updateUser(id: string, input: UpdateUserInput) {
     try {
       const result = await urqlClient.mutation(updateUserMutation, { id, input }).toPromise()
-      
+
       if (result.error) {
         console.error('Update user error:', result.error)
         return { success: false, error: result.error.message }
@@ -729,7 +730,7 @@ export class GraphQLOperations {
           type: 'user',
           action: 'update',
           data: user,
-          timestamp: new Date()
+          timestamp: new Date(),
         })
       }
 

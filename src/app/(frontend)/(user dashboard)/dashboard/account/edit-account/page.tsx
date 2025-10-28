@@ -8,10 +8,15 @@ import { Separator } from '@/components/ui/separator'
 import { Header } from '@/components/dashboard/header'
 import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { Footer } from '@/components/dashboard/footer'
-import { useUser } from '@/providers/main_providers/UserContext'
+import { useQuery } from '@apollo/client/react'
+import { getUserQuery } from '@/lib/api'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { db } from '@/lib/db/appDB'
 
 export default function AccountPage() {
-  const {user} = useUser()
+  const userId = useLiveQuery(() => db.userProfile.toCollection().first())?.id
+
+  const { loading, error, data } = useQuery(getUserQuery, { variables: { id: userId } })
 
   return (
     <>
@@ -20,14 +25,19 @@ export default function AccountPage() {
       <ContentWrapper>
         <div className="grid pt-4">
           <Link href="/dashboard/account/edit-account/edit-fullname">
-            <ButtonListItem text="Edit Full Name" caption={user?.fullname || 'Not set'} />
-            <Separator className />
+            <ButtonListItem
+              text="Edit Full Name"
+              caption={`${data?.user?.fullname}`}
+              loading={loading}
+            />
+            <Separator />
           </Link>
           <Link href="/dashboard/account/edit-account/edit-mobile">
-            <ButtonListItem 
-              text="Mobile Number" 
-              caption={user?.mobile ? `+${user.mobile}` : 'Not set'} 
-              badgeText={user?.mobile ? "Verified" : undefined} 
+            <ButtonListItem
+              text="Mobile Number"
+              caption={data?.user?.phone ? `+${data?.user.phone}` : 'Not set'}
+              badgeText={'Verified'}
+              loading={loading}
             />
           </Link>
         </div>

@@ -1,14 +1,17 @@
 'use client'
+import { GraphQLOperations } from '@/lib/api'
+import { db } from '@/lib/db/appDB'
+import { getUserProfile } from '@/lib/db/helpers/userProfileHelpers'
 import { Flashing, Order } from '@/types/orders/orderType'
 import { Issue, IssueVals, Photo, RequestPiece } from '@/types/orders/requestType'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { createContext, useContext, useState, ReactNode } from 'react'
 
 export type UserData = {
   userId: string
   fullname: string
   email: string
-  mobile: number
-  password: string
+  mobile: string
 }
 
 export type UserContextType = {
@@ -25,7 +28,12 @@ interface UserProviderProps {
 }
 
 export function UserProvider({ initialData = {}, children }: UserProviderProps) {
-  const [user, setUserState] = useState<Partial<UserData>>(initialData)
+  const [user, setUserState] = useState<Partial<UserData>>({
+    // userId: userPrfoile?.id,
+    // fullname: userPrfoile?.fullname,
+    // email: userPrfoile?.email,
+    // mobile: userPrfoile?.phone,
+  })
 
   const setUser = (data: Partial<UserData>) => {
     setUserState((prev) => ({ ...prev, ...data }))

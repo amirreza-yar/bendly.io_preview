@@ -3,7 +3,7 @@
 import React from 'react'
 import { Factory, BoxDeliverd, Checked, Delivery } from '@/components/uikit/icons'
 
-interface Activity {
+type Activity = {
   id: number
   icon: React.ComponentType<{ className?: string }>
   message: string
@@ -48,27 +48,26 @@ export default function RecentActivity() {
   ])
 
   return (
-    <div className="w-[529px] h-[376px] bg-white mt-4">
-      <h5 className="text-md py-6 pl-6">Recent Activity</h5>
-      <div className="ml-6 h-[calc(376px-3.5rem)] overflow-y-auto space-y-5 pr-4">
-        {activities.map((activity) => (
-          <div key={activity.id} className="flex items-start gap-3">
-            <div
-              className="border w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: activity.bgColor }}
-            >
-              <activity.icon className="w-4 h-4" />
-            </div>
-            <div className="flex flex-col">
-              <p className="text-body m-0">{activity.message}</p>
-              <p className="text-subtitle m-0">
-                {activity.timestamp}
-                {activity.by ? ` - By ${activity.by}` : ''}
-              </p>
-            </div>
+    <div className="grid gap-4 border rounded-lg border-border-default bg-white p-4">
+      <h5 className="text-md pt-4">Recent Activity</h5>
+
+      {activities.map((activity) => (
+        <div key={activity.id} className="flex items-start gap-3">
+          <div
+            className="border w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: activity.bgColor }}
+          >
+            <activity.icon className="w-4 h-4" />
           </div>
-        ))}
-      </div>
+          <div className="flex flex-col">
+            <p className="text-body">{activity.message}</p>
+            <p className="text-subtitle">
+              {activity.timestamp}
+              {activity.by ? ` - By ${activity.by}` : ''}
+            </p>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }

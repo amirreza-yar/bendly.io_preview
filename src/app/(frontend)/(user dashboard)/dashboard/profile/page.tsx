@@ -5,23 +5,25 @@ import { ArrowLeft, ChevronRight, Pencil, RightArrow } from '@/components/uikit/
 import { Separator } from '@/components/uikit/separator'
 import BottomNav from '@/components/dashboard/bottomNav'
 import { apiGetProfile } from '@/utilities/api/auth'
+import { db } from '@/lib/db/appDB'
 // import { apiGetProfile } from '@/utilities/api/user_auth/auth'
 
 export default function ProfilePage() {
   const [userInfo, setUserInfo] = useState<{ name: string; email: string }>()
 
   const getUserInfo = async () => {
-    const res = await apiGetProfile()
+    // const res = await apiGetProfile()
 
-    console.log(res.user)
+    const userProfile = await db.userProfile.toCollection().first()
 
-    // if (res.success) {
-    //   const user = res.user
-    //   setUserInfo({
-    //     name: user.,
-    //     email: user.email,
-    //   })
-    // }
+    console.log(userProfile)
+
+    if (userProfile) {
+      setUserInfo({
+        name: userProfile.fullname,
+        email: userProfile.email,
+      })
+    }
   }
 
   useEffect(() => {

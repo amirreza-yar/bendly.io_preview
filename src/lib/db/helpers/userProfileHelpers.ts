@@ -29,7 +29,9 @@ export async function storeUserProfile(userData: {
       lastLogin: userData.lastLogin,
     }
 
-    await db.userProfiles.put(userProfile)
+    await db.userProfile.clear().then(() => {
+      db.userProfile.put(userProfile)
+    })
   } catch (error) {
     console.error('Failed to store user profile:', error)
     throw error
@@ -39,9 +41,9 @@ export async function storeUserProfile(userData: {
 /**
  * Retrieve user profile data from IndexedDB
  */
-export async function getUserProfile(userId: string): Promise<UserProfile | null> {
+export async function getUserProfile(): Promise<UserProfile | null> {
   try {
-    const userProfile = await db.userProfiles.get(userId)
+    const userProfile = await db.userProfile.toCollection().first()
     return userProfile || null
   } catch (error) {
     console.error('Failed to get user profile:', error)
@@ -54,9 +56,9 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
  */
 export async function getCurrentUserId(): Promise<string | null> {
   try {
-    const userProfiles = await db.userProfiles.toArray()
+    const userProfile = await db.userProfile.toCollection().first()
     // Return the first (and should be only) user profile
-    return userProfiles.length > 0 ? userProfiles[0].id : null
+    return String(userProfile?.id)
   } catch (error) {
     console.error('Failed to get current user ID:', error)
     return null
@@ -68,7 +70,7 @@ export async function getCurrentUserId(): Promise<string | null> {
  */
 export async function clearUserProfile(): Promise<void> {
   try {
-    await db.userProfiles.clear()
+    await db.userProfile.clear()
   } catch (error) {
     console.error('Failed to clear user profile:', error)
     throw error
@@ -78,9 +80,12 @@ export async function clearUserProfile(): Promise<void> {
 /**
  * Update user profile data in IndexedDB
  */
-export async function updateUserProfile(userId: string, updates: Partial<UserProfile>): Promise<void> {
+export async function updateUserProfile(
+  userId: string,
+  updates: Partial<UserProfile>,
+): Promise<void> {
   try {
-    await db.userProfiles.update(userId, updates)
+    await db.userProfile.update(userId, updates)
   } catch (error) {
     console.error('Failed to update user profile:', error)
     throw error

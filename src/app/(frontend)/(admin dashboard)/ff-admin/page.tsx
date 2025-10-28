@@ -21,15 +21,11 @@ export default function AdminDashboardOverview() {
         <div className="w-full h-[498px] border rounded-lg border-border-default bg-white">
           <RecentOrderTable />
         </div>
-        <div className="w-full flex gap-5 flex-col md:flex-row">
-          <div className=" border rounded-lg border-border-default bg-white  ">
-            <RecentActivity />
-          </div>
-          <div className="w-full border rounded-lg border-border-default bg-white">
-            <ReplacementRequestTable />
-          </div>
+        <div className="w-full gap-5 grid lg:grid-cols-2">
+          <RecentActivity />
+          <ReplacementRequestTable />
         </div>
-        <div className="grid auto-rows-min gap-8 md:grid-cols-2">
+        <div className="grid auto-rows-min gap-8 lg:grid-cols-2">
           <OrdersChartCard totalorders={1543} changes={4.2} />
           <RevenueChartCard totalrevenue={4513.0} changes={5.7} />
         </div>
