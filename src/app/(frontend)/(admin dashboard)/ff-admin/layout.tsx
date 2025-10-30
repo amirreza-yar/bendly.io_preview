@@ -94,7 +94,19 @@ const data = {
 export default function AdminDashbaordLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const [navIndex, setNavIndex] = useState(-1)
+  const [subSettingNav, setSubSettingNav] = useState<string | null>(null)
   const { orderId, requestId } = useParams()
+
+  const { state, toggleSidebar } = useSidebar()
+  const isMobile = useIsMobile()
+
+  const handleResize = () => {
+    if (window.innerWidth < 1100 && state === 'expanded') {
+      toggleSidebar()
+    } else if (window.innerWidth > 1100 && state === 'collapsed') {
+      toggleSidebar()
+    }
+  }
 
   useEffect(() => {
     if (pathname.startsWith('/ff-admin/order')) {
@@ -105,15 +117,28 @@ export default function AdminDashbaordLayout({ children }: { children: ReactNode
       setNavIndex(3)
     } else if (pathname.startsWith('/ff-admin/setting')) {
       setNavIndex(4)
+      if (pathname === '/ff-admin/setting/materials') {
+        setSubSettingNav('Material')
+      } else if (pathname === '/ff-admin/setting/materials/') {
+        setSubSettingNav('Material Details')
+      } else {
+        setSubSettingNav(null)
+      }
     } else {
       setNavIndex(0)
     }
+
+    // Run on mount
+    handleResize()
+
+    // Add event listener
+    window.addEventListener('resize', handleResize)
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
   }, [pathname])
-
-  const { state } = useSidebar()
-  const isMobile = useIsMobile()
-
-  console.log(orderId)
 
   if (orderId) {
     return <>{children}</>
@@ -202,15 +227,26 @@ export default function AdminDashbaordLayout({ children }: { children: ReactNode
                 </h4>
               ) : (
                 <h4 className="font-semibold text-[24px]/[33px]">
-                  {navIndex === 0
-                    ? 'Overview'
-                    : navIndex === 1
-                      ? 'Orders Management'
-                      : navIndex === 2
-                        ? 'Replacement'
-                        : navIndex === 3
-                          ? 'Customers'
-                          : navIndex === 4 && 'Settings'}
+                  {(() => {
+                    switch (navIndex) {
+                      case 0:
+                        return 'Overview'
+                      case 1:
+                        return 'Orders Management'
+                      case 2:
+                        return 'Replacement'
+                      case 3:
+                        return 'Customers'
+                      case 4:
+                        if (subSettingNav === null) {
+                          return 'Settings'
+                        } else {
+                          return subSettingNav
+                        }
+                      default:
+                        return ''
+                    }
+                  })()}
                 </h4>
               )}
             </div>

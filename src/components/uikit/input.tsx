@@ -62,7 +62,7 @@ export function LabeledInput({
       {/* Label */}
       {label && (
         <div className="flex items-center gap-1">
-          <p className="text-xs/[16.5px] font-medium text-neutral-dark">{label}</p>
+          <p className="label-regular data-[error=true]:text-destructive label-regular">{label}</p>
           {required && (
             <p className="text-sm font-medium text-attention-default-default text-red-500">*</p>
           )}

@@ -48,7 +48,7 @@ export default function RecentActivity() {
   ])
 
   return (
-    <div className="grid gap-4 border rounded-lg border-border-default bg-white p-4">
+    <div className="grid gap-4 border rounded-lg border-border-default bg-white py-4 px-6">
       <h5 className="text-md pt-4">Recent Activity</h5>
 
       {activities.map((activity) => (

@@ -62,9 +62,9 @@ export default function DetailsComponent({
     if (order?.flashings?.length) {
       const lastFlashing = order.flashings.find((flash) => flash.id === flashingId)
       form.reset({
-        code: lastFlashing.code,
-        position: lastFlashing.position,
-        specifications: lastFlashing.specifications,
+        code: lastFlashing?.code,
+        position: lastFlashing?.position,
+        specifications: lastFlashing?.specifications,
       })
     }
   }, [order, form])

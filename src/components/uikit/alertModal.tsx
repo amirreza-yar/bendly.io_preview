@@ -20,7 +20,6 @@ export function AlertDialogContent({ className, ...props }: AlertDialogContentPr
           'data-[state=open]:animate-in data-[state=closed]:animate-out ' +
             'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 ' +
             'fixed inset-0 z-50 backdrop-blur-md',
-          className,
         )}
       />
       <AlertDialogPrimitive.Content
@@ -97,7 +96,7 @@ export function AlertModal({
       <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" asChild>
         {children}
       </AlertDialogPrimitive.Trigger>
-      <AlertDialogContent className="font-roboto">
+      <AlertDialogContent className="font-roboto w-100">
         <div data-slot="alert-dialog-header" className="flex flex-col gap-4">
           {dismissible && (
             <AlertDialogPrimitive.Cancel className="absolute top-4 end-4 [&_svg:not([class*='size-'])]:size-6">

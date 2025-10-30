@@ -1034,4 +1034,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  input[type="color"]::-webkit-color-swatch {
+    border-radius: 50%; /* Makes it circular */
+  }
 }

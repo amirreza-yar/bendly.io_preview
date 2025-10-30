@@ -113,7 +113,7 @@ function getNodeBounds(nodes: StoredFlashing['nodes'], offset: number, path3DOff
   const maxLeft = Math.max(...lefts)
   const minTop = Math.min(...tops)
   const maxTop = Math.max(...tops)
-  console.log('max top/left: ', maxTop, maxLeft)
+  // console.log('max top/left: ', maxTop, maxLeft)
 
   return `${Math.round(minLeft - offset / 2)} ${Math.round(minTop - offset / 2 - path3DOffset * PATH3DCOEFF)} ${Math.round(maxLeft - minLeft + offset + path3DOffset)} ${Math.round(maxTop - minTop + offset + path3DOffset * PATH3DCOEFF)}`
 }
@@ -222,7 +222,7 @@ export default function FlashingSVG({
   crushFoldOffsetCoeff?: number
   path3DOffsetCoeff?: number
 }) {
-  console.log(flashing.nodes)
+  // console.log(flashing.nodes)
 
   const { lines, longestLine } = calculateLines(flashing.nodes)
   const path3DOffset = longestLine.length * path3DOffsetCoeff
