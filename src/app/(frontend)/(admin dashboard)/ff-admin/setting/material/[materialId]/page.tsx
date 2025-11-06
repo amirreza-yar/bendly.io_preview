@@ -9,7 +9,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/uikit/breadcrumb'
 import { Button } from '@/components/uikit/buttons/button'
-import { GearSetting } from '@/components/uikit/icons'
+import { CircleQuestion, Download, Edit, GearSetting, Plus } from '@/components/uikit/icons'
 import FlashingSVG from '@/components/utils/flashingSVG'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -33,6 +33,40 @@ const data = {
   squishCost: 4,
   costPer100Girth: 3,
   costPer1Length: 15,
+}
+
+let materialDetails: any = {
+  material: 'Pre-painted steel',
+  groups: [
+    {
+      groupName: 'Base Group',
+      colors: [
+        { name: 'Monument', code: '#504A4B' },
+        { name: 'Surfmist', code: '#ECE7E1' },
+        { name: 'Shale Grey', code: '#7D7D7D' },
+        { name: 'Woodland Grey', code: '#5C6A6A' },
+        { name: 'Manor Red', code: '#8B3A3A' },
+      ],
+      baseCost: 5,
+      costPerFold: 2,
+      squishCost: 4,
+      costPer100Girth: 3,
+    },
+    {
+      groupName: 'Secondary Group',
+      colors: [
+        { name: 'Surfmist', code: '#ECE7E1' },
+        { name: 'Classic Cream', code: '#F1E3C4' },
+        { name: 'Paperbark', code: '#D2C0A2' },
+        { name: 'Shale Grey', code: '#7D7D7D' },
+        { name: 'Dune', code: '#B6A998' },
+      ],
+      baseCost: 8,
+      costPerFold: 3,
+      squishCost: 6,
+      costPer100Girth: 5,
+    },
+  ],
 }
 
 const demoFlashingData = {
@@ -138,7 +172,7 @@ export default function MaterialDetailsPage() {
                 <h3 className="font-bold">{data.material}</h3>
               </div>
               <div className="flex flex-col items-start w-full gap-3 pb-3">
-                <p className="body-regular font-bold">Material Variants</p>
+                <p className="body-regular font-bold">Colors</p>
                 <div className="grid gap-3 w-full">
                   {data.colors.map((color, index) => (
                     <div key={index} className="flex items-center justify-between pr-8 pl-2">
@@ -150,6 +184,18 @@ export default function MaterialDetailsPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+              <div className="flex items-center justify-between w-full">
+                <p className="label-regular font-bold">Type</p>
+                <p className="label-regular">Color</p>
+              </div>
+              <div className="flex items-center justify-between w-full">
+                <p className="label-regular font-bold">Groups</p>
+                <p className="label-regular">2</p>
+              </div>
+              <div className="flex items-center justify-between w-full">
+                <p className="label-regular font-bold">Num. of colors</p>
+                <p className="label-regular">11</p>
               </div>
               <div className="flex items-center justify-between w-full">
                 <p className="label-regular font-bold">Base cost</p>
@@ -167,20 +213,14 @@ export default function MaterialDetailsPage() {
                 <p className="label-regular font-bold">Cost per 100 mm girth</p>
                 <p className="label-regular">3.00 $</p>
               </div>
-              <div className="flex items-center justify-between w-full">
-                <p className="label-regular font-bold">Cost per 1 m length</p>
-                <p className="label-regular">15.00 $</p>
-              </div>
-              <div className="w-full px-2 pt-6">
-                <Button
-                  variant="secondary"
-                  onClick={() => setIsEditMaterialModalOpen(true)}
-                  className="w-full"
-                >
-                  Edit Material
+              <div className="w-full px-2 pt-6 space-y-3">
+                <Button variant="secondary" onClick={() => {}} className="w-full">
+                  <Download />
+                  Export Material
                 </Button>
-                <Button className="w-full mt-4" onClick={() => setIsAddNewVarModalOpen(true)}>
-                  Add Variant
+                <Button onClick={() => setIsEditMaterialModalOpen(true)} className="w-full">
+                  <Edit />
+                  Edit Material
                 </Button>
               </div>
             </div>
@@ -257,16 +297,19 @@ export default function MaterialDetailsPage() {
                       <td className="px-2 py-3 text-center">27.00 $</td>
                     </tr>
                     <tr>
-                      <td className="px-2 py-3">Length cost</td>
-                      <td className="px-2 py-3 text-center">15.00 $</td>
+                      <td className="px-2 py-3 flex items-center gap-2">
+                        Length cost
+                        <CircleQuestion className="size-4" />
+                      </td>
+                      <td className="px-2 py-3 text-center">42.00 $</td>
                       <td className="px-2 py-3 text-center">5</td>
-                      <td className="px-2 py-3 text-center">75.00 $</td>
+                      <td className="px-2 py-3 text-center">210.00 $</td>
                     </tr>
                     <tr className="bg-gray-100">
                       <td className="p-3 font-xbold">Total cost</td>
                       <td className="p-3 font-xbold text-center"></td>
                       <td className="p-3 font-xbold text-center"></td>
-                      <td className="p-3 font-xbold text-center">117.00 $</td>
+                      <td className="p-3 font-xbold text-center">210.00 $</td>
                     </tr>
                   </tbody>
                 </table>
@@ -285,7 +328,7 @@ export default function MaterialDetailsPage() {
       <EditMaterialModal
         isEditMaterialModalOpen={isEditMaterialModalOpen}
         setIsEditMaterialModalOpen={setIsEditMaterialModalOpen}
-        materialDetails={data}
+        materialDetails={materialDetails}
         onEditMaterialFormSubmit={onEditMaterialFormSubmit}
       />
     </>

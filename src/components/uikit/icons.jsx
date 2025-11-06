@@ -1061,19 +1061,19 @@ const More = ({ ...props }) => {
         d="M12.5 6.5C12.5 6.77614 12.2761 7 12 7C11.7239 7 11.5 6.77614 11.5 6.5C11.5 6.22386 11.7239 6 12 6C12.2761 6 12.5 6.22386 12.5 6.5Z"
         fill="currentColor"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="2"
       />
       <path
         d="M12.5 12.5C12.5 12.7761 12.2761 13 12 13C11.7239 13 11.5 12.7761 11.5 12.5C11.5 12.2239 11.7239 12 12 12C12.2761 12 12.5 12.2239 12.5 12.5Z"
         fill="currentColor"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="2"
       />
       <path
         d="M12.5 18.5C12.5 18.7761 12.2761 19 12 19C11.7239 19 11.5 18.7761 11.5 18.5C11.5 18.2239 11.7239 18 12 18C12.2761 18 12.5 18.2239 12.5 18.5Z"
         fill="currentColor"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="2"
       />
     </svg>
   )
@@ -2295,7 +2295,7 @@ const PlusIcon = ({ ...props }) => {
     >
       <path
         d="M10 16.25V3.75M3.75 10H16.25"
-        stroke="#3355FF"
+        stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
       />

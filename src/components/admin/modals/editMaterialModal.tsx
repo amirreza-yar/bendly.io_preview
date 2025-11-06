@@ -20,8 +20,8 @@ export default function EditMaterialModal({
   return (
     <>
       <DialogPrimitive.Root open={isEditMaterialModalOpen} data-slot="alert-dialog">
-        <AlertDialogContent className="font-roboto max-w-[1000px] lg:w-[70vw] w-[90vw] max-h-[90vh] pt-0">
-          <div data-slot="alert-dialog-header" className="flex flex-col gap-4">
+        <AlertDialogContent className="font-roboto max-w-[870px] lg:w-[70vw] w-[90vw] max-h-[90vh] p-0">
+          <div data-slot="alert-dialog-header" className="hidden">
             <DialogPrimitive.Title
               data-slot="alert-dialog-title"
               className="text-sm/[19px] font-semibold hidden"
@@ -31,29 +31,8 @@ export default function EditMaterialModal({
           <EditMaterialForm
             materialDetails={materialDetails}
             onEditMaterialFormSubmit={onEditMaterialFormSubmit}
+            setIsEditMaterialModalOpen={setIsEditMaterialModalOpen}
           />
-
-          <div
-            data-slot="alert-dialog-footer"
-            className={'flex flex-col gap-4 sm:flex-row sm:justify-end pt-4'}
-          >
-            <DialogPrimitive.Action asChild>
-              <Button type="submit" form="edit-material-form">
-                Submit Changes
-              </Button>
-            </DialogPrimitive.Action>
-
-            <DialogPrimitive.Cancel asChild>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setIsEditMaterialModalOpen(false)
-                }}
-              >
-                Discard
-              </Button>
-            </DialogPrimitive.Cancel>
-          </div>
         </AlertDialogContent>
       </DialogPrimitive.Root>
     </>
