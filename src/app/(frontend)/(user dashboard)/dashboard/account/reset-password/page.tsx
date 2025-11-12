@@ -43,12 +43,12 @@ export default function ResetPasswordPage() {
   return (
     <>
       <Header title="Reset Password" returnHref="/dashboard/account" />
-      <ContentWrapper>
+      <ContentWrapper className="">
         <div className="grid text-center">
           <div className="grid px-6 gap-2 pt-12">
             <h5>Reset your password</h5>
             <p className="subtitle-regular">We will send a reset link to your email address</p>
-            <div className="w-full flex items-center justify-center mt-4">
+            <div className=" flex items-center justify-center mt-4">
               <Link
                 href=""
                 className="flex w-fit items-center justify-center gap-2 px-4 py-2 border border-border-default rounded-full"
@@ -61,7 +61,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <Form {...form}>
-          <form className="grid gap-6 mt-10" onSubmit={form.handleSubmit(handleResetPassword)}>
+          <form className="grid gap-6 mt-10 " onSubmit={form.handleSubmit(handleResetPassword)}>
             {/* Password Field */}
             <FormField
               control={form.control}
@@ -86,13 +86,13 @@ export default function ResetPasswordPage() {
               )}
             />
 
-            <Button type="submit" className="w-full bg-primary">
+            <Button type="submit" className=" bg-primary">
               Send Reset Link
             </Button>
           </form>
         </Form>
 
-        <div className="w-full flex items-center justify-center pt-6 gap-2">
+        <div className=" flex items-center justify-center pt-6 gap-2">
           <p className="text-caption-regular">Remembered your password?</p>
           <ResetPasswordIcon className="size-[15px] text-primary" />
           <Link

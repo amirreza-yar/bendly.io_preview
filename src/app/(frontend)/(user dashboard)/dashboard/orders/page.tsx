@@ -19,7 +19,7 @@ export default function OrdersPage() {
       <Header title="Orders" returnHref="/dashboard/profile" />
       <ContentWrapper className="pb-4 pt-14 no-scrollbar">
         <Tabs defaultValue="current">
-          <TabsList className="sticky top-4 bg-white z-20 mx-auto max-w-110 w-full">
+          <TabsList className="sticky top-4 bg-white z-20 mx-auto  w-full">
             <TabsTrigger value="current">Current</TabsTrigger>
             <TabsTrigger value="past">Past</TabsTrigger>
             <TabsTrigger value="replacement">Replacement</TabsTrigger>

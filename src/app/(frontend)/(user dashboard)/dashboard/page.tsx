@@ -58,11 +58,11 @@ export default function Page() {
         </Link>
       </header>
       <div className="pt-14 pb-16 h-full flex overflow-scroll px-4">
-        <div className="flex flex-col items-center justify-center w-full">
+        <div className="flex flex-col items-center justify-center w-full ">
           <p className="label-small pb-2">
             Start a new order from scratch and add project details later
           </p>
-          <Button className="w-full max-w-82" onClick={newFlashing}>
+          <Button className="w-full max-w-82 md:max-w-[500px] lg:max-w-150" onClick={newFlashing}>
             <span>New Order</span>
             <NewOrder />
           </Button>

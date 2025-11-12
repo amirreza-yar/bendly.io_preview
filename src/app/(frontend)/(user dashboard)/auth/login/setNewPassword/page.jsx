@@ -32,7 +32,7 @@ export default function SetNewPasswordPage() {
   }
 
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-gray-900">
+    <div className="h-screen flex items-center justify-center">
       <div className="flex flex-col w-full h-full -md md:-lg mx-auto bg-white shadow-md p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 rounded-none sm:rounded-lg">
         <div className="flex items-center mb-6 h-8">
           <button onClick={() => router.back()} className="flex-shrink-0">
@@ -46,9 +46,9 @@ export default function SetNewPasswordPage() {
           <h5 className="text-xmd font-bold pb-4">Reset Your Password</h5>
           <p className="text-gray-600 text-sm pt-1.5">Please enter a new password for your account</p>
         </div>
-        <form onSubmit={handleSubmit} className="flex flex-col items-center gap-4 w-full">
+        <form onSubmit={handleSubmit} className="flex flex-col items-center gap-4 ">
         <LabeledInput
-        className="w-full"
+        className="w-full md:max-w-[500px]"
         label="New Password"
         type="password"
         required
@@ -63,16 +63,16 @@ export default function SetNewPasswordPage() {
           <Button
             type="submit"
             variant="default"
-            className="h-11 w-full bg-blue-600 text-white hover:bg-blue-700"
+            className="h-11 w-full bg-blue-600 text-white hover:bg-blue-700 md:max-w-[500px]"
             disabled={loading}
           >
             {loading ? 'Resetting...' : 'Reset Password'}
           </Button>
         </form>
-        <span className=' h-5 text-xsm mt-3 ml-13'>
+        <span className='text-center h-5 text-xsm mt-3 ml-13'>
                 Remembered your password? 
             <button
-              className="text-blue-600 text-xms mt-2 pl-2"
+              className="text-blue-600 text-xms mt-2 pl-4"
               onClick={() => router.push('/login')}
             >
             Back to Login

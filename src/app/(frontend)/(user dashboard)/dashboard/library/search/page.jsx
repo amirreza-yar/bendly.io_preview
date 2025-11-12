@@ -70,9 +70,9 @@ export default function LibrarySearchPage() {
       </header>
       <ContentWrapper className='pt-14'>
         {searchResults.length !== 0 ? (
-          <div className="flex flex-col items-start self-stretch flex-grow-0 flex-shrink-0 gap-4 pt-4">
+          <div className="flex flex-col items-start self-stretch  gap-4 pt-4">
             <Tabs defaultValue="all-filtered">
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-4 bg-white z-20">
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-4 bg-white z-20 ">
                 <span className="label-regular shrink-0">Filter:</span>
                 <TabsPrimitive.List
                   data-slot="tabs-list"

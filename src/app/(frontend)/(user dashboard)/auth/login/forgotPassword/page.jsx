@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
             <Button
               type="submit"
               variant="default"
-              className="h-11 w-full bg-blue-600 text-white hover:bg-blue-700"
+              className="h-11 w-full bg-blue-600 text-white hover:bg-blue-700 md:max-w-[500px]"
             >
               Send Reset Link
             </Button>
