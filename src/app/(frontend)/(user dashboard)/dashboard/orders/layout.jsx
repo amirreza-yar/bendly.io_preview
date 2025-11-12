@@ -14,11 +14,5 @@ export default function OrdersLayout({ children }) {
   //     }
   //   }, [])
 
-  return (
-    <>
-      {children}
-
-      {/* <BottomNav /> */}
-    </>
-  )
+  return <div className="max-w-275 mx-auto">{children}</div>
 }

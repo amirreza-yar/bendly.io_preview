@@ -18,7 +18,10 @@ export function Header({ title, children, className, returnHref }: HeaderProps) 
       )}
     >
       <div
-        className={cn('flex items-center justify-between h-full w-full px-4  mx-auto', className)}
+        className={cn(
+          'flex items-center justify-between h-full w-full max-w-275 px-4  mx-auto',
+          className,
+        )}
       >
         <div className="flex items-center gap-[18px] pr-3">
           {returnHref && (

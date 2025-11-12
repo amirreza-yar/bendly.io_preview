@@ -43,8 +43,8 @@ export default function OrderDetails() {
     return (
       <>
         <Header title="Order Details" returnHref="/dashboard/orders" />
-        <ContentWrapper className="bg-surface-page-body pt-14 px-0 pb-4 no-scrollbar">
-          <div className="grid gap-2">
+        <ContentWrapper className="bg-surface-page-body md:bg-white pt-14 md:pt-18 px-0 md:px-4 pb-4 no-scrollbar">
+          <div className="grid gap-2 grid-rows-[min-content_1fr] md:gap-4 md:grid-cols-2 [&>div]:md:border [&>div]:border-gray-200 [&>div]:md:bg-gray-50 [&>div]:rounded-md">
             <div className="grid gap-2 bg-white p-4">
               <div className="flex items-center justify-between label-small pb-1">
                 <p className="text-subtitle">Order Status</p>
