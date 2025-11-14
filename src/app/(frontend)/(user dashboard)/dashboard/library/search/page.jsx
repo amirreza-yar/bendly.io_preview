@@ -31,126 +31,134 @@ export default function LibrarySearchPage() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark">
-        <div className="flex items-center justify-between h-full w-full px-4">
-          <div className="flex items-center gap-[18px] pr-3">
-            <Link href="/dashboard/library">
-              <ArrowLeft />
-            </Link>
+<header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark md:max-w-[1000px] md:mx-auto md:left-1/2 md:-translate-x-1/2">
+  <div className="flex items-center justify-between h-full w-full px-4">
+    <div className="flex items-center gap-[18px] pr-3">
+      <Link href="/dashboard/library">
+        <ArrowLeft />
+      </Link>
+    </div>
+    <div className="w-full flex items-center relative">
+      <Magnifier className="size-5 absolute left-4" />
+      <Input
+        ref={searchInputRef}
+        value={searchValue}
+        onChange={(e) => {
+          const val = e.target.value;
+          setSearchValue(val);
+          setSearchResults(
+            templates.filter((t) =>
+              t.title.toLowerCase().includes(val.toLowerCase())
+            )
+          );
+        }}
+        placeholder="Search template..."
+        className="pl-11"
+      />
+      {searchValue !== '' && (
+        <XIcon
+          className="size-5 absolute right-4 cursor-pointer"
+          onClick={() => {
+            setSearchValue('');
+            setSearchResults(templates);
+            searchInputRef.current?.focus();
+          }}
+        />
+      )}
+    </div>
+  </div>
+</header>
+
+<div className="min-h-screen md:max-w-[1000px] md:mx-auto md:px-4">
+  <ContentWrapper className="pt-14">
+    {searchResults.length ? (
+      <div className="flex flex-col items-start self-stretch gap-4 pt-4">
+        <Tabs defaultValue="all-filtered">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-4 bg-white z-20 w-full md:w-auto">
+            <span className="label-regular shrink-0">Filter:</span>
+            <TabsPrimitive.List className="flex h-8 gap-2 overflow-x-auto min-w-0 no-scrollbar">
+              <TabsTrigger
+                value="all-filtered"
+                className="shrink-0 px-3 border-1 border-border-default data-[state=active]:bg-surface-comp-active data-[state=active]:border-border-darkest data-[state=active]:text-black"
+              >
+                All
+              </TabsTrigger>
+              <TabsTrigger
+                value="my-filtered-templates"
+                className="shrink-0 px-3 border-1 border-border-default data-[state=active]:bg-surface-comp-active data-[state=active]:border-border-darkest data-[state=active]:text-black"
+              >
+                My Templates
+              </TabsTrigger>
+              <TabsTrigger
+                value="app-filtered-templates"
+                className="shrink-0 px-3 border-1 border-border-default data-[state=active]:bg-surface-comp-active data-[state=active]:border-border-darkest data-[state=active]:text-black"
+              >
+                App Templates
+              </TabsTrigger>
+            </TabsPrimitive.List>
           </div>
 
-          <div className="w-full flex items-center relative ">
-            <Magnifier className="size-5 absolute left-4" />
-            <Input
-              ref={searchInputRef}
-              value={searchValue}
-              onChange={(se) => {
-                setSearchValue(se.target.value)
-                setSearchResults(
-                  templates.filter((template) =>
-                    template.title.toLowerCase().includes(se.target.value.toLowerCase()),
-                  ),
-                )
-              }}
-              placeholder="Search template..."
-              className="pl-11"
-            />
-            {searchValue !== '' && (
-              <XIcon
-                className="size-5 absolute right-4"
-                onClick={() => {
-                  setSearchValue('')
-                  setSearchResults(templates)
-                  searchInputRef.current?.focus()
-                }}
-              />
-            )}
-          </div>
-        </div>
-      </header>
-      <ContentWrapper className='pt-14'>
-        {searchResults.length !== 0 ? (
-          <div className="flex flex-col items-start self-stretch  gap-4 pt-4">
-            <Tabs defaultValue="all-filtered">
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar sticky top-4 bg-white z-20 ">
-                <span className="label-regular shrink-0">Filter:</span>
-                <TabsPrimitive.List
-                  data-slot="tabs-list"
-                  className="flex h-8 gap-2 overflow-x-auto min-w-0 no-scrollbar"
-                >
-                  <TabsTrigger
-                    // onClick={() => searchInputRef.current?.focus()}
-                    value="all-filtered"
-                    className="shrink-0 px-3 border-1 border-border-default data-[state=active]:bg-surface-comp-active data-[state=active]:border-border-darkest data-[state=active]:text-black"
-                  >
-                    All
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="my-filtered-templates"
-                    className="shrink-0 px-3 border-1 border-border-default data-[state=active]:bg-surface-comp-active data-[state=active]:border-border-darkest data-[state=active]:text-black"
-                  >
-                    My Templates
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="app-filtered-templates"
-                    className="shrink-0 px-3 border-1 border-border-default data-[state=active]:bg-surface-comp-active data-[state=active]:border-border-darkest data-[state=active]:text-black"
-                  >
-                    App Templates
-                  </TabsTrigger>
-                </TabsPrimitive.List>
-              </div>
+          <TabsContent value="all-filtered">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 pt-2">
+              {searchResults.map((t, i) => (
+                <LibraryTemplateItem
+                  key={i}
+                  title={t.title}
+                  image={t.imageSrc}
+                  isMyTemplate={t.isMyTemplate}
+                />
+              ))}
+            </div>
+          </TabsContent>
 
-              <TabsContent value="all-filtered">
-                <div className="grid grid-cols-2 pt-2 gap-4">
-                  {searchResults.map((template, index) => (
-                    <LibraryTemplateItem
-                      key={index}
-                      title={template.title}
-                      image={template.imageSrc}
-                      isMyTemplate={template.isMyTemplate}
-                    />
-                  ))}
-                </div>
-              </TabsContent>
-              <TabsContent value="my-filtered-templates">
-                <div className="grid grid-cols-2 pt-2 gap-4">
-                  {searchResults
-                    .filter((t) => t.isMyTemplate)
-                    .map((template, index) => (
-                      <LibraryTemplateItem
-                        key={index}
-                        title={template.title}
-                        image={template.imageSrc}
-                        isMyTemplate
-                      />
-                    ))}
-                </div>
-              </TabsContent>
-              <TabsContent value="app-filtered-templates">
-                <div className="grid grid-cols-2 pt-2 gap-4">
-                  {searchResults
-                    .filter((t) => !t.isMyTemplate)
-                    .map((template, index) => (
-                      <LibraryTemplateItem
-                        key={index}
-                        title={template.title}
-                        image={template.imageSrc}
-                      />
-                    ))}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-4">
-            <h5>No results found</h5>
-            <p className="text-center subtitle-large text-subtitle">
-              Please check your spelling or try different keywords
-            </p>
-          </div>
-        )}
-      </ContentWrapper>
-      <BottomNav />
+          <TabsContent value="my-filtered-templates">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 pt-2">
+              {searchResults
+                .filter((t) => t.isMyTemplate)
+                .map((t, i) => (
+                  <LibraryTemplateItem
+                    key={i}
+                    title={t.title}
+                    image={t.imageSrc}
+                    isMyTemplate
+                  />
+                ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="app-filtered-templates">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 pt-2">
+              {searchResults
+                .filter((t) => !t.isMyTemplate)
+                .map((t, i) => (
+                  <LibraryTemplateItem
+                    key={i}
+                    title={t.title}
+                    image={t.imageSrc}
+                  />
+                ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    ) : (
+      <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+        <h5>No results found</h5>
+        <p className="text-center subtitle-large text-subtitle">
+          Please check your spelling or try different keywords
+        </p>
+      </div>
+    )}
+  </ContentWrapper>
+
+  <div className="md:hidden">
+    <BottomNav />
+  </div>
+</div>
+
+<div className="hidden md:block md:max-w-[1000px] md:mx-auto">
+  <BottomNav />
+</div>
     </>
   )
 }

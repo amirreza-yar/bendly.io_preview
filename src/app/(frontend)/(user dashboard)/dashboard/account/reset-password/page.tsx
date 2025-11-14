@@ -43,7 +43,7 @@ export default function ResetPasswordPage() {
   return (
     <>
       <Header title="Reset Password" returnHref="/dashboard/account" />
-      <ContentWrapper className="">
+      <ContentWrapper className="min-h-screen md:max-w-[1000px] md:mx-auto md:px-4">
         <div className="grid text-center">
           <div className="grid px-6 gap-2 pt-12">
             <h5>Reset your password</h5>

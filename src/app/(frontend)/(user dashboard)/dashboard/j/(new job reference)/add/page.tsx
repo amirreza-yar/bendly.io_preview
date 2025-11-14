@@ -121,7 +121,7 @@ export default function JobReferencesPage() {
             <div className="w-full h-full">
               <div className="flex justify-around items-center h-full">
                 {/* <Link href={`/${slug}/canvas`} className="w-full"> */}
-                <Button type="submit" className="w-full bg-primary">
+                <Button type="submit" className="w-full bg-primary md:max-w-[600px]">
                   Next
                 </Button>
                 {/* </Link> */}

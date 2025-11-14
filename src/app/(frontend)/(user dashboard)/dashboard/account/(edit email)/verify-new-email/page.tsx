@@ -73,13 +73,11 @@ export default function VerifyEmailPage() {
         className="border-0"
       />
 
-      <ContentWrapper className="pt-24">
+      <ContentWrapper className="pt-24 min-h-screen md:max-w-[1000px] md:mx-auto md:px-4">
         <div className="grid gap-6 items-center">
           <div className="grid items-center text-center gap-2">
             <h5>Verify your new email</h5>
-            <p className="subtitle-regular">
-              We've sent a 5-digit code to your new email address:
-            </p>
+            <p className="subtitle-regular">We've sent a 5-digit code to your new email address:</p>
             <div className="flex gap-2 items-center rounded-full border border-border-default bg-surface-disable w-fit justify-self-center py-2 px-4 text-[16px]/[24px] font-regular">
               {email}
             </div>

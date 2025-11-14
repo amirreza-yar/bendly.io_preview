@@ -94,7 +94,7 @@ export default function JobReferencesPage() {
   return (
     <>
       <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark">
-        <div className="flex items-center justify-between h-full w-full px-4">
+        <div className="flex items-center justify-between h-full w-full px-4 min-h-screen md:max-w-[1000px] md:mx-auto md:px-4">
           <div className="flex items-center gap-[18px] pr-3">
             <Link href={`/dashboard/j/add`}>
               <ArrowLeft />
@@ -103,7 +103,7 @@ export default function JobReferencesPage() {
           </div>
         </div>
       </header>
-      <div className="overflow-scroll h-full pt-18 pb-22 px-4 no-scrollbar">
+      <div className="overflow-scroll h-full pt-18 pb-22 px-4 no-scrollbar min-h-screen md:max-w-[1000px] md:mx-auto md:px-4">
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
           <LabeledInput
             label="Street Address"
@@ -179,7 +179,7 @@ export default function JobReferencesPage() {
             <div className="w-full h-full">
               <div className="flex justify-around items-center h-full">
                 {/* <Link href={`/${slug}/canvas`} className="w-full"> */}
-                <Button type="submit" className="w-full bg-primary">
+                <Button type="submit" className="w-full bg-primary md:max-w-[700px]">
                   Continue to Recipient Details
                 </Button>
                 {/* </Link> */}

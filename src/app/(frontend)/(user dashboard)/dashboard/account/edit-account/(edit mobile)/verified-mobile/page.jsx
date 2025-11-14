@@ -30,8 +30,8 @@ export default function VerifiedMobilePage() {
   }
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <div className="w-full min-h-screen bg-white shadow-md p-4 sm:p-6 md:p-8 rounded-none sm:rounded-lg">
+    <div className="flex flex-col">
+      <div className="min-h-screen md:max-w-[1000px] md:mx-auto md:px-4 p-4  ">
         <div className="flex items-center mb-6 h-8">
           <button onClick={() => router.back()} className="flex-shrink-0">
             <ArrowLeft className="w-7 h-7 text-gray-700" />
@@ -65,7 +65,7 @@ export default function VerifiedMobilePage() {
           </div>
         </div>
 
-        <div className="flex justify-center mt-10">
+        <div className="flex mt-10">
           <Button
             variant="default"
             size="md"

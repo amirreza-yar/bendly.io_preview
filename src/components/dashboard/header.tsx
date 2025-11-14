@@ -13,16 +13,11 @@ export function Header({ title, children, className, returnHref }: HeaderProps) 
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark',
+        'fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark md:max-w-[1000px] md:mx-auto md:left-1/2 md:-translate-x-1/2',
         className,
       )}
     >
-      <div
-        className={cn(
-          'flex items-center justify-between h-full w-full max-w-275 px-4  mx-auto',
-          className,
-        )}
-      >
+      <div className="flex items-center justify-between h-full w-full px-4">
         <div className="flex items-center gap-[18px] pr-3">
           {returnHref && (
             <Link href={returnHref}>

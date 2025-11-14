@@ -107,7 +107,11 @@ export default function AccountPage() {
       </ContentWrapper>
 
       <Footer>
-        <Button disabled={!isDirty} className="w-full" onClick={() => setIsModalOpen(true)}>
+        <Button
+          disabled={!isDirty}
+          className="w-full md:max-w-[700px]"
+          onClick={() => setIsModalOpen(true)}
+        >
           Send Verify Code
         </Button>
       </Footer>
