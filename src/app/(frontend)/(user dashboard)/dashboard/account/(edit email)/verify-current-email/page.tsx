@@ -74,7 +74,7 @@ export default function VerifyEmailPage() {
         className="border-0"
       />
 
-      <ContentWrapper className="pt-24">
+      <ContentWrapper className="pt-24 min-h-screen md:max-w-[1000px] md:mx-auto md:px-4">
         <div className="grid gap-6 items-center">
           <div className="grid items-center text-center gap-2">
             <h5>Verify your current email</h5>

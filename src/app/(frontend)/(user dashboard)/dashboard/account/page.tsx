@@ -33,7 +33,7 @@ export default function AccountPage() {
       <Header title="Account" returnHref="/dashboard/profile" />
 
       <>
-        <ContentWrapper className="grid content-between">
+        <ContentWrapper className="min-h-screen md:max-w-[1000px] md:mx-auto md:px-4 grid content-between">
           <div className="grid divide-y divide-border-seprator">
             <Link href="/dashboard/account/edit-account">
               <ButtonListItem

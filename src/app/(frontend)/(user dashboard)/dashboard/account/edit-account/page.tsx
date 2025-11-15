@@ -22,8 +22,8 @@ export default function AccountPage() {
     <>
       <Header title="Account" returnHref="/dashboard/account" />
 
-      <ContentWrapper>
-        <div className="grid pt-4">
+      <ContentWrapper className="min-h-screen md:max-w-[1000px] md:mx-auto md:px-4">
+        <div className="grid">
           <Link href="/dashboard/account/edit-account/edit-fullname">
             <ButtonListItem
               text="Edit Full Name"
@@ -44,7 +44,7 @@ export default function AccountPage() {
       </ContentWrapper>
 
       <Footer>
-        <Button className="w-full bg-primary">Save</Button>
+        <Button className="w-full bg-primary md:max-w-[700px]">Save</Button>
       </Footer>
     </>
   )

@@ -32,10 +32,10 @@ export default function SetNewPasswordPage() {
   }
 
   return (
-    <div className="h-screen flex items-center justify-center">
-      <div className="flex flex-col w-full h-full -md md:-lg mx-auto bg-white shadow-md p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 rounded-none sm:rounded-lg">
+    <div className="min-h-screen md:max-w-[1000px] md:mx-auto md:px-4 p-4">
+      <div className="flex flex-col ">
         <div className="flex items-center mb-6 h-8">
-          <button onClick={() => router.back()} className="flex-shrink-0">
+          <button onClick={() => router.back()} className="">
             <ArrowLeft className="w-7 h-7 text-gray-700" />
           </button>
           <div className="flex-1 flex justify-center mr-5.5">

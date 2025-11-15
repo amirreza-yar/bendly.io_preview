@@ -196,7 +196,7 @@ export default function JobReferencesPage() {
             No job references have been created yet{' '}
           </p>
           <Link className="w-full" href="/dashboard/j/add">
-            <Button className="w-full">
+            <Button className="w-full ">
               <Plus />
               Create New Job References
             </Button>

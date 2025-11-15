@@ -32,40 +32,50 @@ export default function ProfilePage() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark">
+      <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark md:max-w-[1000px] md:mx-auto md:left-1/2 md:-translate-x-1/2">
         <div className="flex items-center justify-between h-full w-full px-4">
           <div className="flex items-center gap-[18px] pr-3">
             <h6>Profile</h6>
           </div>
         </div>
       </header>
-      <div className="overflow-scroll h-full flex flex-col items-center self-stretch flex-grow pt-14 pb-20 px-4">
-        <div className="flex flex-col w-full py-4 gap-6">
-          <Link
-            href="/dashboard/account"
-            className="flex items-center justify-between rounded-md border-2 border-border-default px-4 py-[10px]"
-          >
-            <div className="grid gap-2">
-              <p className="label-regular text-body">{userInfo?.name}</p>
-              <p className="caption-small text-subtitle">{userInfo?.email}</p>
-            </div>
-            <Pencil className="size-6 text-icon-body" />
-          </Link>
 
-          <div className="grid rounded-md border-2 border-border-default px-4 py-[10px] gap-4">
-            <Link href="/dashboard/orders" className="flex items-center justify-between">
-              <span className="label-regular">Orders</span>
-              <ChevronRight className="size-6" />
+      <div className="min-h-screen md:max-w-[1000px] md:mx-auto md:px-4">
+        <div className="overflow-scroll h-full flex flex-col items-center self-stretch flex-grow pt-14 pb-20">
+          <div className="flex flex-col w-full py-4 gap-6">
+            <Link
+              href="/dashboard/account"
+              className="flex items-center justify-between rounded-md border-2 border-border-default px-4 py-[10px]"
+            >
+              <div className="grid gap-2">
+                <p className="label-regular text-body">{userInfo?.name}</p>
+                <p className="caption-small text-subtitle">{userInfo?.email}</p>
+              </div>
+              <Pencil className="size-6 text-icon-body" />
             </Link>
-            <Separator />
-            <Link href="/dashboard/j" className="flex items-center justify-between">
-              <span className="label-regular">Job Refrences</span>
-              <ChevronRight className="size-6" />
-            </Link>
+
+            <div className="grid rounded-md border-2 border-border-default px-4 py-[10px] gap-4">
+              <Link href="/dashboard/orders" className="flex items-center justify-between">
+                <span className="label-regular">Orders</span>
+                <ChevronRight className="size-6" />
+              </Link>
+              <Separator />
+              <Link href="/dashboard/j" className="flex items-center justify-between">
+                <span className="label-regular">Job Refrences</span>
+                <ChevronRight className="size-6" />
+              </Link>
+            </div>
           </div>
         </div>
+
+        <div className="md:hidden">
+          <BottomNav />
+        </div>
       </div>
-      <BottomNav />
+
+      <div className="hidden md:block md:max-w-[1000px] md:mx-auto">
+        <BottomNav />
+      </div>
     </>
   )
 }

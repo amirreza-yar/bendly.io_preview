@@ -72,7 +72,7 @@ export default function EditNamePage() {
       </ContentWrapper>
       <Footer>
         {/* Button outside form, but linked via form attribute */}
-        <Button type="submit" form="edit-name-form" className="w-full bg-primary">
+        <Button type="submit" form="edit-name-form" className="w-full bg-primary md:max-w-[700px]">
           Save
         </Button>
       </Footer>
