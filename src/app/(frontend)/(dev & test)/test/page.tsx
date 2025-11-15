@@ -1,16 +1,87 @@
-// 'use client'
+'use client'
+import { useEffect, useState } from 'react'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
 
-import * as React from 'react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
-import AdminDashboardCustomers from '../../(admin dashboard)/ff-admin/customer/page'
-import CustomerDetails from '../../(admin dashboard)/ff-admin/customer/customerdetails/page'
-import FlashingSVG from '@/components/utils/flashingSVG'
-import { ReplacementTable } from '@/components/admin/tables/replacementstable'
+export function SortableItem({ id }: { id: string }) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id })
 
-export default function test() {
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
   return (
-    <>
-      <ReplacementTable />
-    </>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="
+        p-3
+        bg-gray-100
+        rounded-lg
+        cursor-grab
+        font-medium
+        shadow-sm
+        active:cursor-grabbing
+        select-none
+        transition-colors
+      "
+    >
+      {id}
+    </div>
   )
+}
+
+export default function Test() {
+  const [items, setItems] = useState([1, 2, 3])
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  )
+
+  useEffect(() => {
+    console.log(items)
+  }, [items, setItems])
+
+  return (
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+        {items.map((id) => (
+          <SortableItem key={id} id={id} />
+        ))}
+      </SortableContext>
+    </DndContext>
+  )
+
+  function handleDragEnd(event) {
+    const { active, over } = event
+
+    if (active.id !== over.id) {
+      setItems((items) => {
+        const oldIndex = items.indexOf(active.id)
+        const newIndex = items.indexOf(over.id)
+
+        return arrayMove(items, oldIndex, newIndex)
+      })
+    }
+  }
 }

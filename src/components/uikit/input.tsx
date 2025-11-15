@@ -17,7 +17,7 @@ export const Input = forwardRef<HTMLInputElement, InputProp>(
         {...props}
         data-slot="input"
         className={cn(
-          'px-4 py-3 font-roboto text-[14px]/[16.6px] text-neutral-dark placeholder:text-neutral-midlight selection:bg-primary-light border-[2px] border-border-dark h-11 w-full min-w-0 rounded-md bg-transparent shadow-xs transition-[color,border] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-surface-disable disabled:opacity-60',
+          'px-4 py-3 font-roboto text-[14px]/[16.6px] text-neutral-dark placeholder:text-neutral-midlight selection:bg-primary-light border-[2px] border-border-default h-11 w-full min-w-0 rounded-md bg-transparent shadow-xs transition-[color,border] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-surface-disable disabled:opacity-60',
           'focus-visible:border-primary',
           'file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium ',
           'aria-invalid:ring-destructive/20 aria-invalid:text-destructive aria-invalid:border-destructive',

@@ -1,6 +1,7 @@
 import RecentActivity from '@/components/admin/cards/recentactivity'
 import { Button } from '@/components/uikit/buttons/button'
 import { Edit, ProfileNav } from '@/components/uikit/icons'
+import { Calendar, CalendarDays, Cuboid, Truck } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AdminDashboardSettings() {
@@ -74,6 +75,55 @@ export default function AdminDashboardSettings() {
         </div>
         <div className="2xl:col-span-4 lg:col-span-3 md:col-span-2 col-span-5 p-8 bg-white flex flex-col gap-10 border border-border-default rounded-lg">
           <div>
+            <h5 className="text-md">Factory settings</h5>
+            <p className="pb-6 pt-2 label-regular text-subtitle">
+              The settings relevant to factory or manufacture.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Link
+                href="/ff-admin/setting/material"
+                className="w-70 h-35 border border-border-default rounded-md flex flex-col p-4 gap-2 bg-gray-50"
+              >
+                <div className="flex items-ceter gap-3">
+                  <Cuboid className="size-[18px] text-gray-700" />
+                  <h6>Add / Edit materials</h6>
+                </div>
+                <p className="caption-regular text-gray-600 line-clamp-4">
+                  Add new materials with their colors or thicknesses. Also you can edit the
+                  previously added materials, colors or thicknesses. Change the price of materials
+                  based on flashing dimensions, squish folds or wight.
+                </p>
+              </Link>
+              <Link
+                href="/ff-admin/setting/delivery"
+                className="w-70 h-35 border border-border-default rounded-md flex flex-col p-4 gap-2 bg-gray-50"
+              >
+                <div className="flex items-ceter gap-3">
+                  <Truck className="size-[20px] text-gray-700" />
+                  <h6>Change delivery methods and cost</h6>
+                </div>
+                <p className="caption-regular text-gray-600 line-clamp-4">
+                  Add or change delivery types. Edit different delivery type's cost based on
+                  conditions.
+                </p>
+              </Link>
+              <Link
+                href="/ff-admin/setting/factory-calendar"
+                className="w-70 h-35 border border-border-default rounded-md flex flex-col p-4 gap-2 bg-gray-50"
+              >
+                <div className="flex items-ceter gap-3">
+                  <CalendarDays className="size-[18px] text-gray-700" />
+                  <h6>Factory calendar</h6>
+                </div>
+                <p className="caption-regular text-gray-600 line-clamp-4">
+                  Set or change factory holidays, closure days or days off. On these days user still
+                  can submit orders but factory will be able to produce or deliver their order after
+                  factory days off.
+                </p>
+              </Link>
+            </div>
+          </div>
+          <div>
             <h5 className="text-md">Dashboard settings</h5>
             <p className="pb-6 pt-2 label-regular text-subtitle">
               The settings relevant to this dashboard.
@@ -120,40 +170,6 @@ export default function AdminDashboardSettings() {
                 <h6>Dashboard and application info</h6>
                 <p className="caption-regular text-gray-600 line-clamp-4">
                   Version, title and description.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div>
-            <h5 className="text-md">Factory settings</h5>
-            <p className="pb-6 pt-2 label-regular text-subtitle">
-              The settings relevant to factory or manufacture.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/ff-admin/setting/material"
-                className="w-70 h-35 border border-border-default rounded-md flex flex-col p-4 gap-2"
-              >
-                <h6>Add / Edit materials</h6>
-                <p className="caption-regular text-gray-600 line-clamp-4">
-                  Add new materials with their colors or thicknesses. Also you can edit the
-                  previously added materials, colors or thicknesses. Change the price of materials
-                  based on flashing dimensions, squish folds or wight.
-                </p>
-              </Link>
-              <div className="w-70 h-35 border border-border-default rounded-md flex flex-col p-4 gap-2">
-                <h6>Change delivery methods and cost</h6>
-                <p className="caption-regular text-gray-600 line-clamp-4">
-                  Add or change delivery types. Edit different delivery type's cost based on
-                  conditions.
-                </p>
-              </div>
-              <div className="w-70 h-35 border border-border-default rounded-md flex flex-col p-4 gap-2">
-                <h6>Set factory days off</h6>
-                <p className="caption-regular text-gray-600 line-clamp-4">
-                  Set or change factory holidays, closure days or days off. On these days user still
-                  can submit orders but factory will be able to produce or deliver their order after
-                  factory days off.
                 </p>
               </div>
             </div>

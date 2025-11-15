@@ -51,15 +51,15 @@ export function Select({
       {...props}
     >
       {label && (
-        <div className="flex items-center gap-1 mb-1">
-          <p className="text-xs font-medium text-neutral-dark">{label}</p>
+        <div className="flex items-center gap-1 mb-2">
+          <p className="label-regular text-neutral-dark">{label}</p>
           {required && <p className="text-sm font-medium text-red-500">*</p>}
         </div>
       )}
       <SelectPrimitive.Trigger
         data-slot="select-trigger"
         className={cn(
-          'text-sm flex items-center justify-between gap-2 rounded-md px-3 transition-[color,box-shadow] disabled:cursor-not-allowed h-11 w-full',
+          'text-xs flex items-center justify-between gap-2 rounded-md px-3 transition-[color,box-shadow] disabled:cursor-not-allowed h-11 w-full',
           borderless
             ? 'border-none outline-none shadow-none focus:ring-0 focus:outline-none'
             : `${error ? 'border-border-attention' : 'border-border-default'} border-2 focus:border-primary`,
