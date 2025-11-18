@@ -5,7 +5,6 @@ import CustomerDetailsCard from '@/components/admin/cards/customerdetailscard'
 import TotalOrders from '@/components/admin/cards/totalorders'
 import TotalSpend from '@/components/admin/cards/totalspend'
 import { CustomerOrderTable } from '@/components/admin/tables/ordermanagement'
-import * as React from 'react'
 
 export default function CustomerDetails() {
   return (
