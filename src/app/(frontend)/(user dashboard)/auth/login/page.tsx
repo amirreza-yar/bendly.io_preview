@@ -17,6 +17,7 @@ import {
 import { LabeledInput } from '@/components/uikit/input'
 import { Mail } from '@/components/uikit/icons'
 import Link from 'next/link'
+import api from '@/lib/axios'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -24,37 +25,39 @@ export default function LoginPage() {
 
   const [errorText, setErrorText] = useState<string>('')
 
-  if (!email) {
-    return notFound()
-  }
+  // if (!email) {
+  //   return notFound()
+  // }
 
   const onSubmitLogin = async (data: LoginFormValue) => {
+    console.log(data)
+
     try {
-      const res = await apiLogin(email, data.password)
-      console.log('Login response:', res)
-      
-      if (res.success) {
+      const res = await api.post('/auth/login/', {
+        email: data.email,
+        password: data.password,
+      })
+
+      if (res.status === 200) {
         toast('Welcome!')
-        // Small delay to ensure cookies are set
         setTimeout(() => {
           router.push('/dashboard')
         }, 100)
-      } else if (res.error?.includes('password') || res.error?.includes('credentials')) {
-        setErrorText('Incorrect password, Please try again')
-      } else {
-        toast('Something went wrong')
-        setErrorText(res.error || 'Login failed')
       }
-    } catch (error) {
-      console.error('Login error:', error)
-      toast('Something went wrong')
-      setErrorText('Network error occurred')
+    } catch (error: any) {
+      const message =
+        error.response.data.non_field_errors[0] ||
+        error.response?.data ||
+        'Something broke, probably not your fault.'
+
+      toast(message)
+      // setErrorText(message)
     }
   }
 
   return (
     <>
-      <HeaderWithCenterTitle title="Logo" returnHref={`/auth?email=${email}`} />
+      <HeaderWithCenterTitle title="Logo" />
       <ContentWrapper className="pt-30">
         <div className="grid gap-6">
           <div className="grid items-center text-center gap-2">

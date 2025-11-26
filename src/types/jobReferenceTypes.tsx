@@ -9,13 +9,13 @@ export type Address = {
 }
 
 export type RecipientInfo = {
-  recipientName: string
-  recipientMobile: number
+  recipient_name: string
+  recipient_mobile: number
 }
 
 export type JobReference = {
   code: number
-  projectName?: string
+  project_name?: string
   addresses?: (Address & RecipientInfo)[]
 }
 
@@ -28,7 +28,7 @@ export type StoredAddress = Address &
 export type StoredJobReference = {
   id: string
   code: number
-  projectName?: string
+  project_name?: string
   addresses?: StoredAddress[]
   createdAt?: number
   updatedAt?: number

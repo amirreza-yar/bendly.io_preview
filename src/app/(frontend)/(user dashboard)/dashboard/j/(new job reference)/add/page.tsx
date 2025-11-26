@@ -14,6 +14,7 @@ import { ContentWrapper } from '@/components/dashboard/contentWrapper'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { createJobReferenceMutation } from '@/lib/api'
 import { useEffect } from 'react'
+import api from '@/lib/axios'
 
 const formSchema = z.object({
   jobReferenceCode: z
@@ -71,20 +72,33 @@ export default function JobReferencesPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setError,
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   })
 
   const router = useRouter()
 
-  const onSubmit = (data: FormValues) => {
-    setNewJobReference({
-      jobReferenceCode: data.jobReferenceCode,
-      projectName: data.projectName || '',
-    })
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await api.patch('/d/job-ref/new/', {
+        code: data.jobReferenceCode,
+        project_name: data.projectName,
+      })
+      setNewJobReference({
+        jobReferenceCode: data.jobReferenceCode,
+        projectName: data.projectName || '',
+      })
 
-    router.push(`/dashboard/j/add/address-details`)
-    // reset()
+      router.push(`/dashboard/j/add/address-details`)
+    } catch (error: any) {
+      const detail = error?.response?.data
+      if (detail.code) {
+        setError('jobReferenceCode', detail.code)
+      } else {
+        console.log(detail)
+      }
+    }
   }
 
   return (

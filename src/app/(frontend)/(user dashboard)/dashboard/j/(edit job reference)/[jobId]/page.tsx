@@ -18,6 +18,8 @@ import { useState } from 'react'
 import { Footer } from '@/components/dashboard/footer'
 import { Header } from '@/components/dashboard/header'
 import { RemoveJobRefModal } from '@/components/dashboard/jobReference/modals'
+import useSWR from 'swr'
+import api, { fetcher } from '@/lib/axios'
 
 export default function OrderJobReferencePage() {
   const { jobId } = useParams<{ jobId: string }>()
@@ -25,14 +27,18 @@ export default function OrderJobReferencePage() {
   const router = useRouter()
   const [isDeleted, setIsDeleted] = useState<boolean>(false)
 
-  const jobReference = useGETJobRefById(jobId)
-  if (!isDeleted && jobReference === undefined) {
-    notFound()
-  }
+  const { data, error, isLoading } = useSWR(jobId ? `/d/job-ref/${jobId}` : null, fetcher)
+
+  console.log(data)
+
+  const jobReference = data
+  // if (!isDeleted && jobReference === undefined) {
+  //   notFound()
+  // }
 
   const onJobRefDelete = async () => {
     setIsDeleted(true)
-    await deleteJobRefById(jobReference?.id ?? '').then(() => {
+    await api.delete(`/d/job-ref/${jobId}/`).then(() => {
       toast('Job Reference deleted')
       router.replace('/dashboard/j')
     })
@@ -46,7 +52,7 @@ export default function OrderJobReferencePage() {
 
   return (
     <>
-      <Header title={`Job Ref: JR-${jobReference?.id}`} returnHref="/dashboard/j">
+      <Header title={`Job Ref: JR-${jobReference?.code}`} returnHref="/dashboard/j">
         <RemoveJobRefModal
           trigger={<Remove className="size-6" />}
           onJobRefDelete={onJobRefDelete}

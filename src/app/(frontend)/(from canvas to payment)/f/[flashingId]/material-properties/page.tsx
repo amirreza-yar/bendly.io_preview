@@ -28,6 +28,10 @@ import { FeaturedCheckSmall } from '@/components/uikit/icons'
 import { notFound, useParams, useRouter, useSearchParams } from 'next/navigation'
 import { upsertPartialFlashing } from '@/lib/db/helpers/flashingHelpers'
 import { useEffect, useState } from 'react'
+import axios from 'axios'
+import useSWR from 'swr'
+
+const fetcher = (url: string) => axios.get(url).then((res) => res.data)
 
 export default function SelectMaterialAndColorPage() {
   const router = useRouter()
@@ -40,6 +44,13 @@ export default function SelectMaterialAndColorPage() {
   const orderId = useSearchParams().get('orderId')
 
   const savedFlashing = useLiveQuery(() => db.flashings.get({ id: flashingId }), [flashingId], null)
+
+  const { data, error, isLoading } = useSWR(
+    'http://localhost:8000/api/factory/b459892c-3365-4c0e-960e-d96964c6babb/material/',
+    fetcher,
+  )
+
+  console.log(data)
 
   useEffect(() => {
     console.log(isNavigating)

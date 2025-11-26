@@ -21,6 +21,7 @@ import { useQuery } from '@apollo/client/react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db/appDB'
 import { createJobReferenceMutation, getUserQuery } from '@/lib/api'
+import api from '@/lib/axios'
 
 const formSchema = z.object({
   recipientFullName: z
@@ -88,66 +89,39 @@ export default function JobReferencesPage() {
 
   const userId = useLiveQuery(() => db.userProfile.toCollection().first())?.id
 
-  const { loading, error, data } = useQuery(getUserQuery, { variables: { id: userId } })
-
-  const meFullname = data?.user?.fullname
-  const mePhone = data?.user?.phone
+  const meFullname = 'Test'
+  const mePhone = '+671231231231'
 
   const handleNextClick = async () => {
-    console.log(newJobReference)
+    try {
+      const recipientName = newJobReference.recipientFullName
+        ? newJobReference.recipientFullName
+        : meFullname
 
-    const recipientName = newJobReference.recipientFullName
-      ? newJobReference.recipientFullName
-      : meFullname
+      const recipientMobile = newJobReference.recipientMobileNumber
+        ? Number(newJobReference.recipientMobileNumber)
+        : mePhone
 
-    const recipientMobile = newJobReference.recipientMobileNumber
-      ? Number(newJobReference.recipientMobileNumber)
-      : mePhone
+      await api.patch('/d/job-ref/new/', {
+        code: Number(newJobReference.jobReferenceCode),
+        project_name: newJobReference.projectName,
 
-    await addJobReference({
-      code: Number(newJobReference.jobReferenceCode),
-      projectName: newJobReference.projectName,
-      addresses: [
-        {
-          id: generateRandomId({ length: 4 }),
-          title: newJobReference.addressTitle ?? '',
-          streetAddress: newJobReference.streetAddress,
-          state: newJobReference.state,
-          suburb: newJobReference.suburb,
-          postcode: Number(newJobReference.postcode),
-          recipientName: recipientName,
-          recipientMobile: recipientMobile,
-        },
-      ],
-    })
+        title: newJobReference.addressTitle ?? '',
+        street_address: newJobReference.streetAddress,
+        state: newJobReference.state,
+        suburb: newJobReference.suburb,
+        postcode: Number(newJobReference.postcode),
+        recipient_name: recipientName,
+        recipient_phone: recipientMobile,
 
-    const { loading, error, data } = useQuery(createJobReferenceMutation, {
-      variables: {
-        input: {
-          code: '1234',
-          projectName: 'Main Site',
-          ownerId: '68fcca256112bffdccd0e6f3',
-          addresses: [
-            {
-              street: '123 Main st.',
-              suburb: 'Melbourne',
-              state: 'Sydney',
-              postcode: '1234',
-              addressName: 'Main Site addr.',
-            },
-          ],
-          recipients: [
-            {
-              name: 'Amirreza',
-              phone: '09876541230',
-            },
-          ],
-        },
-      },
-    })
+        finalize: true,
+      })
 
-    toast('Job Reference Created')
-    router.push('/dashboard/j')
+      toast('Job Reference Created')
+      router.push('/dashboard/j')
+    } catch (error: any) {
+      toast('Something went wrong')
+    }
   }
 
   return (

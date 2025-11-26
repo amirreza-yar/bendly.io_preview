@@ -165,6 +165,10 @@ export const AuthEmailForm = ({
 
 const LoginFormSchema = z.object({
   password: z.string('Please enter your password.').nonempty('Password is required'),
+  email: z
+    .string('Please enter a valid email address.')
+    .trim()
+    .email('Please enter a valid email address.'),
 })
 
 export type LoginFormValue = z.infer<typeof LoginFormSchema>
@@ -189,7 +193,27 @@ export const LoginForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmitLogin)} className="grid gap-6">
+      <form onSubmit={form.handleSubmit(onSubmitLogin)} className="grid gap-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex gap-2 label-regular">Email</FormLabel>
+              <FormControl>
+                <LabeledInput
+                  icon={Mail}
+                  placeholder="Your Email"
+                  type="text"
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="password"
@@ -212,7 +236,7 @@ export const LoginForm = ({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full mt-4">
           Continue
         </Button>
       </form>

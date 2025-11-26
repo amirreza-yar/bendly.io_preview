@@ -31,7 +31,7 @@ export function JobRefAddressCard({
           <div className="grid gap-1">
             <p className="label-regular truncate">{address.title}</p>
             <p className="body-small truncate">
-              {address.streetAddress}, {address.suburb}, {address.state} {address.postcode}{' '}
+              {address.street_address}, {address.suburb}, {address.state} {address.postcode}{' '}
             </p>
           </div>
         </div>
@@ -39,7 +39,7 @@ export function JobRefAddressCard({
           <ProfileNav className="size-5 mt-[2px]" />
           <div className="grid gap-1">
             <p className="body-small truncate">
-              {address.recipientName} {address.recipientMobile}
+              {address.recipient_name} {address.recipient_phone}
             </p>
           </div>
         </div>
@@ -73,7 +73,7 @@ export function JobRefInfoCard({ jobReference }: JobRefInfoCardProps) {
       <Edit className="absolute right-3 size-5" />
       <div className="grid gap-2 label-regular">
         <div className="flex gap-2 truncate">JR-{jobReference?.code}</div>
-        <div className="flex gap-2 truncate">{jobReference?.projectName}</div>
+        <div className="flex gap-2 truncate">{jobReference?.project_name}</div>
       </div>
     </Link>
   )

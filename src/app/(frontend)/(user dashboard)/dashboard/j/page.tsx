@@ -16,6 +16,8 @@ import Link from 'next/link'
 import { Header } from '@/components/dashboard/header'
 import { useGETAllJobRefs } from '@/lib/db/helpers/jobRefHelpers'
 import { StoredJobReference } from '@/types/jobReferenceTypes'
+import useSWR from 'swr'
+import { fetcher } from '@/lib/axios'
 
 export function searchJobReferences(
   data: StoredJobReference[] | null | undefined,
@@ -47,9 +49,11 @@ export default function JobReferencesPage() {
 
   const [searchResults, setSearchResults] = useState<StoredJobReference[] | null>()
 
-  const jobReferences = useGETAllJobRefs()
+  const { data, error, isLoading } = useSWR('/d/job-ref/', fetcher)
 
-  console.log(jobReferences)
+  console.log(data?.results)
+
+  const jobReferences = data?.results
 
   useEffect(() => {
     if (jobReferences) {
@@ -107,7 +111,7 @@ export default function JobReferencesPage() {
                     <ChevronRight className="absolute top-4 right-4" />
                     <div className="grid gap-1 label-regular">
                       <p>JR-{job?.code}</p>
-                      <p>{job?.projectName}</p>
+                      <p>{job?.project_name}</p>
                     </div>
                     {(job.addresses?.length ?? 0) > 0 ? (
                       <>
@@ -117,8 +121,8 @@ export default function JobReferencesPage() {
                             <div className="flex flex-col gap-1 truncate">
                               <p className="label-regular">{job?.addresses?.[0]?.title}</p>
                               <p className="body-small">
-                                {job?.addresses?.[0]?.streetAddress}, {job?.addresses?.[0]?.suburb},{' '}
-                                {job?.addresses?.[0]?.state} {job?.addresses?.[0]?.postcode}
+                                {job?.addresses?.[0]?.street_address}, {job?.addresses?.[0]?.suburb}
+                                , {job?.addresses?.[0]?.state} {job?.addresses?.[0]?.postcode}
                               </p>
                             </div>
                           </div>
