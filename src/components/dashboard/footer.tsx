@@ -5,7 +5,7 @@ export function Footer({ children, className }: { children: React.ReactNode; cla
   return (
     <div
       className={cn(
-        'fixed bottom-0 left-0 w-full h-19 z-10 bg-white border-t-1 border-border-dark px-4',
+        'fixed bottom-0 left-0 w-full h-19 z-10 bg-white border-t-1 border-border-dark px-4 [&_button]:max-w-150 text-center',
         className,
       )}
     >

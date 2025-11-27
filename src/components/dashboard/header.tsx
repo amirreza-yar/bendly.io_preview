@@ -1,15 +1,23 @@
 import Link from 'next/link'
 import { ArrowLeft, HomeMenu, Magnifier } from '@/components/uikit/icons'
 import { cn } from '@/utilities/ui'
+import { Button } from '../uikit/buttons/button'
 
 type HeaderProps = {
   title: string
   children?: any
   className?: string
   returnHref?: string
+  onReturnButtonClick?: (props: any) => void
 }
 
-export function Header({ title, children, className, returnHref }: HeaderProps) {
+export function Header({
+  title,
+  children,
+  className,
+  returnHref,
+  onReturnButtonClick,
+}: HeaderProps) {
   return (
     <header
       className={cn(
@@ -23,6 +31,11 @@ export function Header({ title, children, className, returnHref }: HeaderProps) 
             <Link href={returnHref}>
               <ArrowLeft />
             </Link>
+          )}
+          {onReturnButtonClick && (
+            <button type="button" className="cursor-pointer" onClick={onReturnButtonClick}>
+              <ArrowLeft />
+            </button>
           )}
           <h6>{title}</h6>
         </div>

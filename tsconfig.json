@@ -38,7 +38,7 @@
     "src/components/flashing/canvas/canvasUI/canvasController.jsx",
     "src/components/flashing/canvas/canvasUI/canvasController.jsx",
     "src/providers/.dev/indexDB.tsx",
-    "src/app/(frontend)/(user dashboard)/dashboard/account/edit-account/(edit mobile)/edit-current-mobile-number/page.jsx",
+    "src/app/(frontend)/(user dashboard)/dashboard/account/edit/(edit mobile)/edit-current-mobile-number/page.jsx",
     "src/components/admin/cards/tables/page.jsx"
   ],
   "exclude": ["node_modules"]

@@ -12,6 +12,7 @@ import { apiLogout } from '@/utilities/api/auth'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/providers/main_providers/UserContext'
+import api from '@/lib/axios'
 
 export default function AccountPage() {
   const { user } = useUser()
@@ -19,11 +20,11 @@ export default function AccountPage() {
   const router = useRouter()
 
   const onLogoutHandler = async () => {
-    const res = await apiLogout()
-    if (res.success) {
+    try {
+      const res = await api.post('/auth/logout/')
       toast('Signed out successfully')
       router.push('/auth')
-    } else {
+    } catch (error: any) {
       toast('Something went wrong')
     }
   }
@@ -35,17 +36,17 @@ export default function AccountPage() {
       <>
         <ContentWrapper className="min-h-screen md:max-w-[1000px] md:mx-auto md:px-4 grid content-between">
           <div className="grid divide-y divide-border-seprator">
-            <Link href="/dashboard/account/edit-account">
+            <Link href="/dashboard/account/edit">
               <ButtonListItem
                 text="Edit Account Information"
                 caption="Full name, Mobile number"
                 icon={User}
               />
             </Link>
-            <Link href="/dashboard/account/change-email">
+            <Link href="/dashboard/account/edit/email">
               <ButtonListItem text="Change Email" badgeText="Verified" icon={Mail} />
             </Link>
-            <Link href="/dashboard/account/change-password">
+            <Link href="/dashboard/account/edit/password">
               <ButtonListItem text="Change Password" icon={PasswordField} />
             </Link>
 

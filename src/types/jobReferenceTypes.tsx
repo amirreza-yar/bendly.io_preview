@@ -2,7 +2,7 @@ export type AustraliaStates = 'NSW' | 'VIC' | 'QLD' | 'WA' | 'SA' | 'TAS' | 'ACT
 
 export type Address = {
   title: string
-  streetAddress?: string
+  street_address?: string
   suburb?: string
   state?: AustraliaStates | string
   postcode?: number

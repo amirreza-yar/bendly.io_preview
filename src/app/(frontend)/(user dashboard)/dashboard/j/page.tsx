@@ -18,6 +18,8 @@ import { useGETAllJobRefs } from '@/lib/db/helpers/jobRefHelpers'
 import { StoredJobReference } from '@/types/jobReferenceTypes'
 import useSWR from 'swr'
 import { fetcher } from '@/lib/axios'
+import { Skeleton } from '@/components/uikit/skeleton'
+import { Footer } from '@/components/dashboard/footer'
 
 export function searchJobReferences(
   data: StoredJobReference[] | null | undefined,
@@ -72,35 +74,49 @@ export default function JobReferencesPage() {
           <div className="overflow-scroll h-full pt-14 pb-22 px-4 no-scrollbar">
             <div className="grid">
               <div className="w-full py-4 flex items-center relative sticky top-0 z-10 max-w-[500px] mx-auto">
-                <Magnifier className="size-5 absolute left-4" />
-
-                <Input
-                  type="text"
-                  ref={searchInputRef}
-                  value={searchValue}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const value = e.target.value
-                    setSearchValue(value)
-                    const results = searchJobReferences(jobReferences, value)
-                    setSearchResults(results)
-                  }}
-                  placeholder="Search template..."
-                  className="pl-11 bg-white"
-                />
-
-                {searchValue !== '' && (
-                  <XIcon
-                    className="size-5 absolute right-4 cursor-pointer"
-                    onClick={() => {
-                      setSearchValue('')
-                      setSearchResults(jobReferences)
-                      searchInputRef.current?.focus()
-                    }}
-                  />
+                {isLoading ? (
+                  <Skeleton className="h-11 w-full" />
+                ) : (
+                  <>
+                    <Magnifier className="size-5 absolute left-4" />
+                    <Input
+                      type="text"
+                      ref={searchInputRef}
+                      value={searchValue}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const value = e.target.value
+                        setSearchValue(value)
+                        const results = searchJobReferences(jobReferences, value)
+                        setSearchResults(results)
+                      }}
+                      placeholder="Search template..."
+                      className="pl-11 bg-white"
+                    />
+                    {searchValue !== '' && (
+                      <XIcon
+                        className="size-5 absolute right-4 cursor-pointer"
+                        onClick={() => {
+                          setSearchValue('')
+                          setSearchResults(jobReferences)
+                          searchInputRef.current?.focus()
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               </div>
 
               <div className="grid w-full gap-4 lg:grid-cols-3 md:grid-cols-2 max-w-[900px] mx-auto">
+                {isLoading && (
+                  <>
+                    <Skeleton className="h-38" />
+                    <Skeleton className="h-38" />
+                    <Skeleton className="h-38" />
+                    <Skeleton className="h-38" />
+                    <Skeleton className="h-38" />
+                    <Skeleton className="h-38" />
+                  </>
+                )}
                 {searchResults?.map((job) => (
                   <Link
                     href={`/dashboard/j/${job?.id}`}
@@ -155,9 +171,11 @@ export default function JobReferencesPage() {
                     ) : (
                       <>
                         <div className="flex gap-3 items-start text-alert-default bg-surface-alert-subtle p-3 rounded-md">
-                          <AlertTriangle className="size-5 mt-0.5" />
+                          <AlertTriangle className="size-4 mt-1" />
                           <div className="grid">
-                            <p className="label-large">Associated addresses deleted</p>
+                            <p className="text-[14px] font-semibold">
+                              Associated addresses deleted
+                            </p>
                             <p className="body-small">
                               Add an address to continue or delete this Job Reference.
                             </p>
@@ -181,18 +199,18 @@ export default function JobReferencesPage() {
             </div>
           </div>
 
-          <div className="fixed bottom-0 left-0 w-full h-19 z-10 bg-white border-t-1 border-border-dark px-4">
-            <div className="w-full h-full max-w-[500px] mx-auto">
-              <div className="flex justify-around items-center h-full">
-                <Link className="w-full" href="/dashboard/j/add">
-                  <Button className="w-full">
-                    <Plus />
-                    Create New Job References
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
+          <Footer>
+            {isLoading ? (
+              <Skeleton className="h-11 w-full" />
+            ) : (
+              <Link className="w-full" href="/dashboard/j/add">
+                <Button className="w-full">
+                  <Plus />
+                  Create New Job References
+                </Button>
+              </Link>
+            )}
+          </Footer>
         </>
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center gap-4 px-10 max-w-[600px] mx-auto">

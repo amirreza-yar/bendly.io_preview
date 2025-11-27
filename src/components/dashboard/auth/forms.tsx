@@ -20,9 +20,10 @@ import { Checkbox } from '@/components/uikit/checkbox'
 import Link from 'next/link'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { Loader } from 'lucide-react'
 
 const VerifyEmailOTPSchema = z.object({
-  emailOTP: z.string().min(5, {
+  emailOTP: z.string().min(6, {
     message: 'Please enter the code',
   }),
 })
@@ -32,9 +33,11 @@ export type VerifyEmailOTPValue = z.infer<typeof VerifyEmailOTPSchema>
 export const VerifyEmailOTPForm = ({
   onSubmitVerifyEmail,
   errorText,
+  isLoading = false,
 }: {
   onSubmitVerifyEmail: (data: VerifyEmailOTPValue) => void
   errorText?: string
+  isLoading?: boolean
 }) => {
   const form = useForm<VerifyEmailOTPValue>({
     resolver: zodResolver(VerifyEmailOTPSchema),
@@ -48,7 +51,10 @@ export const VerifyEmailOTPForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmitVerifyEmail)} className="grid gap-6 pt-2">
+      <form
+        onSubmit={form.handleSubmit(onSubmitVerifyEmail)}
+        className="grid gap-6 pt-2 justify-center"
+      >
         <FormField
           control={form.control}
           name="emailOTP"
@@ -56,13 +62,14 @@ export const VerifyEmailOTPForm = ({
             <div className="flex items-center justify-center">
               <FormItem>
                 <FormControl>
-                  <InputOTP maxLength={5} {...field}>
+                  <InputOTP maxLength={6} {...field}>
                     <InputOTPGroup className="w-fit flex justify-center">
                       <InputOTPSlot className="border-border-dark" index={0} />
                       <InputOTPSlot className="border-border-dark" index={1} />
                       <InputOTPSlot className="border-border-dark" index={2} />
                       <InputOTPSlot className="border-border-dark" index={3} />
                       <InputOTPSlot className="border-border-dark" index={4} />
+                      <InputOTPSlot className="border-border-dark" index={5} />
                     </InputOTPGroup>
                   </InputOTP>
                 </FormControl>
@@ -72,7 +79,8 @@ export const VerifyEmailOTPForm = ({
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full max-w-82" disabled={isLoading}>
+          {isLoading && <Loader className="animate-spin" />}
           Verify
         </Button>
       </form>
@@ -92,9 +100,11 @@ export type EmailInputValue = z.infer<typeof EmailInputSchema>
 export const AuthEmailForm = ({
   onSubmitEmail,
   defaultEmail,
+  isLoading = false,
 }: {
   onSubmitEmail: (data: EmailInputValue) => void
   defaultEmail: string | null | undefined
+  isLoading?: boolean
 }) => {
   const form = useForm<EmailInputValue>({
     resolver: zodResolver(EmailInputSchema),
@@ -155,7 +165,8 @@ export const AuthEmailForm = ({
         {/* <Button type="submit" className="w-full" disabled={mutation.isPending}>
           {mutation.isPending ? 'Sending...' : 'Countinue'}
         </Button> */}
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading && <Loader className="animate-spin" />}
           Countinue
         </Button>
       </form>
@@ -164,11 +175,19 @@ export const AuthEmailForm = ({
 }
 
 const LoginFormSchema = z.object({
-  password: z.string('Please enter your password.').nonempty('Password is required'),
+  password: z
+    .string('Please enter your password.')
+    .min(8, 'Password must be at least 8 characters long.')
+    .max(64, 'Password must be at most 64 characters long.')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter.')
+    .regex(/[0-9]/, 'Password must contain at least one number.')
+    .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character.'),
   email: z
-    .string('Please enter a valid email address.')
+    .string('Please enter your email address.')
     .trim()
-    .email('Please enter a valid email address.'),
+    .email('Please enter a valid email address.')
+    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i, 'Please enter a valid email address.'),
 })
 
 export type LoginFormValue = z.infer<typeof LoginFormSchema>
@@ -176,9 +195,11 @@ export type LoginFormValue = z.infer<typeof LoginFormSchema>
 export const LoginForm = ({
   onSubmitLogin,
   errorText,
+  isLoading = false,
 }: {
   onSubmitLogin: (data: LoginFormValue) => void
   errorText: string
+  isLoading?: boolean
 }) => {
   const form = useForm<LoginFormValue>({
     resolver: zodResolver(LoginFormSchema),
@@ -236,8 +257,9 @@ export const LoginForm = ({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full mt-4">
-          Continue
+        <Button type="submit" className="w-full mt-4" disabled={isLoading}>
+          {isLoading && <Loader className="animate-spin" />}
+          Login
         </Button>
       </form>
     </Form>
@@ -245,23 +267,29 @@ export const LoginForm = ({
 }
 
 const CreateAccountFormSchema = z.object({
+  password: z
+    .string('Please enter your password.')
+    .min(8, 'Password must be at least 8 characters long.')
+    .max(64, 'Password must be at most 64 characters long.')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter.')
+    .regex(/[0-9]/, 'Password must contain at least one number.')
+    .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character.'),
+  email: z
+    .string('Please enter your email address.')
+    .trim()
+    .email('Please enter a valid email address.')
+    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i, 'Please enter a valid email address.'),
   fullName: z
     .string()
     .nonempty('Full name is required')
     .regex(/^[a-zA-Z ]+$/, 'Full name must contain letters only')
     .max(50, 'Full name is 50 characters max'),
 
-  phone: z
-    .string()
-    .nonempty('Mobile number is required')
-    .regex(/^\d{10}$/, 'Mobile number must be 10 digits'),
-  password: z
-    .string()
-    .nonempty('Password is required')
-    .regex(
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/,
-      'Use 8+ characters with letters, numbers, and symbols',
-    ),
+  // phone: z
+  //   .string()
+  //   .nonempty('Mobile number is required')
+  //   .regex(/^\d{10}$/, 'Mobile number must be 10 digits'),
   terms: z.boolean('Terms & Conditions must be accepted').refine((val) => val === true, {
     message: 'Terms & Conditions must be accepted',
   }),
@@ -271,8 +299,10 @@ export type CreateAccountFormValues = z.infer<typeof CreateAccountFormSchema>
 
 export const CreateAccountForm = ({
   onCreateAccountSubmit,
+  isLoading = false,
 }: {
   onCreateAccountSubmit: (data: CreateAccountFormValues) => void
+  isLoading?: boolean
 }) => {
   const form = useForm<CreateAccountFormValues>({
     resolver: zodResolver(CreateAccountFormSchema),
@@ -281,6 +311,25 @@ export const CreateAccountForm = ({
   return (
     <Form {...form}>
       <form className="grid gap-6" onSubmit={form.handleSubmit(onCreateAccountSubmit)}>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex gap-2 label-regular">Email</FormLabel>
+              <FormControl>
+                <LabeledInput
+                  icon={Mail}
+                  placeholder="Your Email"
+                  type="text"
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="fullName"
@@ -304,7 +353,7 @@ export const CreateAccountForm = ({
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="phone"
           render={({ field }) => (
@@ -324,7 +373,7 @@ export const CreateAccountForm = ({
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         <FormField
           control={form.control}
@@ -375,7 +424,10 @@ export const CreateAccountForm = ({
           )}
         />
 
-        <Button type="submit">Create Account</Button>
+        <Button type="submit" className="w-full mt-4" disabled={isLoading}>
+          {isLoading && <Loader className="animate-spin" />}
+          Create Account
+        </Button>
       </form>
     </Form>
   )

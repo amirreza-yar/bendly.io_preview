@@ -63,12 +63,13 @@ interface JobRefInfoCardProps {
   jobReference: StoredJobReference | null
 }
 
-export function JobRefInfoCard({ jobReference }: JobRefInfoCardProps) {
+export function JobRefInfoCard({ jobReference, ...props }: JobRefInfoCardProps) {
   return (
     <Link
+      {...props}
       href={`/dashboard/j/${jobReference?.id}/edit-info`}
       data-slot="card"
-      className="grid gap-4 items-center rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative mt-4 mb-8"
+      className="grid gap-4 items-center rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative"
     >
       <Edit className="absolute right-3 size-5" />
       <div className="grid gap-2 label-regular">
