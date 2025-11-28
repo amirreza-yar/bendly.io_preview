@@ -36,7 +36,7 @@ export default function AccountPage() {
             />
             <Separator />
           </Link>
-          <Link href="#">
+          <Link href="#" className="opacity-40">
             <ButtonListItem
               text="Mobile Number"
               caption={data?.phone ? `+${data?.phone}` : 'Not set'}

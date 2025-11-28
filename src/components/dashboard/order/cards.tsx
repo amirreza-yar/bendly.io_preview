@@ -25,63 +25,70 @@ import { EditFlashingDrawer } from '@/components/dashboard/order/drawers'
 import { cn } from '@/utilities/ui'
 import FlashingSVG from '@/components/utils/flashingSVG'
 
-export function OrderCard({ order, ...props }: { order: StoredOrder }) {
+function formatStatus(status: any) {
+  const map: any = {
+    pending: 'Pending',
+    in_progress: 'In Progress',
+    delivered: 'Delivered',
+    cancelled: 'Cancelled',
+    complete: 'Complete',
+  }
+
+  return map[status] || status
+}
+
+export function OrderCard({ order, ...props }: { order: any }) {
+  console.log(order)
+
   return (
     <Link
       href={`/dashboard/orders/${order.id}`}
       {...props}
-      className="grid gap-4 rounded-md bg-white border-1 border-border-default p-4"
+      className="grid gap-4 rounded-md bg-gray-50 border-1 border-border-default p-4"
     >
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
           <p className="caption-regular text-subtitle">Order Number</p>
           <span className="label-regular text-heading">{order.id}</span>
         </div>
-        <OrderStatusBadge status={order.status} />
+        <OrderStatusBadge status={formatStatus(order.status)} />
       </div>
       <div className="grid gap-1">
-        <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
+        <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
           <DateIcon />
-          <span className="label-small">Delivery Date: {formatDate(order.deliveryDate ?? 0)}</span>
+          <span className="text-[12px]">Delivery Date: {formatDate(order.delivery.date ?? 0)}</span>
         </div>
-        <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
+        <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
           <Building />
           <span className="rounded-[900px] px-[10px] py-[2px] border-1 border-border-default">
-            JR-{order?.jobRefrence?.code}
+            JR-{order?.job_reference?.code}
           </span>
-          <span className="">{order?.jobRefrence?.projectName}</span>
+          <span className="">{order?.job_reference?.project_name}</span>
         </div>
-        {order.deliveryType === 'delivery'
+        {order.delivery.type === 'delivery'
           ? (() => {
               return (
-                <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
+                <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
                   <Delivery />
-                  <span>
-                    {order?.address?.streetAddress}, {order?.address?.suburb},{' '}
-                    {order?.address?.state}, {order?.address?.postcode}
-                  </span>
+                  <span>{order?.job_reference?.full_address}</span>
                 </div>
               )
             })()
           : (() => {
               return (
-                <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
+                <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
                   <WareHouse />
                   <span>
-                    {order?.pickupInfo?.address.streetAddress}, {order?.pickupInfo?.address.suburb},{' '}
-                    {order?.pickupInfo?.address.state}, {order?.pickupInfo?.address.postcode}
+                    <span>{order?.job_reference?.full_address}</span>
                   </span>
                 </div>
               )
             })()}
       </div>
-      <div className="grid auto-cols-max grid-flow-col content-center gap-2 [&_svg]:size-4 text-body label-small">
+      <div className="grid auto-cols-max grid-flow-col content-center gap-2 [&_svg]:size-4 text-body text-[12px]">
         <Box2 />
-        <span className="rounded-xs border-1 border-border-default px-2 py-1">
-          {order?.flashings?.[0].moreDetails?.material} /{' '}
-          {order?.flashings?.[0].moreDetails?.color
-            ? order?.flashings?.[0].moreDetails?.color.name
-            : `${order?.flashings?.[0].moreDetails?.thickness?.thickness}mm`}
+        <span className="rounded-xs border-1 border-border-default px-2 py-1 bg-gray-100">
+          {order?.flashings?.[0].material.name} / {order?.flashings?.[0].material.label}
           <br />
           {order?.flashings?.[0].specifications?.reduce(
             (sum: number, spec: any) => sum + spec.quantity,
@@ -90,13 +97,13 @@ export function OrderCard({ order, ...props }: { order: StoredOrder }) {
           pcs
         </span>
         {(order?.flashings?.length ?? 0) > 1 && (
-          <span className="flex items-center rounded-xs border-1 border-border-default px-2">
+          <span className="flex items-center rounded-xs border-1 border-border-default px-2 bg-gray-100">
             +{(order?.flashings?.length ?? 1) - 1}
           </span>
         )}
       </div>
       <div className="flex justify-between items-center">
-        <span className="label-regular">${order?.paymentHistory?.total.toFixed(2)}</span>
+        <span className="label-regular">${order?.payment_history?.amount.toFixed(2)}</span>
         <ChevronRight />
       </div>
     </Link>

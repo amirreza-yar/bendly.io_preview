@@ -18,7 +18,7 @@ export function TabsList({
       {...props}
       data-slot="tabs-list"
       className={cn(
-        'h-[38px] flex items-center justify-center rounded-md border-2 border-border-dark p-[2px]',
+        'h-[38px] flex items-center justify-center rounded-md border-2 border-gray-300 p-[2px]',
         className,
       )}
     />

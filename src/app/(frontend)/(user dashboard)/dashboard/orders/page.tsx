@@ -9,10 +9,17 @@ import Link from 'next/link'
 import { Order } from '@/types/orders/orderType'
 import { useGETAllOrders } from '@/lib/db/helpers/orderHelpers'
 import { useGETAllReplacementRequests } from '@/lib/db/helpers/replacementRequestHelpers'
+import useSWR from 'swr'
+import { fetcher } from '@/lib/axios'
+import { notFound } from 'next/navigation'
 
 export default function OrdersPage() {
-  const orders = useGETAllOrders()
-  const replacementRequests = useGETAllReplacementRequests()
+  const { data, isLoading, error } = useSWR('/d/order/', fetcher, { onError: notFound })
+
+  const orders = data?.results
+  const replacementRequests = null
+
+  console.log(orders)
 
   return (
     <>
@@ -29,11 +36,10 @@ export default function OrdersPage() {
               {orders &&
                 (() => {
                   const filteredOrders = orders.filter(
-                    (o) =>
-                      o.status === 'Pending' ||
-                      o.status === 'In Production' ||
-                      o.status === 'Ready for pickup' ||
-                      o.status === 'On the way',
+                    (o: any) =>
+                      o.status === 'pending' ||
+                      o.status === 'in_progress' ||
+                      o.status === 'delivered',
                   )
 
                   if (filteredOrders.length === 0)
@@ -45,7 +51,9 @@ export default function OrdersPage() {
                       </>
                     )
 
-                  return filteredOrders.map((o, index) => <OrderCard key={index} order={o} />)
+                  return filteredOrders.map((o: any, index: number) => (
+                    <OrderCard key={index} order={o} />
+                  ))
                 })()}
             </div>
           </TabsContent>
@@ -54,10 +62,7 @@ export default function OrdersPage() {
               {orders &&
                 (() => {
                   const filteredOrders = orders.filter(
-                    (o) =>
-                      o.status === 'Completed' ||
-                      o.status === 'Rejected' ||
-                      o.status === 'Cancelled',
+                    (o: any) => o.status === 'complete' || o.status === 'cancelled',
                   )
 
                   if (filteredOrders.length === 0)
@@ -69,7 +74,9 @@ export default function OrdersPage() {
                       </>
                     )
 
-                  return filteredOrders.map((o, index) => <OrderCard key={index} order={o} />)
+                  return filteredOrders.map((o: any, index: number) => (
+                    <OrderCard key={index} order={o} />
+                  ))
                 })()}
             </div>
           </TabsContent>

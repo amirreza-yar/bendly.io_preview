@@ -43,10 +43,10 @@ export default function AccountPage() {
                 icon={User}
               />
             </Link>
-            <Link href="/dashboard/account/edit/email">
+            <Link href="#" className="opacity-40">
               <ButtonListItem text="Change Email" badgeText="Verified" icon={Mail} />
             </Link>
-            <Link href="/dashboard/account/edit/password">
+            <Link href="#" className="opacity-40">
               <ButtonListItem text="Change Password" icon={PasswordField} />
             </Link>
 

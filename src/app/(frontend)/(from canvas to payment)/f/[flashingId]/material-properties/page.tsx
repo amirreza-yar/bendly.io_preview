@@ -30,14 +30,11 @@ import { upsertPartialFlashing } from '@/lib/db/helpers/flashingHelpers'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import useSWR from 'swr'
-
-const fetcher = (url: string) => axios.get(url).then((res) => res.data)
+import { fetcher } from '@/lib/axios'
 
 export default function SelectMaterialAndColorPage() {
   const router = useRouter()
   const [isNavigating, setIsNavigating] = useState<boolean>(false)
-
-  const materialsWithProperties = useLiveQuery(() => db.materialsAndProps.toArray(), [])
 
   const { flashingId }: { flashingId: string } = useParams()
 
@@ -45,10 +42,9 @@ export default function SelectMaterialAndColorPage() {
 
   const savedFlashing = useLiveQuery(() => db.flashings.get({ id: flashingId }), [flashingId], null)
 
-  const { data, error, isLoading } = useSWR(
-    'http://localhost:8000/api/factory/b459892c-3365-4c0e-960e-d96964c6babb/material/',
-    fetcher,
-  )
+  const materialsWithProperties = null
+
+  const { data, error, isLoading } = useSWR('/d/materials/', fetcher)
 
   console.log(data)
 
