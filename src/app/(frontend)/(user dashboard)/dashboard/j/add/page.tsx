@@ -25,8 +25,8 @@ import {
 import { ArrowLeft, Edit, MapMarker } from '@/components/uikit/icons'
 
 const NewJobRefFormSchema = z.object({
-  code: z.string().nonempty('Job reference code is required'),
-  projectName: z.string().nonempty('Project name is required'),
+  code: z.string('Code is required').nonempty('Job reference code is required'),
+  projectName: z.string().optional(),
   title: z
     .string('Address Title / Site Name is required')
     .nonempty('Address Title / Site Name is required')
@@ -101,7 +101,7 @@ export default function NewAddressPage() {
     if (tabValue === 'job-tab') {
       const validation = await newJobRefForm.trigger(['code', 'projectName'])
 
-      if (validation || true) {
+      if (validation) {
         setTabValue('address-tab')
       }
     } else if (tabValue === 'address-tab') {
@@ -113,7 +113,7 @@ export default function NewAddressPage() {
         'title',
       ])
 
-      if (validation || true) {
+      if (validation) {
         setTabValue('recipient-tab')
       }
     }
@@ -129,12 +129,7 @@ export default function NewAddressPage() {
 
   return (
     <>
-      <Tabs
-        defaultValue="recipient-tab"
-        className="h-full"
-        value={tabValue}
-        onValueChange={setTabValue}
-      >
+      <Tabs className="h-full" value={tabValue} onValueChange={setTabValue}>
         <Form {...newJobRefForm}>
           <form className="h-full" onSubmit={newJobRefForm.handleSubmit(onNewJobRefFormSubmit)}>
             <JobRefFormTab

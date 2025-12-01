@@ -168,6 +168,8 @@ export function NewOrderCard({
 }) {
   if (!flashing) return
 
+  console.log(flashing.total_girth)
+
   return (
     <div
       {...props}
@@ -179,7 +181,7 @@ export function NewOrderCard({
             <FlashingSVG flashing={flashing} className="pl-2 h-18" path3DOffsetCoeff={0.8} />
             <div className="grid gap-1">
               <Edit className="size-5 justify-self-end" />
-              <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>
+              <p className="caption-small">Total Grith: {flashing.total_girth.rounded()} mm</p>
               <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
             </div>
           </div>
@@ -187,33 +189,33 @@ export function NewOrderCard({
       ) : (
         <Link
           href={`/f/${flashing.id}/edit/canvas?next=order&orderId=${orderId}`}
-          className="grid grid-cols-2 p-3 rounded-xs border border-border-default"
+          className="grid grid-cols-2 p-3 rounded-xs border border-border-default bg-gray-50"
         >
           <FlashingSVG flashing={flashing} className="pl-2 h-18" path3DOffsetCoeff={0.8} />
           <div className="grid gap-1">
             <Edit className="size-5 justify-self-end" />
-            <p className="caption-small">Total Grith: {flashing.totalGirth} mm</p>
+            <p className="caption-small">Total Grith: {flashing.total_girth.toFixed(0)} mm</p>
             <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
           </div>
         </Link>
       )}
       <Link
         href={`/f/${flashing.id}/edit/material-properties?next=order&orderId=${orderId}`}
-        className="flex justify-between items-start p-3 rounded-xs border border-border-default"
+        className="flex justify-between items-start p-3 rounded-xs border border-border-default bg-gray-50"
       >
         <div className="grid gap-2">
-          <p className="caption-small">Material: {flashing.material}</p>
+          <p className="caption-small">Material: {flashing.material_data.name}</p>
           <p className="caption-small">
-            {flashing.color
-              ? `Color: ${flashing.color.name}`
-              : `Thickness: ${flashing.thickness?.thickness}mm`}
+            {flashing.material_data.type === 'color'
+              ? `Color: ${flashing.material_data.type}`
+              : `Thickness: ${flashing.material_data.label} mm`}
           </p>
         </div>
         <Edit className="justify-self-end size-5 mb-4" />
       </Link>
       <Link
         href={`/f/${flashing.id}/details?orderId=${orderId}`}
-        className="grid gap-4 p-3 rounded-xs border border-border-default"
+        className="grid gap-4 p-3 rounded-xs border border-border-default bg-gray-50"
       >
         <div className="flex justify-between items-start">
           <div className="grid gap-2">
@@ -229,7 +231,7 @@ export function NewOrderCard({
         </div>
         <div className="flex justify-between pr-11">
           <div className="grid gap-2">
-            <p className="label-regular border-b pb-1 pr-2">Quantity</p>
+            <p className="label-regular border-b border-gray-300 pb-1 pr-2">Quantity</p>
             {flashing?.specifications?.map((spec, index) => (
               <p key={index} className="caption-small">
                 {spec.quantity} pcs
@@ -237,7 +239,7 @@ export function NewOrderCard({
             ))}
           </div>
           <div className="grid gap-2 pr-6">
-            <p className="label-regular border-b pb-1 pr-2">Length</p>
+            <p className="label-regular border-b border-gray-300 pb-1 pr-2">Length</p>
             {flashing?.specifications?.map((spec, index) => (
               <p key={index} className="caption-small">
                 {spec.length} mm
@@ -246,7 +248,7 @@ export function NewOrderCard({
           </div>
         </div>
       </Link>
-      <div className="flex justify-end items-center">
+      <div className="flex justify-end items-center py-2">
         <DeleteFlashingModalOnOrderReview deleteFlashing={() => onDeleteFlashing(flashing.id)}>
           <div className="flex label-regular items-center gap-2 px-4">
             Delete

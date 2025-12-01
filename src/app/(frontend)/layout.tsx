@@ -47,7 +47,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             disableTransitionOnChange
           >
             <DBProvider>
-              <main className="h-screen relative w-screen overflow-auto no-scrollbar font-roboto">
+              <main className="h-screen relative w-screen overflow-auto no-scrollbar font-roboto max-w-[1000px] mx-auto">
                 {children}
               </main>
             </DBProvider>

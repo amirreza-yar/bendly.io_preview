@@ -66,69 +66,14 @@ export default function DeliveryAndShipping() {
     return new Map(flashings.map((f: any) => [f?.id, f]))
   }, [flashings])
 
-  const { data: priceData } = useQuery<PriceResponse>({
-    queryKey: ['flashings-prices', order?.id, flashingsMap],
-    queryFn: () => fetchPrices(order, flashingsMap),
-    enabled: !!order?.flashings && flashingsMap.size > 0,
-  })
+  const GST: number = 0
+  const DELIVERY_COST: number = 0
 
-  const GST: number = priceData?.gst ?? 0
-  const DELIVERY_COST: number = priceData?.deliveryCost ?? 0
+  const PICKUP_DESC = ''
+  const PICKUP_ADDRESS = ''
 
-  const { data: pickupInfoData } = useQuery<PickupInfoResponse>({
-    queryKey: ['pickup-info'],
-    queryFn: () => fetchPickupInfo(),
-    enabled: !!order,
-  })
-
-  const PICKUP_DESC = pickupInfoData?.pickupDesc
-  const PICKUP_ADDRESS = pickupInfoData?.pickupAddr
-
-  const { data: availableDatesData } = useQuery<AvailableDatesRespose>({
-    queryKey: ['available-dates'],
-    queryFn: () => fetchAvailableDates(),
-    enabled: !!order,
-  })
-
-  const AVAILABLE_DATES = availableDatesData?.availableDates
-  const DELIVERY_DESC = availableDatesData?.deliveryDesc
-
-  const augmentedFlashings = useMemo(() => {
-    if (!order?.flashings) return []
-
-    return order.flashings
-      .map((flash) => {
-        const found = flashingsMap.get(flash.id) ?? null
-        const priceFound = priceData?.prices?.find((prc: any) => prc.id === flash.id)
-        if (!found || !priceFound) return null
-
-        const specMap = new Map(priceFound.specifications.map((s) => [s.id, s.cost]))
-
-        return {
-          ...found,
-          code: flash.code,
-          position: flash.position,
-          specifications: flash.specifications?.map((spec) => ({
-            ...spec,
-            cost: specMap.get(spec.id) ?? 0,
-          })),
-        }
-      })
-      .filter(Boolean)
-  }, [order?.flashings, flashingsMap, priceData])
-
-  const totalCost = useMemo(() => {
-    const grandTotal = augmentedFlashings.reduce((total, flash) => {
-      const subtotal =
-        flash.specifications?.reduce(
-          (sum: number, spec: Specification) => sum + (spec.cost ?? 0),
-          0,
-        ) ?? 0
-      return total + subtotal
-    }, 0)
-
-    return grandTotal
-  }, [augmentedFlashings])
+  const AVAILABLE_DATES = [0]
+  const DELIVERY_DESC = [0]
 
   const removeJobRefFromOrder = async () => {
     await upsertPartialOrder(Number(orderId), {
@@ -199,7 +144,7 @@ export default function DeliveryAndShipping() {
   }
 
   const onSubmitDeliveryDate = async (date: string) => {
-    const flashingsToSave: StoredOrderFlashing[] = augmentedFlashings.map(
+    const flashingsToSave: StoredOrderFlashing[] = [].map(
       (flash: Omit<StoredOrderFlashing, 'moreDetails'> & StoredFlashing) => {
         return {
           id: flash.id,
@@ -255,6 +200,8 @@ export default function DeliveryAndShipping() {
 
     router.push(`/o/${orderId}/pay`)
   }
+
+  const totalCost = 0
 
   return (
     <>
@@ -401,7 +348,7 @@ export default function DeliveryAndShipping() {
           <div className="grid gap-3 py-4 px-4 bg-white">
             <h6>Order Summary</h6>
 
-            {order?.flashings && <NewOrderSummaryAccordion flashings={augmentedFlashings} />}
+            {/* {order?.flashings && <NewOrderSummaryAccordion flashings={augmentedFlashings} />} */}
             {order?.deliveryType === 'delivery' && (
               <>
                 <Separator />

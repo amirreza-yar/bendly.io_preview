@@ -28,6 +28,7 @@ const AuthPage = () => {
   const onSubmitLogin = async (data: LoginFormValue) => {
     try {
       setIsLoading(true)
+
       await api.post('/auth/login/', {
         email: data.email,
         password: data.password,

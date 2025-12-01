@@ -21,7 +21,7 @@ export function Header({
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark md:max-w-[1000px] md:mx-auto md:left-1/2 md:-translate-x-1/2',
+        'fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-gray-300 md:max-w-[1000px] md:mx-auto md:left-1/2 md:-translate-x-1/2',
         className,
       )}
     >
