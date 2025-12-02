@@ -11,6 +11,7 @@ import {
   CardChecked,
   Check,
   ChevronRight,
+  Delivery,
   Edit,
   FeaturedCheckSmall,
   FeaturedSuccess,
@@ -18,19 +19,26 @@ import {
   MapMarker,
   Plus,
   ProfileNav,
+  WareHouse,
   XIcon,
 } from '@/components/uikit/icons'
 import { TabsContent } from '@/components/uikit/tabs'
-import { fetcher } from '@/lib/axios'
+import api, { fetcher } from '@/lib/axios'
 import { cn } from '@/utilities/ui'
 import { Tabs } from '@radix-ui/react-tabs'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
 import { Footer } from '@/components/dashboard/footer'
 import { Input } from '@/components/uikit/input'
 import { StoredJobReference } from '@/types/jobReferenceTypes'
+import z from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Carousel, CarouselContent, CarouselItem } from '@/components/uikit/carousel'
+import { getDayAbbrString, getDayMonthNumber } from '@/utilities/datetime'
+import { House } from 'lucide-react'
 
 export function searchJobReferences(data: any, query: any) {
   const normalizedQuery = query.toLowerCase()
@@ -56,6 +64,14 @@ export function searchJobReferences(data: any, query: any) {
 
 const snapPoints = [0.6, 1]
 
+const fulFillmentFormSchema = z.object({
+  address_id: z.string().nonempty().nullable(),
+  delivery_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  delivery_type: z.enum(['delivery', 'pickup']),
+})
+
+type FulFillmentFormSchema = z.infer<typeof fulFillmentFormSchema>
+
 export default function FulFillPage() {
   const [tabValue, setTabValue] = useState('main-tab')
 
@@ -77,7 +93,21 @@ export default function FulFillPage() {
     },
   })
 
+  const fulFillmentForm = useForm<FulFillmentFormSchema>({
+    resolver: zodResolver(fulFillmentFormSchema),
+    defaultValues: {
+      delivery_type: 'delivery',
+    },
+  })
+
+  const jobId = fulFillmentForm.watch('job_reference_id')
+  const addressId = fulFillmentForm.watch('address_id')
+  const deliveryType = fulFillmentForm.watch('delivery_type')
+
   const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const AVAILABLE_DATES = ['2025-12-01', '2025-12-02', '2025-12-03', '2025-12-03', '2025-12-04']
+  const DELIVERY_DESC = 'Open from 9:00 to 18:00'
 
   const [jobReference, setJobReference] = useState<{
     job_reference_id: number
@@ -110,6 +140,25 @@ export default function FulFillPage() {
     },
   })
 
+  const checkForEstimatedDeliveryDate = async (address_id: number | string) => {
+    console.log(address_id)
+    try {
+      const res = await api.post('/d/cart/estimate-delivery/', {
+        address_id: address_id,
+      })
+
+      console.log(res.data)
+    } catch (error: any) {
+      console.log(error.response.data)
+    }
+  }
+
+  useEffect(() => {
+    if (jobReference?.address_id) {
+      checkForEstimatedDeliveryDate(jobReference.address_id)
+    }
+  }, [jobReference])
+
   const order = {}
 
   return (
@@ -118,85 +167,108 @@ export default function FulFillPage() {
         <TabsContent value="main-tab">
           <Header title="Shipping & Delivery" returnHref="/cart" />
           <ContentWrapper className="pt-14 pb-22 px-0 bg-surface-page-body md:px-0">
-            <div className="bg-white px-4 py-4">
+            <div className="bg-white px-4 pt-4">
               <div className="grid grid-cols-2 text-center rounded-md border-2 p-0.5 md:mx-4 border-gray-300">
                 <div
                   className={cn(
                     'rounded-md py-1.5 text-[13px]',
-                    deliveryTypeState === 'delivery' ? 'bg-primary text-white' : 'text-body',
+                    deliveryType === 'delivery' ? 'bg-primary text-white' : 'text-body',
                   )}
-                  onClick={() => setDeliveryTypeState('delivery')}
+                  onClick={() => fulFillmentForm.setValue('delivery_type', 'delivery')}
                 >
                   Delivery
                 </div>
                 <div
                   className={cn(
                     'rounded-md py-1.5 text-[13px]',
-                    deliveryTypeState === 'pickup' ? 'bg-primary text-white' : 'text-body',
+                    deliveryType === 'pickup' ? 'bg-primary text-white' : 'text-body',
                   )}
-                  onClick={() => setDeliveryTypeState('pickup')}
+                  onClick={() => fulFillmentForm.setValue('delivery_type', 'pickup')}
                 >
                   Pickup
                 </div>
               </div>
 
-              <div className="grid pb-2 pt-6 px-2">
-                <h6>Job Reference</h6>
-                {jobReference ? (
-                  <div className="grid gap-1">
-                    <div
-                      data-slot="card"
-                      className="grid gap-4 rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative mt-4"
-                    >
-                      <IconButton
-                        // onClick={}
-                        variant="ghost"
-                        black
-                        className="absolute top-0 right-0"
-                      >
-                        <XIcon className="size-5" />
-                      </IconButton>
-                      <div className="grid gap-1">
-                        <p className="text-[16px] font-bold">JR-{jobReference?.code}</p>
-                        <p className="text-[14px] font-semibold">{jobReference?.project_name}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <MapMarker className="size-5" />
-                        <div className="flex flex-col gap-1 truncate">
-                          <>
-                            <p className="label-regular">{jobReference?.title}</p>
+              <div className="flex flex-col pb-2 pt-6 px-2">
+                <div className="flex items-center gap-2">
+                  <House className="size-5" />
+                  <h6>Job Reference</h6>
+                </div>
+                {fetched_job_references && jobId ? (
+                  (() => {
+                    console.log(fetched_job_references?.results, jobId)
+                    const job = fetched_job_references?.results?.find((j: any) => j.id === jobId)
+                    const addr = job.addresses.find((a: any) => a.id === addressId)
 
-                            <p className="body-small">{jobReference?.full_address}</p>
-                            {/* ) : (
-                                <p className="body-small">Self pickup - No Delivery Address</p>
-                              )} */}
-                          </>
+                    return (
+                      <div className="flex flex-col gap-1">
+                        <div
+                          data-slot="card"
+                          className="flex flex-col gap-4 rounded-md border-1 border-border-default bg-surface-card py-3 px-4 relative mt-4"
+                        >
+                          <IconButton
+                            onClick={() => {
+                              fulFillmentForm.setValue('job_reference_id', null)
+                              fulFillmentForm.setValue('address_id', null)
+                            }}
+                            variant="ghost"
+                            black
+                            className="absolute top-0 right-0"
+                          >
+                            <XIcon className="size-5" />
+                          </IconButton>
+                          <div className="flex flex-col gap-1">
+                            <p className="text-[16px] font-bold">JR-{job.code}</p>
+                            <p className="text-[14px] font-semibold">
+                              {job.project_name ?? 'Not Provided'}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <MapMarker className="size-5" />
+                            <div className="flex flex-col gap-1 truncate">
+                              <>
+                                {deliveryType === 'delivery' ? (
+                                  <>
+                                    <p className="label-regular">{addr.title}</p>
+                                    <p className="body-small">{addr.full_address}</p>
+                                  </>
+                                ) : (
+                                  <>
+                                    <p className="label-regular">Self Pickup</p>
+                                    <p className="body-small">No Delivery Address</p>
+                                  </>
+                                )}
+                              </>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <ProfileNav className="size-5" />
+                            <div className="truncate">
+                              <>
+                                <p className="body-small">
+                                  {addr.recipient_name} - +67{addr.recipient_phone}
+                                </p>
+                              </>
+                            </div>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="flex gap-2">
-                        <ProfileNav className="size-5" />
-                        <div className="truncate">
-                          <>
-                            <p className="body-small">{jobReference?.recipient}</p>
-                          </>
-                        </div>
+                        <Button
+                          size="default"
+                          onClick={() => setJobReferenceDrawerOpen(true)}
+                          variant="ghost"
+                          className="pr-0 self-end w-fit"
+                        >
+                          Edit or Change
+                          <ChevronRight className="size-5" />
+                        </Button>
                       </div>
-                    </div>
-
-                    <Button
-                      size="default"
-                      onClick={() => setJobReferenceDrawerOpen(true)}
-                      variant="ghost"
-                      className="pr-0 justify-self-end"
-                    >
-                      Edit or Change
-                      <ChevronRight className="size-5" />
-                    </Button>
-                  </div>
+                    )
+                  })()
                 ) : (
                   <>
-                    <div className="flex flex-col gap-3 pt-2">
+                    <div className="flex flex-col gap-3 pt-2 pb-4">
                       <p className="subtitle-regular pb-2">
                         Choose an existing job reference or create a new one to organize this order
                       </p>
@@ -221,109 +293,45 @@ export default function FulFillPage() {
                 )}
               </div>
             </div>
-          </ContentWrapper>
 
-          <Drawer.Root>
-            <Drawer.Trigger className="relative flex h-10 flex-shrink-0 items-center justify-center gap-2 rounded-full bg-white px-4 text-sm font-medium shadow-sm transition-all hover:bg-[#FAFAFA] dark:bg-[#161615] dark:hover:bg-[#1A1A19] dark:text-white">
-              Open Drawer
-            </Drawer.Trigger>
-            <Drawer.Portal>
-              <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-              <Drawer.Content className="bg-gray-100 flex flex-col rounded-t-[10px] h-full mt-24 lg:h-fit max-h-[96%] fixed bottom-0 left-0 right-0">
-                <div className="p-4 bg-white rounded-t-[10px] flex-1">
-                  <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-gray-300 mb-8" />
-                  <div className="max-w-md mx-auto">
-                    <Drawer.Title className="font-medium mb-4 text-gray-900">
-                      Nested Drawers.
-                    </Drawer.Title>
-                    <p className="text-gray-600 mb-2">
-                      Nesting drawers creates a{' '}
-                      <a href="https://sonner.emilkowal.ski/" target="_blank" className="underline">
-                        Sonner-like
-                      </a>{' '}
-                      stacking effect .
-                    </p>
-                    <p className="text-gray-600 mb-2">
-                      You can nest as many drawers as you want. All you need to do is add a
-                      `Drawer.NestedRoot` component instead of `Drawer.Root`.
-                    </p>
-                    <Drawer.NestedRoot>
-                      <Drawer.Trigger className="rounded-md mt-4 w-full bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
-                        Open Second Drawer
-                      </Drawer.Trigger>
-                      <Drawer.Portal>
-                        <Drawer.Overlay className="fixed inset-0 bg-black/40" />
-                        <Drawer.Content className="bg-gray-100 flex flex-col rounded-t-[10px] lg:h-[327px] h-full mt-24 max-h-[94%] fixed bottom-0 left-0 right-0">
-                          <div className="p-4 bg-white rounded-t-[10px] flex-1">
-                            <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-gray-300 mb-8" />
-                            <div className="max-w-md mx-auto">
-                              <Drawer.Title className="font-medium mb-4 text-gray-900">
-                                This drawer is nested.
-                              </Drawer.Title>
-                              <p className="text-gray-600 mb-2">
-                                If you pull this drawer down a bit, it&apos;ll scale the drawer
-                                underneath it as well.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="p-4 bg-gray-100 border-t border-gray-200 mt-auto">
-                            <div className="flex gap-6 justify-end max-w-md mx-auto">
-                              <a
-                                className="text-xs text-gray-600 flex items-center gap-0.25"
-                                href="https://github.com/emilkowalski/vaul"
-                                target="_blank"
-                              >
-                                GitHub
-                                <svg
-                                  fill="none"
-                                  height="16"
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  viewBox="0 0 24 24"
-                                  width="16"
-                                  aria-hidden="true"
-                                  className="w-3 h-3 ml-1"
-                                >
-                                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
-                                  <path d="M15 3h6v6"></path>
-                                  <path d="M10 14L21 3"></path>
-                                </svg>
-                              </a>
-                              <a
-                                className="text-xs text-gray-600 flex items-center gap-0.25"
-                                href="https://twitter.com/emilkowalski_"
-                                target="_blank"
-                              >
-                                Twitter
-                                <svg
-                                  fill="none"
-                                  height="16"
-                                  stroke="currentColor"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  viewBox="0 0 24 24"
-                                  width="16"
-                                  aria-hidden="true"
-                                  className="w-3 h-3 ml-1"
-                                >
-                                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
-                                  <path d="M15 3h6v6"></path>
-                                  <path d="M10 14L21 3"></path>
-                                </svg>
-                              </a>
-                            </div>
-                          </div>
-                        </Drawer.Content>
-                      </Drawer.Portal>
-                    </Drawer.NestedRoot>
-                  </div>
-                </div>
-              </Drawer.Content>
-            </Drawer.Portal>
-          </Drawer.Root>
+            <div className="flex flex-col mt-2 py-6 px-6 bg-white">
+              <div className="flex items-center gap-2 pb-2">
+                {deliveryType === 'delivery' ? (
+                  <Delivery className="size-6" />
+                ) : (
+                  <WareHouse className="size-6" />
+                )}
+                <h6>Select you {deliveryType} date</h6>
+              </div>
+
+              <p className="subtitle-regular">Please select your preferred {deliveryType} date</p>
+
+              <Carousel
+                opts={{
+                  align: 'start',
+                }}
+                className="w-full pt-4"
+              >
+                <CarouselContent className="-ml-4 w-screen">
+                  {AVAILABLE_DATES?.map((date, index) => (
+                    <CarouselItem
+                      key={index}
+                      className="last:pr-6"
+                      // onClick={() => onSubmitDeliveryDate(date)}
+                    >
+                      <div className="flex flex-col items-center text-center gap-1.5 rounded-md border border-border-default p-2">
+                        <p className="label-small">{getDayAbbrString(date)}</p>
+                        <p className="caption-small text-subtitle">{getDayMonthNumber(date)}</p>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+              {deliveryType === 'pickup' && (
+                <p className="text-center caption-small pt-4">{DELIVERY_DESC}</p>
+              )}
+            </div>
+          </ContentWrapper>
 
           <Drawer.Root
             open={jobReferenceDrawerOpen}
@@ -405,12 +413,11 @@ export default function FulFillPage() {
                                     data-slot="card"
                                     className={cn(
                                       'grid gap-4 rounded-md border-1 border-border-default py-3 px-4 relative text-start',
-                                      jobReference?.job_reference_id === Number(job.id) &&
-                                        'bg-gray-100',
+                                      jobId === job.id && 'bg-gray-100',
                                     )}
                                     // disabled
                                   >
-                                    {jobReference?.job_reference_id === Number(job.id) && (
+                                    {jobId === job.id && (
                                       <div className="absolute z-110 right-4 top-4">
                                         <FeaturedCheckSmall className="size-5" />
                                       </div>
@@ -497,22 +504,16 @@ export default function FulFillPage() {
                                               <Drawer.Close
                                                 key={address.id}
                                                 onClick={() => {
-                                                  setJobReference({
-                                                    job_reference_id: Number(job.id),
-                                                    address_id: Number(address.id),
-                                                    code: String(job.code),
-                                                    project_name: job.project_name,
-                                                    title: address.title,
-                                                    full_address: address.full_address,
-                                                    recipient: `${address.recipient_name} - ${address.recipient_phone}`,
-                                                  })
+                                                  fulFillmentForm.setValue(
+                                                    'job_reference_id',
+                                                    job.id,
+                                                  )
+                                                  fulFillmentForm.setValue('address_id', address.id)
                                                   setJobReferenceDrawerOpen(false)
                                                 }}
                                                 className={cn(
                                                   'rounded-md border-1 border-border-default py-3 px-4 relative',
-                                                  jobReference?.address_id === Number(address.id)
-                                                    ? 'bg-gray-100'
-                                                    : '',
+                                                  addressId === address.id ? 'bg-gray-100' : '',
                                                 )}
                                               >
                                                 <div className="flex flex-col gap-2">
@@ -544,8 +545,7 @@ export default function FulFillPage() {
                                                   </div>
                                                 </div>
 
-                                                {jobReference?.address_id ===
-                                                  Number(address.id) && (
+                                                {addressId === address.id && (
                                                   <div className="absolute z-110 right-4 top-4">
                                                     <FeaturedCheckSmall className="size-5" />
                                                   </div>

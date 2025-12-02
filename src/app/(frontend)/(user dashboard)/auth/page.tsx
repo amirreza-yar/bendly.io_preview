@@ -40,7 +40,7 @@ const AuthPage = () => {
     } catch (error: any) {
       setIsLoading(false)
       const message =
-        error.response.data.non_field_errors[0] ||
+        error.response?.data?.non_field_errors[0] ||
         error.response?.data ||
         'Something broke, probably not your fault.'
 
