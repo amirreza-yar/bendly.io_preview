@@ -37,8 +37,25 @@ import z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/uikit/carousel'
-import { getDayAbbrString, getDayMonthNumber } from '@/utilities/datetime'
+import { formatPrettyDate, getDayAbbrString, getDayMonthNumber } from '@/utilities/datetime'
 import { House } from 'lucide-react'
+import { Form } from '@/components/uikit/form'
+import { toast } from 'sonner'
+
+function generateSequentialDates(date: string): string[] {
+  if (!date) return []
+
+  const first = new Date(date)
+  const result = []
+
+  for (let i = 0; i < 14; i++) {
+    const d = new Date(first)
+    d.setDate(first.getDate() + i)
+    result.push(d.toISOString().split('T')[0])
+  }
+
+  return result
+}
 
 export function searchJobReferences(data: any, query: any) {
   const normalizedQuery = query.toLowerCase()
@@ -65,12 +82,13 @@ export function searchJobReferences(data: any, query: any) {
 const snapPoints = [0.6, 1]
 
 const fulFillmentFormSchema = z.object({
+  job_reference_id: z.string().nonempty().nullable(),
   address_id: z.string().nonempty().nullable(),
   delivery_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   delivery_type: z.enum(['delivery', 'pickup']),
 })
 
-type FulFillmentFormSchema = z.infer<typeof fulFillmentFormSchema>
+type FulFillmentFormValue = z.infer<typeof fulFillmentFormSchema>
 
 export default function FulFillPage() {
   const [tabValue, setTabValue] = useState('main-tab')
@@ -93,7 +111,7 @@ export default function FulFillPage() {
     },
   })
 
-  const fulFillmentForm = useForm<FulFillmentFormSchema>({
+  const fulFillmentForm = useForm<FulFillmentFormValue>({
     resolver: zodResolver(fulFillmentFormSchema),
     defaultValues: {
       delivery_type: 'delivery',
@@ -103,10 +121,10 @@ export default function FulFillPage() {
   const jobId = fulFillmentForm.watch('job_reference_id')
   const addressId = fulFillmentForm.watch('address_id')
   const deliveryType = fulFillmentForm.watch('delivery_type')
+  const deliveryDate = fulFillmentForm.watch('delivery_date')
 
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  const AVAILABLE_DATES = ['2025-12-01', '2025-12-02', '2025-12-03', '2025-12-03', '2025-12-04']
   const DELIVERY_DESC = 'Open from 9:00 to 18:00'
 
   const [jobReference, setJobReference] = useState<{
@@ -159,7 +177,19 @@ export default function FulFillPage() {
     }
   }, [jobReference])
 
-  const order = {}
+  const onSubmitUpdateCartForm = async (data: FulFillmentFormValue) => {
+    console.log(data)
+
+    try {
+      await api.post('/d/cart/update/', {
+        address_id: data.address_id,
+        delivery_date: data.delivery_date,
+        delivery_type: data.delivery_type,
+      })
+    } catch (error: any) {
+      toast('Something went wrong')
+    }
+  }
 
   return (
     <>
@@ -313,18 +343,26 @@ export default function FulFillPage() {
                 className="w-full pt-4"
               >
                 <CarouselContent className="-ml-4 w-screen">
-                  {AVAILABLE_DATES?.map((date, index) => (
-                    <CarouselItem
-                      key={index}
-                      className="last:pr-6"
-                      // onClick={() => onSubmitDeliveryDate(date)}
-                    >
-                      <div className="flex flex-col items-center text-center gap-1.5 rounded-md border border-border-default p-2">
-                        <p className="label-small">{getDayAbbrString(date)}</p>
-                        <p className="caption-small text-subtitle">{getDayMonthNumber(date)}</p>
-                      </div>
-                    </CarouselItem>
-                  ))}
+                  {cart &&
+                    generateSequentialDates(cart?.estimated_delivery_date)?.map((date, index) => (
+                      <CarouselItem
+                        key={index}
+                        className="last:pr-6 pb-2"
+                        onClick={() => fulFillmentForm.setValue('delivery_date', date)}
+                      >
+                        <div
+                          className={cn(
+                            'flex flex-col items-center text-center rounded-md border p-2',
+                            deliveryDate === date
+                              ? 'border-primary bg-primary-lightest/40 ring-primary text-primary-dark font-bold'
+                              : 'border-border-default',
+                          )}
+                        >
+                          <p className="text-[13px]">{getDayAbbrString(date)}</p>
+                          <p className="text-[12px] opacity-70">{getDayMonthNumber(date)}</p>
+                        </div>
+                      </CarouselItem>
+                    ))}
                 </CarouselContent>
               </Carousel>
               {deliveryType === 'pickup' && (
@@ -332,6 +370,29 @@ export default function FulFillPage() {
               )}
             </div>
           </ContentWrapper>
+
+          <Footer className="px-0 w-full">
+            <form
+              id="fulfillment-form"
+              className="w-full flex items-center justify-between px-4"
+              onSubmit={fulFillmentForm.handleSubmit(onSubmitUpdateCartForm)}
+            >
+              <input className="hidden" {...fulFillmentForm.register('address_id')} />
+              <input className="hidden" {...fulFillmentForm.register('delivery_date')} />
+              <input className="hidden" {...fulFillmentForm.register('delivery_type')} />
+              <div className="flex flex-col items-start">
+                <p className="text-[12px]">
+                  You {deliveryType === 'delivery' ? 'will recieve' : 'can pickup'} your order on
+                </p>
+                <p className="text-[14px] font-bold">
+                  {deliveryDate ? formatPrettyDate(deliveryDate) : 'Not Set'}
+                </p>
+              </div>
+              <button form="fulfillment-form" type="submit" className="min-w-30">
+                Next
+              </button>
+            </form>
+          </Footer>
 
           <Drawer.Root
             open={jobReferenceDrawerOpen}
