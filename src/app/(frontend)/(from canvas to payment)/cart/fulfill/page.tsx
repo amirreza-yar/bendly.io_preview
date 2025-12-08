@@ -27,7 +27,7 @@ import api, { fetcher } from '@/lib/axios'
 import { cn } from '@/utilities/ui'
 import { Tabs } from '@radix-ui/react-tabs'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
 import { Footer } from '@/components/dashboard/footer'
@@ -41,6 +41,8 @@ import { formatPrettyDate, getDayAbbrString, getDayMonthNumber } from '@/utiliti
 import { House } from 'lucide-react'
 import { Form } from '@/components/uikit/form'
 import { toast } from 'sonner'
+import { Textarea } from '@/components/uikit/textarea'
+import { Separator } from '@/components/uikit/separator'
 
 function generateSequentialDates(date: string): string[] {
   if (!date) return []
@@ -81,12 +83,19 @@ export function searchJobReferences(data: any, query: any) {
 
 const snapPoints = [0.6, 1]
 
-const fulFillmentFormSchema = z.object({
-  job_reference_id: z.string().nonempty().nullable(),
-  address_id: z.string().nonempty().nullable(),
-  delivery_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  delivery_type: z.enum(['delivery', 'pickup']),
-})
+const fulFillmentFormSchema = z
+  .object({
+    job_reference_id: z.number('Select a job reference').nullable(),
+    address_id: z.number('Select a job reference').nullable(),
+    delivery_date: z
+      .string('Select a delivery date')
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Select a delivery date'),
+    delivery_type: z.enum(['delivery', 'pickup'], 'Delivery type is required'),
+  })
+  .refine((data) => data.job_reference_id && data.address_id, {
+    message: 'Select a job reference',
+    path: ['job_reference_id'], // where you want the single error to appear
+  })
 
 type FulFillmentFormValue = z.infer<typeof fulFillmentFormSchema>
 
@@ -102,7 +111,7 @@ export default function FulFillPage() {
 
   const [searchValue, setSearchValue] = useState<string>('')
 
-  const [searchResults, setSearchResults] = useState<StoredJobReference[] | null>()
+  const [searchResults, setSearchResults] = useState<any[] | null>()
 
   const { data: fetched_job_references } = useSWR('/d/job-ref/', fetcher, {
     onSuccess: (data) => {
@@ -117,6 +126,20 @@ export default function FulFillPage() {
       delivery_type: 'delivery',
     },
   })
+
+  useEffect(() => {
+    if (!fulFillmentForm) return
+    const err = fulFillmentForm.formState.errors
+    if (err.job_reference_id || err.address_id || err.delivery_date) {
+      if (err.address_id || err.job_reference_id) {
+        toast(err.job_reference_id?.message)
+      }
+
+      if (err.delivery_date) {
+        toast(err.delivery_date.message)
+      }
+    }
+  }, [fulFillmentForm.formState])
 
   const jobId = fulFillmentForm.watch('job_reference_id')
   const addressId = fulFillmentForm.watch('address_id')
@@ -146,17 +169,22 @@ export default function FulFillPage() {
     onError: notFound,
     onSuccess: (data) => {
       setDeliveryTypeState(data.delivery_type)
-      // setJobReference({
-      //   job_reference_id: data.job_reference.id,
-      //   address_id: data.address.id,
-      //   code: data.job_reference.code,
-      //   project_name: data.job_reference.project_name,
-      //   title: data.address.title,
-      //   full_address: data.address.full_address,
-      //   recipient: `${data.address.recipient_name} - ${data.address.recipient_phone}`,
-      // })
+
+      fulFillmentForm.setValue('job_reference_id', data.job_reference.id)
+      fulFillmentForm.setValue('address_id', data.address.id)
+      fulFillmentForm.setValue('delivery_date', data.delivery_date)
+      fulFillmentForm.setValue('delivery_type', data.delivery_type)
     },
   })
+
+  // useEffect(() => {
+  //   if (cart && fulFillmentForm) {
+  //     fulFillmentForm.setValue('job_reference_id', cart?.job_reference.id)
+  //     fulFillmentForm.setValue('address_id', cart?.address.id)
+  //     fulFillmentForm.setValue('delivery_date', cart?.delivery_date)
+  //     fulFillmentForm.setValue('delivery_type', cart?.delivery_type)
+  //   }
+  // }, [cart, fulFillmentForm])
 
   const checkForEstimatedDeliveryDate = async (address_id: number | string) => {
     console.log(address_id)
@@ -170,6 +198,8 @@ export default function FulFillPage() {
       console.log(error.response.data)
     }
   }
+
+  const router = useRouter()
 
   useEffect(() => {
     if (jobReference?.address_id) {
@@ -186,6 +216,7 @@ export default function FulFillPage() {
         delivery_date: data.delivery_date,
         delivery_type: data.delivery_type,
       })
+      router.replace('/cart/checkout/')
     } catch (error: any) {
       toast('Something went wrong')
     }
@@ -368,18 +399,23 @@ export default function FulFillPage() {
               {deliveryType === 'pickup' && (
                 <p className="text-center caption-small pt-4">{DELIVERY_DESC}</p>
               )}
+
+              <Separator className="my-4" />
+              <h6 className="pb-3">Order Notes</h6>
+              <Textarea
+                placeholder="Add an optional note (if needed)"
+                className="px-4 py-3 resize-none min-h-21"
+                maxLength={300}
+              />
             </div>
           </ContentWrapper>
 
           <Footer className="px-0 w-full">
             <form
-              id="fulfillment-form"
+              // id="fulfillment-form"
               className="w-full flex items-center justify-between px-4"
               onSubmit={fulFillmentForm.handleSubmit(onSubmitUpdateCartForm)}
             >
-              <input className="hidden" {...fulFillmentForm.register('address_id')} />
-              <input className="hidden" {...fulFillmentForm.register('delivery_date')} />
-              <input className="hidden" {...fulFillmentForm.register('delivery_type')} />
               <div className="flex flex-col items-start">
                 <p className="text-[12px]">
                   You {deliveryType === 'delivery' ? 'will recieve' : 'can pickup'} your order on
@@ -388,9 +424,9 @@ export default function FulFillPage() {
                   {deliveryDate ? formatPrettyDate(deliveryDate) : 'Not Set'}
                 </p>
               </div>
-              <button form="fulfillment-form" type="submit" className="min-w-30">
+              <Button type="submit" className="min-w-30">
                 Next
-              </button>
+              </Button>
             </form>
           </Footer>
 
@@ -474,11 +510,11 @@ export default function FulFillPage() {
                                     data-slot="card"
                                     className={cn(
                                       'grid gap-4 rounded-md border-1 border-border-default py-3 px-4 relative text-start',
-                                      jobId === job.id && 'bg-gray-100',
+                                      jobId === Number(job.id) && 'bg-gray-100',
                                     )}
                                     // disabled
                                   >
-                                    {jobId === job.id && (
+                                    {jobId === Number(job.id) && (
                                       <div className="absolute z-110 right-4 top-4">
                                         <FeaturedCheckSmall className="size-5" />
                                       </div>
@@ -561,20 +597,25 @@ export default function FulFillPage() {
                                         <>
                                           {searchResults
                                             ?.find((job_ref) => job_ref.id === job?.id)
-                                            ?.addresses?.map((address, index) => (
+                                            ?.addresses?.map((address: any) => (
                                               <Drawer.Close
                                                 key={address.id}
                                                 onClick={() => {
                                                   fulFillmentForm.setValue(
                                                     'job_reference_id',
-                                                    job.id,
+                                                    Number(job.id),
                                                   )
-                                                  fulFillmentForm.setValue('address_id', address.id)
+                                                  fulFillmentForm.setValue(
+                                                    'address_id',
+                                                    Number(address.id),
+                                                  )
                                                   setJobReferenceDrawerOpen(false)
                                                 }}
                                                 className={cn(
                                                   'rounded-md border-1 border-border-default py-3 px-4 relative',
-                                                  addressId === address.id ? 'bg-gray-100' : '',
+                                                  addressId === Number(address.id)
+                                                    ? 'bg-gray-100'
+                                                    : '',
                                                 )}
                                               >
                                                 <div className="flex flex-col gap-2">
@@ -606,7 +647,7 @@ export default function FulFillPage() {
                                                   </div>
                                                 </div>
 
-                                                {addressId === address.id && (
+                                                {addressId === Number(address.id) && (
                                                   <div className="absolute z-110 right-4 top-4">
                                                     <FeaturedCheckSmall className="size-5" />
                                                   </div>

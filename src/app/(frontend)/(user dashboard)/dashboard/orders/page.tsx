@@ -14,9 +14,8 @@ import { fetcher } from '@/lib/axios'
 import { notFound } from 'next/navigation'
 
 export default function OrdersPage() {
-  const { data, isLoading, error } = useSWR('/d/order/', fetcher, { onError: notFound })
+  const { data: orders, isLoading, error } = useSWR('/d/order/', fetcher, { onError: notFound })
 
-  const orders = data?.results
   const replacementRequests = null
 
   console.log(orders)
@@ -29,13 +28,13 @@ export default function OrdersPage() {
           <TabsList className="sticky top-4 bg-white z-20 mx-auto w-full">
             <TabsTrigger value="current">Current</TabsTrigger>
             <TabsTrigger value="past">Past</TabsTrigger>
-            <TabsTrigger value="replacement">Replacement</TabsTrigger>
+            {/* <TabsTrigger value="replacement">Replacement</TabsTrigger> */}
           </TabsList>
           <TabsContent value="current">
             <div className="grid grid-cols-1 md:grid-cols-2 pt-6 gap-4 lg:grid-cols-3">
               {orders &&
                 (() => {
-                  const filteredOrders = orders.filter(
+                  const filteredOrders = orders.results.filter(
                     (o: any) =>
                       o.status === 'pending' ||
                       o.status === 'in_progress' ||
@@ -61,7 +60,7 @@ export default function OrdersPage() {
             <div className="grid grid-cols-1 pt-6 gap-4">
               {orders &&
                 (() => {
-                  const filteredOrders = orders.filter(
+                  const filteredOrders = orders.results.filter(
                     (o: any) => o.status === 'complete' || o.status === 'cancelled',
                   )
 
@@ -80,7 +79,7 @@ export default function OrdersPage() {
                 })()}
             </div>
           </TabsContent>
-          <TabsContent value="replacement">
+          {/* <TabsContent value="replacement">
             <div className="grid grid-cols-1 pt-6 gap-4">
               {replacementRequests && replacementRequests.length > 0 ? (
                 replacementRequests.map((req, index) => (
@@ -95,7 +94,7 @@ export default function OrdersPage() {
                 </div>
               )}
             </div>
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </ContentWrapper>
     </>

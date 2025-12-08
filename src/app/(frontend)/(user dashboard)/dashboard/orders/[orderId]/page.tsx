@@ -18,14 +18,28 @@ import { notFound, useParams } from 'next/navigation'
 import { useMemo } from 'react'
 import useSWR from 'swr'
 
+function formatStatus(status: any) {
+  const map: any = {
+    pending: 'Pending',
+    in_progress: 'In Progress',
+    delivered: 'Delivered',
+    cancelled: 'Cancelled',
+    complete: 'Complete',
+  }
+
+  return map[status] || status
+}
+
 export default function OrderDetails() {
   const { orderId } = useParams<{ orderId: string }>()
 
-  const { data, isLoading, error } = useSWR(`/d/order/${orderId}/`, fetcher, {
-    onError: notFound(),
+  const {
+    data: order,
+    isLoading,
+    error,
+  } = useSWR(`/d/order/${orderId}/`, fetcher, {
+    onError: notFound,
   })
-
-  const order = data
 
   return (
     <>
@@ -36,7 +50,7 @@ export default function OrderDetails() {
             <div className="flex items-center justify-between label-small pb-1">
               <p className="text-subtitle">Order Status</p>
               <span className="text-heading">
-                <OrderStatusBadge status={order?.status} />
+                <OrderStatusBadge status={formatStatus(order?.status)} />
               </span>
             </div>
             <div className="flex items-center justify-between label-small">
@@ -62,18 +76,18 @@ export default function OrderDetails() {
 
           {order?.status !== 'Rejected' && (
             <div className="grid gap-2 bg-white p-4">
-              {order?.delivery?.type === 'delivery' ? (
+              {order?.fulfillment?.type === 'delivery' ? (
                 <h6 className="pb-4">Delivery Information</h6>
               ) : (
                 <h6 className="pb-4">Pickup Information</h6>
               )}
               <p className="label-small text-subtitle pb-1">
-                {order?.delivery?.type === 'delivery' ? 'Delivery to:' : 'Pickup at:'}
+                {order?.fulfillment?.type === 'delivery' ? 'Delivery to:' : 'Pickup at:'}
               </p>
-              {order?.delivery?.type === 'delivery' ? (
+              {order?.fulfillment?.type === 'delivery' ? (
                 <div className="flex items-center justify-start gap-1 label-small [&_svg]:size-4">
                   <Delivery />
-                  <span className="text-heading">{order?.job_reference?.full_address}</span>
+                  <span className="text-heading">{order?.fulfillment.address?.full_address}</span>
                 </div>
               ) : (
                 <div className="flex items-start justify-start gap-2 label-small [&_svg]:size-4">
@@ -87,22 +101,24 @@ export default function OrderDetails() {
               <div className="flex items-center justify-start gap-1 label-small [&_svg]:size-4">
                 <ProfileNav />
                 <span className="text-subtitle">
-                  {order?.job_reference?.recipient_name} {order?.job_reference?.recipient_phone}
+                  {order?.fulfillment.address.recipient_name}{' '}
+                  {order?.fulfillment.address.recipient_phone}
                 </span>
               </div>
               <div className="flex items-center justify-between label-small">
                 <p className="text-subtitle">Delivery Date</p>
-                <span className="text-heading">{formatDateWithDay(order?.delivery.date ?? 0)}</span>
+                <span className="text-heading">
+                  {formatDateWithDay(order?.fulfillment.date ?? 0)}
+                </span>
               </div>
-              <div className="flex items-center justify-between label-small">
-                <p className="text-subtitle">Delivery ID</p>
-                {order?.progress !== 'Order Received' ? (
+              {order?.status === 'in_progress' && (
+                <div className="flex items-center justify-between label-small">
+                  <p className="text-subtitle">Delivery ID</p>
                   <span className="text-heading">{order?.deliveryId}</span>
-                ) : (
-                  <span className="text-heading">Generated when order approved</span>
-                )}
-              </div>
-              {order?.delivery?.type === 'delivery' &&
+                </div>
+              )}
+              {order?.fulfillment?.type === 'delivery' &&
+                order?.status === 'in_progress' &&
                 (() => {
                   const driverInfo = order?.driverInfo
                   return (
@@ -131,7 +147,7 @@ export default function OrderDetails() {
                       ) : (
                         <div className="flex items-center justify-between label-small">
                           <p className="text-subtitle">Driver Information</p>
-                          <span className="text-heading">Shown when order</span>
+                          <span className="text-heading">Shown when order progressed</span>
                         </div>
                       )}
                     </>
@@ -196,28 +212,45 @@ export default function OrderDetails() {
           {order?.status !== 'Rejected' && (
             <div className="grid gap-2 bg-white p-4">
               <h6 className="pb-4">Order Summary</h6>
-              {/* <NewOrderSummaryAccordion flashings={augmentedFlashings} /> */}
+              {order?.flashings && <NewOrderSummaryAccordion flashings={order?.flashings} />}
               <Separator className="mb-2" />
               <div className="grid gap-4 pr-8">
-                {order?.delivery?.type === 'delivery' && (
-                  <div className="flex items-center justify-between">
-                    <span className="label-small grid">
-                      Delivery
-                      <p className="caption-small text-subtitle">Available from 2 business days</p>
-                    </span>
-                    <p className="label-small text-success">${order?.delivery_cost?.toFixed(2)}</p>
-                  </div>
+                {order?.fulfillment.type === 'delivery' && (
+                  <>
+                    <div>
+                      <div className="flex justify-between label-small">
+                        <p>Delivery</p>
+                        <p className="text-success">
+                          {order?.fulfillment?.method?._dm_type === 'freight'
+                            ? 'Freight Collect'
+                            : `$${order?.fulfillment.delivery_cost?.toFixed(2)}`}
+                        </p>
+                      </div>
+                      <p className="caption-small text-subtitle">
+                        {order?.fulfillment?.method?._dm_type !== 'freight'
+                          ? 'Factory will deliver your order'
+                          : 'Order delivered via freight transport'}
+                      </p>
+                    </div>
+                  </>
                 )}
                 <div className="flex items-center justify-between">
                   <span className="label-small">GST</span>
-                  <p className="label-small text-success">${order?.GST?.toFixed(2)}</p>
+                  <p className="label-small text-success">
+                    $
+                    {(
+                      (order?.payment_history?.flashings_cost +
+                        order?.payment_history?.delivery_cost) *
+                      order?.payment_history?.gst
+                    ).toFixed(2)}
+                  </p>
                 </div>
               </div>
               <Separator className="my-2" />
               <div className="flex items-center justify-between pr-8">
                 <span className="label-regular">Total</span>
                 <p className="label-regular text-success">
-                  ${order?.paymentHistory?.total.toFixed(2)}
+                  ${order?.payment_history?.amount.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -229,22 +262,22 @@ export default function OrderDetails() {
               <div className="flex items-center justify-between">
                 <p className="label-small text-subtitle">Total</p>
                 <p className="label-small text-heading">
-                  {order?.paymentHistory?.total.toFixed(2)}
+                  {order?.payment_history?.amount.toFixed(2)}
                 </p>
               </div>
               <div className="flex items-center justify-between">
                 <p className="label-small text-subtitle">Payment Date</p>
                 <p className="label-small text-heading">
-                  {formatDateTime(order?.paymentHistory?.date ?? 0)}
+                  {formatDateTime(order?.payment_history?.date ?? 0)}
                 </p>
               </div>
               <div className="flex items-center justify-between">
                 <p className="label-small text-subtitle">Transaction ID</p>
-                <p className="label-small text-heading">{order?.paymentHistory?.transactionId}</p>
+                <p className="label-small text-heading">{order?.payment_history?.transaction_id}</p>
               </div>
               <div className="flex items-center justify-between">
-                <p className="label-small text-subtitle">Total</p>
-                <p className="label-small text-heading">{order?.paymentHistory?.via}</p>
+                <p className="label-small text-subtitle">Via</p>
+                <p className="label-small text-heading">{order?.payment_history?.method}</p>
               </div>
             </div>
           </div>
