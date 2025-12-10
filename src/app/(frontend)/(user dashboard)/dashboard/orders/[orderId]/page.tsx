@@ -1,37 +1,46 @@
-'use client'
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import { Header } from '@/components/dashboard/header'
-import { NewOrderSummaryAccordion } from '@/components/dashboard/order/accordion'
-import { OrderStatusBadge } from '@/components/dashboard/order/badge'
+"use client";
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
+import { Header } from "@/components/dashboard/header";
+import { NewOrderSummaryAccordion } from "@/components/dashboard/order/accordion";
+import { OrderStatusBadge } from "@/components/dashboard/order/badge";
 import {
   ProgressionObject,
   RejectedProgressionObject,
-} from '@/components/dashboard/order/progressionObject'
-import { formatDateTime, formatDateWithDay } from '@/components/dashboard/order/utils'
-import { Button } from '@/components/uikit/buttons/button'
-import { Delivery, Info, Phone, ProfileNav, WareHouse } from '@/components/uikit/icons'
-import { Separator } from '@/components/uikit/separator'
-import { fetcher } from '@/lib/axios'
-import { useGETOrderById } from '@/lib/db/helpers/orderHelpers'
-import Link from 'next/link'
-import { notFound, useParams } from 'next/navigation'
-import { useMemo } from 'react'
-import useSWR from 'swr'
+} from "@/components/dashboard/order/progressionObject";
+import {
+  formatDateTime,
+  formatDateWithDay,
+} from "@/components/dashboard/order/utils";
+import { Button } from "@/components/uikit/buttons/button";
+import {
+  Delivery,
+  Info,
+  Phone,
+  ProfileNav,
+  WareHouse,
+} from "@/components/uikit/icons";
+import { Separator } from "@/components/uikit/separator";
+import { fetcher } from "@/lib/axios";
+import { useGETOrderById } from "@/lib/db/helpers/orderHelpers";
+import Link from "next/link";
+import { notFound, useParams } from "next/navigation";
+import { useMemo } from "react";
+import useSWR from "swr";
 
 function formatStatus(status: any) {
   const map: any = {
-    pending: 'Pending',
-    in_progress: 'In Progress',
-    delivered: 'Delivered',
-    cancelled: 'Cancelled',
-    complete: 'Complete',
-  }
+    pending: "Pending",
+    in_progress: "In Progress",
+    delivered: "Delivered",
+    cancelled: "Cancelled",
+    complete: "Complete",
+  };
 
-  return map[status] || status
+  return map[status] || status;
 }
 
 export default function OrderDetails() {
-  const { orderId } = useParams<{ orderId: string }>()
+  const { orderId } = useParams<{ orderId: string }>();
 
   const {
     data: order,
@@ -39,7 +48,7 @@ export default function OrderDetails() {
     error,
   } = useSWR(`/d/order/${orderId}/`, fetcher, {
     onError: notFound,
-  })
+  });
 
   return (
     <>
@@ -59,35 +68,45 @@ export default function OrderDetails() {
             </div>
             <div className="flex items-center justify-between label-small">
               <p className="text-subtitle">Order Date</p>
-              <span className="text-heading">{formatDateTime(order?.created_at)}</span>
+              <span className="text-heading">
+                {formatDateTime(order?.created_at)}
+              </span>
             </div>
             <Separator className="my-2" />
             <div className="flex items-center justify-between label-small">
               <p className="text-subtitle">Job Ref</p>
-              <span className="text-heading">JR-{order?.job_reference?.code}</span>
+              <span className="text-heading">
+                JR-{order?.job_reference?.code}
+              </span>
             </div>
             {order?.job_reference?.project_name && (
               <div className="flex items-center justify-between label-small">
                 <p className="text-subtitle">Project Name</p>
-                <span className="text-heading">{order?.job_reference?.project_name}</span>
+                <span className="text-heading">
+                  {order?.job_reference?.project_name}
+                </span>
               </div>
             )}
           </div>
 
-          {order?.status !== 'Rejected' && (
+          {order?.status !== "Rejected" && (
             <div className="grid gap-2 bg-white p-4">
-              {order?.fulfillment?.type === 'delivery' ? (
+              {order?.fulfillment?.type === "delivery" ? (
                 <h6 className="pb-4">Delivery Information</h6>
               ) : (
                 <h6 className="pb-4">Pickup Information</h6>
               )}
               <p className="label-small text-subtitle pb-1">
-                {order?.fulfillment?.type === 'delivery' ? 'Delivery to:' : 'Pickup at:'}
+                {order?.fulfillment?.type === "delivery"
+                  ? "Delivery to:"
+                  : "Pickup at:"}
               </p>
-              {order?.fulfillment?.type === 'delivery' ? (
+              {order?.fulfillment?.type === "delivery" ? (
                 <div className="flex items-center justify-start gap-1 label-small [&_svg]:size-4">
                   <Delivery />
-                  <span className="text-heading">{order?.fulfillment.address?.full_address}</span>
+                  <span className="text-heading">
+                    {order?.fulfillment.address?.full_address}
+                  </span>
                 </div>
               ) : (
                 <div className="flex items-start justify-start gap-2 label-small [&_svg]:size-4">
@@ -101,7 +120,7 @@ export default function OrderDetails() {
               <div className="flex items-center justify-start gap-1 label-small [&_svg]:size-4">
                 <ProfileNav />
                 <span className="text-subtitle">
-                  {order?.fulfillment.address.recipient_name}{' '}
+                  {order?.fulfillment.address.recipient_name}{" "}
                   {order?.fulfillment.address.recipient_phone}
                 </span>
               </div>
@@ -111,28 +130,30 @@ export default function OrderDetails() {
                   {formatDateWithDay(order?.fulfillment.date ?? 0)}
                 </span>
               </div>
-              {order?.status === 'in_progress' && (
+              {order?.status === "in_progress" && (
                 <div className="flex items-center justify-between label-small">
                   <p className="text-subtitle">Delivery ID</p>
                   <span className="text-heading">{order?.deliveryId}</span>
                 </div>
               )}
-              {order?.fulfillment?.type === 'delivery' &&
-                order?.status === 'in_progress' &&
+              {order?.fulfillment?.type === "delivery" &&
+                order?.status === "in_progress" &&
                 (() => {
-                  const driverInfo = order?.driverInfo
+                  const driverInfo = order?.driverInfo;
                   return (
                     <>
-                      {order?.progress === 'Ready' ||
-                      order?.progress === 'In Production' ||
-                      order?.progress === 'Completed' ? (
+                      {order?.progress === "Ready" ||
+                      order?.progress === "In Production" ||
+                      order?.progress === "Completed" ? (
                         <>
                           <div className="flex items-center justify-between label-small">
                             <p className="text-subtitle">Driver Information</p>
-                            <span className="text-heading">{driverInfo?.name}</span>
+                            <span className="text-heading">
+                              {driverInfo?.name}
+                            </span>
                           </div>
 
-                          {order?.progress !== 'Completed' && (
+                          {order?.progress !== "Completed" && (
                             <div className="flex justify-end items-center pt-1">
                               <Link
                                 href={`tel:${driverInfo?.mobile}`}
@@ -147,19 +168,24 @@ export default function OrderDetails() {
                       ) : (
                         <div className="flex items-center justify-between label-small">
                           <p className="text-subtitle">Driver Information</p>
-                          <span className="text-heading">Shown when order progressed</span>
+                          <span className="text-heading">
+                            Shown when order progressed
+                          </span>
                         </div>
                       )}
                     </>
-                  )
+                  );
                 })()}
             </div>
           )}
 
-          {order?.progress === 'Completed' &&
+          {order?.progress === "Completed" &&
             (() => {
               // const req = replacementRequests.find((req) => order?.id === req.order?.id)
-              const req = { requestDateTime: undefined, requestProgress: undefined }
+              const req = {
+                requestDateTime: undefined,
+                requestProgress: undefined,
+              };
 
               if (req !== undefined) {
                 return (
@@ -168,19 +194,20 @@ export default function OrderDetails() {
                     <div className="flex items-start gap-3 p-3 rounded-md body-small bg-surface-info-subtle text-primary">
                       <Info className="size-5" />
                       <p>
-                        You have submitted a replacement request for this order on{' '}
-                        {formatDateTime(req.requestDateTime ?? 0)} <br /> Status:{' '}
-                        {req.requestProgress}
+                        You have submitted a replacement request for this order
+                        on {formatDateTime(req.requestDateTime ?? 0)} <br />{" "}
+                        Status: {req.requestProgress}
                       </p>
                     </div>
                   </div>
-                )
+                );
               } else {
                 return (
                   <div className="grid gap-2 bg-white p-4">
                     <h6>Post-Delivery Actions</h6>
                     <p className="body-small text-body">
-                      Something wrong with your delivery? Request a replacement easily.
+                      Something wrong with your delivery? Request a replacement
+                      easily.
                     </p>
                     <Link
                       className="w-full"
@@ -191,45 +218,49 @@ export default function OrderDetails() {
                       </Button>
                     </Link>
                   </div>
-                )
+                );
               }
             })()}
 
           <div className="grid gap-2 bg-white p-4">
             <h6 className="pb-4">Order Progress</h6>
-            {order?.status !== 'Rejected' ? (
+            {order?.status !== "Rejected" ? (
               <ProgressionObject progress={order?.status} />
             ) : (
               <>
                 <RejectedProgressionObject progress={order?.progress} />
                 <Separator className="my-2 mt-1" />
                 <p className="label-small text-subtitle">Reasons for Reject:</p>
-                <span className="label-small text-body">{order?.rejectionDesc}</span>
+                <span className="label-small text-body">
+                  {order?.rejectionDesc}
+                </span>
               </>
             )}
           </div>
 
-          {order?.status !== 'Rejected' && (
+          {order?.status !== "Rejected" && (
             <div className="grid gap-2 bg-white p-4">
               <h6 className="pb-4">Order Summary</h6>
-              {order?.flashings && <NewOrderSummaryAccordion flashings={order?.flashings} />}
+              {order?.flashings && (
+                <NewOrderSummaryAccordion flashings={order?.flashings} />
+              )}
               <Separator className="mb-2" />
               <div className="grid gap-4 pr-8">
-                {order?.fulfillment.type === 'delivery' && (
+                {order?.fulfillment.type === "delivery" && (
                   <>
                     <div>
                       <div className="flex justify-between label-small">
                         <p>Delivery</p>
                         <p className="text-success">
-                          {order?.fulfillment?.method?._dm_type === 'freight'
-                            ? 'Freight Collect'
-                            : `$${order?.fulfillment.delivery_cost?.toFixed(2)}`}
+                          {order?.fulfillment?.method?._dm_type === "freight"
+                            ? "Freight Collect"
+                            : `$${order?.fulfillment.cost?.toFixed(2)}`}
                         </p>
                       </div>
                       <p className="caption-small text-subtitle">
-                        {order?.fulfillment?.method?._dm_type !== 'freight'
-                          ? 'Factory will deliver your order'
-                          : 'Order delivered via freight transport'}
+                        {order?.fulfillment?.method?._dm_type !== "freight"
+                          ? "Factory will deliver your order"
+                          : "Order delivered via freight transport"}
                       </p>
                     </div>
                   </>
@@ -273,16 +304,20 @@ export default function OrderDetails() {
               </div>
               <div className="flex items-center justify-between">
                 <p className="label-small text-subtitle">Transaction ID</p>
-                <p className="label-small text-heading">{order?.payment_history?.transaction_id}</p>
+                <p className="label-small text-heading">
+                  {order?.payment_history?.transaction_id}
+                </p>
               </div>
               <div className="flex items-center justify-between">
                 <p className="label-small text-subtitle">Via</p>
-                <p className="label-small text-heading">{order?.payment_history?.method}</p>
+                <p className="label-small text-heading">
+                  {order?.payment_history?.method}
+                </p>
               </div>
             </div>
           </div>
 
-          {order?.progress !== 'Completed' && (
+          {order?.progress !== "Completed" && (
             <div className="grid bg-white p-4 gap-6">
               <h6>Need Help?</h6>
               <div className="grid gap-4">
@@ -300,12 +335,14 @@ export default function OrderDetails() {
                   <Phone className="size-5" />
                   Send Mail
                 </Link>
-                <p className="caption-small text-center pt-2">Support hours: Mon-Fri 8AM-6PM EST</p>
+                <p className="caption-small text-center pt-2">
+                  Support hours: Mon-Fri 8AM-6PM EST
+                </p>
               </div>
             </div>
           )}
         </div>
       </ContentWrapper>
     </>
-  )
+  );
 }

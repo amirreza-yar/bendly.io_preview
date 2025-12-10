@@ -1,24 +1,29 @@
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import { TabsContent } from '@radix-ui/react-tabs'
-import { UseFormReturn } from 'react-hook-form'
-import { FormControl, FormField, FormItem, FormMessage } from '@/components/uikit/form'
-import { LabeledInput, LabeledInputWithCode } from '@/components/uikit/input'
-import { ReactNode } from 'react'
-import { Select } from '@/components/uikit/select'
-import { Separator } from '@/components/uikit/separator'
-import { Button } from '@/components/uikit/buttons/button'
-import { Edit, Info, MapMarker } from '@/components/uikit/icons'
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
+import { TabsContent } from "@radix-ui/react-tabs";
+import { UseFormReturn } from "react-hook-form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/uikit/form";
+import { LabeledInput, LabeledInputWithCode } from "@/components/uikit/input";
+import { ReactNode } from "react";
+import { Select } from "@/components/uikit/select";
+import { Separator } from "@/components/uikit/separator";
+import { Button } from "@/components/uikit/buttons/button";
+import { Edit, Info, MapMarker } from "@/components/uikit/icons";
 
 const australianStates = [
-  { value: 'NSW', label: 'New South Wales' },
-  { value: 'VIC', label: 'Victoria' },
-  { value: 'QLD', label: 'Queensland' },
-  { value: 'WA', label: 'Western Australia' },
-  { value: 'SA', label: 'South Australia' },
-  { value: 'TAS', label: 'Tasmania' },
-  { value: 'ACT', label: 'Australian Capital Territory' },
-  { value: 'NT', label: 'Northern Territory' },
-]
+  { value: "NSW", label: "New South Wales" },
+  { value: "VIC", label: "Victoria" },
+  { value: "QLD", label: "Queensland" },
+  { value: "WA", label: "Western Australia" },
+  { value: "SA", label: "South Australia" },
+  { value: "TAS", label: "Tasmania" },
+  { value: "ACT", label: "Australian Capital Territory" },
+  { value: "NT", label: "Northern Territory" },
+];
 
 export const AddressFormTab = ({
   tabValue,
@@ -27,11 +32,11 @@ export const AddressFormTab = ({
   Footer,
   className,
 }: {
-  tabValue: string
-  addressForm: UseFormReturn<any>
-  Header: ReactNode
-  Footer: ReactNode
-  className?: string
+  tabValue: string;
+  addressForm: UseFormReturn<any>;
+  Header: ReactNode;
+  Footer: ReactNode;
+  className?: string;
 }) => {
   return (
     <TabsContent value={tabValue} className={className}>
@@ -50,7 +55,7 @@ export const AddressFormTab = ({
                     type="text"
                     placeholder="e.g., 123 Main St"
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -69,7 +74,7 @@ export const AddressFormTab = ({
                     type="text"
                     placeholder="e.g., Sydney"
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -89,7 +94,7 @@ export const AddressFormTab = ({
                       placeholder="Select state / territory"
                       required
                       {...field}
-                      value={field.value ?? ''}
+                      value={field.value ?? ""}
                       onValueChange={field.onChange}
                     />
                   </div>
@@ -110,7 +115,7 @@ export const AddressFormTab = ({
                     type="text"
                     placeholder="e.g., 2000"
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -130,7 +135,7 @@ export const AddressFormTab = ({
                     type="text"
                     placeholder="Eneter a name for Site / Address"
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -141,8 +146,8 @@ export const AddressFormTab = ({
         {Footer}
       </ContentWrapper>
     </TabsContent>
-  )
-}
+  );
+};
 
 export const RecipientFormTab = ({
   tabValue,
@@ -153,14 +158,16 @@ export const RecipientFormTab = ({
   showAddress = false,
   onAddressCardClick,
 }: {
-  tabValue: string
-  recipientForm: UseFormReturn<any>
-  Header: ReactNode
-  Footer: ReactNode
-  className?: string
-  showAddress?: boolean
-  onAddressCardClick?: (props: any) => void
+  tabValue: string;
+  recipientForm: UseFormReturn<any>;
+  Header: ReactNode;
+  Footer: ReactNode;
+  className?: string;
+  showAddress?: boolean;
+  onAddressCardClick?: (props: any) => void;
 }) => {
+  const watched = recipientForm.watch();
+
   return (
     <TabsContent value={tabValue} className={className}>
       {Header}
@@ -175,10 +182,10 @@ export const RecipientFormTab = ({
               <div className="flex gap-2">
                 <MapMarker className="size-5" />
                 <div className="flex flex-col gap-1 items-start truncate">
-                  <p className="label-regular">{recipientForm.getValues().title}</p>
+                  <p className="label-regular">{watched?.title}</p>
                   <p className="body-small">
-                    {recipientForm.getValues().street}, {recipientForm.getValues().suburb},{' '}
-                    {recipientForm.getValues().state} {recipientForm.getValues().postcode}
+                    {watched?.street}, {watched?.suburb}, {watched?.state}{" "}
+                    {watched?.postcode}
                   </p>
                 </div>
               </div>
@@ -194,8 +201,8 @@ export const RecipientFormTab = ({
               size="default"
               type="button"
               onClick={() => {
-                recipientForm.setValue('name', 'Amirreza Yarahmadi')
-                recipientForm.setValue('phone', '1231231231')
+                recipientForm.setValue("name", "Amirreza Yarahmadi");
+                recipientForm.setValue("phone", "1231231231");
               }}
             >
               Set my info
@@ -213,7 +220,7 @@ export const RecipientFormTab = ({
                     type="text"
                     placeholder="e.g., Jon Doe"
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -232,7 +239,7 @@ export const RecipientFormTab = ({
                     type="text"
                     placeholder="e.g., 400123456"
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -243,8 +250,8 @@ export const RecipientFormTab = ({
         {Footer}
       </ContentWrapper>
     </TabsContent>
-  )
-}
+  );
+};
 
 export const JobRefFormTab = ({
   tabValue,
@@ -253,11 +260,11 @@ export const JobRefFormTab = ({
   Footer,
   className,
 }: {
-  tabValue: string
-  jobRefForm: UseFormReturn<any>
-  Header: ReactNode
-  Footer: ReactNode
-  className?: string
+  tabValue: string;
+  jobRefForm: UseFormReturn<any>;
+  Header: ReactNode;
+  Footer: ReactNode;
+  className?: string;
 }) => {
   return (
     <TabsContent value={tabValue} className={className}>
@@ -280,10 +287,12 @@ export const JobRefFormTab = ({
                     type="text"
                     placeholder="Enter unique Job Reference code"
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
-                <FormMessage>A unique code you assign to identify this job</FormMessage>
+                <FormMessage>
+                  A unique code you assign to identify this job
+                </FormMessage>
               </FormItem>
             )}
           />
@@ -299,10 +308,12 @@ export const JobRefFormTab = ({
                     type="text"
                     placeholder="Enter your project name"
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                   />
                 </FormControl>
-                <FormMessage>Name this job reference for easy identification</FormMessage>
+                <FormMessage>
+                  Name this job reference for easy identification
+                </FormMessage>
               </FormItem>
             )}
           />
@@ -310,5 +321,5 @@ export const JobRefFormTab = ({
         {Footer}
       </ContentWrapper>
     </TabsContent>
-  )
-}
+  );
+};

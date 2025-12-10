@@ -1,23 +1,29 @@
-'use client'
+import { Button } from "@/components/uikit/buttons/button";
+import { FeaturedSuccess } from "@/components/uikit/icons";
+import api from "@/lib/axios";
+import { Download } from "lucide-react";
+import { cookies } from "next/headers";
+import Link from "next/link";
 
-import { Button } from '@/components/uikit/buttons/button'
-import { FeaturedSuccess } from '@/components/uikit/icons'
-import { fetcher } from '@/lib/axios'
-import { Download } from 'lucide-react'
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import useSWR from 'swr'
+export default async function SuccessPayPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ id: string; orderId: string }>;
+}) {
+  const { id, orderId } = await searchParams;
 
-export default function SuccessPayPage() {
-  const searchParams = useSearchParams
-  const transId = searchParams().get('id')
-  const orderId = searchParams().get('orderId')
+  let order: any = null;
+  try {
+    const res = await api.get(`/d/order/${orderId}/`, {
+      headers: {
+        Cookie: (await cookies()).toString(),
+      },
+    });
 
-  const { data: order, isLoading, error } = useSWR(`/d/order/${orderId}`, fetcher)
-
-  //   const cart = await api.get(`/d/order/${orderId}`)
-
-  console.log(order)
+    order = res.data;
+  } catch (err: any) {
+    console.log(err.response);
+  }
 
   return (
     <>
@@ -28,7 +34,7 @@ export default function SuccessPayPage() {
           <p className="text-[13px]">Your order has been submitted</p>
           <div className="flex items-center gap-4 justify-between">
             <p className="text-[13px]">Transaction ID</p>
-            <p className="text-[13px] font-bold">{transId}</p>
+            <p className="text-[13px] font-bold">{id}</p>
           </div>
           <div className="flex items-center gap-4 justify-between">
             <p className="text-[13px]">Order ID</p>
@@ -37,12 +43,12 @@ export default function SuccessPayPage() {
           <div className="flex items-center gap-4 justify-between">
             <p className="text-[13px]">Date</p>
             <p className="text-[13px] font-bold">
-              {new Date(order?.created_at).toLocaleString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
+              {new Date(order?.created_at).toLocaleString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
               })}
             </p>
           </div>
@@ -63,5 +69,5 @@ export default function SuccessPayPage() {
         </div>
       </div>
     </>
-  )
+  );
 }

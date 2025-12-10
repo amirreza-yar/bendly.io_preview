@@ -2,13 +2,8 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Roboto_Flex } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'sonner'
-import { UserData, UserProvider } from '@/providers/main_providers/UserContext'
+import { UserProvider } from '@/providers/main_providers/UserContext'
 import { DBProvider } from '@/providers/db_providers/DBContext'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { getUserProfile } from '@/lib/db/helpers/userProfileHelpers'
-import { db } from '@/lib/db/appDB'
-import { ApolloClient, HttpLink, InMemoryCache, gql } from '@apollo/client'
-import { ApolloProvider } from '@apollo/client/react'
 
 export const metadata = {
   title: 'Flashing Factory DEV',

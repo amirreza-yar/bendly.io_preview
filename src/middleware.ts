@@ -1,28 +1,5 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { jwtVerify } from 'jose'
-import api from './lib/axios'
-
-async function verifyJWT(token: string) {
-  try {
-    const secretRead = process.env.JWT_SECRET || 'dev-secret-key'
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'dev-secret-key')
-    console.log('🔐 Verifying JWT with secret length:', secret.length, secretRead, token)
-    const { payload } = await jwtVerify(token, secret)
-    console.log('✅ JWT verified successfully:', payload)
-
-    // Validate Payload CMS token structure
-    if (payload.sid && payload.sub && payload.email) {
-      return payload
-    } else {
-      console.error('❌ Invalid Payload CMS token structure')
-      return payload
-    }
-  } catch (error) {
-    console.error('❌ JWT verification failed:', error)
-    return null
-  }
-}
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname

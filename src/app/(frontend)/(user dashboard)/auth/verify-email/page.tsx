@@ -1,60 +1,70 @@
-'use client'
-import { HeaderWithCenterTitle } from '@/components/dashboard/header'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import Link from 'next/link'
-import { Edit } from '@/components/uikit/icons'
-import { useEffect, useRef, useState } from 'react'
-import { apiSendEmailCode, apiVerifyEmailCode } from '@/utilities/api/auth'
-import { toast } from 'sonner'
-import { VerifyEmailOTPForm, VerifyEmailOTPValue } from '@/components/dashboard/auth/forms'
-import { CodeResendTime, CodeResendTimeHandle } from '@/components/dashboard/auth/resendTime'
-import api from '@/lib/axios'
+"use client";
 
-export default function VerifyEmailPage() {
-  const router = useRouter()
+import { HeaderWithCenterTitle } from "@/components/dashboard/header";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
+import Link from "next/link";
+import { Edit } from "@/components/uikit/icons";
+import { use, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import {
+  VerifyEmailOTPForm,
+  VerifyEmailOTPValue,
+} from "@/components/dashboard/auth/forms";
+import {
+  CodeResendTime,
+  CodeResendTimeHandle,
+} from "@/components/dashboard/auth/resendTime";
+import api from "@/lib/axios";
 
-  const email = useSearchParams().get('email') ?? ''
+export default function VerifyEmailPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ email?: string }>;
+}) {
+  const router = useRouter();
 
-  useEffect(() => {
-    if (!email) {
-      router.replace('/auth')
-    }
-  }, [email, router])
+  const email = use(searchParams).email;
 
-  const [isLoading, setIsLoading] = useState(false)
+  // useEffect(() => {
+  //   if (!email) {
+  //     router.replace("/auth");
+  //   }
+  // }, [email, router]);
 
-  const resendRef = useRef<CodeResendTimeHandle>(null)
-  const [invalidCodeErrorText, setInvalidCodeErrorText] = useState<string>('')
+  const [isLoading, setIsLoading] = useState(false);
+
+  const resendRef = useRef<CodeResendTimeHandle>(null);
+  const [invalidCodeErrorText, setInvalidCodeErrorText] = useState<string>("");
 
   const onSubmitVerifyEmail = async (data: VerifyEmailOTPValue) => {
     try {
-      setIsLoading(true)
-      await api.post('/auth/registration/verify-email/', {
+      setIsLoading(true);
+      await api.post("/auth/registration/verify-email/", {
         key: data.emailOTP,
-      })
+      });
 
-      toast('Your email verified')
-      setIsLoading(false)
-      router.replace('/dashboard')
+      toast("Your email verified");
+      setIsLoading(false);
+      router.replace("/dashboard");
     } catch (error: any) {
-      setIsLoading(false)
+      setIsLoading(false);
 
-      setInvalidCodeErrorText('Invalid OTP. Please try again.')
+      setInvalidCodeErrorText("Invalid OTP. Please try again.");
     }
-  }
+  };
 
   const handleResendEmailCode = async () => {
     try {
-      await api.post('/auth/registration/resend-email/', {
+      await api.post("/auth/registration/resend-email/", {
         email: email,
-      })
+      });
 
-      toast('Verification email resent')
+      toast("Verification email resent");
     } catch (error: any) {
-      toast('Something went wrong!')
+      toast("Something went wrong!");
     }
-  }
+  };
 
   return (
     <>
@@ -80,11 +90,16 @@ export default function VerifyEmailPage() {
           />
 
           <div className="flex gap-2 items-center justify-center">
-            <span className="text-xs text-gray-600">Did not receive the code?</span>
-            <CodeResendTime ref={resendRef} onResendHandler={handleResendEmailCode} />
+            <span className="text-xs text-gray-600">
+              Did not receive the code?
+            </span>
+            <CodeResendTime
+              ref={resendRef}
+              onResendHandler={handleResendEmailCode}
+            />
           </div>
         </div>
       </ContentWrapper>
     </>
-  )
+  );
 }

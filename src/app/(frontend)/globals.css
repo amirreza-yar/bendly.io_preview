@@ -1,8 +1,6 @@
 
 @import 'tailwindcss';
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,slnt,wdth,GRAD@8..144,-10,25,150&display=swap');
-
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
