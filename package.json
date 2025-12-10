@@ -1,7 +1,7 @@
 {
-  "name": "ff-frontend",
+  "name": "bendly-frontend",
   "version": "0.1.0",
-  "description": "Flashing Factory Application",
+  "description": "Bendly Frontend Master Repo",
   "license": "MIT",
   "type": "module",
   "private": true,
