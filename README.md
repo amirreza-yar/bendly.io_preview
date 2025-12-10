@@ -1,321 +1,322 @@
-# Payload Website Template
+# Bendly Frontend
 
-This is the official [Payload Website Template](https://github.com/payloadcms/payload/blob/main/templates/website). Use it to power websites, blogs, or portfolios from small to enterprise. This repo includes a fully-working backend, enterprise-grade admin panel, and a beautifully designed, production-ready website.
+A modern, full-stack manufacturing platform for the construction industry, specializing in flashing design and fabrication. Bendly enables customers to design, order, and track custom flashing products through an intuitive web interface, while providing manufacturers with comprehensive order management and production tracking tools.
 
-This template is right for you if you are working on:
+## Overview
 
-- A personal or enterprise-grade website, blog, or portfolio
-- A content publishing platform with a fully featured publication workflow
-- Exploring the capabilities of Payload
+Bendly is a web-based platform for flashing design and manufacturing in the construction industry.
 
-Core features:
+## 🏗️ Architecture & Tech Stack
 
-- [Pre-configured Payload Config](#how-it-works)
-- [Authentication](#users-authentication)
-- [Access Control](#access-control)
-- [Layout Builder](#layout-builder)
-- [Draft Preview](#draft-preview)
-- [Live Preview](#live-preview)
-- [On-demand Revalidation](#on-demand-revalidation)
-- [SEO](#seo)
-- [Search](#search)
-- [Redirects](#redirects)
-- [Jobs and Scheduled Publishing](#jobs-and-scheduled-publish)
-- [Website](#website)
+### Frontend Framework
 
-## Quick Start
+- **Next.js 15** - React framework with App Router
+- **React 19** - Latest React with concurrent features
+- **TypeScript** - Type-safe development
 
-To spin up this example locally, follow these steps:
+### UI & Styling
 
-### Clone
+- **Tailwind CSS 4** - Utility-first CSS framework
+- **Radix UI** - Accessible, unstyled UI primitives
+- **shadcn/ui** - Re-usable component library
+- **Lucide React** - Beautiful icon set
+- **Framer Motion** - Animation library
 
-If you have not done so already, you need to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+### State Management & Data
 
-#### Method 1 (recommended)
+- **Zustand** - Lightweight state management
+- **Apollo Client** - GraphQL client for API communication
+- **URQL** - Alternative GraphQL client for specific operations
+- **Dexie** - IndexedDB wrapper for offline storage
+- **SWR** - React hooks for data fetching
 
-Go to Payload Cloud and [clone this template](https://payloadcms.com/new/clone/website). This will create a new repository on your GitHub account with this template's code which you can then clone to your own machine.
+### Canvas & Design
 
-#### Method 2
+- **Fabric.js** - HTML5 canvas library for design interface
+- **@dnd-kit** - Drag and drop functionality
 
-Use the `create-payload-app` CLI to clone this template directly to your machine:
+### Forms & Validation
+
+- **React Hook Form** - Performant forms with easy validation
+- **Zod** - TypeScript-first schema validation
+
+### Development Tools
+
+- **Vitest** - Unit testing framework
+- **Playwright** - End-to-end testing
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+
+## 🚀 Key Features
+
+### Customer Features
+
+- **Interactive Design Canvas**: Drag-and-drop interface for creating custom metal designs
+- **Material Selection**: Choose from various metals, gauges, and finishes
+- **Real-time Pricing**: Dynamic pricing based on design specifications
+- **Order Tracking**: Complete order lifecycle visibility
+- **Account Management**: Manage addresses, job references, and preferences
+- **Order History**: View past orders and reorder functionality
+
+### Admin Features
+
+- **Order Management Dashboard**: Comprehensive order processing interface
+- **Customer Management**: View and manage customer accounts
+- **Production Tracking**: Monitor manufacturing progress
+- **Material Inventory**: Track stock levels and manage materials
+- **Analytics & Reporting**: Business intelligence and performance metrics
+- **Factory Calendar**: Schedule and manage production capacity
+
+### Technical Features
+
+- **Offline Support**: IndexedDB for offline design capabilities
+- **Responsive Design**: Mobile-first approach with desktop optimization
+- **Dark Mode**: Theme switching capability
+- **Real-time Updates**: Live order status and notifications
+- **Secure Authentication**: JWT-based authentication with automatic token refresh
+- **Role-based Access**: Different permission levels for customers and admins
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- **Node.js**: ^18.20.2 || >=20.9.0
+- **pnpm**: ^9 || ^10 (recommended package manager)
+- **Backend**: Running Bendly backend API
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <repository-url>
+   cd bendly/frontend
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Environment setup**
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. **Configure environment variables**
+
+   ```env
+   NEXT_PUBLIC_BACKEND_URL=http://localhost:4000
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   # Add other required environment variables
+   ```
+
+5. **Start development server**
+
+   ```bash
+   pnpm dev
+   ```
+
+6. **Open your browser**
+   Navigate to `http://localhost:3000`
+
+### Available Scripts
+
+| Command          | Description                       |
+| ---------------- | --------------------------------- |
+| `pnpm dev`       | Start development server          |
+| `pnpm devsafe`   | Start dev server with clean build |
+| `pnpm build`     | Build for production              |
+| `pnpm start`     | Start production server           |
+| `pnpm lint`      | Run ESLint                        |
+| `pnpm lint:fix`  | Fix ESLint issues                 |
+| `pnpm test`      | Run all tests                     |
+| `pnpm test:int`  | Run integration tests             |
+| `pnpm test:e2e`  | Run end-to-end tests              |
+| `pnpm reinstall` | Clean install dependencies        |
+
+## 📁 Project Structure
+
+```text
+frontend/
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   │   ├── (frontend)/         # Main application routes
+│   │   │   ├── (admin dashboard)/    # Admin interface
+│   │   │   ├── (user dashboard)/     # Customer dashboard
+│   │   │   └── (from canvas to payment)/ # Order flow
+│   │   ├── api/                # API routes
+│   │   └── globals.css         # Global styles
+│   ├── components/             # Reusable components
+│   │   ├── admin/              # Admin-specific components
+│   │   ├── auth/               # Authentication components
+│   │   ├── dashboard/          # Dashboard widgets
+│   │   ├── flashing/           # Canvas/design components
+│   │   ├── ui/                 # Base UI components (shadcn/ui)
+│   │   └── utils/              # Utility components
+│   ├── hooks/                  # Custom React hooks
+│   ├── lib/                    # Core utilities and API clients
+│   │   ├── api.ts              # REST API client
+│   │   ├── graphql/            # GraphQL operations
+│   │   ├── sync/               # Data synchronization
+│   │   └── urqlClient.ts       # URQL GraphQL client
+│   ├── providers/              # React context providers
+│   ├── stores/                 # Zustand state stores
+│   ├── types/                  # TypeScript type definitions
+│   └── utilities/              # Helper functions
+├── public/                     # Static assets
+├── tests/                      # Test files
+└── docs/                       # Documentation
+```
+
+## 🔐 Authentication
+
+Bendly uses a comprehensive JWT-based authentication system with automatic token refresh. See [AUTHENTICATION.md](./src/docs/AUTHENTICATION.md) for detailed documentation.
+
+### Key Authentication Features
+
+- **Secure Cookies**: httpOnly cookies in production
+- **Automatic Refresh**: Seamless token renewal
+- **Role-based Access**: Customer and admin roles
+- **Protected Routes**: Middleware-based route protection
+
+## 🌐 API Integration
+
+### Backend Communication
+
+- **GraphQL**: Primary API protocol for complex queries and mutations
+- **REST**: Supplementary REST endpoints for specific operations
+- **Real-time**: WebSocket connections for live updates
+
+### Data Flow
+
+1. **GraphQL Client**: Apollo Client for main API communication
+2. **URQL Client**: Specialized GraphQL client for auth operations
+3. **State Management**: Zustand stores for local state
+4. **Offline Storage**: Dexie for IndexedDB operations
+
+### Key API Operations
+
+- **Authentication**: Login, register, token refresh
+- **Orders**: CRUD operations, status updates
+- **Designs**: Canvas state management, templates
+- **Materials**: Inventory, pricing, specifications
+- **Users**: Profile management, addresses
+
+## 🎨 Canvas Design System
+
+The core of Bendly's value proposition is the interactive canvas for designing custom flashing products. Built with Fabric.js, it provides:
+
+- **Drag & Drop**: Intuitive shape manipulation
+- **Material Preview**: Real-time visual feedback
+- **Template System**: Pre-built design templates
+- **Offline Editing**: Design without internet connection
+- **Export/Import**: Save and share designs
+
+## 📱 Responsive Design
+
+Bendly is built mobile-first with responsive design principles:
+
+- **Mobile Optimized**: Touch-friendly interface for design work
+- **Progressive Enhancement**: Enhanced features on larger screens
+- **Cross-device Sync**: Seamless experience across devices
+
+## 🧪 Testing Strategy
+
+### Testing Framework
+
+- **Vitest**: Fast unit testing with React Testing Library
+- **Playwright**: End-to-end testing for critical user flows
+
+### Test Coverage
+
+- **Unit Tests**: Component and utility function testing
+- **Integration Tests**: API integration and state management
+- **E2E Tests**: Complete user journey testing
+
+## 🚀 Deployment
+
+### Production Build
 
 ```bash
-pnpx create-payload-app my-project -t website
+pnpm build
+pnpm start
 ```
 
-#### Method 3
+### Environment Requirements
 
-Use the `git` CLI to clone this template directly to your machine:
+- **Node.js**: Production-ready Node.js environment
+- **Backend**: Running Bendly backend API
+- **Database**: Connected database instance
+- **File Storage**: Configured file storage (local or cloud)
 
-```bash
-git clone -n --depth=1 --filter=tree:0 https://github.com/payloadcms/payload my-project && cd my-project && git sparse-checkout set --no-cone templates/website && git checkout && rm -rf .git && git init && git add . && git mv -f templates/website/{.,}* . && git add . && git commit -m "Initial commit"
-```
+### Deployment Platforms
 
-### Development
+- **Vercel**: Recommended for frontend deployment
+- **Docker**: Containerized deployment
+- **Self-hosted**: VPS or dedicated hosting
 
-1. First [clone the repo](#clone) if you have not done so already
-1. `cd my-project && cp .env.example .env` to copy the example environment variables
-1. `pnpm install && pnpm dev` to install dependencies and start the dev server
-1. open `http://localhost:3000` to open the app in your browser
+## 🛠️ Development Guidelines
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+### Code Style
 
-## How it works
+- **ESLint**: Automated code linting
+- **Prettier**: Consistent code formatting
+- **TypeScript**: Strict type checking (no `any` types)
+- **Conventional Commits**: Structured commit messages
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+### Component Architecture
 
-### Collections
+- **Atomic Design**: Organized component hierarchy
+- **Composition**: Flexible component composition
+- **Accessibility**: WCAG compliant components
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+### Performance
 
-- #### Users (Authentication)
+- **Code Splitting**: Route-based and component-based splitting
+- **Image Optimization**: Next.js automatic optimization
+- **Caching**: Intelligent caching strategies
+- **Bundle Analysis**: Regular bundle size monitoring
 
-  Users are auth-enabled collections that have access to the admin panel and unpublished content. See [Access Control](#access-control) for more details.
+## 🤝 Contributing
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
 
-- #### Posts
+### Development Workflow
 
-  Posts are used to generate blog posts, news articles, or any other type of content that is published over time. All posts are layout builder enabled so you can generate unique layouts for each post using layout-building blocks, see [Layout Builder](#layout-builder) for more details. Posts are also draft-enabled so you can preview them before publishing them to your website, see [Draft Preview](#draft-preview) for more details.
+1. Pick an issue from the backlog
+2. Create a feature branch
+3. Implement changes with tests
+4. Ensure all tests pass
+5. Submit pull request with description
 
-- #### Pages
+## 📄 License
 
-  All pages are layout builder enabled so you can generate unique layouts for each page using layout-building blocks, see [Layout Builder](#layout-builder) for more details. Pages are also draft-enabled so you can preview them before publishing them to your website, see [Draft Preview](#draft-preview) for more details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-- #### Media
+## 📞 Support
 
-  This is the uploads enabled collection used by pages, posts, and projects to contain media like images, videos, downloads, and other assets. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+For support and questions:
 
-- #### Categories
+- **Issues**: GitHub Issues for bug reports and feature requests
+- **Discussions**: GitHub Discussions for general questions
+- **Documentation**: Check the docs folder for detailed guides
 
-  A taxonomy used to group posts together. Categories can be nested inside of one another, for example "News > Technology". See the official [Payload Nested Docs Plugin](https://payloadcms.com/docs/plugins/nested-docs) for more details.
+## 🔄 Recent Updates
 
-### Globals
+- Migration from Payload CMS to custom backend
+- Next.js 15 and React 19 upgrade
+- Canvas redesign with Fabric.js
+- Enhanced authentication system
+- Mobile-responsive improvements
+- Performance optimizations
 
-See the [Globals](https://payloadcms.com/docs/configuration/globals) docs for details on how to extend this functionality.
+---
 
-- `Header`
-
-  The data required by the header on your front-end like nav links.
-
-- `Footer`
-
-  Same as above but for the footer of your site.
-
-## Access control
-
-Basic access control is setup to limit access to various content based based on publishing status.
-
-- `users`: Users can access the admin panel and create or edit content.
-- `posts`: Everyone can access published posts, but only users can create, update, or delete them.
-- `pages`: Everyone can access published pages, but only users can create, update, or delete them.
-
-For more details on how to extend this functionality, see the [Payload Access Control](https://payloadcms.com/docs/access-control/overview#access-control) docs.
-
-## Layout Builder
-
-Create unique page layouts for any type of content using a powerful layout builder. This template comes pre-configured with the following layout building blocks:
-
-- Hero
-- Content
-- Media
-- Call To Action
-- Archive
-
-Each block is fully designed and built into the front-end website that comes with this template. See [Website](#website) for more details.
-
-## Lexical editor
-
-A deep editorial experience that allows complete freedom to focus just on writing content without breaking out of the flow with support for Payload blocks, media, links and other features provided out of the box. See [Lexical](https://payloadcms.com/docs/rich-text/overview) docs.
-
-## Draft Preview
-
-All posts and pages are draft-enabled so you can preview them before publishing them to your website. To do this, these collections use [Versions](https://payloadcms.com/docs/configuration/collections#versions) with `drafts` set to `true`. This means that when you create a new post, project, or page, it will be saved as a draft and will not be visible on your website until you publish it. This also means that you can preview your draft before publishing it to your website. To do this, we automatically format a custom URL which redirects to your front-end to securely fetch the draft version of your content.
-
-Since the front-end of this template is statically generated, this also means that pages, posts, and projects will need to be regenerated as changes are made to published documents. To do this, we use an `afterChange` hook to regenerate the front-end when a document has changed and its `_status` is `published`.
-
-For more details on how to extend this functionality, see the official [Draft Preview Example](https://github.com/payloadcms/payload/tree/examples/draft-preview).
-
-## Live preview
-
-In addition to draft previews you can also enable live preview to view your end resulting page as you're editing content with full support for SSR rendering. See [Live preview docs](https://payloadcms.com/docs/live-preview/overview) for more details.
-
-## On-demand Revalidation
-
-We've added hooks to collections and globals so that all of your pages, posts, footer, or header changes will automatically be updated in the frontend via on-demand revalidation supported by Nextjs.
-
-> Note: if an image has been changed, for example it's been cropped, you will need to republish the page it's used on in order to be able to revalidate the Nextjs image cache.
-
-## SEO
-
-This template comes pre-configured with the official [Payload SEO Plugin](https://payloadcms.com/docs/plugins/seo) for complete SEO control from the admin panel. All SEO data is fully integrated into the front-end website that comes with this template. See [Website](#website) for more details.
-
-## Search
-
-This template also pre-configured with the official [Payload Search Plugin](https://payloadcms.com/docs/plugins/search) to showcase how SSR search features can easily be implemented into Next.js with Payload. See [Website](#website) for more details.
-
-## Redirects
-
-If you are migrating an existing site or moving content to a new URL, you can use the `redirects` collection to create a proper redirect from old URLs to new ones. This will ensure that proper request status codes are returned to search engines and that your users are not left with a broken link. This template comes pre-configured with the official [Payload Redirects Plugin](https://payloadcms.com/docs/plugins/redirects) for complete redirect control from the admin panel. All redirects are fully integrated into the front-end website that comes with this template. See [Website](#website) for more details.
-
-## Jobs and Scheduled Publish
-
-We have configured [Scheduled Publish](https://payloadcms.com/docs/versions/drafts#scheduled-publish) which uses the [jobs queue](https://payloadcms.com/docs/jobs-queue/jobs) in order to publish or unpublish your content on a scheduled time. The tasks are run on a cron schedule and can also be run as a separate instance if needed.
-
-> Note: When deployed on Vercel, depending on the plan tier, you may be limited to daily cron only.
-
-## Website
-
-This template includes a beautifully designed, production-ready front-end built with the [Next.js App Router](https://nextjs.org), served right alongside your Payload app in a instance. This makes it so that you can deploy both your backend and website where you need it.
-
-Core features:
-
-- [Next.js App Router](https://nextjs.org)
-- [TypeScript](https://www.typescriptlang.org)
-- [React Hook Form](https://react-hook-form.com)
-- [Payload Admin Bar](https://github.com/payloadcms/payload/tree/main/packages/admin-bar)
-- [TailwindCSS styling](https://tailwindcss.com/)
-- [shadcn/ui components](https://ui.shadcn.com/)
-- User Accounts and Authentication
-- Fully featured blog
-- Publication workflow
-- Dark mode
-- Pre-made layout building blocks
-- SEO
-- Search
-- Redirects
-- Live preview
-
-### Cache
-
-Although Next.js includes a robust set of caching strategies out of the box, Payload Cloud proxies and caches all files through Cloudflare using the [Official Cloud Plugin](https://www.npmjs.com/package/@payloadcms/payload-cloud). This means that Next.js caching is not needed and is disabled by default. If you are hosting your app outside of Payload Cloud, you can easily reenable the Next.js caching mechanisms by removing the `no-store` directive from all fetch requests in `./src/app/_api` and then removing all instances of `export const dynamic = 'force-dynamic'` from pages files, such as `./src/app/(pages)/[slug]/page.tsx`. For more details, see the official [Next.js Caching Docs](https://nextjs.org/docs/app/building-your-application/caching).
-
-## Development
-
-To spin up this example locally, follow the [Quick Start](#quick-start). Then [Seed](#seed) the database with a few pages, posts, and projects.
-
-### Working with Postgres
-
-Postgres and other SQL-based databases follow a strict schema for managing your data. In comparison to our MongoDB adapter, this means that there's a few extra steps to working with Postgres.
-
-Note that often times when making big schema changes you can run the risk of losing data if you're not manually migrating it.
-
-#### Local development
-
-Ideally we recommend running a local copy of your database so that schema updates are as fast as possible. By default the Postgres adapter has `push: true` for development environments. This will let you add, modify and remove fields and collections without needing to run any data migrations.
-
-If your database is pointed to production you will want to set `push: false` otherwise you will risk losing data or having your migrations out of sync.
-
-#### Migrations
-
-[Migrations](https://payloadcms.com/docs/database/migrations) are essentially SQL code versions that keeps track of your schema. When deploy with Postgres you will need to make sure you create and then run your migrations.
-
-Locally create a migration
-
-```bash
-pnpm payload migrate:create
-```
-
-This creates the migration files you will need to push alongside with your new configuration.
-
-On the server after building and before running `pnpm start` you will want to run your migrations
-
-```bash
-pnpm payload migrate
-```
-
-This command will check for any migrations that have not yet been run and try to run them and it will keep a record of migrations that have been run in the database.
-
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-### Seed
-
-To seed the database with a few pages, posts, and projects you can click the 'seed database' link from the admin panel.
-
-The seed script will also create a demo user for demonstration purposes only:
-
-- Demo Author
-  - Email: `demo-author@payloadcms.com`
-  - Password: `password`
-
-> NOTICE: seeding the database is destructive because it drops your current database to populate a fresh one from the seed template. Only run this command if you are starting a new project or can afford to lose your current data.
-
-## Production
-
-To run Payload in production, you need to build and start the Admin panel. To do so, follow these steps:
-
-1. Invoke the `next build` script by running `pnpm build` or `npm run build` in your project root. This creates a `.next` directory with a production-ready admin bundle.
-1. Finally run `pnpm start` or `npm run start` to run Node in production and serve Payload from the `.build` directory.
-1. When you're ready to go live, see Deployment below for more details.
-
-### Deploying to Payload Cloud
-
-The easiest way to deploy your project is to use [Payload Cloud](https://payloadcms.com/new/import), a one-click hosting solution to deploy production-ready instances of your Payload apps directly from your GitHub repo.
-
-### Deploying to Vercel
-
-This template can also be deployed to Vercel for free. You can get started by choosing the Vercel DB adapter during the setup of the template or by manually installing and configuring it:
-
-```bash
-pnpm add @payloadcms/db-vercel-postgres
-```
-
-```ts
-// payload.config.ts
-import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
-
-export default buildConfig({
-  // ...
-  db: vercelPostgresAdapter({
-    pool: {
-      connectionString: process.env.POSTGRES_URL || '',
-    },
-  }),
-  // ...
-```
-
-We also support Vercel's blob storage:
-
-```bash
-pnpm add @payloadcms/storage-vercel-blob
-```
-
-```ts
-// payload.config.ts
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
-
-export default buildConfig({
-  // ...
-  plugins: [
-    vercelBlobStorage({
-      collections: {
-        [Media.slug]: true,
-      },
-      token: process.env.BLOB_READ_WRITE_TOKEN || '',
-    }),
-  ],
-  // ...
-```
-
-There is also a simplified [one click deploy](https://github.com/payloadcms/payload/tree/templates/with-vercel-postgres) to Vercel should you need it.
-
-### Self-hosting
-
-Before deploying your app, you need to:
-
-1. Ensure your app builds and serves in production. See [Production](#production) for more details.
-2. You can then deploy Payload as you would any other Node.js or Next.js application either directly on a VPS, DigitalOcean's Apps Platform, via Coolify or more. More guides coming soon.
-
-You can also deploy your app manually, check out the [deployment documentation](https://payloadcms.com/docs/production/deployment) for full details.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+**Bendly** - Empowering custom manufacturing through innovative web technology.
