@@ -12,8 +12,7 @@ export default function JobRefCard({
   ...props
 }) {
   return (
-    <Link
-      href={`/dashboard/j/${jobRefrenceCode}`}
+    <div
       data-slot="card"
       className={cn(
         'flex flex-col rounded-md border-1 border-border-default bg-surface-card py-3 px-4 w-[280px]',
@@ -31,6 +30,6 @@ export default function JobRefCard({
           <p className="body-small">{locationAddress}</p>
         </div>
       </div>
-    </Link>
+    </div>
   )
 }

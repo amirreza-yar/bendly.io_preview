@@ -1,22 +1,34 @@
 // TopBar.jsx
-'use client'
-import React from 'react'
-import { IconButton } from '@/components/uikit/buttons/iconButton'
-import { XIcon } from '@/components/uikit/icons'
-import { ArrowRight } from '@/components/uikit/icons'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { AlertDialogContent, AlertModal } from '../../../uikit/alertModal'
-import { cn } from '@/utilities/ui'
-import { Button } from '../../../uikit/buttons/button'
-import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
+"use client";
+import React from "react";
+import { IconButton } from "@/components/uikit/buttons/iconButton";
+import { XIcon } from "@/components/uikit/icons";
+import { ArrowRight } from "@/components/uikit/icons";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { AlertDialogContent, AlertModal } from "../../../uikit/alertModal";
+import { cn } from "@/utilities/ui";
+import { Button } from "../../../uikit/buttons/button";
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
 export const slideFromTop = {
-  hidden: { y: '-100%', opacity: 0, transition: { type: 'tween', duration: 0.25 } },
-  visible: { y: '0%', opacity: 1, transition: { type: 'tween', duration: 0.25 } },
-  exit: { y: '-100%', opacity: 0, transition: { type: 'tween', duration: 0.2 } },
-}
+  hidden: {
+    y: "-100%",
+    opacity: 0,
+    transition: { type: "tween", duration: 0.25 },
+  },
+  visible: {
+    y: "0%",
+    opacity: 1,
+    transition: { type: "tween", duration: 0.25 },
+  },
+  exit: {
+    y: "-100%",
+    opacity: 0,
+    transition: { type: "tween", duration: 0.2 },
+  },
+};
 
 const TopBar = ({ onClose, onNext, canvasIsEmpty }) => {
   return (
@@ -30,7 +42,10 @@ const TopBar = ({ onClose, onNext, canvasIsEmpty }) => {
       <div className="flex justify-between items-center bg-white h-[56px] px-0.5">
         {!canvasIsEmpty ? (
           <AlertDialogPrimitive.Root data-slot="alert-dialog">
-            <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" asChild>
+            <AlertDialogPrimitive.Trigger
+              data-slot="alert-dialog-trigger"
+              asChild
+            >
               <IconButton
                 variant="ghost"
                 black
@@ -41,7 +56,10 @@ const TopBar = ({ onClose, onNext, canvasIsEmpty }) => {
               </IconButton>
             </AlertDialogPrimitive.Trigger>
             <AlertDialogContent className="font-roboto">
-              <div data-slot="alert-dialog-header" className="flex flex-col gap-4">
+              <div
+                data-slot="alert-dialog-header"
+                className="flex flex-col gap-4"
+              >
                 <AlertDialogPrimitive.Cancel className="absolute top-4 end-4 [&_svg:not([class*='size-'])]:size-6">
                   <XIcon className="text-neutral-dark" variant="secondary" />
                 </AlertDialogPrimitive.Cancel>
@@ -56,16 +74,22 @@ const TopBar = ({ onClose, onNext, canvasIsEmpty }) => {
                   data-slot="alert-dialog-description"
                   className="text-muted-foreground text-sm"
                 >
-                  Are you sure you want to discard this drawing? If you discard, your work will be
-                  lost.
+                  Are you sure you want to discard this drawing? If you discard,
+                  your work will be lost.
                 </AlertDialogPrimitive.Description>
               </div>
               <div
                 data-slot="alert-dialog-footer"
-                className={'flex flex-col gap-4 sm:flex-row sm:justify-end'}
+                className={"flex flex-col gap-4 sm:flex-row sm:justify-end"}
               >
                 <AlertDialogPrimitive.Action asChild>
-                  <Button onClick={() => window.location.assign('/dashboard')} variant="ghost">
+                  <Button
+                    // onClick={() => {
+                    //   // window.location.assign("/dashboard");
+                    // }}
+                    onClick={onClose}
+                    variant="ghost"
+                  >
                     Discard
                   </Button>
                 </AlertDialogPrimitive.Action>
@@ -78,7 +102,10 @@ const TopBar = ({ onClose, onNext, canvasIsEmpty }) => {
           </AlertDialogPrimitive.Root>
         ) : (
           <IconButton
-            onClick={() => window.location.assign('/dashboard')}
+            // onClick={() => {
+            //   // window.location.assign("/dashboard");
+            // }}
+            onClick={onClose}
             variant="ghost"
             black
             className="hover:bg-white"
@@ -89,12 +116,17 @@ const TopBar = ({ onClose, onNext, canvasIsEmpty }) => {
 
         <h6 className="text-smd font-semibold">Canvas</h6>
 
-        <IconButton onClick={onNext} variant="ghost" black className="hover:bg-white">
+        <IconButton
+          onClick={onNext}
+          variant="ghost"
+          black
+          className="hover:bg-white"
+        >
           <ArrowRight />
         </IconButton>
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default TopBar
+export default TopBar;

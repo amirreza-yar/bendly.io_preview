@@ -1,82 +1,76 @@
-'use client'
-import { Button } from '@/components/uikit/buttons/button'
-import { GoogleIcon } from '@/components/ui/icon'
-import React, { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { HeaderWithCenterTitle } from '@/components/dashboard/header'
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import DividerWithText from '@/components/uikit/dividerWithText'
-import { apiCheckEmail, apiSendEmailCode } from '@/utilities/api/auth'
-import { toast } from 'sonner'
+"use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { HeaderWithCenterTitle } from "@/components/dashboard/header";
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
+import { toast } from "sonner";
 import {
-  AuthEmailForm,
   CreateAccountForm,
   CreateAccountFormValues,
-  EmailInputValue,
   LoginForm,
   LoginFormValue,
-} from '@/components/dashboard/auth/forms'
-import api from '@/lib/axios'
-import { Tabs, TabsContent, TabsTrigger } from '@radix-ui/react-tabs'
+} from "@/components/dashboard/auth/forms";
+import api from "@/lib/axios";
+import { Tabs, TabsContent } from "@radix-ui/react-tabs";
 
 const AuthPage = () => {
-  const router = useRouter()
+  const router = useRouter();
 
-  const [tabValue, setTabValue] = useState('login-tab')
-  const [isLoading, setIsLoading] = useState(false)
+  const [tabValue, setTabValue] = useState("login-tab");
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmitLogin = async (data: LoginFormValue) => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
 
-      await api.post('/auth/login/', {
+      await api.post("/auth/login/", {
         email: data.email,
         password: data.password,
-      })
+      });
 
-      toast('Welcome!')
-      setIsLoading(false)
-      router.replace('/dashboard')
+      toast("Welcome!");
+      setIsLoading(false);
+      router.replace("/dashboard");
     } catch (error: any) {
-      setIsLoading(false)
+      setIsLoading(false);
       const message =
         error.response?.data?.non_field_errors[0] ||
         error.response?.data ||
-        'Something broke, probably not your fault.'
+        "Something broke, probably not your fault.";
 
-      toast(message)
+      toast(message);
     }
-  }
+  };
 
   const onCreateAccountSubmit = async (data: CreateAccountFormValues) => {
-    const parts = data.fullName.trim().split(/\s+/)
-    const firstName = parts[0]
-    const lastName = parts.slice(1).join(' ') || ''
+    const parts = data.fullName.trim().split(/\s+/);
+    const firstName = parts[0];
+    const lastName = parts.slice(1).join(" ") || "";
 
     try {
-      setIsLoading(true)
-      await api.post('/auth/registration/', {
+      setIsLoading(true);
+      await api.post("/auth/registration/", {
         email: data.email,
         first_name: firstName,
         last_name: lastName,
         password1: data.password,
         password2: data.password,
-      })
+      });
 
-      toast('Verification email sent ')
-      setIsLoading(false)
-      router.replace(`/auth/verify-email?email=${data.email}`)
+      toast("Verification email sent ");
+      setIsLoading(false);
+      router.replace(`/auth/verify-email?email=${data.email}`);
     } catch (error: any) {
-      setIsLoading(false)
-      console.log(error.response.data)
+      setIsLoading(false);
+      console.log(error.response.data);
       const message =
         error.response.data.email[0] ||
         error.response?.data ||
-        'Something broke, probably not your fault.'
+        "Something broke, probably not your fault.";
 
-      toast(message)
+      toast(message);
     }
-  }
+  };
 
   return (
     <>
@@ -88,7 +82,9 @@ const AuthPage = () => {
               <div className="flex flex-col gap-6">
                 <div className="grid items-center text-center gap-2">
                   <h5>Welcome back!</h5>
-                  <p className="subtitle-regular">Enter you credentials to login</p>
+                  <p className="subtitle-regular">
+                    Enter you credentials to login
+                  </p>
                 </div>
                 {/* <Button
                   className="w-full border-border-default text-body mt-2 opacity-40"
@@ -101,13 +97,17 @@ const AuthPage = () => {
 
                 <DividerWithText text="OR" /> */}
 
-                <LoginForm onSubmitLogin={onSubmitLogin} errorText="" isLoading={isLoading} />
+                <LoginForm
+                  onSubmitLogin={onSubmitLogin}
+                  errorText=""
+                  isLoading={isLoading}
+                />
               </div>
 
               <div className="flex gap-2 pt-4">
-                <p className="subtitle-regular">Don't have an account?</p>
+                <p className="subtitle-regular">{"Don't have an account?"}</p>
                 <button
-                  onClick={() => setTabValue('signup-tab')}
+                  onClick={() => setTabValue("signup-tab")}
                   className="text-primary label-regular cursor-pointer"
                 >
                   Signup
@@ -124,7 +124,9 @@ const AuthPage = () => {
               <div className="flex flex-col gap-6">
                 <div className="grid items-center text-center gap-2">
                   <h5>Welcome to Bendly!</h5>
-                  <p className="subtitle-regular">Enter you details to signup</p>
+                  <p className="subtitle-regular">
+                    Enter you details to signup
+                  </p>
                 </div>
                 {/* <Button
                   className="w-full border-border-default text-body mt-2 opacity-40"
@@ -146,7 +148,7 @@ const AuthPage = () => {
               <div className="flex gap-2 pt-4">
                 <p className="subtitle-regular">Already have an account?</p>
                 <button
-                  onClick={() => setTabValue('login-tab')}
+                  onClick={() => setTabValue("login-tab")}
                   className="text-primary label-regular cursor-pointer"
                 >
                   Login
@@ -157,7 +159,7 @@ const AuthPage = () => {
         </TabsContent>
       </Tabs>
     </>
-  )
-}
+  );
+};
 
-export default AuthPage
+export default AuthPage;
