@@ -1,87 +1,112 @@
-'use client'
-import { Footer } from '@/components/dashboard/footer'
-import { Button } from '../../uikit/buttons/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../uikit/form'
-import z from 'zod'
-import { useFieldArray, useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Input, LabeledInput } from '../../uikit/input'
-import { useEffect, useState } from 'react'
-import { IconButton } from '../../uikit/buttons/iconButton'
-import { ArrowLeft, Minus, Plus } from '../../uikit/icons'
-import { StoredOrder } from '@/types/orderTypes'
-import { Header } from '../../dashboard/header'
-import { ContentWrapper } from '../../dashboard/contentWrapper'
-import { UnsavedChangesOnDetailsModal } from './modals'
+"use client";
+import { Footer } from "@/components/dashboard/footer";
+import { Button } from "../../uikit/buttons/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../uikit/form";
+import z from "zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input, LabeledInput } from "../../uikit/input";
+import { ReactNode, useEffect, useState } from "react";
+import { IconButton } from "../../uikit/buttons/iconButton";
+import { ArrowLeft, Minus, Plus } from "../../uikit/icons";
+import { StoredOrder } from "@/types/orderTypes";
+import { Header } from "../../dashboard/header";
+import { ContentWrapper } from "../../dashboard/contentWrapper";
+import { UnsavedChangesOnDetailsModal } from "./modals";
+import { useGETFlashingById } from "@/lib/db/helpers/flashingHelpers";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db/appDB";
+import useSWR from "swr";
+import { fetcher } from "@/lib/axios";
 
 const SpecSchema = z.object({
-  quantity: z.number('Required field').min(1, '??'),
+  quantity: z.number("Required field").min(1, "??"),
   length: z
-    .number('Required field')
-    .min(200, 'Must be at least 200 mm')
-    .max(8000, 'Must be at most 8000 mm'),
-})
+    .number("Required field")
+    .min(200, "Must be at least 200 mm")
+    .max(8000, "Must be at most 8000 mm"),
+});
 
 const DetailsFormSchema = z.object({
   code: z
-    .string('Required field')
-    .nonempty('Required field')
-    .regex(/^[a-zA-Z0-9-]+$/, 'Alphanumeric and - only'),
+    .string("Required field")
+    .nonempty("Required field")
+    .regex(/^[a-zA-Z0-9-]+$/, "Alphanumeric and - only"),
   position: z.string().optional(),
   specifications: z
     .array(SpecSchema)
-    .nonempty('At least one specification is required')
+    .nonempty("At least one specification is required")
     .refine(
-      (arr) => arr.every((s) => typeof s.quantity === 'number' && typeof s.length === 'number'),
-      { message: 'Each specification must have quantity and length' },
+      (arr) =>
+        arr.every(
+          (s) => typeof s.quantity === "number" && typeof s.length === "number"
+        ),
+      { message: "Each specification must have quantity and length" }
     ),
-})
+});
 
-type SpecDraft = { quantity?: number; length?: number }
-export type DetailsFormValues = z.infer<typeof DetailsFormSchema>
+type SpecDraft = { quantity?: number; length?: number };
+export type DetailsFormValues = z.infer<typeof DetailsFormSchema>;
 
 export default function DetailsComponent({
   onDetailsFormSubmit,
-  order,
-  flashingId,
   onModalDiscardChanges,
-  title,
+  flashingId,
 }: {
-  onDetailsFormSubmit: (data: DetailsFormValues) => void
-  order?: StoredOrder | null
-  flashingId: string
-  onModalDiscardChanges: () => void
-  title: string
+  onDetailsFormSubmit: (data: DetailsFormValues) => void;
+  onModalDiscardChanges: () => void;
+  flashingId?: string;
 }) {
   const form = useForm<DetailsFormValues>({
     resolver: zodResolver(DetailsFormSchema),
-    defaultValues: { specifications: [{ quantity: undefined, length: undefined }] },
-  })
+    defaultValues: {
+      specifications: [{ quantity: undefined, length: undefined }],
+    },
+  });
 
-  useEffect(() => {
-    if (order?.flashings?.length) {
-      const lastFlashing = order.flashings.find((flash) => flash.id === flashingId)
-      form.reset({
-        code: lastFlashing?.code,
-        position: lastFlashing?.position,
-        specifications: lastFlashing?.specifications,
-      })
-    }
-  }, [order, form])
+  const {
+    data: flashing,
+    // error,
+    // isLoading,
+  } = useSWR(flashingId ? `/d/flashing/${flashingId}/` : null, fetcher, {
+    onSuccess: (data) => {
+      console.log(data);
+      form.setValue("code", data.code);
+      form.setValue("position", data.position);
+      form.setValue("specifications", data.specifications);
+    },
+  });
+
+  // useEffect(() => {
+  //   if (order?.flashings?.length) {
+  //     const lastFlashing = order.flashings.find((flash) => flash.id === flashingId)
+  //     form.reset({
+  //       code: lastFlashing?.code,
+  //       position: lastFlashing?.position,
+  //       specifications: lastFlashing?.specifications,
+  //     })
+  //   }
+  // }, [order, form])
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'specifications',
-  })
+    name: "specifications",
+  });
 
-  const specifications = form.watch('specifications') || []
+  const specifications = form.watch("specifications") || [];
 
-  const { isDirty } = form.formState
+  const { isDirty } = form.formState;
 
   return (
     <>
-      {order && isDirty ? (
-        <UnsavedChangesOnDetailsModal
+      {/* <UnsavedChangesOnDetailsModal
           onDiscardChanges={onModalDiscardChanges}
           onSaveChanges={() => form.handleSubmit(onDetailsFormSubmit)()}
         >
@@ -93,12 +118,9 @@ export default function DetailsComponent({
               </div>
             </div>
           </header>
-        </UnsavedChangesOnDetailsModal>
-      ) : order ? (
-        <Header title={title} returnHref={`/o/${order.id}/review`} />
-      ) : (
-        <Header title={title} returnHref={`/f/${flashingId}/preview`} />
-      )}
+        </UnsavedChangesOnDetailsModal> */}
+
+      <Header title="Details" returnHref={flashing ? "/cart" : "/f/preview"} />
 
       <ContentWrapper className="pt-18 bg-white pb-24">
         <Form {...form}>
@@ -115,7 +137,11 @@ export default function DetailsComponent({
                         Code <span className="text-[#E50000]">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Code" {...field} value={field.value ?? ''} />
+                        <Input
+                          placeholder="Code"
+                          {...field}
+                          value={field.value ?? ""}
+                        />
                       </FormControl>
                       <FormMessage>Alphanumeric and – only</FormMessage>
                     </FormItem>
@@ -128,7 +154,11 @@ export default function DetailsComponent({
                     <FormItem>
                       <FormLabel>Position</FormLabel>
                       <FormControl>
-                        <Input placeholder="Position" {...field} value={field.value ?? ''} />
+                        <Input
+                          placeholder="Position"
+                          {...field}
+                          value={field.value ?? ""}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -137,7 +167,9 @@ export default function DetailsComponent({
               </div>
               <div className="grid gap-2 pt-2">
                 <h6>Specifications</h6>
-                <p className="subtitle-regular">The length range is from 200 mm to 8000 mm</p>
+                <p className="subtitle-regular">
+                  The length range is from 200 mm to 8000 mm
+                </p>
               </div>
               <FormField
                 control={form.control}
@@ -163,10 +195,12 @@ export default function DetailsComponent({
                                       type="number"
                                       placeholder="0"
                                       {...field}
-                                      value={field.value ?? ''}
+                                      value={field.value ?? ""}
                                       onChange={(e) => {
-                                        const v = e.target.value
-                                        field.onChange(v === '' ? undefined : Number(v))
+                                        const v = e.target.value;
+                                        field.onChange(
+                                          v === "" ? undefined : Number(v)
+                                        );
                                       }}
                                     />
                                   </FormControl>
@@ -191,10 +225,12 @@ export default function DetailsComponent({
                                       type="number"
                                       placeholder="0"
                                       {...field}
-                                      value={field.value ?? ''}
+                                      value={field.value ?? ""}
                                       onChange={(e) => {
-                                        const v = e.target.value
-                                        field.onChange(v === '' ? undefined : Number(v))
+                                        const v = e.target.value;
+                                        field.onChange(
+                                          v === "" ? undefined : Number(v)
+                                        );
                                       }}
                                     />
                                   </FormControl>
@@ -255,7 +291,12 @@ export default function DetailsComponent({
                 <IconButton
                   type="button"
                   variant="secondary"
-                  onClick={() => append({ quantity: undefined as any, length: undefined as any })}
+                  onClick={() =>
+                    append({
+                      quantity: undefined as any,
+                      length: undefined as any,
+                    })
+                  }
                   className="mt-[27px]"
                   disabled={false}
                 >
@@ -272,5 +313,5 @@ export default function DetailsComponent({
         </Form>
       </ContentWrapper>
     </>
-  )
+  );
 }

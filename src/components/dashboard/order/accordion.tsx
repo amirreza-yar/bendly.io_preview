@@ -1,16 +1,18 @@
-import { ChevronDown } from '@/components/uikit/icons'
-import FlashingSVG from '@/components/utils/flashingSVG'
-import { StoredFlashing } from '@/types/flashingTypes'
-import { Flashing, PaymentHistory } from '@/types/orders/orderType'
-import { StoredOrderFlashing } from '@/types/orderTypes'
-import * as AccordionPrimitive from '@radix-ui/react-accordion'
-import { ComponentPropsWithoutRef } from 'react'
+import { ChevronDown } from "@/components/uikit/icons";
+import FlashingSVG from "@/components/utils/flashingSVG";
+import { StoredFlashing } from "@/types/flashingTypes";
+import { Flashing, PaymentHistory } from "@/types/orders/orderType";
+import { StoredOrderFlashing } from "@/types/orderTypes";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { ComponentPropsWithoutRef } from "react";
 
 type OrderSpecificationAccordionProp = {
-  flashings: Flashing[]
-}
+  flashings: Flashing[];
+};
 
-export function OrderSpecificationAccordion({ flashings }: OrderSpecificationAccordionProp) {
+export function OrderSpecificationAccordion({
+  flashings,
+}: OrderSpecificationAccordionProp) {
   return (
     <AccordionPrimitive.Root
       data-slot="accordion"
@@ -33,8 +35,11 @@ export function OrderSpecificationAccordion({ flashings }: OrderSpecificationAcc
                 </p>
                 <p className="caption-small">Thickness: {flash.thickness}mm</p>
                 <p className="caption-small">
-                  Quantity:{' '}
-                  {flash.sepcifications.reduce((sum: number, spec: any) => sum + spec.quantity, 0)}{' '}
+                  Quantity:{" "}
+                  {flash.sepcifications.reduce(
+                    (sum: number, spec: any) => sum + spec.quantity,
+                    0
+                  )}{" "}
                   pcs
                 </p>
               </div>
@@ -67,14 +72,16 @@ export function OrderSpecificationAccordion({ flashings }: OrderSpecificationAcc
         </AccordionPrimitive.Item>
       ))}
     </AccordionPrimitive.Root>
-  )
+  );
 }
 
 type OrderSummaryAccordionProp = {
-  flashings: Flashing[]
-}
+  flashings: Flashing[];
+};
 
-export function OrderSummeryAccordion({ flashings }: OrderSummaryAccordionProp) {
+export function OrderSummeryAccordion({
+  flashings,
+}: OrderSummaryAccordionProp) {
   return (
     <AccordionPrimitive.Root
       data-slot="accordion"
@@ -84,19 +91,27 @@ export function OrderSummeryAccordion({ flashings }: OrderSummaryAccordionProp) 
       className="grid gap-4 items-center"
     >
       {flashings.map((flash, index) => (
-        <AccordionPrimitive.Item defaultChecked key={index} value={flash.flashingId}>
+        <AccordionPrimitive.Item
+          defaultChecked
+          key={index}
+          value={flash.flashingId}
+        >
           <AccordionPrimitive.Trigger
             data-slot="accordion-trigger"
             className="w-full text-sm font-medium transition-all outline-none [&[data-state=open]_svg]:rotate-180"
           >
             <p className="label-regular flex gap-[2px] items-center pb-1.5">
-              Flashing #<span>{index + 1}</span> - {flash.material} / {flash.color}
+              Flashing #<span>{index + 1}</span> - {flash.material} /{" "}
+              {flash.color}
             </p>
             <div className="w-full flex items-center justify-between gap-3">
               <div className="flex-col flex items-start gap-2">
                 <p className="caption-small">
-                  Quantity:{' '}
-                  {flash.sepcifications.reduce((sum: number, spec: any) => sum + spec.quantity, 0)}{' '}
+                  Quantity:{" "}
+                  {flash.sepcifications.reduce(
+                    (sum: number, spec: any) => sum + spec.quantity,
+                    0
+                  )}{" "}
                   pcs
                 </p>
               </div>
@@ -106,7 +121,7 @@ export function OrderSummeryAccordion({ flashings }: OrderSummaryAccordionProp) 
                   $
                   {flash.sepcifications
                     .reduce((sum: number, spec: any) => sum + spec.cost, 0)
-                    .toFixed(2)}{' '}
+                    .toFixed(2)}{" "}
                 </p>
                 <ChevronDown className="mb-1 pointer-events-none size-6 shrink-0 translate-y-0.5 transition-transform duration-120" />
               </div>
@@ -119,7 +134,10 @@ export function OrderSummeryAccordion({ flashings }: OrderSummaryAccordionProp) 
             <div className="flex justify-between pb-4">
               <div className="w-full grid gap-2 pl-4 pr-8">
                 {flash.sepcifications.map((spec, index) => (
-                  <div key={index} className="flex items-center justify-between caption-small">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between caption-small"
+                  >
                     <p className="text-subtitle">
                       {spec.quantity} pcs x {spec.length}mm
                     </p>
@@ -132,7 +150,7 @@ export function OrderSummeryAccordion({ flashings }: OrderSummaryAccordionProp) 
         </AccordionPrimitive.Item>
       ))}
     </AccordionPrimitive.Root>
-  )
+  );
 }
 
 // type NewOrderSummaryAccordionProp = {
@@ -155,7 +173,7 @@ export function NewOrderSummaryAccordion({ flashings }: { flashings: any }) {
     >
       {flashings &&
         flashings.map((flash: any, index: any) => (
-          <AccordionPrimitive.Item key={index} value={flash.id ?? ''}>
+          <AccordionPrimitive.Item key={index} value={flash.id ?? ""}>
             <AccordionPrimitive.Trigger
               data-slot="accordion-trigger"
               className="w-full flex justify-between text-sm font-medium transition-all outline-none [&[data-state=open]_#chevron]:rotate-180 pb-4"
@@ -169,27 +187,30 @@ export function NewOrderSummaryAccordion({ flashings }: { flashings: any }) {
                 />
                 <div className="grid items-center justify-items-stretch w-full">
                   <p className="label-regular justify-self-start">
-                    {flash.material_data.name} /{' '}
-                    {flash.material_data.type === 'color'
+                    {flash.material_data.name} /{" "}
+                    {flash.material_data.type === "color"
                       ? flash.material_data?.label
                       : `${flash.material_data?.value} mm`}
                   </p>
                   <div className="flex items-center justify-between">
                     <p className="label-small">
-                      Qty:{' '}
+                      Qty:{" "}
                       {flash.specifications?.reduce(
                         (sum: number, spec: any) => sum + spec.quantity,
-                        0,
-                      )}{' '}
+                        0
+                      )}{" "}
                       pcs
                     </p>
                     <div className="flex gap-1 items-center">
                       <p className="label-small">
-                        Subtotal:{' '}
+                        Subtotal:{" "}
                         <span className="text-success">
                           $
                           {flash.specifications
-                            ?.reduce((sum: any, spec: any) => sum + (spec?.cost ?? 0), 0)
+                            ?.reduce(
+                              (sum: any, spec: any) => sum + (spec?.cost ?? 0),
+                              0
+                            )
                             .toLocaleString(undefined, {
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2,
@@ -211,14 +232,14 @@ export function NewOrderSummaryAccordion({ flashings }: { flashings: any }) {
             >
               <div className="flex justify-between pb-4">
                 <div className="grid gap-2 pl-19">
-                  {flash.specifications?.map((sum: any, spec: any) => (
+                  {flash.specifications?.map((spec: any, index: number) => (
                     <p key={index} className="caption-small text-subtitle">
                       {spec.quantity} x {spec.length} mm
                     </p>
                   ))}
                 </div>
                 <div className="grid gap-2 pr-6">
-                  {flash.specifications?.map((sum: any, spec: any) => (
+                  {flash.specifications?.map((spec: any, index: number) => (
                     <p key={index} className="caption-small text-success">
                       ${spec.cost?.toFixed(2)}
                     </p>
@@ -229,5 +250,5 @@ export function NewOrderSummaryAccordion({ flashings }: { flashings: any }) {
           </AccordionPrimitive.Item>
         ))}
     </AccordionPrimitive.Root>
-  )
+  );
 }

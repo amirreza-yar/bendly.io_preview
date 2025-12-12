@@ -9,36 +9,36 @@ import {
   Remove,
   WareHouse,
   XIcon,
-} from '@/components/uikit/icons'
-import Link from 'next/link'
-import { OrderStatusBadge } from './badge'
-import { Flashing, Order } from '@/types/orders/orderType'
-import { ReplacementRequest } from '@/types/orders/requestType'
-import { formatDate, formatDateTime } from './utils'
-import { StoredOrder, StoredOrderFlashing } from '@/types/orderTypes'
-import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
-import { AlertDialogContent } from '@/components/uikit/alertModal'
-import { Button } from '@/components/uikit/buttons/button'
-import { ReactNode } from 'react'
-import { StoredFlashing } from '@/types/flashingTypes'
-import { EditFlashingDrawer } from '@/components/dashboard/order/drawers'
-import { cn } from '@/utilities/ui'
-import FlashingSVG from '@/components/utils/flashingSVG'
+} from "@/components/uikit/icons";
+import Link from "next/link";
+import { OrderStatusBadge } from "./badge";
+import { Flashing, Order } from "@/types/orders/orderType";
+import { ReplacementRequest } from "@/types/orders/requestType";
+import { formatDate, formatDateTime } from "./utils";
+import { StoredOrder, StoredOrderFlashing } from "@/types/orderTypes";
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
+import { AlertDialogContent } from "@/components/uikit/alertModal";
+import { Button } from "@/components/uikit/buttons/button";
+import { ReactNode } from "react";
+import { StoredFlashing } from "@/types/flashingTypes";
+import { EditFlashingDrawer } from "@/components/dashboard/order/drawers";
+import { cn } from "@/utilities/ui";
+import FlashingSVG from "@/components/utils/flashingSVG";
 
 function formatStatus(status: any) {
   const map: any = {
-    pending: 'Pending',
-    in_progress: 'In Progress',
-    delivered: 'Delivered',
-    cancelled: 'Cancelled',
-    complete: 'Complete',
-  }
+    pending: "Pending",
+    in_progress: "In Progress",
+    delivered: "Delivered",
+    cancelled: "Cancelled",
+    complete: "Complete",
+  };
 
-  return map[status] || status
+  return map[status] || status;
 }
 
 export function OrderCard({ order, ...props }: { order: any }) {
-  console.log(order)
+  console.log(order);
 
   return (
     <Link
@@ -67,14 +67,14 @@ export function OrderCard({ order, ...props }: { order: any }) {
           </span>
           <span className="">{order?.job_reference?.project_name}</span>
         </div>
-        {order.fulfillment.type === 'delivery'
+        {order.fulfillment.type === "delivery"
           ? (() => {
               return (
                 <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
                   <Delivery />
                   <span>{order?.fulfillment.address?.full_address}</span>
                 </div>
-              )
+              );
             })()
           : (() => {
               return (
@@ -84,18 +84,19 @@ export function OrderCard({ order, ...props }: { order: any }) {
                     <span>{order?.fulfillment.address.full_address}</span>
                   </span>
                 </div>
-              )
+              );
             })()}
       </div>
       <div className="grid auto-cols-max grid-flow-col content-center gap-2 [&_svg]:size-4 text-body text-[12px]">
         <Box2 />
         <span className="rounded-xs border-1 border-border-default px-2 py-1 bg-gray-100">
-          {order?.flashings?.[0].material_data.name} / {order?.flashings?.[0].material_data.label}
+          {order?.flashings?.[0].material_data.name} /{" "}
+          {order?.flashings?.[0].material_data.label}
           <br />
           {order?.flashings?.[0].specifications?.reduce(
             (sum: number, spec: any) => sum + spec.quantity,
-            0,
-          )}{' '}
+            0
+          )}{" "}
           pcs
         </span>
         {(order?.flashings?.length ?? 0) > 1 && (
@@ -105,11 +106,13 @@ export function OrderCard({ order, ...props }: { order: any }) {
         )}
       </div>
       <div className="flex justify-between items-center">
-        <span className="label-regular">${order?.payment_history?.amount.toFixed(2)}</span>
+        <span className="label-regular">
+          ${order?.payment_history?.amount.toFixed(2)}
+        </span>
         <ChevronRight />
       </div>
     </Link>
-  )
+  );
 }
 
 export function RequestCard({ req, ...props }: { req: ReplacementRequest }) {
@@ -122,14 +125,18 @@ export function RequestCard({ req, ...props }: { req: ReplacementRequest }) {
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
           <p className="caption-regular text-subtitle">Request ID</p>
-          <span className="label-regular text-heading">REQ-{req.requestId}</span>
+          <span className="label-regular text-heading">
+            REQ-{req.requestId}
+          </span>
         </div>
         <OrderStatusBadge status={req.requestStatus} />
       </div>
       <div className="grid gap-1">
         <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  label-small">
           <DateIcon />
-          <span className="label-small">Delivery Date: {formatDateTime(req.requestDateTime)}</span>
+          <span className="label-small">
+            Delivery Date: {formatDateTime(req.requestDateTime)}
+          </span>
         </div>
       </div>
       <div className="flex justify-between items-center">
@@ -149,7 +156,7 @@ export function RequestCard({ req, ...props }: { req: ReplacementRequest }) {
         <ChevronRight />
       </div>
     </Link>
-  )
+  );
 }
 
 export function NewOrderCard({
@@ -161,55 +168,79 @@ export function NewOrderCard({
   ...props
 }: {
   flashing:
-    | (StoredFlashing & Pick<StoredOrderFlashing, 'code' | 'position' | 'specifications'>)
-    | undefined
-  onDeleteFlashing: (flashingId: string) => void
-  onSaveFlashing: (flashingId: string) => void
-  orderId: string
-  className?: string
+    | (StoredFlashing &
+        Pick<StoredOrderFlashing, "code" | "position" | "specifications">)
+    | any;
+  onDeleteFlashing: (flashingId: string) => void;
+  onSaveFlashing: (flashingId: string) => void;
+  orderId: string;
+  className?: string;
 }) {
-  if (!flashing) return
+  if (!flashing) return;
 
-  console.log(flashing.total_girth)
+  console.log(flashing.total_girth);
 
   return (
     <div
       {...props}
-      className={cn('grid gap-2 bg-white p-3 rounded-xs border border-border-default', className)}
+      className={cn(
+        "grid gap-2 bg-white p-3 rounded-xs border border-border-default",
+        className
+      )}
     >
-      {flashing.color && !flashing.startCrushFold && !flashing.endCrushFold ? (
+      {/* {flashing.material_data.type === "color" &&
+      !flashing.start_crush_fold &&
+      !flashing.end_crush_fold ? (
         <EditFlashingDrawer flashingId={flashing.id} orderId={orderId}>
           <div className="grid grid-cols-2 p-3 rounded-xs border border-border-default">
-            <FlashingSVG flashing={flashing} className="pl-2 h-18" path3DOffsetCoeff={0.8} />
+            <FlashingSVG
+              flashing={flashing}
+              className="pl-2 h-18"
+              path3DOffsetCoeff={0.8}
+            />
             <div className="grid gap-1">
               <Edit className="size-5 justify-self-end" />
-              <p className="caption-small">Total Grith: {flashing.total_girth.rounded()} mm</p>
-              <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
+              <p className="caption-small">
+                Total Grith: {Math.round(flashing?.total_girth)} mm
+              </p>
+              <p className="caption-small">
+                Tapered: {flashing.tapered ? "Yes" : "No"}
+              </p>
             </div>
           </div>
         </EditFlashingDrawer>
-      ) : (
-        <Link
-          href={`/f/${flashing.id}/edit/canvas?next=order&orderId=${orderId}`}
-          className="grid grid-cols-2 p-3 rounded-xs border border-border-default bg-gray-50"
-        >
-          <FlashingSVG flashing={flashing} className="pl-2 h-18" path3DOffsetCoeff={0.8} />
-          <div className="grid gap-1">
-            <Edit className="size-5 justify-self-end" />
-            <p className="caption-small">Total Grith: {flashing.total_girth.toFixed(0)} mm</p>
-            <p className="caption-small">Tapered: {flashing.tapered ? 'Yes' : 'No'}</p>
-          </div>
-        </Link>
-      )}
+      ) : ( */}
       <Link
-        href={`/f/${flashing.id}/edit/material-properties?next=order&orderId=${orderId}`}
+        href={`/f/canvas?flashingId=${flashing.id}`}
+        className="grid grid-cols-2 p-3 rounded-xs border border-border-default bg-gray-50"
+      >
+        <FlashingSVG
+          flashing={flashing}
+          className="pl-2 h-18"
+          path3DOffsetCoeff={0.8}
+        />
+        <div className="grid gap-1">
+          <Edit className="size-5 justify-self-end" />
+          <p className="caption-small">
+            Total Grith: {flashing.total_girth.toFixed(0)} mm
+          </p>
+          <p className="caption-small">
+            Tapered: {flashing.tapered ? "Yes" : "No"}
+          </p>
+        </div>
+      </Link>
+      {/* )} */}
+      <Link
+        href={`/f/material?flashingId=${flashing.id}`}
         className="flex justify-between items-start p-3 rounded-xs border border-border-default bg-gray-50"
       >
         <div className="grid gap-2">
-          <p className="caption-small">Material: {flashing.material_data.name}</p>
           <p className="caption-small">
-            {flashing.material_data.type === 'color'
-              ? `Color: ${flashing.material_data.type}`
+            Material: {flashing.material_data.name}
+          </p>
+          <p className="caption-small">
+            {flashing.material_data.type === "color"
+              ? `Color: ${flashing.material_data.label}`
               : `Thickness: ${flashing.material_data.label} mm`}
           </p>
         </div>
@@ -226,23 +257,27 @@ export function NewOrderCard({
             </p>
             <p className="caption-small">
               Position:
-              {flashing.position ? flashing.position : 'Not provided'}
+              {flashing.position ? flashing.position : "Not provided"}
             </p>
           </div>
           <Edit className="justify-self-end size-5 mb-4" />
         </div>
         <div className="flex justify-between pr-11">
           <div className="grid gap-2">
-            <p className="label-regular border-b border-gray-300 pb-1 pr-2">Quantity</p>
-            {flashing?.specifications?.map((spec, index) => (
+            <p className="label-regular border-b border-gray-300 pb-1 pr-2">
+              Quantity
+            </p>
+            {flashing?.specifications?.map((spec: any, index: number) => (
               <p key={index} className="caption-small">
                 {spec.quantity} pcs
               </p>
             ))}
           </div>
           <div className="grid gap-2 pr-6">
-            <p className="label-regular border-b border-gray-300 pb-1 pr-2">Length</p>
-            {flashing?.specifications?.map((spec, index) => (
+            <p className="label-regular border-b border-gray-300 pb-1 pr-2">
+              Length
+            </p>
+            {flashing?.specifications?.map((spec: any, index: number) => (
               <p key={index} className="caption-small">
                 {spec.length} mm
               </p>
@@ -251,7 +286,9 @@ export function NewOrderCard({
         </div>
       </Link>
       <div className="flex justify-end items-center py-2">
-        <DeleteFlashingModalOnOrderReview deleteFlashing={() => onDeleteFlashing(flashing.id)}>
+        <DeleteFlashingModalOnOrderReview
+          deleteFlashing={() => onDeleteFlashing(flashing.id)}
+        >
           <div className="flex label-regular items-center gap-2 px-4">
             Delete
             <Remove className="size-5" />
@@ -263,15 +300,15 @@ export function NewOrderCard({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export const DeleteFlashingModalOnOrderReview = ({
   deleteFlashing,
   children,
 }: {
-  deleteFlashing: () => void
-  children: ReactNode
+  deleteFlashing: () => void;
+  children: ReactNode;
 }) => {
   return (
     <AlertDialogPrimitive.Root data-slot="alert-dialog">
@@ -294,10 +331,14 @@ export const DeleteFlashingModalOnOrderReview = ({
             data-slot="alert-dialog-description"
             className="text-muted-foreground text-sm"
           >
-            Are you sure you want to delete this Flashing This action cannot be undone.
+            Are you sure you want to delete this Flashing This action cannot be
+            undone.
           </AlertDialogPrimitive.Description>
         </div>
-        <div data-slot="alert-dialog-footer" className="flex gap-4 justify-end pt-4">
+        <div
+          data-slot="alert-dialog-footer"
+          className="flex gap-4 justify-end pt-4"
+        >
           <AlertDialogPrimitive.Action asChild>
             <Button variant="ghost">No</Button>
           </AlertDialogPrimitive.Action>
@@ -310,5 +351,5 @@ export const DeleteFlashingModalOnOrderReview = ({
         </div>
       </AlertDialogContent>
     </AlertDialogPrimitive.Root>
-  )
-}
+  );
+};
