@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+import { cookies } from "next/headers";
 
 export async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -10,9 +11,11 @@ export async function proxy(req: NextRequest) {
   const token = req.cookies.get("auth-jwt")?.value;
   const sessionToken = req.cookies;
 
+  const cookieStore = cookies();
+
   let isAuthenticated;
 
-  console.log(token, sessionToken);
+  console.log(token, (await cookieStore).get("auth-jwt"));
 
   if (token) {
     try {
