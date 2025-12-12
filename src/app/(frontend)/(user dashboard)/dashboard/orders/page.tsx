@@ -1,24 +1,39 @@
-'use client'
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import { Header } from '@/components/dashboard/header'
-import { OrderCard, RequestCard } from '@/components/dashboard/order/cards'
-import { OrderStatusBadge } from '@/components/dashboard/order/badge'
-import { Box2, Building, ChevronRight, DateIcon, Delivery } from '@/components/uikit/icons'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/uikit/tabs'
-import Link from 'next/link'
-import { Order } from '@/types/orders/orderType'
-import { useGETAllOrders } from '@/lib/db/helpers/orderHelpers'
-import { useGETAllReplacementRequests } from '@/lib/db/helpers/replacementRequestHelpers'
-import useSWR from 'swr'
-import { fetcher } from '@/lib/axios'
-import { notFound } from 'next/navigation'
+"use client";
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
+import { Header } from "@/components/dashboard/header";
+import { OrderCard, RequestCard } from "@/components/dashboard/order/cards";
+import { OrderStatusBadge } from "@/components/dashboard/order/badge";
+import {
+  Box2,
+  Building,
+  ChevronRight,
+  DateIcon,
+  Delivery,
+} from "@/components/uikit/icons";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/uikit/tabs";
+import Link from "next/link";
+import { Order } from "@/types/orders/orderType";
+import { useGETAllOrders } from "@/lib/db/helpers/orderHelpers";
+import { useGETAllReplacementRequests } from "@/lib/db/helpers/replacementRequestHelpers";
+import useSWR from "swr";
+import { fetcher } from "@/lib/axios";
+import { notFound } from "next/navigation";
 
 export default function OrdersPage() {
-  const { data: orders, isLoading, error } = useSWR('/d/order/', fetcher, { onError: notFound })
+  const {
+    data: orders,
+    isLoading,
+    error,
+  } = useSWR("/a/order/", fetcher, { onError: notFound });
 
-  const replacementRequests = null
+  const replacementRequests = null;
 
-  console.log(orders)
+  console.log(orders);
 
   return (
     <>
@@ -36,10 +51,10 @@ export default function OrdersPage() {
                 (() => {
                   const filteredOrders = orders.results.filter(
                     (o: any) =>
-                      o.status === 'pending' ||
-                      o.status === 'in_progress' ||
-                      o.status === 'delivered',
-                  )
+                      o.status === "pending" ||
+                      o.status === "in_progress" ||
+                      o.status === "delivered"
+                  );
 
                   if (filteredOrders.length === 0)
                     return (
@@ -48,11 +63,11 @@ export default function OrdersPage() {
                           <h6>No orders here</h6>
                         </div>
                       </>
-                    )
+                    );
 
                   return filteredOrders.map((o: any, index: number) => (
                     <OrderCard key={index} order={o} />
-                  ))
+                  ));
                 })()}
             </div>
           </TabsContent>
@@ -61,8 +76,9 @@ export default function OrdersPage() {
               {orders &&
                 (() => {
                   const filteredOrders = orders.results.filter(
-                    (o: any) => o.status === 'complete' || o.status === 'cancelled',
-                  )
+                    (o: any) =>
+                      o.status === "complete" || o.status === "cancelled"
+                  );
 
                   if (filteredOrders.length === 0)
                     return (
@@ -71,11 +87,11 @@ export default function OrdersPage() {
                           <h6>No orders here</h6>
                         </div>
                       </>
-                    )
+                    );
 
                   return filteredOrders.map((o: any, index: number) => (
                     <OrderCard key={index} order={o} />
-                  ))
+                  ));
                 })()}
             </div>
           </TabsContent>
@@ -98,5 +114,5 @@ export default function OrdersPage() {
         </Tabs>
       </ContentWrapper>
     </>
-  )
+  );
 }

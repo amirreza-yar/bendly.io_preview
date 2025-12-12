@@ -1,23 +1,29 @@
-'use client'
-import { notFound, useParams } from 'next/navigation'
-import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
-import Link from 'next/link'
-import { ArrowLeft } from '@/components/uikit/icons'
-import { ButtonListItem } from '@/components/uikit/buttons/buttonListItem'
-import { Separator } from '@/components/uikit/separator'
-import { useGETJobRefAddressByIds } from '@/lib/db/helpers/jobRefHelpers'
-import useSWR from 'swr'
-import { fetcher } from '@/lib/axios'
+"use client";
+import { notFound, useParams } from "next/navigation";
+import { jobReferences } from "@/utilities/demo_datas/demoJobRefData";
+import Link from "next/link";
+import { ArrowLeft } from "@/components/uikit/icons";
+import { ButtonListItem } from "@/components/uikit/buttons/buttonListItem";
+import { Separator } from "@/components/uikit/separator";
+import { useGETJobRefAddressByIds } from "@/lib/db/helpers/jobRefHelpers";
+import useSWR from "swr";
+import { fetcher } from "@/lib/axios";
 
 export default function EditAddressPage() {
-  const { jobId, addressId } = useParams<{ jobId: string; addressId: string }>()
+  const { jobId, addressId } = useParams<{
+    jobId: string;
+    addressId: string;
+  }>();
 
-  const { data, error, isLoading } = useSWR(`/d/job-ref/${jobId}/address/${addressId}`, fetcher)
+  const { data, error, isLoading } = useSWR(
+    `/a/job-ref/${jobId}/address/${addressId}`,
+    fetcher
+  );
 
-  const address = data
+  const address = data;
 
   if (!isLoading && address === undefined) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -35,7 +41,9 @@ export default function EditAddressPage() {
 
       <div className="overflow-scroll w-full h-full pt-18 pb-22 px-4 no-scrollbar">
         <div className="grid gap-3">
-          <Link href={`/dashboard/j/${jobId}/${addressId}/edit-address-details`}>
+          <Link
+            href={`/dashboard/j/${jobId}/${addressId}/edit-address-details`}
+          >
             <ButtonListItem text="Edit Address Details" />
           </Link>
           <Separator />
@@ -45,5 +53,5 @@ export default function EditAddressPage() {
         </div>
       </div>
     </>
-  )
+  );
 }

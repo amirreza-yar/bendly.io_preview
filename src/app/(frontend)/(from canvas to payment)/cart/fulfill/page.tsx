@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import { Header } from '@/components/dashboard/header'
-import { Button } from '@/components/uikit/buttons/button'
-import { IconButton } from '@/components/uikit/buttons/iconButton'
-import DividerWithText from '@/components/uikit/dividerWithText'
-import { Drawer } from 'vaul'
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
+import { Header } from "@/components/dashboard/header";
+import { Button } from "@/components/uikit/buttons/button";
+import { IconButton } from "@/components/uikit/buttons/iconButton";
+import DividerWithText from "@/components/uikit/dividerWithText";
+import { Drawer } from "vaul";
 import {
   AlertTriangle,
   CardChecked,
@@ -21,161 +21,173 @@ import {
   ProfileNav,
   WareHouse,
   XIcon,
-} from '@/components/uikit/icons'
-import { TabsContent } from '@/components/uikit/tabs'
-import api, { fetcher } from '@/lib/axios'
-import { cn } from '@/utilities/ui'
-import { Tabs } from '@radix-ui/react-tabs'
-import Link from 'next/link'
-import { notFound, useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
-import useSWR from 'swr'
-import { Footer } from '@/components/dashboard/footer'
-import { Input } from '@/components/uikit/input'
-import { StoredJobReference } from '@/types/jobReferenceTypes'
-import z from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Carousel, CarouselContent, CarouselItem } from '@/components/uikit/carousel'
-import { formatPrettyDate, getDayAbbrString, getDayMonthNumber } from '@/utilities/datetime'
-import { House } from 'lucide-react'
-import { Form } from '@/components/uikit/form'
-import { toast } from 'sonner'
-import { Textarea } from '@/components/uikit/textarea'
-import { Separator } from '@/components/uikit/separator'
+} from "@/components/uikit/icons";
+import { TabsContent } from "@/components/uikit/tabs";
+import api, { fetcher } from "@/lib/axios";
+import { cn } from "@/utilities/ui";
+import { Tabs } from "@radix-ui/react-tabs";
+import Link from "next/link";
+import { notFound, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import useSWR from "swr";
+import { Footer } from "@/components/dashboard/footer";
+import { Input } from "@/components/uikit/input";
+import { StoredJobReference } from "@/types/jobReferenceTypes";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/uikit/carousel";
+import {
+  formatPrettyDate,
+  getDayAbbrString,
+  getDayMonthNumber,
+} from "@/utilities/datetime";
+import { House } from "lucide-react";
+import { Form } from "@/components/uikit/form";
+import { toast } from "sonner";
+import { Textarea } from "@/components/uikit/textarea";
+import { Separator } from "@/components/uikit/separator";
 
 function generateSequentialDates(date: string): string[] {
-  if (!date) return []
+  if (!date) return [];
 
-  const first = new Date(date)
-  const result = []
+  const first = new Date(date);
+  const result = [];
 
   for (let i = 0; i < 14; i++) {
-    const d = new Date(first)
-    d.setDate(first.getDate() + i)
-    result.push(d.toISOString().split('T')[0])
+    const d = new Date(first);
+    d.setDate(first.getDate() + i);
+    result.push(d.toISOString().split("T")[0]);
   }
 
-  return result
+  return result;
 }
 
 export function searchJobReferences(data: any, query: any) {
-  const normalizedQuery = query.toLowerCase()
+  const normalizedQuery = query.toLowerCase();
 
   return data?.filter((job: any) => {
-    const valuesToSearch: string[] = []
+    const valuesToSearch: string[] = [];
 
     const extractValues = (obj: any) => {
-      if (typeof obj === 'string' || typeof obj === 'number') {
-        valuesToSearch.push(String(obj).toLowerCase())
+      if (typeof obj === "string" || typeof obj === "number") {
+        valuesToSearch.push(String(obj).toLowerCase());
       } else if (Array.isArray(obj)) {
-        obj.forEach(extractValues)
-      } else if (typeof obj === 'object' && obj !== null) {
-        Object.values(obj).forEach(extractValues)
+        obj.forEach(extractValues);
+      } else if (typeof obj === "object" && obj !== null) {
+        Object.values(obj).forEach(extractValues);
       }
-    }
+    };
 
-    extractValues(job)
+    extractValues(job);
 
-    return valuesToSearch.some((value) => value.includes(normalizedQuery))
-  })
+    return valuesToSearch.some((value) => value.includes(normalizedQuery));
+  });
 }
 
-const snapPoints = [0.6, 1]
+const snapPoints = [0.6, 1];
 
 const fulFillmentFormSchema = z
   .object({
-    job_reference_id: z.number('Select a job reference').nullable(),
-    address_id: z.number('Select a job reference').nullable(),
+    job_reference_id: z.number("Select a job reference").nullable(),
+    address_id: z.number("Select a job reference").nullable(),
     delivery_date: z
-      .string('Select a delivery date')
-      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Select a delivery date'),
-    delivery_type: z.enum(['delivery', 'pickup'], 'Delivery type is required'),
+      .string("Select a delivery date")
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Select a delivery date"),
+    delivery_type: z.enum(["delivery", "pickup"], "Delivery type is required"),
   })
   .refine((data) => data.job_reference_id && data.address_id, {
-    message: 'Select a job reference',
-    path: ['job_reference_id'], // where you want the single error to appear
-  })
+    message: "Select a job reference",
+    path: ["job_reference_id"], // where you want the single error to appear
+  });
 
-type FulFillmentFormValue = z.infer<typeof fulFillmentFormSchema>
+type FulFillmentFormValue = z.infer<typeof fulFillmentFormSchema>;
 
 export default function FulFillPage() {
-  const [tabValue, setTabValue] = useState('main-tab')
+  const [tabValue, setTabValue] = useState("main-tab");
 
-  const [deliveryTypeState, setDeliveryTypeState] = useState<'delivery' | 'pickup'>()
-  const [jobReferenceDrawerOpen, setJobReferenceDrawerOpen] = useState<boolean>(false)
-  const [jobReferenceDrawerSnap, setJobReferenceDrawerSnap] = useState<number | string | null>(
-    snapPoints[0],
-  )
-  const [isSelectDateDrawerOpen, setIsSelectDateDrawerOpen] = useState<boolean>(false)
+  const [deliveryTypeState, setDeliveryTypeState] = useState<
+    "delivery" | "pickup"
+  >();
+  const [jobReferenceDrawerOpen, setJobReferenceDrawerOpen] =
+    useState<boolean>(false);
+  const [jobReferenceDrawerSnap, setJobReferenceDrawerSnap] = useState<
+    number | string | null
+  >(snapPoints[0]);
+  const [isSelectDateDrawerOpen, setIsSelectDateDrawerOpen] =
+    useState<boolean>(false);
 
-  const [searchValue, setSearchValue] = useState<string>('')
+  const [searchValue, setSearchValue] = useState<string>("");
 
-  const [searchResults, setSearchResults] = useState<any[] | null>()
+  const [searchResults, setSearchResults] = useState<any[] | null>();
 
-  const { data: fetched_job_references } = useSWR('/d/job-ref/', fetcher, {
+  const { data: fetched_job_references } = useSWR("/a/job-ref/", fetcher, {
     onSuccess: (data) => {
-      console.log(data.results)
-      setSearchResults(data.results)
+      console.log(data.results);
+      setSearchResults(data.results);
     },
-  })
+  });
 
   const fulFillmentForm = useForm<FulFillmentFormValue>({
     resolver: zodResolver(fulFillmentFormSchema),
     defaultValues: {
-      delivery_type: 'delivery',
+      delivery_type: "delivery",
     },
-  })
+  });
 
   useEffect(() => {
-    if (!fulFillmentForm) return
-    const err = fulFillmentForm.formState.errors
+    if (!fulFillmentForm) return;
+    const err = fulFillmentForm.formState.errors;
     if (err.job_reference_id || err.address_id || err.delivery_date) {
       if (err.address_id || err.job_reference_id) {
-        toast(err.job_reference_id?.message)
+        toast(err.job_reference_id?.message);
       }
 
       if (err.delivery_date) {
-        toast(err.delivery_date.message)
+        toast(err.delivery_date.message);
       }
     }
-  }, [fulFillmentForm.formState])
+  }, [fulFillmentForm.formState]);
 
-  const jobId = fulFillmentForm.watch('job_reference_id')
-  const addressId = fulFillmentForm.watch('address_id')
-  const deliveryType = fulFillmentForm.watch('delivery_type')
-  const deliveryDate = fulFillmentForm.watch('delivery_date')
+  const jobId = fulFillmentForm.watch("job_reference_id");
+  const addressId = fulFillmentForm.watch("address_id");
+  const deliveryType = fulFillmentForm.watch("delivery_type");
+  const deliveryDate = fulFillmentForm.watch("delivery_date");
 
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const DELIVERY_DESC = 'Open from 9:00 to 18:00'
+  const DELIVERY_DESC = "Open from 9:00 to 18:00";
 
   const [jobReference, setJobReference] = useState<{
-    job_reference_id: number
-    address_id: number
-    code: string
-    project_name?: string
-    title: string
-    full_address: string
-    recipient: string
-  } | null>()
+    job_reference_id: number;
+    address_id: number;
+    code: string;
+    project_name?: string;
+    title: string;
+    full_address: string;
+    recipient: string;
+  } | null>();
 
   const {
     data: cart,
     error,
     isLoading,
     mutate,
-  } = useSWR('/d/cart/', fetcher, {
+  } = useSWR("/a/cart/", fetcher, {
     onError: notFound,
     onSuccess: (data) => {
-      setDeliveryTypeState(data.delivery_type)
+      setDeliveryTypeState(data.delivery_type);
 
-      fulFillmentForm.setValue('job_reference_id', data.job_reference.id)
-      fulFillmentForm.setValue('address_id', data.address.id)
-      fulFillmentForm.setValue('delivery_date', data.delivery_date)
-      fulFillmentForm.setValue('delivery_type', data.delivery_type)
+      fulFillmentForm.setValue("job_reference_id", data.job_reference.id);
+      fulFillmentForm.setValue("address_id", data.address.id);
+      fulFillmentForm.setValue("delivery_date", data.delivery_date);
+      fulFillmentForm.setValue("delivery_type", data.delivery_type);
     },
-  })
+  });
 
   // useEffect(() => {
   //   if (cart && fulFillmentForm) {
@@ -187,40 +199,40 @@ export default function FulFillPage() {
   // }, [cart, fulFillmentForm])
 
   const checkForEstimatedDeliveryDate = async (address_id: number | string) => {
-    console.log(address_id)
+    console.log(address_id);
     try {
-      const res = await api.post('/d/cart/estimate-delivery/', {
+      const res = await api.post("/a/cart/estimate-delivery/", {
         address_id: address_id,
-      })
+      });
 
-      console.log(res.data)
+      console.log(res.data);
     } catch (error: any) {
-      console.log(error.response.data)
+      console.log(error.response.data);
     }
-  }
+  };
 
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     if (jobReference?.address_id) {
-      checkForEstimatedDeliveryDate(jobReference.address_id)
+      checkForEstimatedDeliveryDate(jobReference.address_id);
     }
-  }, [jobReference])
+  }, [jobReference]);
 
   const onSubmitUpdateCartForm = async (data: FulFillmentFormValue) => {
-    console.log(data)
+    console.log(data);
 
     try {
-      await api.post('/d/cart/update/', {
+      await api.post("/a/cart/update/", {
         address_id: data.address_id,
         delivery_date: data.delivery_date,
         delivery_type: data.delivery_type,
-      })
-      router.replace('/cart/checkout/')
+      });
+      router.replace("/cart/checkout/");
     } catch (error: any) {
-      toast('Something went wrong')
+      toast("Something went wrong");
     }
-  }
+  };
 
   return (
     <>
@@ -232,19 +244,27 @@ export default function FulFillPage() {
               <div className="grid grid-cols-2 text-center rounded-md border-2 p-0.5 md:mx-4 border-gray-300">
                 <div
                   className={cn(
-                    'rounded-md py-1.5 text-[13px]',
-                    deliveryType === 'delivery' ? 'bg-primary text-white' : 'text-body',
+                    "rounded-md py-1.5 text-[13px]",
+                    deliveryType === "delivery"
+                      ? "bg-primary text-white"
+                      : "text-body"
                   )}
-                  onClick={() => fulFillmentForm.setValue('delivery_type', 'delivery')}
+                  onClick={() =>
+                    fulFillmentForm.setValue("delivery_type", "delivery")
+                  }
                 >
                   Delivery
                 </div>
                 <div
                   className={cn(
-                    'rounded-md py-1.5 text-[13px]',
-                    deliveryType === 'pickup' ? 'bg-primary text-white' : 'text-body',
+                    "rounded-md py-1.5 text-[13px]",
+                    deliveryType === "pickup"
+                      ? "bg-primary text-white"
+                      : "text-body"
                   )}
-                  onClick={() => fulFillmentForm.setValue('delivery_type', 'pickup')}
+                  onClick={() =>
+                    fulFillmentForm.setValue("delivery_type", "pickup")
+                  }
                 >
                   Pickup
                 </div>
@@ -257,9 +277,13 @@ export default function FulFillPage() {
                 </div>
                 {fetched_job_references && jobId ? (
                   (() => {
-                    console.log(fetched_job_references?.results, jobId)
-                    const job = fetched_job_references?.results?.find((j: any) => j.id === jobId)
-                    const addr = job.addresses.find((a: any) => a.id === addressId)
+                    console.log(fetched_job_references?.results, jobId);
+                    const job = fetched_job_references?.results?.find(
+                      (j: any) => j.id === jobId
+                    );
+                    const addr = job.addresses.find(
+                      (a: any) => a.id === addressId
+                    );
 
                     return (
                       <div className="flex flex-col gap-1">
@@ -269,8 +293,11 @@ export default function FulFillPage() {
                         >
                           <IconButton
                             onClick={() => {
-                              fulFillmentForm.setValue('job_reference_id', null)
-                              fulFillmentForm.setValue('address_id', null)
+                              fulFillmentForm.setValue(
+                                "job_reference_id",
+                                null
+                              );
+                              fulFillmentForm.setValue("address_id", null);
                             }}
                             variant="ghost"
                             black
@@ -279,24 +306,32 @@ export default function FulFillPage() {
                             <XIcon className="size-5" />
                           </IconButton>
                           <div className="flex flex-col gap-1">
-                            <p className="text-[16px] font-bold">JR-{job.code}</p>
+                            <p className="text-[16px] font-bold">
+                              JR-{job.code}
+                            </p>
                             <p className="text-[14px] font-semibold">
-                              {job.project_name ?? 'Not Provided'}
+                              {job.project_name ?? "Not Provided"}
                             </p>
                           </div>
                           <div className="flex gap-2">
                             <MapMarker className="size-5" />
                             <div className="flex flex-col gap-1 truncate">
                               <>
-                                {deliveryType === 'delivery' ? (
+                                {deliveryType === "delivery" ? (
                                   <>
-                                    <p className="label-regular">{addr.title}</p>
-                                    <p className="body-small">{addr.full_address}</p>
+                                    <p className="label-regular">
+                                      {addr.title}
+                                    </p>
+                                    <p className="body-small">
+                                      {addr.full_address}
+                                    </p>
                                   </>
                                 ) : (
                                   <>
                                     <p className="label-regular">Self Pickup</p>
-                                    <p className="body-small">No Delivery Address</p>
+                                    <p className="body-small">
+                                      No Delivery Address
+                                    </p>
                                   </>
                                 )}
                               </>
@@ -308,7 +343,8 @@ export default function FulFillPage() {
                             <div className="truncate">
                               <>
                                 <p className="body-small">
-                                  {addr.recipient_name} - +67{addr.recipient_phone}
+                                  {addr.recipient_name} - +67
+                                  {addr.recipient_phone}
                                 </p>
                               </>
                             </div>
@@ -325,13 +361,14 @@ export default function FulFillPage() {
                           <ChevronRight className="size-5" />
                         </Button>
                       </div>
-                    )
+                    );
                   })()
                 ) : (
                   <>
                     <div className="flex flex-col gap-3 pt-2 pb-4">
                       <p className="subtitle-regular pb-2">
-                        Choose an existing job reference or create a new one to organize this order
+                        Choose an existing job reference or create a new one to
+                        organize this order
                       </p>
 
                       <button
@@ -357,7 +394,7 @@ export default function FulFillPage() {
 
             <div className="flex flex-col mt-2 py-6 px-6 bg-white">
               <div className="flex items-center gap-2 pb-2">
-                {deliveryType === 'delivery' ? (
+                {deliveryType === "delivery" ? (
                   <Delivery className="size-6" />
                 ) : (
                   <WareHouse className="size-6" />
@@ -365,39 +402,51 @@ export default function FulFillPage() {
                 <h6>Select you {deliveryType} date</h6>
               </div>
 
-              <p className="subtitle-regular">Please select your preferred {deliveryType} date</p>
+              <p className="subtitle-regular">
+                Please select your preferred {deliveryType} date
+              </p>
 
               <Carousel
                 opts={{
-                  align: 'start',
+                  align: "start",
                 }}
                 className="w-full pt-4"
               >
                 <CarouselContent className="-ml-4 w-screen">
                   {cart &&
-                    generateSequentialDates(cart?.estimated_delivery_date)?.map((date, index) => (
-                      <CarouselItem
-                        key={index}
-                        className="last:pr-6 pb-2"
-                        onClick={() => fulFillmentForm.setValue('delivery_date', date)}
-                      >
-                        <div
-                          className={cn(
-                            'flex flex-col items-center text-center rounded-md border p-2',
-                            deliveryDate === date
-                              ? 'border-primary bg-primary-lightest/40 ring-primary text-primary-dark font-bold'
-                              : 'border-border-default',
-                          )}
+                    generateSequentialDates(cart?.estimated_delivery_date)?.map(
+                      (date, index) => (
+                        <CarouselItem
+                          key={index}
+                          className="last:pr-6 pb-2"
+                          onClick={() =>
+                            fulFillmentForm.setValue("delivery_date", date)
+                          }
                         >
-                          <p className="text-[13px]">{getDayAbbrString(date)}</p>
-                          <p className="text-[12px] opacity-70">{getDayMonthNumber(date)}</p>
-                        </div>
-                      </CarouselItem>
-                    ))}
+                          <div
+                            className={cn(
+                              "flex flex-col items-center text-center rounded-md border p-2",
+                              deliveryDate === date
+                                ? "border-primary bg-primary-lightest/40 ring-primary text-primary-dark font-bold"
+                                : "border-border-default"
+                            )}
+                          >
+                            <p className="text-[13px]">
+                              {getDayAbbrString(date)}
+                            </p>
+                            <p className="text-[12px] opacity-70">
+                              {getDayMonthNumber(date)}
+                            </p>
+                          </div>
+                        </CarouselItem>
+                      )
+                    )}
                 </CarouselContent>
               </Carousel>
-              {deliveryType === 'pickup' && (
-                <p className="text-center caption-small pt-4">{DELIVERY_DESC}</p>
+              {deliveryType === "pickup" && (
+                <p className="text-center caption-small pt-4">
+                  {DELIVERY_DESC}
+                </p>
               )}
 
               <Separator className="my-4" />
@@ -418,10 +467,12 @@ export default function FulFillPage() {
             >
               <div className="flex flex-col items-start">
                 <p className="text-[12px]">
-                  You {deliveryType === 'delivery' ? 'will recieve' : 'can pickup'} your order on
+                  You{" "}
+                  {deliveryType === "delivery" ? "will recieve" : "can pickup"}{" "}
+                  your order on
                 </p>
                 <p className="text-[14px] font-bold">
-                  {deliveryDate ? formatPrettyDate(deliveryDate) : 'Not Set'}
+                  {deliveryDate ? formatPrettyDate(deliveryDate) : "Not Set"}
                 </p>
               </div>
               <Button type="submit" className="min-w-30">
@@ -445,10 +496,13 @@ export default function FulFillPage() {
                 className="fixed z-99 flex flex-col border-2 border-gray-200 border-b-none rounded-t-md bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px] bg-white shadow-lg"
               >
                 <div
-                  className={cn('no-scrollbar overflow-y-scroll flex flex-col mx-auto w-full', {
-                    // 'overflow-y-auto': jobReferenceDrawerSnap === 1,
-                    // 'overflow-hidden': jobReferenceDrawerSnap !== 1,
-                  })}
+                  className={cn(
+                    "no-scrollbar overflow-y-scroll flex flex-col mx-auto w-full",
+                    {
+                      // 'overflow-y-auto': jobReferenceDrawerSnap === 1,
+                      // 'overflow-hidden': jobReferenceDrawerSnap !== 1,
+                    }
+                  )}
                 >
                   <Drawer.Title className="hidden" />
 
@@ -464,25 +518,29 @@ export default function FulFillPage() {
                                 type="text"
                                 ref={searchInputRef}
                                 value={searchValue}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                  const value = e.target.value
-                                  setSearchValue(value)
+                                onChange={(
+                                  e: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                  const value = e.target.value;
+                                  setSearchValue(value);
                                   const results = searchJobReferences(
                                     fetched_job_references?.results,
-                                    value,
-                                  )
-                                  setSearchResults(results)
+                                    value
+                                  );
+                                  setSearchResults(results);
                                 }}
                                 placeholder="Search template..."
                                 className="pl-11 bg-white"
                               />
-                              {searchValue !== '' && (
+                              {searchValue !== "" && (
                                 <XIcon
                                   className="size-5 absolute right-4 cursor-pointer"
                                   onClick={() => {
-                                    setSearchValue('')
-                                    setSearchResults(fetched_job_references?.results)
-                                    searchInputRef.current?.focus()
+                                    setSearchValue("");
+                                    setSearchResults(
+                                      fetched_job_references?.results
+                                    );
+                                    searchInputRef.current?.focus();
                                   }}
                                 />
                               )}
@@ -491,11 +549,11 @@ export default function FulFillPage() {
 
                           <div
                             className={cn(
-                              'flex flex-col w-full pt-4 px-4 pb-22 gap-4 max-w-[900px] mx-auto',
+                              "flex flex-col w-full pt-4 px-4 pb-22 gap-4 max-w-[900px] mx-auto",
                               {
                                 // 'overflow-y-auto': jobReferenceDrawerSnap === 1,
                                 // 'overflow-hidden': jobReferenceDrawerSnap !== 1,
-                              },
+                              }
                             )}
                           >
                             {searchResults?.map((job) => (
@@ -509,8 +567,8 @@ export default function FulFillPage() {
                                   <button
                                     data-slot="card"
                                     className={cn(
-                                      'grid gap-4 rounded-md border-1 border-border-default py-3 px-4 relative text-start',
-                                      jobId === Number(job.id) && 'bg-gray-100',
+                                      "grid gap-4 rounded-md border-1 border-border-default py-3 px-4 relative text-start",
+                                      jobId === Number(job.id) && "bg-gray-100"
                                     )}
                                     // disabled
                                   >
@@ -534,9 +592,12 @@ export default function FulFillPage() {
                                                 {job?.addresses?.[0]?.title}
                                               </p>
                                               <p className="body-small">
-                                                {job?.addresses?.[0]?.street_address},{' '}
-                                                {job?.addresses?.[0]?.suburb},{' '}
-                                                {job?.addresses?.[0]?.state}{' '}
+                                                {
+                                                  job?.addresses?.[0]
+                                                    ?.street_address
+                                                }
+                                                , {job?.addresses?.[0]?.suburb},{" "}
+                                                {job?.addresses?.[0]?.state}{" "}
                                                 {job?.addresses?.[0]?.postcode}
                                               </p>
                                             </div>
@@ -544,13 +605,16 @@ export default function FulFillPage() {
                                           {job?.addresses?.[1] ? (
                                             <>
                                               <div className="flex items-center gap-2">
-                                                <p className="label-small">Other Address:</p>
+                                                <p className="label-small">
+                                                  Other Address:
+                                                </p>
                                                 <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
                                                   {job?.addresses?.[1].title}
                                                 </span>
                                                 {job?.addresses?.length > 2 && (
                                                   <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
-                                                    +{job?.addresses?.length - 2}
+                                                    +
+                                                    {job?.addresses?.length - 2}
                                                   </span>
                                                 )}
                                               </div>
@@ -558,7 +622,9 @@ export default function FulFillPage() {
                                           ) : (
                                             <>
                                               <div className="flex items-center gap-2">
-                                                <p className="label-small">Other Address:</p>
+                                                <p className="label-small">
+                                                  Other Address:
+                                                </p>
                                                 <span className="caption-regular rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
                                                   ---
                                                 </span>
@@ -576,8 +642,8 @@ export default function FulFillPage() {
                                               Associated addresses deleted
                                             </p>
                                             <p className="body-small">
-                                              Add an address to continue or delete this Job
-                                              Reference.
+                                              Add an address to continue or
+                                              delete this Job Reference.
                                             </p>
                                           </div>
                                         </div>
@@ -592,30 +658,37 @@ export default function FulFillPage() {
                                     <Drawer.Title className="hidden" />
                                     <ContentWrapper className="flex flex-col gap-4 pt-0">
                                       <div className="mx-auto w-20 h-1.5 flex-shrink-0 rounded-full bg-gray-300 mt-4" />
-                                      {(searchResults?.find((job_ref) => job_ref.id === job?.id)
-                                        ?.addresses?.length ?? 0) > 0 ? (
+                                      {(searchResults?.find(
+                                        (job_ref) => job_ref.id === job?.id
+                                      )?.addresses?.length ?? 0) > 0 ? (
                                         <>
                                           {searchResults
-                                            ?.find((job_ref) => job_ref.id === job?.id)
+                                            ?.find(
+                                              (job_ref) =>
+                                                job_ref.id === job?.id
+                                            )
                                             ?.addresses?.map((address: any) => (
                                               <Drawer.Close
                                                 key={address.id}
                                                 onClick={() => {
                                                   fulFillmentForm.setValue(
-                                                    'job_reference_id',
-                                                    Number(job.id),
-                                                  )
+                                                    "job_reference_id",
+                                                    Number(job.id)
+                                                  );
                                                   fulFillmentForm.setValue(
-                                                    'address_id',
-                                                    Number(address.id),
-                                                  )
-                                                  setJobReferenceDrawerOpen(false)
+                                                    "address_id",
+                                                    Number(address.id)
+                                                  );
+                                                  setJobReferenceDrawerOpen(
+                                                    false
+                                                  );
                                                 }}
                                                 className={cn(
-                                                  'rounded-md border-1 border-border-default py-3 px-4 relative',
-                                                  addressId === Number(address.id)
-                                                    ? 'bg-gray-100'
-                                                    : '',
+                                                  "rounded-md border-1 border-border-default py-3 px-4 relative",
+                                                  addressId ===
+                                                    Number(address.id)
+                                                    ? "bg-gray-100"
+                                                    : ""
                                                 )}
                                               >
                                                 <div className="flex flex-col gap-2">
@@ -635,8 +708,13 @@ export default function FulFillPage() {
                                                       <ProfileNav className="size-5 mt-[2px]" />
                                                       <div className="flex flex-col gap-1">
                                                         <p className="body-small truncate">
-                                                          {address.recipient_name} {' +67'}
-                                                          {address.recipient_phone}
+                                                          {
+                                                            address.recipient_name
+                                                          }{" "}
+                                                          {" +67"}
+                                                          {
+                                                            address.recipient_phone
+                                                          }
                                                         </p>
                                                       </div>
                                                     </div>
@@ -647,7 +725,8 @@ export default function FulFillPage() {
                                                   </div>
                                                 </div>
 
-                                                {addressId === Number(address.id) && (
+                                                {addressId ===
+                                                  Number(address.id) && (
                                                   <div className="absolute z-110 right-4 top-4">
                                                     <FeaturedCheckSmall className="size-5" />
                                                   </div>
@@ -658,7 +737,10 @@ export default function FulFillPage() {
                                       ) : (
                                         <div className="h-[50vh]">
                                           <div className="h-full grid items-center justify-center opacity-40">
-                                            <h6>No addresses for JR-{jobReference?.code}</h6>
+                                            <h6>
+                                              No addresses for JR-
+                                              {jobReference?.code}
+                                            </h6>
                                           </div>
                                         </div>
                                       )}
@@ -680,7 +762,8 @@ export default function FulFillPage() {
                               <div className="text-center">
                                 <h5>No results found</h5>
                                 <p className="subtitle-large text-subtitle">
-                                  Please check your spelling or try different keywords
+                                  Please check your spelling or try different
+                                  keywords
                                 </p>
                               </div>
                             </div>
@@ -698,7 +781,7 @@ export default function FulFillPage() {
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center gap-4 px-10 max-w-[600px] mx-auto pt-30">
                       <p className="text-center subtitle-large text-subtitle">
-                        No job references have been created yet{' '}
+                        No job references have been created yet{" "}
                       </p>
 
                       <Button className="w-full ">
@@ -714,5 +797,5 @@ export default function FulFillPage() {
         </TabsContent>
       </Tabs>
     </>
-  )
+  );
 }

@@ -88,7 +88,7 @@ const CanvasControllers = ({
   // )
 
   const { data: swrFlashing, isLoading } = useSWR(
-    flashingId ? `/d/flashing/${flashingId}/` : null,
+    flashingId ? `/a/flashing/${flashingId}/` : null,
     fetcher,
 
     {
@@ -440,7 +440,7 @@ const CanvasControllers = ({
     if (!canvasIsEmpty && savedFlashing && flashingId) {
       (async () => {
         try {
-          await api.patch(`/d/flashing/${flashingId}/`, {
+          await api.patch(`/a/flashing/${flashingId}/`, {
             nodes: flashing.nodes,
             color_side_dir: flashing.crushFoldDir,
             start_crush_fold: flashing.startCrushFold,

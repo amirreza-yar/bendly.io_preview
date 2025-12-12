@@ -14,7 +14,7 @@ export default async function SuccessPayPage({
 
   let order: any = null;
   try {
-    const res = await api.get(`/d/order/${orderId}/`, {
+    const res = await api.get(`/a/order/${orderId}/`, {
       headers: {
         Cookie: (await cookies()).toString(),
       },

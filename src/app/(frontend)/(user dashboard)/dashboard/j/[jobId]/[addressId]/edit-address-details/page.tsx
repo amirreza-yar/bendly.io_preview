@@ -1,79 +1,109 @@
-'use client'
-import { useForm, Controller } from 'react-hook-form'
-import { ArrowLeft, Check, ChevronDown, ChevronUp, Info } from '@/components/uikit/icons'
-import { Input, LabeledInput } from '@/components/uikit/input'
-import { Button } from '@/components/uikit/buttons/button'
-import Link from 'next/link'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { notFound, redirect, useParams, useRouter, useSearchParams } from 'next/navigation'
-import { Select } from '@/components/uikit/select'
-import { Separator } from '@/components/uikit/separator'
-import { useNewJobReference } from '@/providers/data_providers/job_reference_providers/AddJobReferenceContext'
-import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
-import { toast } from 'sonner'
-import { Header } from '@/components/dashboard/header'
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import { useGETJobRefAddressByIds, updateJobReference } from '@/lib/db/helpers/jobRefHelpers'
-import { Footer } from '@/components/dashboard/footer'
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/uikit/form'
-import { useEffect } from 'react'
-import useSWR from 'swr'
-import api, { fetcher } from '@/lib/axios'
+"use client";
+import { useForm, Controller } from "react-hook-form";
+import {
+  ArrowLeft,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Info,
+} from "@/components/uikit/icons";
+import { Input, LabeledInput } from "@/components/uikit/input";
+import { Button } from "@/components/uikit/buttons/button";
+import Link from "next/link";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  notFound,
+  redirect,
+  useParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import { Select } from "@/components/uikit/select";
+import { Separator } from "@/components/uikit/separator";
+import { useNewJobReference } from "@/providers/data_providers/job_reference_providers/AddJobReferenceContext";
+import { jobReferences } from "@/utilities/demo_datas/demoJobRefData";
+import { toast } from "sonner";
+import { Header } from "@/components/dashboard/header";
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
+import {
+  useGETJobRefAddressByIds,
+  updateJobReference,
+} from "@/lib/db/helpers/jobRefHelpers";
+import { Footer } from "@/components/dashboard/footer";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/uikit/form";
+import { useEffect } from "react";
+import useSWR from "swr";
+import api, { fetcher } from "@/lib/axios";
 
 const australianStates = [
-  { value: 'NSW', label: 'New South Wales' },
-  { value: 'VIC', label: 'Victoria' },
-  { value: 'QLD', label: 'Queensland' },
-  { value: 'WA', label: 'Western Australia' },
-  { value: 'SA', label: 'South Australia' },
-  { value: 'TAS', label: 'Tasmania' },
-  { value: 'ACT', label: 'Australian Capital Territory' },
-  { value: 'NT', label: 'Northern Territory' },
-]
+  { value: "NSW", label: "New South Wales" },
+  { value: "VIC", label: "Victoria" },
+  { value: "QLD", label: "Queensland" },
+  { value: "WA", label: "Western Australia" },
+  { value: "SA", label: "South Australia" },
+  { value: "TAS", label: "Tasmania" },
+  { value: "ACT", label: "Australian Capital Territory" },
+  { value: "NT", label: "Northern Territory" },
+];
 
 const formSchema = z.object({
   addressTitle: z
     .string()
-    .nonempty('Address Title / Site Name is required')
-    .max(100, 'Address title must be under 100 characters'),
+    .nonempty("Address Title / Site Name is required")
+    .max(100, "Address title must be under 100 characters"),
 
   streetAddress: z
     .string()
-    .nonempty('Street Address is required')
+    .nonempty("Street Address is required")
     .regex(
       /^[a-zA-Z0-9\s,'\.-]+$/,
-      'Street address can only contain letters, numbers, spaces, comma, hyphen, dot, and apostrophe',
+      "Street address can only contain letters, numbers, spaces, comma, hyphen, dot, and apostrophe"
     )
-    .max(100, 'Street address must be under 100 characters'),
+    .max(100, "Street address must be under 100 characters"),
 
   suburb: z
     .string()
-    .nonempty('Suburb is required')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Suburb must contain only letters, spaces, and hyphens')
-    .max(50, 'Suburb name must be under 50 characters'),
+    .nonempty("Suburb is required")
+    .regex(
+      /^[a-zA-Z\s'-]+$/,
+      "Suburb must contain only letters, spaces, and hyphens"
+    )
+    .max(50, "Suburb name must be under 50 characters"),
 
-  state: z.string('State is required').nonempty('State is required'),
+  state: z.string("State is required").nonempty("State is required"),
 
-  postcode: z.string('Postcode is required'),
-})
+  postcode: z.string("Postcode is required"),
+});
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
 export default function JobReferencesPage({}) {
-  const { jobId, addressId } = useParams<{ jobId: string; addressId: string }>()
+  const { jobId, addressId } = useParams<{
+    jobId: string;
+    addressId: string;
+  }>();
 
-  const { data, error, isLoading } = useSWR(`/d/job-ref/${jobId}/address/${addressId}`, fetcher)
+  const { data, error, isLoading } = useSWR(
+    `/a/job-ref/${jobId}/address/${addressId}`,
+    fetcher
+  );
 
-  const address = data
+  const address = data;
 
   if (!isLoading && address === undefined) {
-    notFound()
+    notFound();
   }
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-  })
+  });
 
   useEffect(() => {
     if (address) {
@@ -83,33 +113,36 @@ export default function JobReferencesPage({}) {
         state: String(address.state),
         postcode: String(address.postcode),
         streetAddress: address.street_address,
-      })
+      });
     }
-  }, [form, address])
+  }, [form, address]);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const onSubmit = async (data: FormValues) => {
     try {
-      await api.patch(`/d/job-ref/${jobId}/address/${addressId}/`, {
+      await api.patch(`/a/job-ref/${jobId}/address/${addressId}/`, {
         title: data.addressTitle,
         suburb: data.suburb,
         state: data.state,
         postcode: data.postcode,
         street_address: data.streetAddress,
-      })
+      });
 
-      router.push(`/dashboard/j/${jobId}/${addressId}`)
-      toast('Address Updated')
-      router.push(`/dashboard/j/${jobId}`)
+      router.push(`/dashboard/j/${jobId}/${addressId}`);
+      toast("Address Updated");
+      router.push(`/dashboard/j/${jobId}`);
     } catch (error: any) {
-      toast('Something went wrong')
+      toast("Something went wrong");
     }
-  }
+  };
 
   return (
     <>
-      <Header title="Edit Address Details" returnHref={`/dashboard/j/${jobId}/${addressId}`} />
+      <Header
+        title="Edit Address Details"
+        returnHref={`/dashboard/j/${jobId}/${addressId}`}
+      />
       <ContentWrapper>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
@@ -125,7 +158,7 @@ export default function JobReferencesPage({}) {
                       type="text"
                       placeholder="e.g., 123 Main St"
                       {...field}
-                      value={field.value ?? ''}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -144,7 +177,7 @@ export default function JobReferencesPage({}) {
                       type="text"
                       placeholder="e.g., Sydney"
                       {...field}
-                      value={field.value ?? ''}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -164,7 +197,7 @@ export default function JobReferencesPage({}) {
                         placeholder="Select state / territory"
                         required
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                         onValueChange={field.onChange}
                       />
                     </div>
@@ -185,14 +218,14 @@ export default function JobReferencesPage({}) {
                       type="text"
                       placeholder="e.g., 2000"
                       {...field}
-                      value={field.value ?? ''}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Separator className="my-2" />{' '}
+            <Separator className="my-2" />{" "}
             <FormField
               control={form.control}
               name="addressTitle"
@@ -205,7 +238,7 @@ export default function JobReferencesPage({}) {
                       type="text"
                       placeholder="Eneter a name for Site / Address"
                       {...field}
-                      value={field.value ?? ''}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -221,5 +254,5 @@ export default function JobReferencesPage({}) {
         </Form>
       </ContentWrapper>
     </>
-  )
+  );
 }

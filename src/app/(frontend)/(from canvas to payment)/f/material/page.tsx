@@ -65,7 +65,7 @@ export default function SelectMaterialAndColorPage({
     data: materials,
     error,
     isLoading,
-  } = useSWR("/d/materials/", fetcher);
+  } = useSWR("/a/materials/", fetcher);
 
   const FormSchema = z.object({
     material: z.number().nonoptional(),
@@ -81,7 +81,7 @@ export default function SelectMaterialAndColorPage({
     data: flashing,
     // error,
     // isLoading,
-  } = useSWR(flashingId ? `/d/flashing/${flashingId}/` : null, fetcher, {
+  } = useSWR(flashingId ? `/a/flashing/${flashingId}/` : null, fetcher, {
     onSuccess: (data) => {
       selectMaterialForm.setValue("material", data.material);
       setTabValue(data.material_data.name);
@@ -97,7 +97,7 @@ export default function SelectMaterialAndColorPage({
 
   const onSelectMaterialSubmit = async (data: FormValues) => {
     if (flashingId && flashing) {
-      await api.patch(`/d/flashing/${flashingId}/`, {
+      await api.patch(`/a/flashing/${flashingId}/`, {
         material: data.material,
       });
 

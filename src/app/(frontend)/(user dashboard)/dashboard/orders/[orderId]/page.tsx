@@ -46,7 +46,7 @@ export default function OrderDetails() {
     data: order,
     isLoading,
     error,
-  } = useSWR(`/d/order/${orderId}/`, fetcher, {
+  } = useSWR(`/a/order/${orderId}/`, fetcher, {
     onError: notFound,
   });
 

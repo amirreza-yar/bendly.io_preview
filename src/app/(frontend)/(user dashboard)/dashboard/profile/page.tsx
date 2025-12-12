@@ -1,20 +1,25 @@
-'use client'
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { ArrowLeft, ChevronRight, Pencil, RightArrow } from '@/components/uikit/icons'
-import { Separator } from '@/components/uikit/separator'
-import BottomNav from '@/components/dashboard/bottomNav'
-import { apiGetProfile } from '@/utilities/api/auth'
-import { db } from '@/lib/db/appDB'
-import { Header } from '@/components/dashboard/header'
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import useSWR from 'swr'
-import { fetcher } from '@/lib/axios'
-import { Skeleton } from '@/components/uikit/skeleton'
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  ChevronRight,
+  Pencil,
+  RightArrow,
+} from "@/components/uikit/icons";
+import { Separator } from "@/components/uikit/separator";
+import BottomNav from "@/components/dashboard/bottomNav";
+import { apiGetProfile } from "@/utilities/api/auth";
+import { db } from "@/lib/db/appDB";
+import { Header } from "@/components/dashboard/header";
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
+import useSWR from "swr";
+import { fetcher } from "@/lib/axios";
+import { Skeleton } from "@/components/uikit/skeleton";
 // import { apiGetProfile } from '@/utilities/api/user_auth/auth'
 
 export default function ProfilePage() {
-  const { data, error, isLoading } = useSWR('/d/profile/', fetcher)
+  const { data, error, isLoading } = useSWR("/a/profile/", fetcher);
 
   return (
     <>
@@ -42,12 +47,18 @@ export default function ProfilePage() {
           )}
 
           <div className="grid rounded-md border-2 border-border-default px-4 py-[10px] gap-4">
-            <Link href="/dashboard/orders" className="flex items-center justify-between">
+            <Link
+              href="/dashboard/orders"
+              className="flex items-center justify-between"
+            >
               <span className="label-regular">Orders</span>
               <ChevronRight className="size-6" />
             </Link>
             <Separator />
-            <Link href="/dashboard/j" className="flex items-center justify-between">
+            <Link
+              href="/dashboard/j"
+              className="flex items-center justify-between"
+            >
               <span className="label-regular">Job Refrences</span>
               <ChevronRight className="size-6" />
             </Link>
@@ -63,5 +74,5 @@ export default function ProfilePage() {
         <BottomNav />
       </div>
     </>
-  )
+  );
 }

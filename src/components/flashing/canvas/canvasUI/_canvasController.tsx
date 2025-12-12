@@ -78,7 +78,7 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
   // )
 
   const { data: savedFlashing } = useSWR(
-    flashingId ? `/d/flashing/${flashingId}/` : null,
+    flashingId ? `/a/flashing/${flashingId}/` : null,
     fetcher
   );
 

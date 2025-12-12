@@ -33,9 +33,9 @@ import { timeAgo } from "@/utilities/datetime";
 
 export default function Page() {
   const router = useRouter();
-  const { data: jobReferences } = useSWR("/d/job-ref/", fetcher);
+  const { data: jobReferences } = useSWR("/a/job-ref/", fetcher);
 
-  const { data: cart } = useSWR("/d/cart/", fetcher);
+  const { data: cart } = useSWR("/a/cart/", fetcher);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {

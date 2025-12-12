@@ -1,62 +1,75 @@
-'use client'
-import { ArrowLeft, Edit, MapMarker, Plus, ProfileNav, Remove } from '@/components/uikit/icons'
-import Link from 'next/link'
-import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
-import { notFound, useParams, useRouter } from 'next/navigation'
-import { Button } from '@/components/uikit/buttons/button'
-import JobRefHeader from '@/components/dashboard/jobReference/header'
-import { JobRefInfoCard } from '@/components/dashboard/jobReference/cards'
-import { JobRefAddressCard } from '@/components/dashboard/jobReference/cards'
-import JobRefFooter from '@/components/dashboard/jobReference/footer'
+"use client";
+import {
+  ArrowLeft,
+  Edit,
+  MapMarker,
+  Plus,
+  ProfileNav,
+  Remove,
+} from "@/components/uikit/icons";
+import Link from "next/link";
+import { jobReferences } from "@/utilities/demo_datas/demoJobRefData";
+import { notFound, useParams, useRouter } from "next/navigation";
+import { Button } from "@/components/uikit/buttons/button";
+import JobRefHeader from "@/components/dashboard/jobReference/header";
+import { JobRefInfoCard } from "@/components/dashboard/jobReference/cards";
+import { JobRefAddressCard } from "@/components/dashboard/jobReference/cards";
+import JobRefFooter from "@/components/dashboard/jobReference/footer";
 import {
   deleteJobRefAddressByIds,
   deleteJobRefById,
   useGETJobRefById,
-} from '@/lib/db/helpers/jobRefHelpers'
-import { toast } from 'sonner'
-import { useState } from 'react'
-import { Footer } from '@/components/dashboard/footer'
-import { Header } from '@/components/dashboard/header'
-import { RemoveJobRefModal } from '@/components/dashboard/jobReference/modals'
-import useSWR, { mutate } from 'swr'
-import api, { fetcher } from '@/lib/axios'
-import { Skeleton } from '@/components/ui/skeleton'
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
+} from "@/lib/db/helpers/jobRefHelpers";
+import { toast } from "sonner";
+import { useState } from "react";
+import { Footer } from "@/components/dashboard/footer";
+import { Header } from "@/components/dashboard/header";
+import { RemoveJobRefModal } from "@/components/dashboard/jobReference/modals";
+import useSWR, { mutate } from "swr";
+import api, { fetcher } from "@/lib/axios";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 
 export default function OrderJobReferencePage() {
-  const { jobId } = useParams<{ jobId: string }>()
+  const { jobId } = useParams<{ jobId: string }>();
 
-  const router = useRouter()
-  const [isDeleted, setIsDeleted] = useState<boolean>(false)
+  const router = useRouter();
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
 
-  const { data, error, isLoading } = useSWR(jobId ? `/d/job-ref/${jobId}` : null, fetcher, {
-    onError: () => notFound(),
-  })
+  const { data, error, isLoading } = useSWR(
+    jobId ? `/a/job-ref/${jobId}` : null,
+    fetcher,
+    {
+      onError: () => notFound(),
+    }
+  );
 
   const onJobRefDelete = async () => {
-    setIsDeleted(true)
-    await api.delete(`/d/job-ref/${jobId}/`).then(() => {
-      toast('Job Reference deleted')
-      router.replace('/dashboard/j')
-    })
-  }
+    setIsDeleted(true);
+    await api.delete(`/a/job-ref/${jobId}/`).then(() => {
+      toast("Job Reference deleted");
+      router.replace("/dashboard/j");
+    });
+  };
 
   const onJobRefAddressDelete = async (addressId: string) => {
-    await api.delete(`/d/job-ref/${jobId}/address/${addressId}/`).then(() => {
-      toast('Job Reference deleted')
-      router.replace(`/dashboard/j/${jobId}`)
-    })
+    await api.delete(`/a/job-ref/${jobId}/address/${addressId}/`).then(() => {
+      toast("Job Reference deleted");
+      router.replace(`/dashboard/j/${jobId}`);
+    });
     mutate(
-      `/d/job-ref/${jobId}`,
+      `/a/job-ref/${jobId}`,
       (currentData: any) => {
         return {
           ...currentData,
-          addresses: currentData.addresses.filter((a: any) => a.id !== addressId),
-        }
+          addresses: currentData.addresses.filter(
+            (a: any) => a.id !== addressId
+          ),
+        };
       },
-      false,
-    )
-  }
+      false
+    );
+  };
 
   return (
     <>
@@ -109,7 +122,10 @@ export default function OrderJobReferencePage() {
         {isLoading ? (
           <Skeleton className="h-11 w-full" />
         ) : (
-          <Link className="w-full" href={`/dashboard/j/${data?.id}/new-address`}>
+          <Link
+            className="w-full"
+            href={`/dashboard/j/${data?.id}/new-address`}
+          >
             <Button className="w-full">
               <Plus />
               Add New Address
@@ -118,5 +134,5 @@ export default function OrderJobReferencePage() {
         )}
       </Footer>
     </>
-  )
+  );
 }

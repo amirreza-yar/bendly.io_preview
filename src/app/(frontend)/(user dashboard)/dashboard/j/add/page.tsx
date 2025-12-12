@@ -88,7 +88,7 @@ export default function NewAddressPage() {
   const onNewJobRefFormSubmit = async (data: NewJobRefFormValues) => {
     console.log(data);
     try {
-      const res = await api.post(`/d/job-ref/`, {
+      const res = await api.post(`/a/job-ref/`, {
         code: data.code,
         project_name: data.projectName,
         addresses: [

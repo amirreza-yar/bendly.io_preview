@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -9,61 +9,63 @@ import {
   MapMarker,
   Plus,
   XIcon,
-} from '@/components/uikit/icons'
-import { Input } from '@/components/uikit/input'
-import { Button } from '@/components/uikit/buttons/button'
-import Link from 'next/link'
-import { Header } from '@/components/dashboard/header'
-import { useGETAllJobRefs } from '@/lib/db/helpers/jobRefHelpers'
-import { StoredJobReference } from '@/types/jobReferenceTypes'
-import useSWR from 'swr'
-import { fetcher } from '@/lib/axios'
-import { Skeleton } from '@/components/uikit/skeleton'
-import { Footer } from '@/components/dashboard/footer'
+} from "@/components/uikit/icons";
+import { Input } from "@/components/uikit/input";
+import { Button } from "@/components/uikit/buttons/button";
+import Link from "next/link";
+import { Header } from "@/components/dashboard/header";
+import { useGETAllJobRefs } from "@/lib/db/helpers/jobRefHelpers";
+import { StoredJobReference } from "@/types/jobReferenceTypes";
+import useSWR from "swr";
+import { fetcher } from "@/lib/axios";
+import { Skeleton } from "@/components/uikit/skeleton";
+import { Footer } from "@/components/dashboard/footer";
 
 export function searchJobReferences(
   data: StoredJobReference[] | null | undefined,
-  query: string,
+  query: string
 ): StoredJobReference[] | null | undefined {
-  const normalizedQuery = query.toLowerCase()
+  const normalizedQuery = query.toLowerCase();
 
   return data?.filter((job) => {
-    const valuesToSearch: string[] = []
+    const valuesToSearch: string[] = [];
 
     const extractValues = (obj: any) => {
-      if (typeof obj === 'string' || typeof obj === 'number') {
-        valuesToSearch.push(String(obj).toLowerCase())
+      if (typeof obj === "string" || typeof obj === "number") {
+        valuesToSearch.push(String(obj).toLowerCase());
       } else if (Array.isArray(obj)) {
-        obj.forEach(extractValues)
-      } else if (typeof obj === 'object' && obj !== null) {
-        Object.values(obj).forEach(extractValues)
+        obj.forEach(extractValues);
+      } else if (typeof obj === "object" && obj !== null) {
+        Object.values(obj).forEach(extractValues);
       }
-    }
+    };
 
-    extractValues(job)
+    extractValues(job);
 
-    return valuesToSearch.some((value) => value.includes(normalizedQuery))
-  })
+    return valuesToSearch.some((value) => value.includes(normalizedQuery));
+  });
 }
 
 export default function JobReferencesPage() {
-  const [searchValue, setSearchValue] = useState<string>('')
+  const [searchValue, setSearchValue] = useState<string>("");
 
-  const [searchResults, setSearchResults] = useState<StoredJobReference[] | null>()
+  const [searchResults, setSearchResults] = useState<
+    StoredJobReference[] | null
+  >();
 
-  const { data, error, isLoading } = useSWR('/d/job-ref/', fetcher)
+  const { data, error, isLoading } = useSWR("/a/job-ref/", fetcher);
 
-  console.log(data?.results)
+  console.log(data?.results);
 
-  const jobReferences = data?.results
+  const jobReferences = data?.results;
 
   useEffect(() => {
     if (jobReferences) {
-      setSearchResults(jobReferences)
+      setSearchResults(jobReferences);
     }
-  }, [jobReferences])
+  }, [jobReferences]);
 
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <>
@@ -84,21 +86,24 @@ export default function JobReferencesPage() {
                       ref={searchInputRef}
                       value={searchValue}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        const value = e.target.value
-                        setSearchValue(value)
-                        const results = searchJobReferences(jobReferences, value)
-                        setSearchResults(results)
+                        const value = e.target.value;
+                        setSearchValue(value);
+                        const results = searchJobReferences(
+                          jobReferences,
+                          value
+                        );
+                        setSearchResults(results);
                       }}
                       placeholder="Search template..."
                       className="pl-11 bg-white"
                     />
-                    {searchValue !== '' && (
+                    {searchValue !== "" && (
                       <XIcon
                         className="size-5 absolute right-4 cursor-pointer"
                         onClick={() => {
-                          setSearchValue('')
-                          setSearchResults(jobReferences)
-                          searchInputRef.current?.focus()
+                          setSearchValue("");
+                          setSearchResults(jobReferences);
+                          searchInputRef.current?.focus();
                         }}
                       />
                     )}
@@ -135,10 +140,14 @@ export default function JobReferencesPage() {
                           <div className="flex gap-2">
                             <MapMarker className="size-5" />
                             <div className="flex flex-col gap-1 truncate">
-                              <p className="label-regular">{job?.addresses?.[0]?.title}</p>
+                              <p className="label-regular">
+                                {job?.addresses?.[0]?.title}
+                              </p>
                               <p className="body-small">
-                                {job?.addresses?.[0]?.street_address}, {job?.addresses?.[0]?.suburb}
-                                , {job?.addresses?.[0]?.state} {job?.addresses?.[0]?.postcode}
+                                {job?.addresses?.[0]?.street_address},{" "}
+                                {job?.addresses?.[0]?.suburb},{" "}
+                                {job?.addresses?.[0]?.state}{" "}
+                                {job?.addresses?.[0]?.postcode}
                               </p>
                             </div>
                           </div>
@@ -177,7 +186,8 @@ export default function JobReferencesPage() {
                               Associated addresses deleted
                             </p>
                             <p className="body-small">
-                              Add an address to continue or delete this Job Reference.
+                              Add an address to continue or delete this Job
+                              Reference.
                             </p>
                           </div>
                         </div>
@@ -215,7 +225,7 @@ export default function JobReferencesPage() {
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center gap-4 px-10 max-w-[600px] mx-auto">
           <p className="text-center subtitle-large text-subtitle">
-            No job references have been created yet{' '}
+            No job references have been created yet{" "}
           </p>
           <Link className="w-full" href="/dashboard/j/add">
             <Button className="w-full ">
@@ -226,5 +236,5 @@ export default function JobReferencesPage() {
         </div>
       )}
     </>
-  )
+  );
 }

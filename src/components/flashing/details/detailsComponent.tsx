@@ -75,7 +75,7 @@ export default function DetailsComponent({
     data: flashing,
     // error,
     // isLoading,
-  } = useSWR(flashingId ? `/d/flashing/${flashingId}/` : null, fetcher, {
+  } = useSWR(flashingId ? `/a/flashing/${flashingId}/` : null, fetcher, {
     onSuccess: (data) => {
       console.log(data);
       form.setValue("code", data.code);

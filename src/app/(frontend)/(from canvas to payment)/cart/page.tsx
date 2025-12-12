@@ -25,11 +25,11 @@ export default function OrderReviewPage() {
 
   const router = useRouter();
 
-  const { data: cart, error, isLoading, mutate } = useSWR("/d/cart/", fetcher);
+  const { data: cart, error, isLoading, mutate } = useSWR("/a/cart/", fetcher);
 
   const onDeleteFlashing = async (flashingId: string) => {
     try {
-      await api.delete(`/d/flashing/${flashingId}/`);
+      await api.delete(`/a/flashing/${flashingId}/`);
       mutate();
       toast("Flashing removed from order");
     } catch (error: any) {

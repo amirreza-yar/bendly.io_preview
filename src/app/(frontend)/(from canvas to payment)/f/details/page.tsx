@@ -58,7 +58,7 @@ export default function DetailsPage({
       console.log(flashingId);
     } else if (flashing) {
       try {
-        await api.post("/d/flashing/", {
+        await api.post("/a/flashing/", {
           material: flashing?.material,
           code: data.code,
           position: data.position,
