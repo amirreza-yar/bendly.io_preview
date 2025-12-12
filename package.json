@@ -63,6 +63,11 @@
     "web-push": "^3.6.7",
     "zod": "^4.1.13"
   },
+  "pnpm": {
+    "overrides": {
+      "jws": ">=4.0.1"
+    }
+  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.26",
