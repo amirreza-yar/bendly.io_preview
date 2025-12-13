@@ -56,30 +56,30 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  // if (
-  //   path.startsWith("/dashboard") ||
-  //   path.startsWith("/cart") ||
-  //   path.startsWith("/f")
-  // ) {
-  //   if (!isAuthenticated) {
-  //     return NextResponse.redirect(new URL("/auth", req.url));
-  //   } else {
-  //     const res = NextResponse.next();
+  if (
+    path.startsWith("/dashboard") ||
+    path.startsWith("/cart") ||
+    path.startsWith("/f")
+  ) {
+    if (!isAuthenticated) {
+      return NextResponse.redirect(new URL("/auth", req.url));
+    } else {
+      const res = NextResponse.next();
 
-  //     res.headers.set("X-Frame-Options", "DENY");
-  //     res.headers.set("X-Content-Type-Options", "nosniff");
-  //     res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  //     res.headers.set("Permissions-Policy", "geolocation=(), microphone=()");
-  //     res.headers.set(
-  //       "Strict-Transport-Security",
-  //       "max-age=63072000; includeSubDomains; preload"
-  //     );
+      res.headers.set("X-Frame-Options", "DENY");
+      res.headers.set("X-Content-Type-Options", "nosniff");
+      res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+      res.headers.set("Permissions-Policy", "geolocation=(), microphone=()");
+      res.headers.set(
+        "Strict-Transport-Security",
+        "max-age=63072000; includeSubDomains; preload"
+      );
 
-  //     return res;
-  //   }
-  // }
+      return res;
+    }
+  }
 
-  return NextResponse.next();
+  // return NextResponse.next();
 }
 
 export const config = {

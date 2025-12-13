@@ -68,6 +68,9 @@
       "jws": ">=4.0.1"
     }
   },
+  "engines": {
+    "node": "24.x"
+  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.26",
