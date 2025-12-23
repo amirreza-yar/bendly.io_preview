@@ -24,7 +24,7 @@ const AuthPage = () => {
       setIsLoading(true);
 
       await api.post("/auth/login/", {
-        email: data.email,
+        email: data.email.toLowerCase(),
         password: data.password,
       });
 
@@ -50,7 +50,7 @@ const AuthPage = () => {
     try {
       setIsLoading(true);
       await api.post("/auth/registration/", {
-        email: data.email,
+        email: data.email.toLowerCase(),
         first_name: firstName,
         last_name: lastName,
         password1: data.password,
