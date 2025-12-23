@@ -1,7 +1,7 @@
 # To use this Dockerfile, you have to set `output: 'standalone'` in your next.config.js file.
 # From https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 
-FROM node:22.14.0-alpine AS base
+FROM node:24.12.0-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -24,6 +24,30 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Set build-time environment variables for Next.js
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_BACKEND_URL
+ARG NEXT_PUBLIC_GRAPHQL_URL
+ARG NEXT_PUBLIC_RESEND_TIMEOUT
+ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY
+ARG JWT_SIGNING_KEY
+ARG VAPID_PRIVATE_KEY
+ARG CRON_SECRET
+ARG GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+ARG PREVIEW_SECRET
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_GRAPHQL_URL=$NEXT_PUBLIC_GRAPHQL_URL
+ENV NEXT_PUBLIC_RESEND_TIMEOUT=$NEXT_PUBLIC_RESEND_TIMEOUT
+ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY=$NEXT_PUBLIC_VAPID_PUBLIC_KEY
+ENV JWT_SIGNING_KEY=$JWT_SIGNING_KEY
+ENV VAPID_PRIVATE_KEY=$VAPID_PRIVATE_KEY
+ENV CRON_SECRET=$CRON_SECRET
+ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+ENV PREVIEW_SECRET=$PREVIEW_SECRET
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
