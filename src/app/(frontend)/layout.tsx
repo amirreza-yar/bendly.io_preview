@@ -1,36 +1,40 @@
-import { ThemeProvider } from '@/components/theme-provider'
-import { Roboto_Flex } from 'next/font/google'
-import './globals.css'
-import { Toaster } from 'sonner'
-import { UserProvider } from '@/providers/main_providers/UserContext'
-import { DBProvider } from '@/providers/db_providers/DBContext'
+import { ThemeProvider } from "@/components/theme-provider";
+import { Roboto_Flex } from "next/font/google";
+import "./globals.css";
+import { Toaster } from "sonner";
+import { UserProvider } from "@/providers/main_providers/UserContext";
+import { DBProvider } from "@/providers/db_providers/DBContext";
 
 export const metadata = {
-  title: 'Flashing Factory DEV',
-  description: 'A PWA for Flashing DEV',
-}
+  title: "Bendly.io Dashboard",
+  description: "Bendly.io Dashboard",
+};
 
 const robot_flex = Roboto_Flex({
-  subsets: ['latin'],
-})
+  subsets: ["latin"],
+});
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        style={{ width: '100vw', height: '100%' }}
+        style={{ width: "100vw", height: "100%" }}
         className={`${robot_flex.className} font-roboto`}
       >
         <UserProvider>
           <Toaster
             position="bottom-center"
-            mobileOffset={{ bottom: '96px', right: '0', left: '0' }}
+            mobileOffset={{ bottom: "96px", right: "0", left: "0" }}
             toastOptions={{
               unstyled: true,
               classNames: {
                 toast:
-                  'bg-[#171717] -fit px-6 py-[12.5px] rounded-md max-w-fit mx-auto shadow-md h-12',
-                title: 'font-roboto text-xs/[22.5px] text-white',
+                  "bg-[#171717] -fit px-6 py-[12.5px] rounded-md max-w-fit mx-auto shadow-md h-12",
+                title: "font-roboto text-xs/[22.5px] text-white",
               },
             }}
             duration={2000}
@@ -50,5 +54,5 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </UserProvider>
       </body>
     </html>
-  )
+  );
 }

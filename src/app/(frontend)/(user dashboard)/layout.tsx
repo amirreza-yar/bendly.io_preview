@@ -1,9 +1,7 @@
 "use client";
-
 import { useEffect } from "react";
-import { setupAxiosInterceptor } from "@/lib/axios";
 
-export default function DashboardLayout({
+export default function DashboardMainRootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -21,8 +19,6 @@ export default function DashboardLayout({
           console.log(error);
         });
     }
-    setupAxiosInterceptor();
   }, []);
-
   return <>{children}</>;
 }

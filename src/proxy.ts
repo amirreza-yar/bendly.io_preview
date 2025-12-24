@@ -1,97 +1,131 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { decodeJwt } from "jose";
+
+const onRedirectToLogin = async (req: NextRequest) => {
+  const res = NextResponse.redirect(new URL("/auth", req.url));
+
+  res.cookies.set("auth-jwt", "", { path: "/", maxAge: 0 });
+  res.cookies.set("auth-refresh-jwt", "", { path: "/", maxAge: 0 });
+  return res;
+};
+
+const onRefreshToken = async (req: NextRequest) => {
+  const refreshUrl = new URL(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/token/refresh/`,
+    req.url
+  );
+
+  const refreshRes = await fetch(refreshUrl.toString(), {
+    method: "POST",
+    headers: {
+      Cookie: req.headers.get("cookie") ?? "",
+    },
+  });
+
+  if (refreshRes.ok) {
+    const setCookieHeaders = refreshRes.headers.get("set-cookie");
+
+    const res = NextResponse.next();
+
+    if (setCookieHeaders) {
+      const cookies = setCookieHeaders.split(/,(?=[^;]+=[^;]+)/);
+      cookies.forEach((c) => {
+        const [cookiePart] = c.split(";");
+        const [name, value] = cookiePart.split("=");
+        if (name && value) {
+          res.cookies.set(name.trim(), value.trim(), {
+            path: "/",
+            httpOnly: true,
+            secure: true,
+          });
+        }
+      });
+    }
+    return res;
+  } else {
+    return onRedirectToLogin(req);
+  }
+};
+
+const onVerifyToken = async (token: string, req: NextRequest) => {
+  try {
+    const payload = decodeJwt(token);
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.exp && payload.exp < now) {
+      return false;
+    }
+
+    const roles: string[] = Array.isArray(payload.roles)
+      ? payload.roles.map(String)
+      : [];
+
+    const hasAdminAccess = roles.some((r) => r === "client");
+
+    if (!hasAdminAccess) {
+      return onRedirectToLogin(req);
+    }
+
+    return true;
+    // eslint-disable-next-line
+  } catch (err: any) {
+    return false;
+  }
+};
 
 export async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
-  console.log("🔒 Middleware running for path:", path);
-
-  // First, check if user has valid token
   const token = req.cookies.get("auth-jwt")?.value;
-  const sessionToken = req.cookies;
+  const refreshToken = req.cookies.get("auth-refresh-jwt")?.value;
 
-  const cookieStore = cookies();
+  if (!path.startsWith("/") || path === "/") return NextResponse.next();
 
-  let isAuthenticated;
-
-  console.log(token, (await cookieStore).get("auth-jwt"));
+  let isAuthenticated: boolean = false;
 
   if (token) {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/token/verify/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
-        }
-      );
+    const ver = await onVerifyToken(token, req);
+    if (ver === true) {
       isAuthenticated = true;
-    } catch (error: any) {
+    } else if (ver === false) {
       isAuthenticated = false;
+    } else {
+      return ver;
     }
   }
 
-  if (token) {
+  if (!isAuthenticated && refreshToken) {
     try {
-      await jwtVerify(
-        token,
-        new TextEncoder().encode(process.env.JWT_SIGNING_KEY)
-      );
-
-      // console.log(res);
-      isAuthenticated = true;
+      return onRefreshToken(req);
+      // eslint-disable-next-line
     } catch (err: any) {
-      // console.log(err);
-      isAuthenticated = false;
+      return onRedirectToLogin(req);
     }
   }
 
-  if (path.startsWith("/auth")) {
+  if (path === "/auth") {
     if (isAuthenticated) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
-    } else {
-      return NextResponse.next();
     }
+    return NextResponse.next();
   }
 
-  if (
-    path.startsWith("/dashboard") ||
-    path.startsWith("/cart") ||
-    path.startsWith("/f")
-  ) {
-    if (!isAuthenticated) {
-      return NextResponse.redirect(new URL("/auth", req.url));
-    } else {
-      const res = NextResponse.next();
+  if (!isAuthenticated) return onRedirectToLogin(req);
 
-      res.headers.set("X-Frame-Options", "DENY");
-      res.headers.set("X-Content-Type-Options", "nosniff");
-      res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-      res.headers.set("Permissions-Policy", "geolocation=(), microphone=()");
-      res.headers.set(
-        "Strict-Transport-Security",
-        "max-age=63072000; includeSubDomains; preload"
-      );
+  const res = NextResponse.next();
+  res.headers.set("X-Frame-Options", "DENY");
+  res.headers.set("X-Content-Type-Options", "nosniff");
+  res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.headers.set("Permissions-Policy", "geolocation=(), microphone=()");
+  res.headers.set(
+    "Strict-Transport-Security",
+    "max-age=63072000; includeSubDomains; preload"
+  );
 
-      return res;
-    }
-  }
-
-  // return NextResponse.next();
+  return res;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - images (image files)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|images).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|manifest.js|manifest.webmanifest|sw.js|images|.*\\.svg$).*)",
   ],
 };
