@@ -62,7 +62,7 @@ export default function Page() {
     <>
       <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white">
         <div className="flex items-center justify-center h-full">
-          <h6 className="text-heading">Flashing Factory</h6>
+          <h6 className="text-heading">Bendly.io</h6>
         </div>
         <Link href="/dashboard/menu" className="absolute right-4">
           <HomeMenu />
