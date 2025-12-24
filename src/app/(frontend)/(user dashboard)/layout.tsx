@@ -1,7 +1,11 @@
 "use client";
 import { useEffect } from "react";
 
-export default function Page() {
+export default function DashboardMainRootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
@@ -16,14 +20,5 @@ export default function Page() {
         });
     }
   }, []);
-
-  return (
-    <div className="h-full w-full flex flex-col justify-center items-center px-10">
-      <h4 className="text-center mb-5">
-        This page is for installing the PWA. Please use chrome or safari to
-        download it.
-      </h4>
-      <a href={"/dashboard"}>Go to Main page</a>
-    </div>
-  );
+  return <>{children}</>;
 }

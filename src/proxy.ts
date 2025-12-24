@@ -78,6 +78,8 @@ export async function proxy(req: NextRequest) {
   const token = req.cookies.get("auth-jwt")?.value;
   const refreshToken = req.cookies.get("auth-refresh-jwt")?.value;
 
+  if (!path.startsWith("/") || path === "/") return NextResponse.next();
+
   let isAuthenticated: boolean = false;
 
   if (token) {
@@ -99,8 +101,6 @@ export async function proxy(req: NextRequest) {
       return onRedirectToLogin(req);
     }
   }
-
-  if (!path.startsWith("/")) return NextResponse.next();
 
   if (path === "/auth") {
     if (isAuthenticated) {
@@ -126,6 +126,6 @@ export async function proxy(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|images|.*\\.svg$).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|manifest.js|manifest.webmanifest|sw.js|images|.*\\.svg$).*)",
   ],
 };
