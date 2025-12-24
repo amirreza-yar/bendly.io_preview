@@ -1,26 +1,28 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { ApolloClient, HttpLink, InMemoryCache, gql } from '@apollo/client'
-import { ApolloProvider } from '@apollo/client/react'
-import { setContext, SetContextLink } from '@apollo/client/link/context'
-import { getAuthToken } from '@/utilities/cookieUtils'
+import { useEffect } from "react";
+import { setupAxiosInterceptor } from "@/lib/axios";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       navigator.serviceWorker
-        .register('/sw.js')
+        .register("/sw.js")
         .then((reg) => {
-          console.log('sw registered!')
-          console.log(reg)
+          console.log("sw registered!");
+          console.log(reg);
         })
         .catch((error) => {
-          console.log('sw reg failed!')
-          console.log(error)
-        })
+          console.log("sw reg failed!");
+          console.log(error);
+        });
     }
-  }, [])
+    setupAxiosInterceptor();
+  }, []);
 
-  return <>{children}</>
+  return <>{children}</>;
 }
