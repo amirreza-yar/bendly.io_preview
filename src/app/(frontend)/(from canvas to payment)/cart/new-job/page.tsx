@@ -1,7 +1,7 @@
 "use client";
 
 import { Header } from "@/components/dashboard/header";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { Tabs } from "@radix-ui/react-tabs";
 import z from "zod";
@@ -64,8 +64,6 @@ const NewJobRefFormSchema = z.object({
 export type NewJobRefFormValues = z.infer<typeof NewJobRefFormSchema>;
 
 export default function NewAddressPage() {
-  const { jobId } = useParams<{ jobId: string }>();
-
   const [tabValue, setTabValue] = useState("job-tab");
 
   const newJobRefForm = useForm<NewJobRefFormValues>({
@@ -93,12 +91,13 @@ export default function NewAddressPage() {
         ],
       });
 
-      console.log(res);
-
       toast("New Job Reference Added");
-      router.push(`/dashboard/j/${res.data.id}`);
+      router.push(
+        `/cart/fulfill?address_id=${res.data.addresses[0].id}&job_ref_id=${res.data.id}`
+      );
     } catch (error: any) {
       toast("Something went wrong");
+      router.push(`/cart/fulfill`);
     }
   };
 
@@ -107,7 +106,19 @@ export default function NewAddressPage() {
       const validation = await newJobRefForm.trigger(["code", "projectName"]);
 
       if (validation) {
-        setTabValue("address-tab");
+        try {
+          await api.post("/a/job-ref/", {
+            code: newJobRefForm.getValues("code"),
+          });
+        } catch (err: any) {
+          const codeErr = err.response.data.code;
+
+          if (codeErr) {
+            newJobRefForm.setError("code", {
+              message: "You already have a job reference with this code",
+            });
+          } else setTabValue("address-tab");
+        }
       }
     } else if (tabValue === "address-tab") {
       const validation = await newJobRefForm.trigger([
@@ -144,7 +155,7 @@ export default function NewAddressPage() {
               tabValue="job-tab"
               jobRefForm={newJobRefForm}
               Header={
-                <Header title="Basic Information" returnHref="/dashboard/j" />
+                <Header title="Basic Information" returnHref="/cart/fulfill" />
               }
               Footer={
                 <Footer>
