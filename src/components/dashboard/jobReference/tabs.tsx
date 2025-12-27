@@ -1,6 +1,6 @@
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import { TabsContent } from "@radix-ui/react-tabs";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import {
   FormControl,
   FormField,
@@ -166,7 +166,13 @@ export const RecipientFormTab = ({
   showAddress?: boolean;
   onAddressCardClick?: (props: any) => void;
 }) => {
-  const watched = recipientForm.watch();
+  const address = useWatch({
+    compute: (data: any) => {
+      return `${data.street}, ${data.suburb}, ${data.state} ${data.postcode}`;
+    },
+  });
+
+  const addressTitle = useWatch({ name: "title" });
 
   return (
     <TabsContent value={tabValue} className={className}>
@@ -182,11 +188,8 @@ export const RecipientFormTab = ({
               <div className="flex gap-2">
                 <MapMarker className="size-5" />
                 <div className="flex flex-col gap-1 items-start truncate">
-                  <p className="label-regular">{watched?.title}</p>
-                  <p className="body-small">
-                    {watched?.street}, {watched?.suburb}, {watched?.state}{" "}
-                    {watched?.postcode}
-                  </p>
+                  <p className="label-regular">{addressTitle}</p>
+                  <p className="body-small">{address}</p>
                 </div>
               </div>
             </div>

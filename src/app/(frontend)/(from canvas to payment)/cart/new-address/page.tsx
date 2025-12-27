@@ -1,7 +1,7 @@
 "use client";
 
 import { Header } from "@/components/dashboard/header";
-import { useParams, useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 
 import { Tabs } from "@radix-ui/react-tabs";
 import z from "zod";
@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/uikit/form";
 import { Button } from "@/components/uikit/buttons/button";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import api from "@/lib/axios";
 import { toast } from "sonner";
 import { Footer } from "@/components/dashboard/footer";
@@ -60,8 +60,18 @@ const NewAddressFormSchema = z.object({
 
 export type NewAddressFormValues = z.infer<typeof NewAddressFormSchema>;
 
-export default function NewAddressPage() {
-  const { jobId } = useParams<{ jobId: string }>();
+export default function NewAddressPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ job_ref_id: string }>;
+}) {
+  const { job_ref_id } = use(searchParams);
+
+  useEffect(() => {
+    if (!job_ref_id) {
+      return notFound();
+    }
+  }, [job_ref_id]);
 
   const [tabValue, setTabValue] = useState("address-tab");
 
@@ -73,7 +83,7 @@ export default function NewAddressPage() {
 
   const onNewAddressFormSubmit = async (data: NewAddressFormValues) => {
     try {
-      await api.post(`/a/job-ref/${jobId}/address/`, {
+      const res = await api.post(`/a/job-ref/${job_ref_id}/address/`, {
         title: data.title,
         street_address: data.street,
         suburb: data.suburb,
@@ -83,8 +93,12 @@ export default function NewAddressPage() {
         recipient_phone: data.phone,
       });
 
+      console.log(res.data);
+
       toast("New Address Added");
-      router.push(`/dashboard/j/${jobId}/`);
+      router.push(
+        `/cart/fulfill?address_id=${res.data.id}&job_ref_id=${job_ref_id}`
+      );
     } catch (error: any) {
       toast("Something went wrong");
     }
@@ -125,10 +139,7 @@ export default function NewAddressPage() {
               tabValue="address-tab"
               addressForm={newAddressForm}
               Header={
-                <Header
-                  title="New Address"
-                  returnHref={`/dashboard/j/${jobId}`}
-                />
+                <Header title="New Address" returnHref={`/cart/fulfill`} />
               }
               Footer={
                 <Footer>
