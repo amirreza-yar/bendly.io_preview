@@ -8,13 +8,10 @@ import DividerWithText from "@/components/uikit/dividerWithText";
 import { Drawer } from "vaul";
 import {
   AlertTriangle,
-  CardChecked,
-  Check,
   ChevronRight,
   Delivery,
   Edit,
   FeaturedCheckSmall,
-  FeaturedSuccess,
   Magnifier,
   MapMarker,
   Plus,
@@ -28,13 +25,12 @@ import { cn } from "@/utilities/ui";
 import { Tabs } from "@radix-ui/react-tabs";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { Footer } from "@/components/dashboard/footer";
 import { Input } from "@/components/uikit/input";
-import { StoredJobReference } from "@/types/jobReferenceTypes";
 import z from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Carousel,
@@ -47,7 +43,6 @@ import {
   getDayMonthNumber,
 } from "@/utilities/datetime";
 import { House } from "lucide-react";
-import { Form } from "@/components/uikit/form";
 import { toast } from "sonner";
 import { Textarea } from "@/components/uikit/textarea";
 import { Separator } from "@/components/uikit/separator";
@@ -107,19 +102,20 @@ const fulFillmentFormSchema = z
 
 type FulFillmentFormValue = z.infer<typeof fulFillmentFormSchema>;
 
-export default function FulFillPage() {
+export default function FulFillPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ job_ref_id: number; address_id: number }>;
+}) {
   const [tabValue, setTabValue] = useState("main-tab");
 
-  const [deliveryTypeState, setDeliveryTypeState] = useState<
-    "delivery" | "pickup"
-  >();
+  const { job_ref_id, address_id } = use(searchParams);
+
   const [jobReferenceDrawerOpen, setJobReferenceDrawerOpen] =
     useState<boolean>(false);
   const [jobReferenceDrawerSnap, setJobReferenceDrawerSnap] = useState<
     number | string | null
   >(snapPoints[0]);
-  const [isSelectDateDrawerOpen, setIsSelectDateDrawerOpen] =
-    useState<boolean>(false);
 
   const [searchValue, setSearchValue] = useState<string>("");
 
@@ -127,7 +123,6 @@ export default function FulFillPage() {
 
   const { data: fetched_job_references } = useSWR("/a/job-ref/", fetcher, {
     onSuccess: (data) => {
-      console.log(data.results);
       setSearchResults(data.results);
     },
   });
@@ -153,75 +148,70 @@ export default function FulFillPage() {
     }
   }, [fulFillmentForm.formState]);
 
-  const jobId = fulFillmentForm.watch("job_reference_id");
-  const addressId = fulFillmentForm.watch("address_id");
-  const deliveryType = fulFillmentForm.watch("delivery_type");
-  const deliveryDate = fulFillmentForm.watch("delivery_date");
+  const jobId = useWatch({
+    name: "job_reference_id",
+    control: fulFillmentForm.control,
+  });
+  const addressId = useWatch({
+    name: "address_id",
+    control: fulFillmentForm.control,
+  });
+  const deliveryType = useWatch({
+    name: "delivery_type",
+    control: fulFillmentForm.control,
+  });
+  const deliveryDate = useWatch({
+    name: "delivery_date",
+    control: fulFillmentForm.control,
+  });
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const DELIVERY_DESC = "Open from 9:00 to 18:00";
 
-  const [jobReference, setJobReference] = useState<{
-    job_reference_id: number;
-    address_id: number;
-    code: string;
-    project_name?: string;
-    title: string;
-    full_address: string;
-    recipient: string;
-  } | null>();
-
-  const {
-    data: cart,
-    error,
-    isLoading,
-    mutate,
-  } = useSWR("/a/cart/", fetcher, {
+  const { data: cart, isLoading: isCartLoading } = useSWR("/a/cart/", fetcher, {
     onError: notFound,
-    onSuccess: (data) => {
-      setDeliveryTypeState(data.delivery_type);
-
-      fulFillmentForm.setValue("job_reference_id", data.job_reference.id);
-      fulFillmentForm.setValue("address_id", data.address.id);
-      fulFillmentForm.setValue("delivery_date", data.delivery_date);
-      fulFillmentForm.setValue("delivery_type", data.delivery_type);
-    },
+    revalidateOnMount: true,
   });
 
-  // useEffect(() => {
-  //   if (cart && fulFillmentForm) {
-  //     fulFillmentForm.setValue('job_reference_id', cart?.job_reference.id)
-  //     fulFillmentForm.setValue('address_id', cart?.address.id)
-  //     fulFillmentForm.setValue('delivery_date', cart?.delivery_date)
-  //     fulFillmentForm.setValue('delivery_type', cart?.delivery_type)
-  //   }
-  // }, [cart, fulFillmentForm])
+  useEffect(() => {
+    if (!cart) return;
 
-  const checkForEstimatedDeliveryDate = async (address_id: number | string) => {
-    console.log(address_id);
-    try {
-      const res = await api.post("/a/cart/estimate-delivery/", {
-        address_id: address_id,
-      });
-
-      console.log(res.data);
-    } catch (error: any) {
-      console.log(error.response.data);
+    if (cart && cart.address.id && cart.delivery_date) {
+      fulFillmentForm.setValue("job_reference_id", cart?.job_reference.id);
+      fulFillmentForm.setValue("address_id", cart?.address.id);
+      fulFillmentForm.setValue("delivery_date", cart?.delivery_date);
+      fulFillmentForm.setValue("delivery_type", cart?.delivery_type);
     }
-  };
+
+    if (job_ref_id && address_id) {
+      fulFillmentForm.setValue("job_reference_id", job_ref_id);
+      fulFillmentForm.setValue("address_id", address_id);
+    }
+  }, [cart, fulFillmentForm, job_ref_id, address_id]);
+
+  // const checkForEstimatedDeliveryDate = async (address_id: number | string) => {
+  //   console.log(address_id);
+  //   try {
+  //     const res = await api.post("/a/cart/estimate-delivery/", {
+  //       address_id: address_id,
+  //     });
+
+  //     console.log(res.data);
+  //   } catch (error: any) {
+  //     console.log(error.response.data);
+  //   }
+  // };
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (jobReference?.address_id) {
-      checkForEstimatedDeliveryDate(jobReference.address_id);
-    }
-  }, [jobReference]);
+  // useEffect(() => {
+  //   if (jobReference?.address_id) {
+  //     checkForEstimatedDeliveryDate(jobReference.address_id);
+  //   }
+  // }, [jobReference]);
 
   const onSubmitUpdateCartForm = async (data: FulFillmentFormValue) => {
-    console.log(data);
-
     try {
       await api.post("/a/cart/update/", {
         address_id: data.address_id,
@@ -277,12 +267,11 @@ export default function FulFillPage() {
                 </div>
                 {fetched_job_references && jobId ? (
                   (() => {
-                    console.log(fetched_job_references?.results, jobId);
                     const job = fetched_job_references?.results?.find(
-                      (j: any) => j.id === jobId
+                      (j: any) => String(j.id) === String(jobId)
                     );
-                    const addr = job.addresses.find(
-                      (a: any) => a.id === addressId
+                    const addr = job?.addresses?.find(
+                      (a: any) => String(a.id) === String(addressId)
                     );
 
                     return (
@@ -307,10 +296,10 @@ export default function FulFillPage() {
                           </IconButton>
                           <div className="flex flex-col gap-1">
                             <p className="text-[16px] font-bold">
-                              JR-{job.code}
+                              JR-{job?.code}
                             </p>
                             <p className="text-[14px] font-semibold">
-                              {job.project_name ?? "Not Provided"}
+                              {job?.project_name ?? "Not Provided"}
                             </p>
                           </div>
                           <div className="flex gap-2">
@@ -320,10 +309,10 @@ export default function FulFillPage() {
                                 {deliveryType === "delivery" ? (
                                   <>
                                     <p className="label-regular">
-                                      {addr.title}
+                                      {addr?.title}
                                     </p>
                                     <p className="body-small">
-                                      {addr.full_address}
+                                      {addr?.full_address}
                                     </p>
                                   </>
                                 ) : (
@@ -343,8 +332,8 @@ export default function FulFillPage() {
                             <div className="truncate">
                               <>
                                 <p className="body-small">
-                                  {addr.recipient_name} - +67
-                                  {addr.recipient_phone}
+                                  {addr?.recipient_name} - +67
+                                  {addr?.recipient_phone}
                                 </p>
                               </>
                             </div>
@@ -380,7 +369,7 @@ export default function FulFillPage() {
                       </button>
                       <DividerWithText text="OR" />
                       <Link
-                        href="#"
+                        href="/cart/new-job"
                         className=" flex gap-2 item-start justify-center py-2.5 rounded-md border border-border-default font-semibold text-sm-m"
                       >
                         <Plus className="size-5" />
@@ -399,7 +388,7 @@ export default function FulFillPage() {
                 ) : (
                   <WareHouse className="size-6" />
                 )}
-                <h6>Select you {deliveryType} date</h6>
+                <h6>Select your {deliveryType} date</h6>
               </div>
 
               <p className="subtitle-regular">
@@ -413,34 +402,33 @@ export default function FulFillPage() {
                 className="w-full pt-4"
               >
                 <CarouselContent className="-ml-4 w-screen">
-                  {cart &&
-                    generateSequentialDates(cart?.estimated_delivery_date)?.map(
-                      (date, index) => (
-                        <CarouselItem
-                          key={index}
-                          className="last:pr-6 pb-2"
-                          onClick={() =>
-                            fulFillmentForm.setValue("delivery_date", date)
-                          }
+                  {generateSequentialDates(cart?.estimated_delivery_date)?.map(
+                    (date, index) => (
+                      <CarouselItem
+                        key={index}
+                        className="last:pr-6 pb-2"
+                        onClick={() =>
+                          fulFillmentForm.setValue("delivery_date", date)
+                        }
+                      >
+                        <div
+                          className={cn(
+                            "flex flex-col items-center text-center rounded-md border p-2",
+                            deliveryDate === date
+                              ? "border-primary bg-primary-lightest/40 ring-primary text-primary-dark font-bold"
+                              : "border-border-default"
+                          )}
                         >
-                          <div
-                            className={cn(
-                              "flex flex-col items-center text-center rounded-md border p-2",
-                              deliveryDate === date
-                                ? "border-primary bg-primary-lightest/40 ring-primary text-primary-dark font-bold"
-                                : "border-border-default"
-                            )}
-                          >
-                            <p className="text-[13px]">
-                              {getDayAbbrString(date)}
-                            </p>
-                            <p className="text-[12px] opacity-70">
-                              {getDayMonthNumber(date)}
-                            </p>
-                          </div>
-                        </CarouselItem>
-                      )
-                    )}
+                          <p className="text-[13px]">
+                            {getDayAbbrString(date)}
+                          </p>
+                          <p className="text-[12px] opacity-70">
+                            {getDayMonthNumber(date)}
+                          </p>
+                        </div>
+                      </CarouselItem>
+                    )
+                  )}
                 </CarouselContent>
               </Carousel>
               {deliveryType === "pickup" && (
@@ -738,8 +726,8 @@ export default function FulFillPage() {
                                         <div className="h-[50vh]">
                                           <div className="h-full grid items-center justify-center opacity-40">
                                             <h6>
-                                              No addresses for JR-
-                                              {jobReference?.code}
+                                              No addresses for this job
+                                              reference
                                             </h6>
                                           </div>
                                         </div>
@@ -747,9 +735,11 @@ export default function FulFillPage() {
                                     </ContentWrapper>
 
                                     <Footer>
-                                      <Button className="w-full">
-                                        <Plus />
-                                        Add New Address
+                                      <Button className="w-full" asChild>
+                                        <Link href="/cart/new-address">
+                                          <Plus />
+                                          Add New Address
+                                        </Link>
                                       </Button>
                                     </Footer>
                                   </Drawer.Content>
@@ -772,9 +762,11 @@ export default function FulFillPage() {
                       </div>
 
                       <Footer>
-                        <Button className="w-full">
-                          <Plus />
-                          Create New Job References
+                        <Button className="w-full" asChild>
+                          <Link href="/cart/new-job">
+                            <Plus />
+                            Create New Job References
+                          </Link>
                         </Button>
                       </Footer>
                     </>
@@ -784,9 +776,11 @@ export default function FulFillPage() {
                         No job references have been created yet{" "}
                       </p>
 
-                      <Button className="w-full ">
-                        <Plus />
-                        Create New Job References
+                      <Button className="w-full" asChild>
+                        <Link href="/cart/new-job">
+                          <Plus />
+                          Create New Job References
+                        </Link>
                       </Button>
                     </div>
                   )}
