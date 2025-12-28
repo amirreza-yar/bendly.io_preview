@@ -13,12 +13,12 @@ export default function DashboardLayout({
       navigator.serviceWorker
         .register("/sw.js")
         .then((reg) => {
-          console.log("sw registered!");
-          console.log(reg);
+          // console.log("sw registered!");
+          // console.log(reg);
         })
         .catch((error) => {
-          console.log("sw reg failed!");
-          console.log(error);
+          // console.log("sw reg failed!");
+          // console.log(error);
         });
     }
     setupAxiosInterceptor();

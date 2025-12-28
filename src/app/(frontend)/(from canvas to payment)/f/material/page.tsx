@@ -74,9 +74,9 @@ export default function SelectMaterialAndColorPage({
   useEffect(() => {
     if (!flashing) return;
     selectMaterialForm.reset({
-      material: flashing.material_data.id ?? flashing.material,
+      material: flashing?.material_data?.id ?? flashing?.material,
     });
-    setTabValue((prev) => (prev ? prev : flashing.material_data.name));
+    setTabValue((prev) => flashing?.material_data?.name ?? "");
   }, [flashing, selectMaterialForm]);
 
   const selectedMaterial = useWatch({

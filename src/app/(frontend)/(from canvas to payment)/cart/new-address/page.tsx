@@ -93,8 +93,6 @@ export default function NewAddressPage({
         recipient_phone: data.phone,
       });
 
-      console.log(res.data);
-
       toast("New Address Added");
       router.push(
         `/cart/fulfill?address_id=${res.data.id}&job_ref_id=${job_ref_id}`

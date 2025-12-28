@@ -30,10 +30,8 @@ export async function saveCanvasState(canvas, lastDotRef) {
 export async function getCanvasState() {
   try {
     const state = await db.canvasData.get(1);
-    console.log("Loaded canvas state:", state);
     return state;
   } catch (error) {
-    console.error("Failed to load canvas state:", error);
     return null;
   }
 }

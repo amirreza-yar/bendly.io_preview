@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
+import { useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -9,9 +9,9 @@ import {
   getSortedRowModel,
   SortingState,
   useReactTable,
-} from '@tanstack/react-table'
-import { ArrowUpDown } from 'lucide-react'
-import { Button } from '@/components/uikit/buttons/button'
+} from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
+import { Button } from "@/components/uikit/buttons/button";
 import {
   Table,
   TableBody,
@@ -19,141 +19,150 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Badge } from '@/components/uikit/badge'
-import { Download, EyeIcon, Plus } from '@/components/uikit/icons'
-import Link from 'next/link'
-import { Input } from '@/components/uikit/input'
-import { AddNewMaterialFormValues } from '../forms/addNewMaterialForm'
-import { toast } from 'sonner'
-import AddNewMaterialModal from '../modals/addNewMaterialModal'
+} from "@/components/ui/table";
+import { Badge } from "@/components/uikit/badge";
+import { Download, EyeIcon, Plus } from "@/components/uikit/icons";
+import Link from "next/link";
+import { Input } from "@/components/uikit/input";
+import { AddNewMaterialFormValues } from "../forms/addNewMaterialForm";
+import { toast } from "sonner";
+import AddNewMaterialModal from "../modals/addNewMaterialModal";
 
 // ✅ Example data
 const data: MaterialVariant[] = [
   {
-    material: 'Aluminium',
+    material: "Aluminium",
     variantNum: 1,
-    variantBasedOn: 'Color',
+    variantBasedOn: "Color",
     baseCost: 5.0,
     costPer100mmGirth: 3.0,
     costPerFold: 2.0,
     costPer1mLength: 13.0,
   },
   {
-    material: 'Steel',
+    material: "Steel",
     variantNum: 2,
-    variantBasedOn: 'Thickness',
+    variantBasedOn: "Thickness",
     baseCost: 7.5,
     costPer100mmGirth: 3.5,
     costPerFold: 2.5,
     costPer1mLength: 15.0,
   },
   {
-    material: 'Brass',
+    material: "Brass",
     variantNum: 3,
-    variantBasedOn: 'Color',
+    variantBasedOn: "Color",
     baseCost: 6.2,
     costPer100mmGirth: 3.3,
     costPerFold: 2.1,
     costPer1mLength: 14.4,
   },
   {
-    material: 'Aluminium',
+    material: "Aluminium",
     variantNum: 1,
-    variantBasedOn: 'Color',
+    variantBasedOn: "Color",
     baseCost: 5.0,
     costPer100mmGirth: 3.0,
     costPerFold: 2.0,
     costPer1mLength: 13.0,
   },
   {
-    material: 'Steel',
+    material: "Steel",
     variantNum: 2,
-    variantBasedOn: 'Thickness',
+    variantBasedOn: "Thickness",
     baseCost: 7.5,
     costPer100mmGirth: 3.5,
     costPerFold: 2.5,
     costPer1mLength: 15.0,
   },
   {
-    material: 'Brass',
+    material: "Brass",
     variantNum: 3,
-    variantBasedOn: 'Color',
+    variantBasedOn: "Color",
     baseCost: 6.2,
     costPer100mmGirth: 3.3,
     costPerFold: 2.1,
     costPer1mLength: 14.4,
   },
-]
+];
 
 export type MaterialVariant = {
-  material: string
-  variantNum: number
-  baseCost: number
-  variantBasedOn: string
-  costPer100mmGirth: number
-  costPerFold: number
-  costPer1mLength: number
-}
+  material: string;
+  variantNum: number;
+  baseCost: number;
+  variantBasedOn: string;
+  costPer100mmGirth: number;
+  costPerFold: number;
+  costPer1mLength: number;
+};
 
 export const columns: ColumnDef<MaterialVariant>[] = [
   {
-    accessorKey: 'material',
+    accessorKey: "material",
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="flex text-black hover:bg-gray-200"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Material
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => <div className="pl-6">{row.getValue('material')}</div>,
+    cell: ({ row }) => <div className="pl-6">{row.getValue("material")}</div>,
   },
   {
-    accessorKey: 'variantNum',
+    accessorKey: "variantNum",
     header: ({ column }) => (
       <Button
         variant="ghost"
         className="text-black hover:bg-gray-200"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Variant Num.
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => <div className="text-center">{row.getValue('variantNum')}</div>,
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("variantNum")}</div>
+    ),
   },
   {
-    accessorKey: 'variantBasedOn',
-    header: 'Color / Thickness',
+    accessorKey: "variantBasedOn",
+    header: "Color / Thickness",
     cell: ({ row }) => (
       <div className="text-center">
         <Badge
-          text={row.getValue('variantBasedOn')}
-          variant={row.getValue('variantBasedOn') === 'Color' ? 'green' : 'blue'}
+          text={row.getValue("variantBasedOn")}
+          variant={
+            row.getValue("variantBasedOn") === "Color" ? "green" : "blue"
+          }
         />
       </div>
     ),
   },
   {
-    accessorKey: 'baseCost',
-    header: 'Base Cost',
+    accessorKey: "baseCost",
+    header: "Base Cost",
     cell: ({ row }) => (
-      <div className="text-center">{row.getValue<number>('baseCost').toFixed(2)} $</div>
+      <div className="text-center">
+        {row.getValue<number>("baseCost").toFixed(2)} $
+      </div>
     ),
   },
   {
-    accessorKey: 'Action',
-    header: 'Action',
+    accessorKey: "Action",
+    header: "Action",
     cell: ({ row }) => {
       return (
-        <Link href="/ff-admin/setting/material/123" className="flex justify-center w-full">
+        <Link
+          href="/ff-admin/setting/material/123"
+          className="flex justify-center w-full"
+        >
           <EyeIcon className="size-5" />
           <span className="sr-only">View order details</span>
         </Link>
-      )
+      );
     },
   },
   // {
@@ -171,20 +180,20 @@ export const columns: ColumnDef<MaterialVariant>[] = [
   //   header: 'Cost per 1m Length',
   //   cell: ({ row }) => <div>{row.getValue('costPer1mLength').toFixed(2)} $</div>,
   // },
-]
+];
 
 export default function MaterialsTable() {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [fetchedData, setFetchedData] = useState<MaterialVariant[]>(data)
-  const [globalFilter, setGlobalFilter] = useState<string>('')
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [fetchedData, setFetchedData] = useState<MaterialVariant[]>(data);
+  const [globalFilter, setGlobalFilter] = useState<string>("");
 
-  const [isAddNewMaterialModalOpen, setIsAddNewMaterialModalOpen] = useState<boolean>(false)
+  const [isAddNewMaterialModalOpen, setIsAddNewMaterialModalOpen] =
+    useState<boolean>(false);
 
   const onAddNewMaterialFormSubmit = async (data: AddNewMaterialFormValues) => {
-    console.log(data)
-    setIsAddNewMaterialModalOpen(false)
-    toast('New material added')
-  }
+    setIsAddNewMaterialModalOpen(false);
+    toast("New material added");
+  };
 
   const table = useReactTable({
     data: fetchedData,
@@ -196,10 +205,10 @@ export default function MaterialsTable() {
     onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
     globalFilterFn: (row, columnId, filterValue) => {
-      const search = String(filterValue).toLowerCase()
-      return row.original.material.toLowerCase().includes(search)
+      const search = String(filterValue).toLowerCase();
+      return row.original.material.toLowerCase().includes(search);
     },
-  })
+  });
 
   return (
     <>
@@ -212,7 +221,10 @@ export default function MaterialsTable() {
             className="max-w-sm"
           />
           <div className="flex gap-4">
-            <Button variant="secondary" onClick={() => setIsAddNewMaterialModalOpen(true)}>
+            <Button
+              variant="secondary"
+              onClick={() => setIsAddNewMaterialModalOpen(true)}
+            >
               <Plus />
               Add Material
             </Button>
@@ -226,7 +238,10 @@ export default function MaterialsTable() {
           <Table className="border-none">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="border-none pt-4 h-14">
+                <TableRow
+                  key={headerGroup.id}
+                  className="border-none pt-4 h-14"
+                >
                   {headerGroup.headers.map((header) => (
                     <TableHead
                       key={header.id}
@@ -234,7 +249,10 @@ export default function MaterialsTable() {
                     >
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -246,14 +264,20 @@ export default function MaterialsTable() {
                   <TableRow key={row.id} className="border-none h-15">
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="label-regular">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow className="border-none pt-4">
-                  <TableCell colSpan={columns.length} className="h-60 text-center border-none">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-60 text-center border-none"
+                  >
                     No material to show
                   </TableCell>
                 </TableRow>
@@ -269,5 +293,5 @@ export default function MaterialsTable() {
         onAddNewMaterialFormSubmit={onAddNewMaterialFormSubmit}
       />
     </>
-  )
+  );
 }

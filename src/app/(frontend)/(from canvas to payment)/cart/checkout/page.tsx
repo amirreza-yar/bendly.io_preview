@@ -15,22 +15,14 @@ import { Separator } from "@/components/uikit/separator";
 import api, { fetcher } from "@/lib/axios";
 import { getDayMonthNumber, getDayString } from "@/utilities/datetime";
 import { cn } from "@/utilities/ui";
-import { CircleDollarSign, CreditCard, Loader2 } from "lucide-react";
-import { notFound, redirect, useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { notFound, useRouter } from "next/navigation";
 import { useState } from "react";
 import useSWR from "swr";
 
 export default function CheckOutPage() {
-  const {
-    data: cart,
-    error,
-    isLoading,
-    mutate,
-  } = useSWR("/a/cart/", fetcher, {
+  const { data: cart } = useSWR("/a/cart/", fetcher, {
     onError: notFound,
-    onSuccess: (data) => {
-      console.log(data, data.total_amount, data.gst_ratio);
-    },
   });
 
   const [isPayLoading, setIsPayLoading] = useState<boolean>(false);
@@ -41,9 +33,9 @@ export default function CheckOutPage() {
     setIsPayLoading(true);
     try {
       const res = await api.post("/a/cart/pay/");
-      console.log(res.data.pay_url);
       setIsPayLoading(false);
       router.push(res.data.pay_url);
+      // eslint-disable-next-line
     } catch (error: any) {
       setIsPayLoading(false);
     }

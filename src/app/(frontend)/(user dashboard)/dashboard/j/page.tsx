@@ -55,8 +55,6 @@ export default function JobReferencesPage() {
 
   const { data, error, isLoading } = useSWR("/a/job-ref/", fetcher);
 
-  console.log(data?.results);
-
   const jobReferences = data?.results;
 
   useEffect(() => {

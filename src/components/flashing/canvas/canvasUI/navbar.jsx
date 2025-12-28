@@ -1,9 +1,9 @@
 // NavBar.jsx
-import React, { useRef, useState } from 'react'
-import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
-import { useUIVisibility } from '@/providers/canvas_providers/UICanvasContext'
-import NavButton from './navbarButton'
-import NavDropdown from './navbarModifyDropDown'
+import React, { useRef, useState } from "react";
+import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
+import { useUIVisibility } from "@/providers/canvas_providers/UICanvasContext";
+import NavButton from "./navbarButton";
+import NavDropdown from "./navbarModifyDropDown";
 import {
   Ruler,
   RulerBold,
@@ -21,13 +21,13 @@ import {
   MoveBold,
   Resize,
   ResizeBold,
-} from '@/components/uikit/icons'
-import { toast } from 'sonner'
-import CancelModal from './cancelModal'
-import { useCancelChangesModalContext } from '@/providers/canvas_providers/cancelChangesModalProvider'
-import { useMovingContext } from '@/providers/canvas_providers/movingProvider'
-import { useResizingContext } from '@/providers/canvas_providers/resizingProvider'
-import { useCrushFoldContext } from '@/providers/canvas_providers/crushFoldProvider'
+} from "@/components/uikit/icons";
+import { toast } from "sonner";
+import CancelModal from "./cancelModal";
+import { useCancelChangesModalContext } from "@/providers/canvas_providers/cancelChangesModalProvider";
+import { useMovingContext } from "@/providers/canvas_providers/movingProvider";
+import { useResizingContext } from "@/providers/canvas_providers/resizingProvider";
+import { useCrushFoldContext } from "@/providers/canvas_providers/crushFoldProvider";
 
 const NavBar = () => {
   const {
@@ -48,145 +48,140 @@ const NavBar = () => {
     setIsCrushFolding,
     isCanvasChanged,
     objectsZoomScale,
-  } = useCanvasContext()
+  } = useCanvasContext();
 
-  const [hasPendingModal, setHasPendingModal] = useState(false)
-  const pendingWork = useRef(() => {})
+  const [hasPendingModal, setHasPendingModal] = useState(false);
+  const pendingWork = useRef(() => {});
 
-  const { onModalApply, onModalDiscard } = useCancelChangesModalContext()
-  const { applyChanges, resetChanges } = useMovingContext()
+  const { onModalApply, onModalDiscard } = useCancelChangesModalContext();
+  const { applyChanges, resetChanges } = useMovingContext();
 
-  const crushFoldApplyChanges = useCrushFoldContext().applyChanges
-  const crushFoldResetChanges = useCrushFoldContext().resetChanges
+  const crushFoldApplyChanges = useCrushFoldContext().applyChanges;
+  const crushFoldResetChanges = useCrushFoldContext().resetChanges;
 
   const resetAll = () => {
-    setIsRulering(false)
-    setIsResizing(false)
-    setIsMoving(false)
-    setIsRemoving(false)
-    setIsDrawing(false)
-    setIsTappering(false)
-    setIsCrushFolding(false)
-  }
+    setIsRulering(false);
+    setIsResizing(false);
+    setIsMoving(false);
+    setIsRemoving(false);
+    setIsDrawing(false);
+    setIsTappering(false);
+    setIsCrushFolding(false);
+  };
 
   const handleTool = (tool) => {
-    console.log('handle tool triggered')
     const switchTool = () => {
-      console.log('the tool is: ', tool)
-      resetAll()
+      resetAll();
       switch (tool) {
-        case 'drawing':
-          setIsDrawing(!isDrawing)
-          break
-        case 'resize':
-          setIsResizing(!isResizing)
-          break
-        case 'taper':
-          setIsTappering(!isTappering)
-          break
-        case 'crushfold':
-          setIsCrushFolding(!isCrushFolding)
-          break
+        case "drawing":
+          setIsDrawing(!isDrawing);
+          break;
+        case "resize":
+          setIsResizing(!isResizing);
+          break;
+        case "taper":
+          setIsTappering(!isTappering);
+          break;
+        case "crushfold":
+          setIsCrushFolding(!isCrushFolding);
+          break;
         default:
-          setIsDrawing(true)
-          break
+          setIsDrawing(true);
+          break;
       }
-      console.log(`The ${tool} button has been clicked`)
-    }
+    };
 
     if (isCanvasChanged) {
-      console.log('handle tool triggered / canvas has changed')
-      setHasPendingModal(true)
+      setHasPendingModal(true);
       pendingWork.current = () => {
-        if (isMoving) applyChanges()
-        if (isCrushFolding) crushFoldApplyChanges()
-        switchTool()
-      }
+        if (isMoving) applyChanges();
+        if (isCrushFolding) crushFoldApplyChanges();
+        switchTool();
+      };
       onModalApply.current = () => {
-        pendingWork.current?.()
-        setHasPendingModal(false)
-        toast('Changes where applied')
-      }
+        pendingWork.current?.();
+        setHasPendingModal(false);
+        toast("Changes where applied");
+      };
       onModalDiscard.current = () => {
-        if (isMoving) resetChanges()
-        if (isCrushFolding) crushFoldResetChanges()
-        switchTool()
-        setHasPendingModal(false)
-        toast('Nothing was changed')
-      }
+        if (isMoving) resetChanges();
+        if (isCrushFolding) crushFoldResetChanges();
+        switchTool();
+        setHasPendingModal(false);
+        toast("Nothing was changed");
+      };
     } else {
-      switchTool()
+      switchTool();
     }
-  }
+  };
 
   const handleModifyItem = (action) => {
     const switchModify = () => {
-      resetAll()
+      resetAll();
       switch (action) {
-        case 'remove':
-          setIsRemoving(!isRemoving)
-          break
-        case 'move':
-          setIsMoving(!isMoving)
-          break
-        case 'ruler':
-          setIsRulering(!isRulering)
-          break
+        case "remove":
+          setIsRemoving(!isRemoving);
+          break;
+        case "move":
+          setIsMoving(!isMoving);
+          break;
+        case "ruler":
+          setIsRulering(!isRulering);
+          break;
         default:
-          break
+          break;
       }
-      console.log(`${action} clicked`)
-    }
+    };
 
     if (isCanvasChanged) {
-      setHasPendingModal(true)
+      setHasPendingModal(true);
       pendingWork.current = () => {
-        if (isMoving) applyChanges()
-        if (isCrushFolding) crushFoldApplyChanges()
-        switchModify()
-      }
+        if (isMoving) applyChanges();
+        if (isCrushFolding) crushFoldApplyChanges();
+        switchModify();
+      };
       onModalApply.current = () => {
-        pendingWork.current?.()
-        setHasPendingModal(false)
-        toast('Changes where applied')
-      }
+        pendingWork.current?.();
+        setHasPendingModal(false);
+        toast("Changes where applied");
+      };
       onModalDiscard.current = () => {
-        if (isMoving) resetChanges()
-        if (isCrushFolding) crushFoldResetChanges()
-        switchModify()
-        setHasPendingModal(false)
-        toast('Nothing was changed')
-      }
+        if (isMoving) resetChanges();
+        if (isCrushFolding) crushFoldResetChanges();
+        switchModify();
+        setHasPendingModal(false);
+        toast("Nothing was changed");
+      };
     } else {
-      switchModify()
+      switchModify();
     }
-  }
+  };
 
-  const modifyActive = isRulering || isMoving || isRemoving
+  const modifyActive = isRulering || isMoving || isRemoving;
 
   const modifyItems = [
     {
       icon: Earaser,
       iconActive: EaraserBold,
-      label: 'Remove',
+      label: "Remove",
       active: isRemoving,
-      onClick: () => handleModifyItem('remove'),
+      onClick: () => handleModifyItem("remove"),
     },
     {
       icon: Move,
       iconActive: MoveBold,
-      label: 'Move',
+      label: "Move",
       active: isMoving,
-      onClick: () => handleModifyItem('move'),
+      onClick: () => handleModifyItem("move"),
     },
     {
       icon: Ruler,
       iconActive: RulerBold,
-      label: 'Ruler',
+      label: "Ruler",
       active: isRulering,
-      onClick: () => handleModifyItem('ruler'),
+      onClick: () => handleModifyItem("ruler"),
     },
-  ]
+  ];
 
   return (
     <>
@@ -195,14 +190,14 @@ const NavBar = () => {
           onApply={onModalApply.current}
           onDiscard={onModalDiscard.current}
           onOpenChange={(e) => {
-            setHasPendingModal(e)
-            console.log('navbar clicked when canvas is changed, ', e)
+            setHasPendingModal(e);
           }}
         >
           <div
             className="flex justify-between items-center max-w-[384px] bg-white rounded-xl px-3 mx-auto mb-4 py-0 h-16"
             style={{
-              boxShadow: '0px 2px 16px -1px rgba(0,0,0,0.1), 0px 2px 4px -1px rgba(0,0,0,0.06)',
+              boxShadow:
+                "0px 2px 16px -1px rgba(0,0,0,0.1), 0px 2px 4px -1px rgba(0,0,0,0.06)",
             }}
           >
             <NavButton
@@ -211,7 +206,7 @@ const NavBar = () => {
               label="Resize"
               active={isResizing}
               disabled={canvasIsEmpty}
-              onClick={() => handleTool('resize')}
+              onClick={() => handleTool("resize")}
             />
             <NavDropdown
               icon={Modify}
@@ -220,7 +215,7 @@ const NavBar = () => {
               active={modifyActive}
               disabled={canvasIsEmpty}
               items={modifyItems}
-              onClick={() => handleTool('')}
+              onClick={() => handleTool("")}
             />
             <NavButton
               icon={Drawing}
@@ -228,7 +223,7 @@ const NavBar = () => {
               label="Drawing"
               active={isDrawing}
               disabled={false}
-              onClick={() => handleTool('drawing')}
+              onClick={() => handleTool("drawing")}
             />
             <NavButton
               icon={Taper}
@@ -236,7 +231,7 @@ const NavBar = () => {
               label="Taper"
               active={isTappering}
               disabled={canvasIsEmpty}
-              onClick={() => handleTool('taper')}
+              onClick={() => handleTool("taper")}
             />
             <NavButton
               icon={CrushFold}
@@ -244,7 +239,7 @@ const NavBar = () => {
               label="CrushFold"
               active={isCrushFolding}
               disabled={canvasIsEmpty}
-              onClick={() => handleTool('crushfold')}
+              onClick={() => handleTool("crushfold")}
             />
           </div>
         </CancelModal>
@@ -252,7 +247,8 @@ const NavBar = () => {
         <div
           className="flex justify-between items-center max-w-[350px] bg-white rounded-xl px-3 mx-auto mb-4 py-0 h-16 overflow-scroll no-scrollbar"
           style={{
-            boxShadow: '0px 2px 16px -1px rgba(0,0,0,0.1), 0px 2px 4px -1px rgba(0,0,0,0.06)',
+            boxShadow:
+              "0px 2px 16px -1px rgba(0,0,0,0.1), 0px 2px 4px -1px rgba(0,0,0,0.06)",
           }}
         >
           <NavButton
@@ -261,7 +257,7 @@ const NavBar = () => {
             label="Resize"
             active={isResizing}
             disabled={canvasIsEmpty}
-            onClick={() => handleTool('resize')}
+            onClick={() => handleTool("resize")}
           />
           <NavDropdown
             icon={Modify}
@@ -277,7 +273,7 @@ const NavBar = () => {
             label="Drawing"
             active={isDrawing}
             disabled={false}
-            onClick={() => handleTool('drawing')}
+            onClick={() => handleTool("drawing")}
           />
           <NavButton
             icon={Taper}
@@ -285,7 +281,7 @@ const NavBar = () => {
             label="Taper"
             active={isTappering}
             disabled={canvasIsEmpty}
-            onClick={() => handleTool('taper')}
+            onClick={() => handleTool("taper")}
           />
           <NavButton
             icon={CrushFold}
@@ -293,12 +289,12 @@ const NavBar = () => {
             label="CrushFold"
             active={isCrushFolding}
             disabled={canvasIsEmpty}
-            onClick={() => handleTool('crushfold')}
+            onClick={() => handleTool("crushfold")}
           />
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;

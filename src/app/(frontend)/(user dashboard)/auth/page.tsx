@@ -62,7 +62,6 @@ const AuthPage = () => {
       router.replace(`/auth/verify-email?email=${data.email}`);
     } catch (error: any) {
       setIsLoading(false);
-      console.log(error.response.data);
       const message =
         error.response.data.email[0] ||
         error.response?.data ||

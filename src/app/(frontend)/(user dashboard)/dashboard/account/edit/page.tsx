@@ -1,26 +1,18 @@
 "use client";
-import { useState } from "react";
 import { Button } from "@/components/uikit/buttons/button";
 import Link from "next/link";
-import { RightArrow, ArrowLeft } from "@/components/uikit/icons";
 import { ButtonListItem } from "@/components/uikit/buttons/buttonListItem";
 import { Separator } from "@/components/ui/separator";
 import { Header } from "@/components/dashboard/header";
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import { Footer } from "@/components/dashboard/footer";
-import { useQuery } from "@apollo/client/react";
-import { getUserQuery } from "@/lib/api";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db/appDB";
 import useSWR from "swr";
 import { fetcher } from "@/lib/axios";
 
 export default function AccountPage() {
-  const userId = useLiveQuery(() => db.userProfile.toCollection().first())?.id;
-
-  const { isLoading, error, data } = useSWR("/a/profile/", fetcher);
-
-  console.log(data);
+  const { isLoading, data } = useSWR("/a/profile/", fetcher);
 
   return (
     <>

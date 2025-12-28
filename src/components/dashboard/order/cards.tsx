@@ -37,8 +37,6 @@ function formatStatus(status: any, type: any) {
 }
 
 export function OrderCard({ order, ...props }: { order: any }) {
-  console.log(order);
-
   return (
     <Link
       href={`/dashboard/orders/${order.id}`}
@@ -178,8 +176,6 @@ export function NewOrderCard({
   className?: string;
 }) {
   if (!flashing) return;
-
-  console.log(flashing.total_girth);
 
   return (
     <div

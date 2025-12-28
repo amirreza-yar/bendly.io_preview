@@ -56,8 +56,6 @@ export default function Page() {
     router.push(`/f/material`);
   };
 
-  console.log(cart?.flashings[0]);
-
   return (
     <>
       <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white">

@@ -761,7 +761,6 @@ export default function useCrushFold() {
     startCrushFoldButton.mainCircle = startCircle
     endCrushFoldButton.mainCircle = endCircle
 
-    console.log(startCrushFoldButton)
 
     startCircle.crushButton = startCrushFoldButton
     endCircle.crushButton = endCrushFoldButton
@@ -841,7 +840,6 @@ export default function useCrushFold() {
         }
       })
 
-      console.log(startCrushFoldObjectRef.current)
 
       createCrushFoldButtons(canvas, circles)
       startCrushFoldObjectRef.current && toggleCrushFoldButton(canvas, startCircleRef.current)

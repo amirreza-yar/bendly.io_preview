@@ -26,8 +26,6 @@ export default function OrdersPage() {
     error,
   } = useSWR("/a/order/", fetcher, { onError: notFound });
 
-  console.log(orders);
-
   return (
     <>
       <Header title="Orders" returnHref="/dashboard/profile" />

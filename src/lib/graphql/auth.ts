@@ -1,12 +1,12 @@
-import { gql } from '@urql/core'
-import { urqlClient } from '../urqlClient'
+import { gql } from "@urql/core";
+import { urqlClient } from "../urqlClient";
 import {
   setAuthToken,
   clearAuthToken,
   getAuthToken,
   isAuthenticated,
-} from '@/utilities/cookieUtils'
-import { GraphQLOperations } from './operations'
+} from "@/utilities/cookieUtils";
+import { GraphQLOperations } from "./operations";
 
 // GraphQL Mutations and Queries for Authentication
 export const loginMutation = gql`
@@ -27,7 +27,7 @@ export const loginMutation = gql`
       expiresIn
     }
   }
-`
+`;
 
 export const registerMutation = gql`
   mutation Register($input: RegisterInput!) {
@@ -47,7 +47,7 @@ export const registerMutation = gql`
       expiresIn
     }
   }
-`
+`;
 
 export const refreshTokenMutation = gql`
   mutation RefreshToken($currentToken: String!) {
@@ -67,13 +67,13 @@ export const refreshTokenMutation = gql`
       expiresIn
     }
   }
-`
+`;
 
 export const meQuery = gql`
   query Me($userId: String!) {
     me(userId: $userId)
   }
-`
+`;
 
 // Authentication API functions using GraphQL
 export async function graphqlLogin(email: string, password: string) {
@@ -82,28 +82,30 @@ export async function graphqlLogin(email: string, password: string) {
       .mutation(loginMutation, {
         input: { email, password },
       })
-      .toPromise()
+      .toPromise();
 
     if (result.error) {
-      console.error('Login error:', result.error)
-      return { success: false, error: result.error.message }
+      console.error("Login error:", result.error);
+      return { success: false, error: result.error.message };
     }
 
     if (result.data?.login) {
-      const { user, accessToken, refreshToken, expiresIn } = result.data.login
+      const { user, accessToken, refreshToken, expiresIn } = result.data.login;
 
       // Use the access token directly from backend (now Payload-compatible)
-      const authToken = accessToken
+      const authToken = accessToken;
 
-      setAuthToken(authToken)
+      setAuthToken(authToken);
 
       // Store user profile data in IndexedDB (professional client-side storage)
-      if (typeof window !== 'undefined' && user) {
+      if (typeof window !== "undefined" && user) {
         try {
-          const { storeUserProfile } = await import('@/lib/db/helpers/userProfileHelpers')
-          await storeUserProfile(user)
+          const { storeUserProfile } = await import(
+            "@/lib/db/helpers/userProfileHelpers"
+          );
+          await storeUserProfile(user);
         } catch (error) {
-          console.error('Failed to store user profile in IndexedDB:', error)
+          console.error("Failed to store user profile in IndexedDB:", error);
           // Don't fail login if storage fails, but log the error
         }
       }
@@ -113,14 +115,14 @@ export async function graphqlLogin(email: string, password: string) {
         user,
         accessToken,
         refreshToken,
-        apiCode: '100600', // Success code
-      }
+        apiCode: "100600", // Success code
+      };
     }
 
-    return { success: false, error: 'Login failed', apiCode: '100602' }
+    return { success: false, error: "Login failed", apiCode: "100602" };
   } catch (error) {
-    console.error('Login error:', error)
-    return { success: false, error: 'Network error' }
+    console.error("Login error:", error);
+    return { success: false, error: "Network error" };
   }
 }
 
@@ -129,7 +131,7 @@ export async function graphqlRegister(
   fullname: string,
   phone: string,
   password: string,
-  roleId?: string,
+  roleId?: string
 ) {
   try {
     const result = await urqlClient
@@ -139,31 +141,34 @@ export async function graphqlRegister(
           fullname,
           phone,
           password,
-          roleId: roleId || 'user', // Default role
+          roleId: roleId || "user", // Default role
         },
       })
-      .toPromise()
+      .toPromise();
 
     if (result.error) {
-      console.error('Register error:', result.error)
-      return { success: false, error: result.error.message }
+      console.error("Register error:", result.error);
+      return { success: false, error: result.error.message };
     }
 
     if (result.data?.register) {
-      const { user, accessToken, refreshToken, expiresIn } = result.data.register
+      const { user, accessToken, refreshToken, expiresIn } =
+        result.data.register;
 
       // Use the access token directly from backend (now Payload-compatible)
-      const authToken = accessToken
+      const authToken = accessToken;
 
-      setAuthToken(authToken)
+      setAuthToken(authToken);
 
       // Store user profile data in IndexedDB (same as login)
-      if (typeof window !== 'undefined' && user) {
+      if (typeof window !== "undefined" && user) {
         try {
-          const { storeUserProfile } = await import('@/lib/db/helpers/userProfileHelpers')
-          await storeUserProfile(user)
+          const { storeUserProfile } = await import(
+            "@/lib/db/helpers/userProfileHelpers"
+          );
+          await storeUserProfile(user);
         } catch (error) {
-          console.error('Failed to store user profile in IndexedDB:', error)
+          console.error("Failed to store user profile in IndexedDB:", error);
           // Don't fail registration if storage fails, but log the error
         }
       }
@@ -173,92 +178,99 @@ export async function graphqlRegister(
         user,
         accessToken,
         refreshToken,
-        apiCode: '100600', // Success code
-      }
+        apiCode: "100600", // Success code
+      };
     }
 
-    return { success: false, error: 'Registration failed', apiCode: '100301' }
+    return { success: false, error: "Registration failed", apiCode: "100301" };
   } catch (error) {
-    console.error('Register error:', error)
-    return { success: false, error: 'Network error' }
+    console.error("Register error:", error);
+    return { success: false, error: "Network error" };
   }
 }
 
 export async function graphqlRefreshToken() {
   try {
-    const currentToken = getAuthToken()
+    const currentToken = getAuthToken();
     if (!currentToken) {
-      return { success: false, error: 'No token available' }
+      return { success: false, error: "No token available" };
     }
 
     const result = await urqlClient
       .mutation(refreshTokenMutation, {
         currentToken,
       })
-      .toPromise()
+      .toPromise();
 
     if (result.error) {
-      console.error('Refresh token error:', result.error)
-      return { success: false, error: result.error.message }
+      console.error("Refresh token error:", result.error);
+      return { success: false, error: result.error.message };
     }
 
     if (result.data?.refreshToken) {
-      const { user, accessToken, refreshToken: newToken, expiresIn } = result.data.refreshToken
+      const {
+        user,
+        accessToken,
+        refreshToken: newToken,
+        expiresIn,
+      } = result.data.refreshToken;
 
       // Use the new token as the ff-token
-      setAuthToken(newToken)
+      setAuthToken(newToken);
 
       return {
         success: true,
         user,
         accessToken: newToken,
         refreshToken: newToken,
-      }
+      };
     }
 
-    return { success: false, error: 'Token refresh failed' }
+    return { success: false, error: "Token refresh failed" };
   } catch (error) {
-    console.error('Refresh token error:', error)
-    return { success: false, error: 'Network error' }
+    console.error("Refresh token error:", error);
+    return { success: false, error: "Network error" };
   }
 }
 
 export async function graphqlLogout() {
   try {
     // Clear tokens from cookies
-    clearAuthToken()
+    clearAuthToken();
 
     // Clear user profile data from IndexedDB
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
-        const { clearUserProfile } = await import('@/lib/db/helpers/userProfileHelpers')
-        await clearUserProfile()
+        const { clearUserProfile } = await import(
+          "@/lib/db/helpers/userProfileHelpers"
+        );
+        await clearUserProfile();
       } catch (error) {
-        console.error('Failed to clear user profile from IndexedDB:', error)
+        console.error("Failed to clear user profile from IndexedDB:", error);
         // Don't fail logout if clearing fails, but log the error
       }
     }
 
-    return { success: true }
+    return { success: true };
   } catch (error) {
-    console.error('Logout error:', error)
-    return { success: false, error: 'Logout failed' }
+    console.error("Logout error:", error);
+    return { success: false, error: "Logout failed" };
   }
 }
 
 export async function graphqlGetProfile() {
   try {
     // Use the universal getMeUser resolver - it validates tokens and provides user data
-    const result = await import('@/utilities/getMeUser')
-    const { user } = await result.getMeUser()
+    const result = await import("@/utilities/getMeUser");
+    const { user } = await result.getMeUser();
 
-    return { success: true, user }
+    return { success: true, user };
   } catch (error) {
-    console.error('Get profile error:', error)
+    console.error("Get profile error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to get profile',
-    }
+      error: error instanceof Error ? error.message : "Failed to get profile",
+    };
   }
 }
 
@@ -272,27 +284,25 @@ export async function apiCheckEmail(email: string) {
             checkEmail(email: $email)
           }
         `,
-        { email },
+        { email }
       )
-      .toPromise()
-
-    console.log(result, email)
+      .toPromise();
 
     if (result.error) {
-      console.error('Check email error:', result.error)
-      return { ok: false, error: 'GraphQL error' }
+      console.error("Check email error:", result.error);
+      return { ok: false, error: "GraphQL error" };
     }
 
-    const data = JSON.parse(result.data.checkEmail)
+    const data = JSON.parse(result.data.checkEmail);
     return {
       ok: true,
-      apiCode: data.exists ? '100102' : '100101',
+      apiCode: data.exists ? "100102" : "100101",
       email: data.email,
       exists: data.exists,
-    }
+    };
   } catch (error) {
-    console.error('Check email error:', error)
-    return { ok: false, error: 'Network error' }
+    console.error("Check email error:", error);
+    return { ok: false, error: "Network error" };
   }
 }
 
@@ -305,24 +315,24 @@ export async function apiSendEmailCode(email: string) {
             sendEmailCode(email: $email)
           }
         `,
-        { email },
+        { email }
       )
-      .toPromise()
+      .toPromise();
 
     if (result.error) {
-      console.error('Send email code error:', result.error)
-      return { ok: false, error: 'GraphQL error' }
+      console.error("Send email code error:", result.error);
+      return { ok: false, error: "GraphQL error" };
     }
 
-    const data = JSON.parse(result.data.sendEmailCode)
+    const data = JSON.parse(result.data.sendEmailCode);
     return {
       ok: data.success,
-      apiCode: data.apiCode || '100100',
+      apiCode: data.apiCode || "100100",
       message: data.message,
-    }
+    };
   } catch (error) {
-    console.error('Send email code error:', error)
-    return { ok: false, error: 'Network error' }
+    console.error("Send email code error:", error);
+    return { ok: false, error: "Network error" };
   }
 }
 
@@ -335,24 +345,24 @@ export async function apiVerifyEmailCode(email: string, code: string) {
             verifyEmailCode(email: $email, code: $code)
           }
         `,
-        { email, code },
+        { email, code }
       )
-      .toPromise()
+      .toPromise();
 
     if (result.error) {
-      console.error('Verify email code error:', result.error)
-      return { ok: false, error: 'GraphQL error' }
+      console.error("Verify email code error:", result.error);
+      return { ok: false, error: "GraphQL error" };
     }
 
-    const data = JSON.parse(result.data.verifyEmailCode)
+    const data = JSON.parse(result.data.verifyEmailCode);
     return {
       ok: data.verified,
-      apiCode: data.apiCode || '100200',
+      apiCode: data.apiCode || "100200",
       message: data.message,
-    }
+    };
   } catch (error) {
-    console.error('Verify email code error:', error)
-    return { ok: false, error: 'Network error' }
+    console.error("Verify email code error:", error);
+    return { ok: false, error: "Network error" };
   }
 }
 
@@ -365,24 +375,24 @@ export async function apiVerifyMobileCode(phone: string, code: string) {
             verifyPhoneCode(phone: $phone, code: $code)
           }
         `,
-        { phone, code },
+        { phone, code }
       )
-      .toPromise()
+      .toPromise();
 
     if (result.error) {
-      console.error('Verify mobile code error:', result.error)
-      return { ok: false, error: 'GraphQL error' }
+      console.error("Verify mobile code error:", result.error);
+      return { ok: false, error: "GraphQL error" };
     }
 
-    const data = JSON.parse(result.data.verifyPhoneCode)
+    const data = JSON.parse(result.data.verifyPhoneCode);
     return {
       ok: data.verified,
-      apiCode: data.apiCode || '100500',
+      apiCode: data.apiCode || "100500",
       message: data.message,
-    }
+    };
   } catch (error) {
-    console.error('Verify mobile code error:', error)
-    return { ok: false, error: 'Network error' }
+    console.error("Verify mobile code error:", error);
+    return { ok: false, error: "Network error" };
   }
 }
 
@@ -395,24 +405,24 @@ export async function apiResendMobileCode(phone: string, email: string) {
             resendPhoneCode(phone: $phone, email: $email)
           }
         `,
-        { phone, email },
+        { phone, email }
       )
-      .toPromise()
+      .toPromise();
 
     if (result.error) {
-      console.error('Resend mobile code error:', result.error)
-      return { ok: false, error: 'GraphQL error' }
+      console.error("Resend mobile code error:", result.error);
+      return { ok: false, error: "GraphQL error" };
     }
 
-    const data = JSON.parse(result.data.resendPhoneCode)
+    const data = JSON.parse(result.data.resendPhoneCode);
     return {
       ok: data.success,
-      apiCode: data.apiCode || '100400',
+      apiCode: data.apiCode || "100400",
       message: data.message,
-    }
+    };
   } catch (error) {
-    console.error('Resend mobile code error:', error)
-    return { ok: false, error: 'Network error' }
+    console.error("Resend mobile code error:", error);
+    return { ok: false, error: "Network error" };
   }
 }
 
@@ -420,19 +430,19 @@ export async function apiCreateAccount(
   email: string,
   fullName: string,
   phone: string,
-  password: string,
+  password: string
 ) {
-  return graphqlRegister(email, fullName, phone, password)
+  return graphqlRegister(email, fullName, phone, password);
 }
 
 export async function apiLogin(email: string, password: string) {
-  return graphqlLogin(email, password)
+  return graphqlLogin(email, password);
 }
 
 export async function apiLogout() {
-  return graphqlLogout()
+  return graphqlLogout();
 }
 
 export async function apiGetProfile() {
-  return graphqlGetProfile()
+  return graphqlGetProfile();
 }

@@ -51,7 +51,6 @@ export default function DetailsPage({
       }
     } else if (dexieFlashing) {
       try {
-        console.log("trying to post flashing...");
         await api.post("/a/flashing/", {
           material: dexieFlashing?.material,
           code: data.code,

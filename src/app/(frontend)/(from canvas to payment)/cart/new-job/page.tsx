@@ -73,7 +73,6 @@ export default function NewAddressPage() {
   const router = useRouter();
 
   const onNewJobRefFormSubmit = async (data: NewJobRefFormValues) => {
-    console.log(data);
     try {
       const res = await api.post(`/a/job-ref/`, {
         code: data.code,

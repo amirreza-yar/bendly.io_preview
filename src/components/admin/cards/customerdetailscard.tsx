@@ -1,48 +1,55 @@
-'use client'
+"use client";
 
-import { Pencil, Call2, Mail } from '@/components/uikit/icons'
-import * as React from 'react'
-import { AlertModal } from '@/components/uikit/alertModal'
-import { useRouter } from 'next/navigation'
+import { Pencil, Call2, Mail } from "@/components/uikit/icons";
+import * as React from "react";
+import { AlertModal } from "@/components/uikit/alertModal";
+import { useRouter } from "next/navigation";
 
 interface CustomerCardProps {
   data?: {
-    name: string
-    email: string
-    phone: string
-  }
+    name: string;
+    email: string;
+    phone: string;
+  };
 }
 
 export default function CustomerDetailsCard({ data }: CustomerCardProps) {
-  const router = useRouter()
+  const router = useRouter();
 
   const customerData = {
-    name: 'Mike Oldfield',
-    email: 'Mike@example.com',
-    phone: '+610412364625',
-  }
+    name: "Mike Oldfield",
+    email: "Mike@example.com",
+    phone: "+610412364625",
+  };
 
-  const displayData = data || customerData
+  const displayData = data || customerData;
 
-  const [open, setOpen] = React.useState(false)
-  const [selectedReason, setSelectedReason] = React.useState('')
+  const [open, setOpen] = React.useState(false);
+  const [selectedReason, setSelectedReason] = React.useState("");
 
   const reasons = [
-    { key: 'personalInfo', label: 'Customer requested profile update', route: '/update-profile' },
-    { key: 'accountError', label: 'Data Correction', route: '/data-correction' },
-    { key: 'securityUpdate', label: 'Other', route: '/security-update' },
-  ]
+    {
+      key: "personalInfo",
+      label: "Customer requested profile update",
+      route: "/update-profile",
+    },
+    {
+      key: "accountError",
+      label: "Data Correction",
+      route: "/data-correction",
+    },
+    { key: "securityUpdate", label: "Other", route: "/security-update" },
+  ];
 
   const handleAction = () => {
-    const selected = reasons.find((r) => r.key === selectedReason)
+    const selected = reasons.find((r) => r.key === selectedReason);
     if (selected) {
-      console.log('Navigating to:', selected.route)
-      router.push(selected.route)
+      router.push(selected.route);
     }
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
-  const handleCancel = () => setOpen(false)
+  const handleCancel = () => setOpen(false);
 
   return (
     <>
@@ -104,7 +111,10 @@ export default function CustomerDetailsCard({ data }: CustomerCardProps) {
         {open && (
           <div className="mt-4 space-y-4">
             {reasons.map((reason) => (
-              <label key={reason.key} className="flex items-center gap-3 text-sm cursor-pointer">
+              <label
+                key={reason.key}
+                className="flex items-center gap-3 text-sm cursor-pointer"
+              >
                 <input
                   type="radio"
                   name="reason"
@@ -120,5 +130,5 @@ export default function CustomerDetailsCard({ data }: CustomerCardProps) {
         )}
       </AlertModal>
     </>
-  )
+  );
 }

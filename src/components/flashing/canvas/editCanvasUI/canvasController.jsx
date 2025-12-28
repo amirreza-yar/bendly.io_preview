@@ -1,77 +1,83 @@
 // CanvasControllers.jsx
-'use client'
-import { AnimatePresence, motion } from 'framer-motion'
-import TopBar from './topBar'
-import ActionBar from './actionBar'
-import BottomControls from './bottomControls'
-import { useUIVisibility } from '@/providers/canvas_providers/UICanvasContext'
-import { useCanvasContext } from '@/providers/canvas_providers/canvasContextProvider'
-import ResizingTopBar from '../resizing/resizingTopBar'
-import ResizingActionBar from '../resizing/resizingActionBar'
-import MovingActionBar from '../moving/movingActionBar'
-import MovingTopBar from '../moving/movingTopBar'
-import RemovingActionBar from '../removing/removingActionBar'
-import RemovingTopBar from '../removing/removingTopBar'
-import RuleringActionBar from '../rulering/ruleringActionBar'
-import RuleringTopBar from '../rulering/ruleringTopBar'
-import TapperingTopBar from '../tappering/tapperingTopBar'
-import TapperingActionBar from '../tappering/tapperingActionBar'
+"use client";
+import { AnimatePresence, motion } from "framer-motion";
+import TopBar from "./topBar";
+import ActionBar from "./actionBar";
+import BottomControls from "./bottomControls";
+import { useUIVisibility } from "@/providers/canvas_providers/UICanvasContext";
+import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
+import ResizingTopBar from "../resizing/resizingTopBar";
+import ResizingActionBar from "../resizing/resizingActionBar";
+import MovingActionBar from "../moving/movingActionBar";
+import MovingTopBar from "../moving/movingTopBar";
+import RemovingActionBar from "../removing/removingActionBar";
+import RemovingTopBar from "../removing/removingTopBar";
+import RuleringActionBar from "../rulering/ruleringActionBar";
+import RuleringTopBar from "../rulering/ruleringTopBar";
+import TapperingTopBar from "../tappering/tapperingTopBar";
+import TapperingActionBar from "../tappering/tapperingActionBar";
 
-import CrushFoldingTopBar from '../crushFolding/crushFoldingTopBar'
-import CrushFoldingActionBar from '../crushFolding/crushFoldingActionBar'
-import ResizingDrawer from '../resizing/resizingDrawer'
-import { useResizingContext } from '@/providers/canvas_providers/resizingProvider'
-import { useTapperingContext } from '@/providers/canvas_providers/tapperingProvider'
-import TapperingDrawer from '../tappering/tapperingDrawer'
-import { upsertPartialFlashing } from '@/lib/db/helpers/flashingHelpers'
-import { notFound, redirect, useParams, useRouter, useSearchParams } from 'next/navigation'
-import { useLiveQuery } from 'dexie-react-hooks'
-import { db } from '@/lib/db/appDB'
-import useLoading from '@/hooks/canvas/useLoading'
-import { useEffect, useState } from 'react'
-import { useHistory } from '@/hooks/canvas/useHistory'
-import useObjectUtils from '@/hooks/canvas/useObjectUtils'
+import CrushFoldingTopBar from "../crushFolding/crushFoldingTopBar";
+import CrushFoldingActionBar from "../crushFolding/crushFoldingActionBar";
+import ResizingDrawer from "../resizing/resizingDrawer";
+import { useResizingContext } from "@/providers/canvas_providers/resizingProvider";
+import { useTapperingContext } from "@/providers/canvas_providers/tapperingProvider";
+import TapperingDrawer from "../tappering/tapperingDrawer";
+import { upsertPartialFlashing } from "@/lib/db/helpers/flashingHelpers";
+import {
+  notFound,
+  redirect,
+  useParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db/appDB";
+import useLoading from "@/hooks/canvas/useLoading";
+import { useEffect, useState } from "react";
+import { useHistory } from "@/hooks/canvas/useHistory";
+import useObjectUtils from "@/hooks/canvas/useObjectUtils";
 
-import { Circle, Line } from 'fabric'
-import { createCrushFoldObject } from '@/utilities/canvas/crushFoldUtils'
-import { toast } from 'sonner'
-import { deleteFlashingById } from '@/lib/db/helpers/flashingHelpers'
+import { Circle, Line } from "fabric";
+import { createCrushFoldObject } from "@/utilities/canvas/crushFoldUtils";
+import { toast } from "sonner";
+import { deleteFlashingById } from "@/lib/db/helpers/flashingHelpers";
 
 function generateUUIDs(count) {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
-  const length = 6
-  const uuids = new Set()
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const length = 6;
+  const uuids = new Set();
 
   while (uuids.size < count) {
-    let uuid = ''
+    let uuid = "";
     for (let i = 0; i < length; i++) {
-      uuid += chars.charAt(Math.floor(Math.random() * chars.length))
+      uuid += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    uuids.add(uuid)
+    uuids.add(uuid);
   }
 
-  return Array.from(uuids)
+  return Array.from(uuids);
 }
 
 function getDistance(nodeA, nodeB) {
-  const dx = nodeB?.left - nodeA?.left
-  const dy = nodeB?.top - nodeA?.top
-  return Math.round(Math.sqrt(dx * dx + dy * dy))
+  const dx = nodeB?.left - nodeA?.left;
+  const dy = nodeB?.top - nodeA?.top;
+  return Math.round(Math.sqrt(dx * dx + dy * dy));
 }
 
 const CanvasControllers = ({ handleUndo, handleRedo }) => {
-  const { flashingId } = useParams()
-  const searchParams = useSearchParams()
-  const next = searchParams?.get('next')
-  const orderId = searchParams?.get('orderId')
+  const { flashingId } = useParams();
+  const searchParams = useSearchParams();
+  const next = searchParams?.get("next");
+  const orderId = searchParams?.get("orderId");
 
   const savedFlashing = useLiveQuery(
     () => db.flashings.get({ id: flashingId }),
     [flashingId],
-    null, // initial value
-  )
+    null // initial value
+  );
 
-  const router = useRouter()
+  const router = useRouter();
 
   const {
     canvasInstance,
@@ -92,59 +98,59 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
     isCanvasChanges,
     setHasEditModalChanges,
     hasEditModalChanges,
-  } = useCanvasContext()
+  } = useCanvasContext();
 
-  const { addHistory } = useHistory()
-  const { centerDrawingGroup } = useObjectUtils()
+  const { addHistory } = useHistory();
+  const { centerDrawingGroup } = useObjectUtils();
 
   const removeCrushFoldObject = (canvas, position) => {
-    if (startCrushFoldObjectRef.current && position === 'start') {
-      delete startCrushFoldObjectRef.current.mainCircle.crushFoldObject
-      canvas.remove(startCrushFoldObjectRef.current)
-      startCrushFoldObjectRef.current = null
-    } else if (endCrushFoldObjectRef.current && position === 'end') {
-      delete endCrushFoldObjectRef.current.mainCircle.crushFoldObject
-      canvas.remove(endCrushFoldObjectRef.current)
-      endCrushFoldObjectRef.current = null
+    if (startCrushFoldObjectRef.current && position === "start") {
+      delete startCrushFoldObjectRef.current.mainCircle.crushFoldObject;
+      canvas.remove(startCrushFoldObjectRef.current);
+      startCrushFoldObjectRef.current = null;
+    } else if (endCrushFoldObjectRef.current && position === "end") {
+      delete endCrushFoldObjectRef.current.mainCircle.crushFoldObject;
+      canvas.remove(endCrushFoldObjectRef.current);
+      endCrushFoldObjectRef.current = null;
     }
-  }
+  };
 
   const addCrushFoldObject = (canvas, circle, position) => {
-    removeCrushFoldObject(position)
+    removeCrushFoldObject(position);
 
     const crushFoldObject = createCrushFoldObject(
       circle,
       crushFoldObjectDirectionRef.current,
-      position,
-    )
-    canvas.add(crushFoldObject)
-    circle.crushFoldObject = crushFoldObject
-    crushFoldObject.mainCircle = circle
+      position
+    );
+    canvas.add(crushFoldObject);
+    circle.crushFoldObject = crushFoldObject;
+    crushFoldObject.mainCircle = circle;
 
     if (circle.line1) {
-      endCrushFoldObjectRef.current = crushFoldObject
+      endCrushFoldObjectRef.current = crushFoldObject;
     } else {
-      startCrushFoldObjectRef.current = crushFoldObject
+      startCrushFoldObjectRef.current = crushFoldObject;
     }
-  }
+  };
 
   useEffect(() => {
     if (savedFlashing && !(savedFlashing.color || savedFlashing.thickness)) {
-      notFound()
+      notFound();
     } else if (savedFlashing === undefined) {
-      notFound()
+      notFound();
     }
-  }, [savedFlashing])
+  }, [savedFlashing]);
 
   useEffect(() => {
-    const canvas = canvasInstance.current
+    const canvas = canvasInstance.current;
     if (!canvas) {
       // console.error('canvas not loaded')
-      return
+      return;
     }
 
     if (canvas && savedFlashing) {
-      crushFoldObjectDirectionRef.current = savedFlashing.crushFoldDir
+      crushFoldObjectDirectionRef.current = savedFlashing.crushFoldDir;
 
       savedFlashing.nodes.map((cir) => {
         canvas.add(
@@ -154,10 +160,10 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
             left: cir.left,
             top: cir.top,
             next_line_bside_length: cir.next_line_bside_length,
-            originX: 'center',
-            originY: 'center',
+            originX: "center",
+            originY: "center",
             radius: 4 / objectsZoomScale.current,
-            fill: '#000',
+            fill: "#000",
             hasControls: false,
             hasBorders: false,
             lockRotation: true,
@@ -170,17 +176,21 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
             evented: true,
             objectCaching: true,
             statefullCache: true,
-          }),
-        )
-      })
+          })
+        );
+      });
 
-      const circles = canvas.getObjects().filter((obj) => obj.type === 'circle')
+      const circles = canvas
+        .getObjects()
+        .filter((obj) => obj.type === "circle");
 
       circles
         .filter((cir) => cir.next_node_id)
         .map((cir) => {
-          const currentCir = cir
-          const nextCir = canvas.getObjects().find((obj) => obj.node_id === currentCir.next_node_id)
+          const currentCir = cir;
+          const nextCir = canvas
+            .getObjects()
+            .find((obj) => obj.node_id === currentCir.next_node_id);
 
           const line = new Line(
             [
@@ -190,9 +200,9 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
               nextCir.getCenterPoint().y,
             ],
             {
-              stroke: '#000',
+              stroke: "#000",
               strokeWidth: 2 / objectsZoomScale.current,
-              strokeLineCap: 'round',
+              strokeLineCap: "round",
               hasControls: false,
               hasBorders: false,
               lockRotation: true,
@@ -203,8 +213,8 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
               selectable: false,
               objectCaching: true,
               statefullCache: true,
-            },
-          )
+            }
+          );
 
           const hitboxLine = new Line(
             [
@@ -216,8 +226,8 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
             {
               strokeWidth: 20 / objectsZoomScale.current, // Hitbox size
               // stroke: "rgba(0,0,0,0)", // Fully transparent
-              stroke: 'rgba(0, 0, 0, 0.0005)',
-              strokeLineCap: 'round',
+              stroke: "rgba(0, 0, 0, 0.0005)",
+              strokeLineCap: "round",
               hasControls: false,
               hasBorders: false,
               lockRotation: true,
@@ -235,60 +245,60 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
 
               // active: true,
 
-              hoverCursor: 'pointer',
-            },
-          )
+              hoverCursor: "pointer",
+            }
+          );
 
           if (currentCir.next_line_bside_length) {
-            line.bSideLineLength = currentCir.next_line_bside_length
+            line.bSideLineLength = currentCir.next_line_bside_length;
           }
 
-          line.hitboxLine = hitboxLine
-          hitboxLine.originalLine = line
-          hitboxLine.isHitboxLine = true
+          line.hitboxLine = hitboxLine;
+          hitboxLine.originalLine = line;
+          hitboxLine.isHitboxLine = true;
 
-          hitboxLine.perPixelTargetFind = true
-          line.perPixelTargetFind = true
+          hitboxLine.perPixelTargetFind = true;
+          line.perPixelTargetFind = true;
 
-          currentCir.line2 = line
-          nextCir.line1 = line
+          currentCir.line2 = line;
+          nextCir.line1 = line;
 
-          line.circle1 = currentCir
-          line.circle2 = nextCir
+          line.circle1 = currentCir;
+          line.circle2 = nextCir;
 
-          canvas.add(line)
+          canvas.add(line);
 
           circles.forEach((cir) => {
-            canvas.bringObjectToFront(cir)
-          })
+            canvas.bringObjectToFront(cir);
+          });
 
-          setCanvasIsEmpty(false)
+          setCanvasIsEmpty(false);
 
-          addHistory('drawing', currentCir, true)
-        })
+          addHistory("drawing", currentCir, true);
+        });
 
-      activeCircle.current = circles.find((cir) => !cir.next_node_id)
+      activeCircle.current = circles.find((cir) => !cir.next_node_id);
 
       if (savedFlashing.startCrushFold) {
-        const startCircle = circles.find((cir) => !cir.prev_node_id)
-        startCircle.set({ radius: 0.2 })
-        addCrushFoldObject(canvas, startCircle, 'start')
+        const startCircle = circles.find((cir) => !cir.prev_node_id);
+        startCircle.set({ radius: 0.2 });
+        addCrushFoldObject(canvas, startCircle, "start");
       }
 
       if (savedFlashing.endCrushFold) {
-        const endCircle = circles.find((cir) => !cir.next_node_id)
-        endCircle.set({ radius: 0.2 })
-        addCrushFoldObject(canvas, endCircle, 'end')
+        const endCircle = circles.find((cir) => !cir.next_node_id);
+        endCircle.set({ radius: 0.2 });
+        addCrushFoldObject(canvas, endCircle, "end");
       }
 
-      centerDrawingGroup(50, 150, 130)
+      centerDrawingGroup(50, 150, 130);
 
-      setIsDrawing(true)
+      setIsDrawing(true);
     }
     return () => {
-      canvas.dispose()
-    }
-  }, [canvasInstance.current, savedFlashing])
+      canvas.dispose();
+    };
+  }, [canvasInstance.current, savedFlashing]);
 
   const {
     topBarVisible,
@@ -306,123 +316,137 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
     tapperingActionBarVisible,
     crushFoldingTopBarVisible,
     crushFoldingActionBarVisible,
-  } = useUIVisibility()
+  } = useUIVisibility();
 
-  const { isResizingDrawerOpen } = useResizingContext()
-  const { isTaperingDrawerOpen } = useTapperingContext()
+  const { isResizingDrawerOpen } = useResizingContext();
+  const { isTaperingDrawerOpen } = useTapperingContext();
 
   const resetAll = () => {
-    setIsDrawing(false)
-    setIsRulering(false)
-    setIsResizing(false)
-    setIsMoving(false)
-    setIsRemoving(false)
-    setIsTappering(false)
-    setIsCrushFolding(false)
-  }
+    setIsDrawing(false);
+    setIsRulering(false);
+    setIsResizing(false);
+    setIsMoving(false);
+    setIsRemoving(false);
+    setIsTappering(false);
+    setIsCrushFolding(false);
+  };
 
   useEffect(() => {
     if (isCanvasChanges) {
-      setHasEditModalChanges(true)
-      console.log('canvas has changed', hasEditModalChanges)
+      setHasEditModalChanges(true);
     }
-  }, [isCanvasChanges, hasEditModalChanges])
+  }, [isCanvasChanges, hasEditModalChanges]);
 
   const exportCanvasToJSON = () => {
-    const canvas = canvasInstance.current
+    const canvas = canvasInstance.current;
     const flashing = {
       nodes: [],
       startCrushFold: false,
       endCrushFold: false,
       crushFoldDir: crushFoldObjectDirectionRef.current,
-    }
+    };
 
-    resetAll()
+    resetAll();
 
-    const circles = canvas.getObjects().filter((obj) => obj.type === 'circle' && !obj.mainCircle)
+    const circles = canvas
+      .getObjects()
+      .filter((obj) => obj.type === "circle" && !obj.mainCircle);
 
-    const startCircle = circles.find((cir) => !cir.line1)
+    const startCircle = circles.find((cir) => !cir.line1);
 
-    const uuids = generateUUIDs(circles.length)
-    let node = startCircle
-    let index = 0
+    const uuids = generateUUIDs(circles.length);
+    let node = startCircle;
+    let index = 0;
 
     while (node) {
       const nodeObject = {
         node_id: uuids[index],
         left: 0,
         top: 0,
-      }
+      };
 
-      nodeObject.top = node.top
-      nodeObject.left = node.left
+      nodeObject.top = node.top;
+      nodeObject.left = node.left;
 
       if (node.line1) {
-        nodeObject.prev_node_id = uuids[index - 1]
+        nodeObject.prev_node_id = uuids[index - 1];
       }
 
       if (node.line2) {
-        nodeObject.next_node_id = uuids[index + 1]
+        nodeObject.next_node_id = uuids[index + 1];
       }
 
       if (
         node.line2?.bSideLineLength &&
-        getDistance(node, node.line2?.circle2) !== Math.round(node.line2?.bSideLineLength)
+        getDistance(node, node.line2?.circle2) !==
+          Math.round(node.line2?.bSideLineLength)
       ) {
-        nodeObject.next_line_bside_length = node.line2.bSideLineLength
+        nodeObject.next_line_bside_length = node.line2.bSideLineLength;
       }
 
       if (!node.line1 && node.crushFoldObject) {
-        flashing.startCrushFold = true
+        flashing.startCrushFold = true;
       }
 
       if (!node.line2 && node.crushFoldObject) {
-        flashing.endCrushFold = true
+        flashing.endCrushFold = true;
       }
 
-      flashing.nodes.push(nodeObject)
+      flashing.nodes.push(nodeObject);
 
-      node = node.line2?.circle2
+      node = node.line2?.circle2;
 
-      index += 1
+      index += 1;
     }
-
-    console.log(savedFlashing)
 
     upsertPartialFlashing(flashingId, {
       nodes: flashing.nodes,
       crushFoldDir: flashing.crushFoldDir,
       startCrushFold: flashing.startCrushFold,
       endCrushFold: flashing.endCrushFold,
-    })
+    });
 
-    if (next === 'preview') {
-      if (savedFlashing.color && !flashing.startCrushFold && !flashing.endCrushFold) {
-        window.location.assign(`/f/${flashingId}/edit/color-side?next=preview`)
+    if (next === "preview") {
+      if (
+        savedFlashing.color &&
+        !flashing.startCrushFold &&
+        !flashing.endCrushFold
+      ) {
+        window.location.assign(`/f/${flashingId}/edit/color-side?next=preview`);
       } else if (savedFlashing) {
-        window.location.assign(`/f/${flashingId}/preview`)
+        window.location.assign(`/f/${flashingId}/preview`);
       }
-    } else if (next === 'order' && orderId) {
-      if (savedFlashing.color && !flashing.startCrushFold && !flashing.endCrushFold) {
-        window.location.assign(`/f/${flashingId}/edit/color-side?next=order&orderId=${orderId}`)
+    } else if (next === "order" && orderId) {
+      if (
+        savedFlashing.color &&
+        !flashing.startCrushFold &&
+        !flashing.endCrushFold
+      ) {
+        window.location.assign(
+          `/f/${flashingId}/edit/color-side?next=order&orderId=${orderId}`
+        );
       } else if (savedFlashing) {
-        window.location.assign(`/o/${orderId}/review`)
+        window.location.assign(`/o/${orderId}/review`);
       }
     }
-  }
+  };
 
   const deleteFlashing = async () => {
     await deleteFlashingById(flashingId).then(() => {
-      toast('The drawn flashing was removed.')
-      window.location.assign('/dashboard')
-    })
-  }
+      toast("The drawn flashing was removed.");
+      window.location.assign("/dashboard");
+    });
+  };
 
   return (
     <>
       <AnimatePresence>
         {actionBarVisible && (
-          <ActionBar onUndo={handleUndo} onRedo={handleRedo} onHelp={() => {}} />
+          <ActionBar
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            onHelp={() => {}}
+          />
         )}
       </AnimatePresence>
 
@@ -430,10 +454,10 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
         {topBarVisible && (
           <TopBar
             onClose={() => {
-              if (next === 'preview') {
-                window.location.assign(`/f/${flashingId}/preview`)
-              } else if (next === 'order' && orderId) {
-                window.location.assign(`/o/${orderId}/review`)
+              if (next === "preview") {
+                window.location.assign(`/f/${flashingId}/preview`);
+              } else if (next === "order" && orderId) {
+                window.location.assign(`/o/${orderId}/review`);
               }
             }}
             hasEditModalChanges={hasEditModalChanges}
@@ -444,30 +468,60 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>{resizingTopBarVisible && <ResizingTopBar />}</AnimatePresence>
-      <AnimatePresence>{resizingActionBarVisible && <ResizingActionBar />}</AnimatePresence>
+      <AnimatePresence>
+        {resizingTopBarVisible && <ResizingTopBar />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {resizingActionBarVisible && <ResizingActionBar />}
+      </AnimatePresence>
 
-      <AnimatePresence>{movingTopBarVisible && <MovingActionBar />}</AnimatePresence>
-      <AnimatePresence>{movingActionBarVisible && <MovingTopBar />}</AnimatePresence>
+      <AnimatePresence>
+        {movingTopBarVisible && <MovingActionBar />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {movingActionBarVisible && <MovingTopBar />}
+      </AnimatePresence>
 
-      <AnimatePresence>{removingTopBarVisible && <RemovingActionBar />}</AnimatePresence>
-      <AnimatePresence>{removingActionBarVisible && <RemovingTopBar />}</AnimatePresence>
+      <AnimatePresence>
+        {removingTopBarVisible && <RemovingActionBar />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {removingActionBarVisible && <RemovingTopBar />}
+      </AnimatePresence>
 
-      <AnimatePresence>{ruleringTopBarVisible && <RuleringActionBar />}</AnimatePresence>
-      <AnimatePresence>{ruleringActionBarVisible && <RuleringTopBar />}</AnimatePresence>
+      <AnimatePresence>
+        {ruleringTopBarVisible && <RuleringActionBar />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {ruleringActionBarVisible && <RuleringTopBar />}
+      </AnimatePresence>
 
-      <AnimatePresence>{tapperingTopBarVisible && <TapperingTopBar />}</AnimatePresence>
-      <AnimatePresence>{tapperingActionBarVisible && <TapperingActionBar />}</AnimatePresence>
+      <AnimatePresence>
+        {tapperingTopBarVisible && <TapperingTopBar />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {tapperingActionBarVisible && <TapperingActionBar />}
+      </AnimatePresence>
 
-      <AnimatePresence>{crushFoldingTopBarVisible && <CrushFoldingTopBar />}</AnimatePresence>
-      <AnimatePresence>{crushFoldingActionBarVisible && <CrushFoldingActionBar />}</AnimatePresence>
+      <AnimatePresence>
+        {crushFoldingTopBarVisible && <CrushFoldingTopBar />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {crushFoldingActionBarVisible && <CrushFoldingActionBar />}
+      </AnimatePresence>
 
-      <AnimatePresence>{bottomControlsVisible && <BottomControls />}</AnimatePresence>
+      <AnimatePresence>
+        {bottomControlsVisible && <BottomControls />}
+      </AnimatePresence>
 
-      <AnimatePresence>{isResizingDrawerOpen && <ResizingDrawer />}</AnimatePresence>
-      <AnimatePresence>{isTaperingDrawerOpen && <TapperingDrawer />}</AnimatePresence>
+      <AnimatePresence>
+        {isResizingDrawerOpen && <ResizingDrawer />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {isTaperingDrawerOpen && <TapperingDrawer />}
+      </AnimatePresence>
     </>
-  )
-}
+  );
+};
 
-export default CanvasControllers
+export default CanvasControllers;

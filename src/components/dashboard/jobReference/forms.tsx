@@ -1,21 +1,28 @@
-'use client'
-import { useForm } from 'react-hook-form'
-import { ArrowLeft, Edit, Info, MapMarker, Ruler, XIcon } from '@/components/uikit/icons'
-import { LabeledInput, LabeledInputWithCode } from '@/components/uikit/input'
-import { Button } from '@/components/uikit/buttons/button'
-import Link from 'next/link'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { RadioGroup, RadioGroupItem } from '@/components/uikit/radioGroup'
-import { Drawer, DrawerClose } from '@/components/uikit/drawer'
-import { useEffect, useState } from 'react'
-import { notFound, redirect, useParams } from 'next/navigation'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import { jobReferences } from '@/utilities/demo_datas/demoJobRefData'
-import { useGETJobRefAddressByIds } from '@/lib/db/helpers/jobRefHelpers'
-import { Header } from '@/components/dashboard/header'
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
+"use client";
+import { useForm } from "react-hook-form";
+import {
+  ArrowLeft,
+  Edit,
+  Info,
+  MapMarker,
+  Ruler,
+  XIcon,
+} from "@/components/uikit/icons";
+import { LabeledInput, LabeledInputWithCode } from "@/components/uikit/input";
+import { Button } from "@/components/uikit/buttons/button";
+import Link from "next/link";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { RadioGroup, RadioGroupItem } from "@/components/uikit/radioGroup";
+import { Drawer, DrawerClose } from "@/components/uikit/drawer";
+import { useEffect, useState } from "react";
+import { notFound, redirect, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { jobReferences } from "@/utilities/demo_datas/demoJobRefData";
+import { useGETJobRefAddressByIds } from "@/lib/db/helpers/jobRefHelpers";
+import { Header } from "@/components/dashboard/header";
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import {
   Form,
   FormControl,
@@ -23,123 +30,127 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/uikit/form'
-import { Footer } from '@/components/dashboard/footer'
-import { StoredAddress } from '@/types/jobReferenceTypes'
-import { Select } from '@/components/uikit/select'
-import { Separator } from '@/components/uikit/separator'
+} from "@/components/uikit/form";
+import { Footer } from "@/components/dashboard/footer";
+import { StoredAddress } from "@/types/jobReferenceTypes";
+import { Select } from "@/components/uikit/select";
+import { Separator } from "@/components/uikit/separator";
 
 const SomeOneElseFormSchema = z.object({
   name: z
-    .string('Full name is required')
-    .min(1, 'Full name is required')
-    .regex(/^[a-zA-Z\s]+$/, 'Full name must contain only letters'),
+    .string("Full name is required")
+    .min(1, "Full name is required")
+    .regex(/^[a-zA-Z\s]+$/, "Full name must contain only letters"),
   mobile: z
-    .string('Mobile number is required')
-    .nonempty('Mobile number is required')
-    .regex(/^\d{10}$/, 'Please eneter a valid mobile number'),
-})
+    .string("Mobile number is required")
+    .nonempty("Mobile number is required")
+    .regex(/^\d{10}$/, "Please eneter a valid mobile number"),
+});
 
-type SomeOneElseFormValues = z.infer<typeof SomeOneElseFormSchema>
+type SomeOneElseFormValues = z.infer<typeof SomeOneElseFormSchema>;
 
 const RecipientInfoFormSchema = z.object({
-  recipient: z.enum(['me', 'someone-else']).nonoptional(),
-})
+  recipient: z.enum(["me", "someone-else"]).nonoptional(),
+});
 
-type RecipientInfoFormValues = z.infer<typeof RecipientInfoFormSchema>
+type RecipientInfoFormValues = z.infer<typeof RecipientInfoFormSchema>;
 
 export function RecipientForm({
   onSubmitRecipient,
   prevRecipient,
 }: {
-  onSubmitRecipient: (data: { name: string; mobile: number }) => void
-  prevRecipient?: { name: string; mobile: number }
+  onSubmitRecipient: (data: { name: string; mobile: number }) => void;
+  prevRecipient?: { name: string; mobile: number };
 }) {
   const [user] = useState<{ name: string; mobile: number }>({
-    name: 'Amirreza Yarahmadi',
+    name: "Amirreza Yarahmadi",
     mobile: 1231231231,
-  })
+  });
 
   const [someOneElseInfo, setSomeOneElseInfo] = useState<{
-    name: string
-    mobile: number
-  }>()
+    name: string;
+    mobile: number;
+  }>();
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const someOneElseForm = useForm<SomeOneElseFormValues>({
     resolver: zodResolver(SomeOneElseFormSchema),
-  })
+  });
 
   const recipientInfoForm = useForm<RecipientInfoFormValues>({
     resolver: zodResolver(RecipientInfoFormSchema),
     defaultValues: {
-      recipient: 'me',
+      recipient: "me",
     },
-  })
+  });
 
   useEffect(() => {
-    if (prevRecipient?.name === user.name && prevRecipient?.mobile === user.mobile) {
+    if (
+      prevRecipient?.name === user.name &&
+      prevRecipient?.mobile === user.mobile
+    ) {
       recipientInfoForm.reset({
-        recipient: 'me',
-      })
+        recipient: "me",
+      });
     } else if (prevRecipient?.name && prevRecipient?.mobile) {
       recipientInfoForm.reset({
-        recipient: 'someone-else',
-      })
-      setSomeOneElseInfo(prevRecipient)
+        recipient: "someone-else",
+      });
+      setSomeOneElseInfo(prevRecipient);
     }
-  }, [prevRecipient, someOneElseForm, recipientInfoForm])
+  }, [prevRecipient, someOneElseForm, recipientInfoForm]);
 
-  const recipient = recipientInfoForm.watch('recipient')
+  const recipient = recipientInfoForm.watch("recipient");
 
   useEffect(() => {
     if (someOneElseInfo) {
       someOneElseForm.reset({
         name: someOneElseInfo.name,
         mobile: String(someOneElseInfo.mobile),
-      })
+      });
     }
-  }, [someOneElseInfo, someOneElseForm])
+  }, [someOneElseInfo, someOneElseForm]);
 
   useEffect(() => {
-    if (!someOneElseInfo && recipient === 'someone-else') {
-      setIsDrawerOpen(true)
+    if (!someOneElseInfo && recipient === "someone-else") {
+      setIsDrawerOpen(true);
     }
-  }, [recipient, someOneElseInfo])
+  }, [recipient, someOneElseInfo]);
 
   const onSomeOneElseInfoFormSubmit = (data: SomeOneElseFormValues) => {
     recipientInfoForm.reset({
-      recipient: 'someone-else',
-    })
+      recipient: "someone-else",
+    });
 
     setSomeOneElseInfo({
       name: data.name,
       mobile: Number(data.mobile),
-    })
+    });
 
-    setIsDrawerOpen(false)
-  }
+    setIsDrawerOpen(false);
+  };
 
   const onRecipientInfoFormSubmit = (data: RecipientInfoFormValues) => {
-    console.log(data)
-    if (data.recipient === 'me') {
+    if (data.recipient === "me") {
       onSubmitRecipient({
         name: user.name,
         mobile: user.mobile,
-      })
-    } else if (data.recipient === 'someone-else' && someOneElseInfo) {
+      });
+    } else if (data.recipient === "someone-else" && someOneElseInfo) {
       onSubmitRecipient({
         name: someOneElseInfo.name,
         mobile: someOneElseInfo.mobile,
-      })
+      });
     }
-  }
+  };
 
   return (
     <>
       <Form {...recipientInfoForm}>
-        <form onSubmit={recipientInfoForm.handleSubmit(onRecipientInfoFormSubmit)}>
+        <form
+          onSubmit={recipientInfoForm.handleSubmit(onRecipientInfoFormSubmit)}
+        >
           <FormField
             control={recipientInfoForm.control}
             name="recipient"
@@ -155,13 +166,17 @@ export function RecipientForm({
                       <FormControl>
                         <RadioGroupItem value="me" />
                       </FormControl>
-                      <FormLabel className="label-regular">Me ({user.name})</FormLabel>
+                      <FormLabel className="label-regular">
+                        Me ({user.name})
+                      </FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center gap-3">
                       <FormControl>
                         <RadioGroupItem value="someone-else" />
                       </FormControl>
-                      <FormLabel className="label-regular">Someone else</FormLabel>
+                      <FormLabel className="label-regular">
+                        Someone else
+                      </FormLabel>
                     </FormItem>
                   </RadioGroup>
                 </FormControl>
@@ -184,8 +199,12 @@ export function RecipientForm({
           <Edit className="absolute top-3 right-3 size-5" />
           <div className="grid gap-2">
             <p className="label-regular">Delivery Recipient</p>
-            <p className="caption-regular text-subtitle pt-1">{someOneElseInfo.name}</p>
-            <p className="caption-regular font-regular">+61{someOneElseInfo.mobile}</p>
+            <p className="caption-regular text-subtitle pt-1">
+              {someOneElseInfo.name}
+            </p>
+            <p className="caption-regular font-regular">
+              +61{someOneElseInfo.mobile}
+            </p>
           </div>
         </div>
       )}
@@ -195,15 +214,18 @@ export function RecipientForm({
             <h6>Recipient Information</h6>
             <XIcon
               onClick={() => {
-                setIsDrawerOpen(false)
-                !someOneElseInfo && recipientInfoForm.setValue('recipient', 'me')
+                setIsDrawerOpen(false);
+                !someOneElseInfo &&
+                  recipientInfoForm.setValue("recipient", "me");
               }}
               className="size-6"
             />
           </div>
           <Form {...someOneElseForm}>
             <form
-              onSubmit={someOneElseForm.handleSubmit(onSomeOneElseInfoFormSubmit)}
+              onSubmit={someOneElseForm.handleSubmit(
+                onSomeOneElseInfoFormSubmit
+              )}
               className="grid gap-6"
             >
               <FormField
@@ -218,7 +240,7 @@ export function RecipientForm({
                         type="text"
                         placeholder="Enter the full name"
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -238,7 +260,7 @@ export function RecipientForm({
                         type="number"
                         placeholder="e.g., 400123456"
                         {...field}
-                        value={field.value ?? ''}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -253,61 +275,64 @@ export function RecipientForm({
         </div>
       </Drawer>
     </>
-  )
+  );
 }
 
 const addressFormSchema = z.object({
   addressTitle: z
     .string()
-    .nonempty('Address Title / Site Name is required')
-    .max(100, 'Address title must be under 100 characters'),
+    .nonempty("Address Title / Site Name is required")
+    .max(100, "Address title must be under 100 characters"),
 
   streetAddress: z
     .string()
-    .nonempty('Street Address is required')
+    .nonempty("Street Address is required")
     .regex(
       /^[a-zA-Z0-9\s,'\.-]+$/,
-      'Street address can only contain letters, numbers, spaces, comma, hyphen, dot, and apostrophe',
+      "Street address can only contain letters, numbers, spaces, comma, hyphen, dot, and apostrophe"
     )
-    .max(100, 'Street address must be under 100 characters'),
+    .max(100, "Street address must be under 100 characters"),
 
   suburb: z
     .string()
-    .nonempty('Suburb is required')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Suburb must contain only letters, spaces, and hyphens')
-    .max(50, 'Suburb name must be under 50 characters'),
+    .nonempty("Suburb is required")
+    .regex(
+      /^[a-zA-Z\s'-]+$/,
+      "Suburb must contain only letters, spaces, and hyphens"
+    )
+    .max(50, "Suburb name must be under 50 characters"),
 
-  state: z.string('State is required'),
+  state: z.string("State is required"),
 
   postcode: z
-    .string('Postcode is required')
-    .nonempty('Postcode is required')
-    .regex(/^\d{4}$/, 'Postcode must be a 4-digit value'),
-})
+    .string("Postcode is required")
+    .nonempty("Postcode is required")
+    .regex(/^\d{4}$/, "Postcode must be a 4-digit value"),
+});
 
-export type AddressFormValues = z.infer<typeof addressFormSchema>
+export type AddressFormValues = z.infer<typeof addressFormSchema>;
 
 const australianStates = [
-  { value: 'NSW', label: 'New South Wales' },
-  { value: 'VIC', label: 'Victoria' },
-  { value: 'QLD', label: 'Queensland' },
-  { value: 'WA', label: 'Western Australia' },
-  { value: 'SA', label: 'South Australia' },
-  { value: 'TAS', label: 'Tasmania' },
-  { value: 'ACT', label: 'Australian Capital Territory' },
-  { value: 'NT', label: 'Northern Territory' },
-]
+  { value: "NSW", label: "New South Wales" },
+  { value: "VIC", label: "Victoria" },
+  { value: "QLD", label: "Queensland" },
+  { value: "WA", label: "Western Australia" },
+  { value: "SA", label: "South Australia" },
+  { value: "TAS", label: "Tasmania" },
+  { value: "ACT", label: "Australian Capital Territory" },
+  { value: "NT", label: "Northern Territory" },
+];
 
 export const AddressForm = ({
   address,
   onAddressFormSubmit,
 }: {
-  address?: Partial<StoredAddress> | null
-  onAddressFormSubmit: (data: AddressFormValues) => void
+  address?: Partial<StoredAddress> | null;
+  onAddressFormSubmit: (data: AddressFormValues) => void;
 }) => {
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressFormSchema),
-  })
+  });
 
   useEffect(() => {
     if (address) {
@@ -315,15 +340,18 @@ export const AddressForm = ({
         addressTitle: address.title,
         suburb: address.suburb,
         state: address.state,
-        postcode: String(address.postcode ?? ''),
+        postcode: String(address.postcode ?? ""),
         streetAddress: address.streetAddress,
-      })
+      });
     }
-  }, [form, address])
+  }, [form, address]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onAddressFormSubmit)} className="grid gap-4">
+      <form
+        onSubmit={form.handleSubmit(onAddressFormSubmit)}
+        className="grid gap-4"
+      >
         <FormField
           control={form.control}
           name="streetAddress"
@@ -336,7 +364,7 @@ export const AddressForm = ({
                   type="text"
                   placeholder="e.g., 123 Main St"
                   {...field}
-                  value={field.value ?? ''}
+                  value={field.value ?? ""}
                 />
               </FormControl>
               <FormMessage />
@@ -355,7 +383,7 @@ export const AddressForm = ({
                   type="text"
                   placeholder="e.g., Sydney"
                   {...field}
-                  value={field.value ?? ''}
+                  value={field.value ?? ""}
                 />
               </FormControl>
               <FormMessage />
@@ -375,7 +403,7 @@ export const AddressForm = ({
                     placeholder="Select state / territory"
                     required
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                     onValueChange={field.onChange}
                   />
                 </div>
@@ -396,14 +424,14 @@ export const AddressForm = ({
                   type="text"
                   placeholder="e.g., 2000"
                   {...field}
-                  value={field.value ?? ''}
+                  value={field.value ?? ""}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Separator className="my-2" />{' '}
+        <Separator className="my-2" />{" "}
         <FormField
           control={form.control}
           name="addressTitle"
@@ -416,7 +444,7 @@ export const AddressForm = ({
                   type="text"
                   placeholder="Eneter a name for Site / Address"
                   {...field}
-                  value={field.value ?? ''}
+                  value={field.value ?? ""}
                 />
               </FormControl>
               <FormMessage />
@@ -430,5 +458,5 @@ export const AddressForm = ({
         </Footer>
       </form>
     </Form>
-  )
-}
+  );
+};

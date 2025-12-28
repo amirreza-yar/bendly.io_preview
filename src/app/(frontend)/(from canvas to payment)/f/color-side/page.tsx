@@ -85,15 +85,8 @@ export default function ColorSidePage({
     if (!flashing) return;
 
     if (flashingId) {
-      console.log("swr flashing dir: ", flashing.color_side_dir);
       setFlashingDir(flashing.color_side_dir);
     } else {
-      console.log(
-        "dexie flashing dir: ",
-        flashing.crushFoldDir,
-        flashing.colorSideDirection,
-        flashing
-      );
       setFlashingDir(flashing.colorSideDirection);
     }
   }, [flashing, flashingId]);
@@ -104,8 +97,6 @@ export default function ColorSidePage({
 
     if (flashing) {
       canvas.clear();
-
-      console.log("flashing dir: ", flashingDir);
 
       loadFlashing(canvas, flashing);
       const { groupHeight } = drawingBounds(canvas);
@@ -127,7 +118,6 @@ export default function ColorSidePage({
 
   const confirmColorSide = async (colorSideDir: boolean) => {
     if (flashingId && flashing) {
-      console.log("colorSideDir: ", colorSideDir);
       await api.patch(`/a/flashing/${flashingId}/`, {
         color_side_dir: colorSideDir,
       });
@@ -135,7 +125,6 @@ export default function ColorSidePage({
       toast("Flashing updated");
       router.replace("/cart");
     } else {
-      console.log("colorSideDir  dexie: ", colorSideDir);
       await upsertPartialFlashing("1", {
         crushFoldDir: colorSideDir,
         colorSideDirection: colorSideDir,

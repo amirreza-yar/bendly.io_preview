@@ -54,7 +54,6 @@ interface OrderStatusionObjectProps {
 
 export function ProgressionObject({ status }: OrderStatusionObjectProps) {
   const progressItem = orderProgresses.find((prog) => prog.status === status);
-  console.log("order progression: ", progressItem);
   const progressIndex = progressItem?.index ?? -1;
 
   if (progressIndex === 3) {

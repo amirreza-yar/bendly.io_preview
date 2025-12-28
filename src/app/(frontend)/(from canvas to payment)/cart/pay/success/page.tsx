@@ -21,9 +21,7 @@ export default async function SuccessPayPage({
     });
 
     order = res.data;
-  } catch (err: any) {
-    console.log(err.response);
-  }
+  } catch (err: any) {}
 
   return (
     <>
