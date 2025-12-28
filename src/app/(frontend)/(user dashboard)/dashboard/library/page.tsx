@@ -1,50 +1,95 @@
-'use client'
-import { ArrowLeft, Delete, Edit, Info, Magnifier, More, XIcon } from '@/components/uikit/icons'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/uikit/tabs'
-import { LibraryTemplateItem } from '@/components/dashboard/library/libraryTemplateItem'
-import Link from 'next/link'
-import { useRef, useState } from 'react'
-import { Input } from '@/components/uikit/input'
-import BottomNav from '@/components/dashboard/bottomNav'
-import { Header } from '@/components/dashboard/header'
-import { ContentWrapper } from '@/components/dashboard/contentWrapper'
-import { useGETTemplatesByOwner, useGETAppTemplates } from '@/lib/db/helpers/templateHelpers'
-import FlashingSVG from '@/components/utils/flashingSVG'
+"use client";
+import { Tabs, TabsContent } from "@/components/uikit/tabs";
+import { LibraryTemplateItem } from "@/components/dashboard/library/libraryTemplateItem";
+import BottomNav from "@/components/dashboard/bottomNav";
+import { Header } from "@/components/dashboard/header";
+import { ContentWrapper } from "@/components/dashboard/contentWrapper";
+import FlashingSVG from "@/components/utils/flashingSVG";
+import useSWR from "swr";
+import api, { fetcher } from "@/lib/axios";
+import { toast } from "sonner";
+import { upsertPartialFlashing } from "@/lib/db/helpers/flashingHelpers";
+import { useRouter } from "next/navigation";
 
 export default function LibraryPage() {
-  // TODO: Get current user ID from auth context
-  const currentUserId = 'user' // This should come from auth context
-
   // Load templates from IndexedDB (offline-first)
-  const myTemplates = useGETTemplatesByOwner(currentUserId) || []
-  const appTemplates = useGETAppTemplates(currentUserId) || []
+  const { data: myTemplates, mutate: mutateTemplates } = useSWR(
+    "/a/template/",
+    fetcher
+  );
+
+  const router = useRouter();
+
+  const onTemplateEditName = async (data: { id: number; name: string }) => {
+    try {
+      await api.patch(`/a/template/${data.id}/`, {
+        name: data.name,
+      });
+      mutateTemplates();
+    } catch (err: any) {
+      toast("Something went wrong");
+    }
+  };
+
+  const onTemplateDelete = async (id: number) => {
+    try {
+      await api.delete(`/a/template/${id}/`);
+      mutateTemplates();
+    } catch (err: any) {
+      toast("Something went wrong");
+    }
+  };
+
+  const onTemplateClick = async (id: number) => {
+    try {
+      const template = myTemplates?.results?.find(
+        (temp: any) => temp.id === id
+      );
+
+      await upsertPartialFlashing("1", {
+        nodes: template.nodes,
+        crushFoldDir: template.color_side_dir,
+        startCrushFold: template.start_crush_fold,
+        endCrushFold: template.end_crush_fold,
+      });
+
+      router.replace("/f/material");
+      toast("Flashing loaded from template");
+    } catch (err: any) {
+      toast("Something went wrong");
+    }
+  };
 
   return (
     <>
       <Header title="Library" returnHref="/dashboard">
-        <Link href="/dashboard/library/search">
+        {/* <Link href="/dashboard/library/search">
           <Magnifier />
-        </Link>
+        </Link> */}
       </Header>
       <div className="min-h-screen md:max-w-[1000px] md:mx-auto md:px-4">
         <ContentWrapper className="no-scrollbar pt-14">
           <div className="flex flex-col items-start self-stretch flex-grow-0 flex-shrink-0 gap-4 pt-4">
             <Tabs defaultValue="my-templates">
-              <TabsList className="sticky top-4 bg-white z-20 w-full md:w-auto">
+              {/* <TabsList className="sticky top-4 bg-white z-20 w-full md:w-auto">
                 <TabsTrigger value="my-templates">My Templates</TabsTrigger>
                 <TabsTrigger value="app-templates">App Templates</TabsTrigger>
-              </TabsList>
+              </TabsList> */}
 
               <TabsContent value="my-templates">
                 <div className="grid grid-cols-2 pt-2 gap-4">
-                  {myTemplates.length > 0 ? (
-                    myTemplates.map((template, index) => (
+                  {myTemplates?.results?.length > 0 ? (
+                    myTemplates?.results?.map((template: any) => (
                       <LibraryTemplateItem
-                        key={template.name + index}
+                        key={template.id}
                         title={template.name}
                         isMyTemplate={true}
+                        templateId={template.id}
+                        onTemplateDelete={onTemplateDelete}
+                        onTemplateEditName={onTemplateEditName}
+                        onTemplateClick={onTemplateClick}
                       >
-                        <FlashingSVG flashing={template.flashing} className="h-20" />
+                        <FlashingSVG flashing={template} className="h-20" />
                       </LibraryTemplateItem>
                     ))
                   ) : (
@@ -58,7 +103,7 @@ export default function LibraryPage() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="app-templates">
+              {/* <TabsContent value="app-templates">
                 <div className="grid grid-cols-2 pt-2 gap-4">
                   {appTemplates.length > 0 ? (
                     appTemplates.map((template, index) => (
@@ -75,7 +120,7 @@ export default function LibraryPage() {
                     </div>
                   )}
                 </div>
-              </TabsContent>
+              </TabsContent> */}
             </Tabs>
           </div>
         </ContentWrapper>
@@ -91,5 +136,5 @@ export default function LibraryPage() {
         </div>
       </div>
     </>
-  )
+  );
 }

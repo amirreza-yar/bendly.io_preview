@@ -16,10 +16,12 @@ import { UseFormReturn } from "react-hook-form";
 import PreviewCanvas from "@/components/flashing/preview/previewCanvas";
 import { deleteFlashingById } from "@/lib/db/helpers/flashingHelpers";
 import {
+  AddTemplateModal,
   DeleteFlashingModalOnPreview,
   TemplateFormValues,
 } from "@/components/flashing/preview/modals";
 import { addTemplate } from "@/lib/db/helpers/templateHelpers";
+import api from "@/lib/axios";
 
 export default function PreviewPage() {
   const router = useRouter();
@@ -41,30 +43,27 @@ export default function PreviewPage() {
       });
     } catch (err: any) {
       toast("Something went wrong");
-      router.replace("/dashboard");
+      // router.replace("/dashboard");
     }
   };
 
   const submitTemplate = async (
-    data: TemplateFormValues,
-    form: UseFormReturn<TemplateFormValues>
+    data: TemplateFormValues
+    // form: UseFormReturn<TemplateFormValues>
   ) => {
-    const error =
-      flashing &&
-      (await addTemplate({
+    try {
+      await api.post("/a/template/", {
         name: data.name,
-        flashing: flashing,
-        owner: "user",
-      }));
-
-    if (error && error.name === "ConstraintError") {
-      form.setError("name", {
-        type: "manual",
-        message: "This name is already in use",
+        start_crush_fold: flashing?.startCrushFold,
+        end_crush_fold: flashing?.endCrushFold,
+        color_side_dir: flashing?.colorSideDirection,
+        tapered: flashing?.tapered,
+        nodes: flashing?.nodes,
       });
-    } else {
       toast("Drawing save as template");
       setIsTemplateModalOpen(false);
+    } catch (error: any) {
+      toast("Something went wrong");
     }
   };
 
@@ -140,12 +139,12 @@ export default function PreviewPage() {
         </div>
       </ContentWrapper>
       <Footer>
-        <div className="flex gap-2 w-full">
-          {/* <AddTemplateModal
+        <div className="grid grid-cols-2 gap-2 w-full">
+          <AddTemplateModal
             setIsTemplateModalOpen={setIsTemplateModalOpen}
             isTemplateModalOpen={isTemplateModalOpen}
             submitTemplate={submitTemplate}
-          /> */}
+          />
 
           <Link href={`/f/details`} className="w-full">
             <Button size="large" className="w-full">
