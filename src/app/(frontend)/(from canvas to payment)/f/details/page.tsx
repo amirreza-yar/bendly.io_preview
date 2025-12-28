@@ -1,28 +1,14 @@
 "use client";
-import React, { use } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { use, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import DetailsComponent, {
   DetailsFormValues,
 } from "@/components/flashing/details/detailsComponent";
-import {
-  useGETOrderById,
-  initNewOrder,
-  upsertPartialOrder,
-} from "@/lib/db/helpers/orderHelpers";
-import {
-  useGETFlashingById,
-  removeOrderIdToBeSavedFromFlashingById,
-  deleteFlashingById,
-} from "@/lib/db/helpers/flashingHelpers";
-import {
-  Specification,
-  StoredOrder,
-  StoredOrderFlashing,
-} from "@/types/orderTypes";
-import { generateRandomId } from "@/lib/db/helpers/utils";
 import { toast } from "sonner";
-import { Header } from "@/components/dashboard/header";
-import api from "@/lib/axios";
+import api, { fetcher } from "@/lib/axios";
+import useSWR from "swr";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db/appDB";
 
 export default function DetailsPage({
   searchParams,
@@ -33,102 +19,68 @@ export default function DetailsPage({
 
   const router = useRouter();
 
-  const flashing = useGETFlashingById("1");
+  const { data: flashing } = useSWR(
+    flashingId ? `/a/flashing/${flashingId}/` : null,
+    fetcher
+  );
+
+  const dexieFlashing = useLiveQuery(
+    () => (flashingId ? undefined : db.flashings.get({ id: "1" })),
+    [flashingId],
+    null
+  );
 
   const onModalDiscardChanges = () => {
     router.push(`/o/cart`);
   };
 
   const onDetailsFormSubmit = async (data: DetailsFormValues) => {
-    console.log(data);
-
-    console.log({
-      material: flashing?.material,
-      code: data.code,
-      position: data.position,
-      specifications: data.specifications,
-      start_crush_fold: flashing?.startCrushFold,
-      end_crush_fold: flashing?.endCrushFold,
-      color_side_dir: flashing?.crushFoldDir,
-      tapered: flashing?.tapered,
-      nodes: flashing?.nodes,
-    });
-
-    if (flashingId) {
-      console.log(flashingId);
-    } else if (flashing) {
+    if (flashingId && flashing) {
       try {
-        await api.post("/a/flashing/", {
-          material: flashing?.material,
+        await api.patch(`/a/flashing/${flashingId}/`, {
           code: data.code,
           position: data.position,
           specifications: data.specifications,
-          start_crush_fold: flashing?.startCrushFold,
-          end_crush_fold: flashing?.endCrushFold,
-          color_side_dir: flashing?.crushFoldDir,
-          tapered: flashing?.tapered,
-          nodes: flashing?.nodes,
+        });
+
+        toast("Flashing details updated");
+        router.replace("/cart");
+        // eslint-disable-next-line
+      } catch (err: any) {
+        toast("Something went wrong");
+      }
+    } else if (dexieFlashing) {
+      try {
+        console.log("trying to post flashing...");
+        await api.post("/a/flashing/", {
+          material: dexieFlashing?.material,
+          code: data.code,
+          position: data.position,
+          specifications: data.specifications,
+          start_crush_fold: dexieFlashing?.startCrushFold,
+          end_crush_fold: dexieFlashing?.endCrushFold,
+          color_side_dir: dexieFlashing?.colorSideDirection,
+          tapered: dexieFlashing?.tapered,
+          nodes: dexieFlashing?.nodes,
         });
 
         toast("Flashing added to order");
         router.replace("/cart");
 
-        await deleteFlashingById("1");
-      } catch (err: any) {}
+        await db.flashings.delete("1");
+        // eslint-disable-next-line
+      } catch (err: any) {
+        toast("Something went wrong");
+      }
     }
-
-    // const specificationsToBeStored: Specification[] = data.specifications.map(
-    //   (spec) => ({
-    //     ...spec,
-    //     id: generateRandomId({ length: 4 }),
-    //     flashingId: flashing?.id ?? "",
-    //   })
-    // );
-
-    // const orderIdToBeSaved = flashing?.orderIdToBeSaved;
-
-    // if (flashing?.orderIdToBeSaved) {
-    //   removeOrderIdToBeSavedFromFlashingById(flashing.id);
-    // }
-
-    // const newFlashing: StoredOrderFlashing = {
-    //   id: flashing?.id ?? "",
-    //   code: data.code,
-    //   position: data.position,
-    //   specifications: specificationsToBeStored,
-    // };
-
-    // const newOrderFlashing: Partial<StoredOrder> = {
-    //   flashings: [newFlashing],
-    // };
-
-    // if (orderIdToBeSaved) {
-    //   upsertPartialOrder(Number(orderIdToBeSaved), newOrderFlashing).then(
-    //     (orderId) => {
-    //       router.push(`/o/${orderIdToBeSaved}/review`);
-    //       toast("New flashing added");
-    //     }
-    //   );
-    // } else if (order) {
-    //   console.log(order, orderId);
-    //   upsertPartialOrder(Number(orderId), newOrderFlashing).then((orderId) => {
-    //     router.push(`/o/${order.id}/review`);
-    //     toast("Your changes have been saved");
-    //   });
-    // } else {
-    //   initNewOrder(newOrderFlashing).then((orderId) => {
-    //     router.push(`/o/${orderId}/review`);
-    //   });
-    // }
   };
 
   return (
     <>
       <DetailsComponent
         onDetailsFormSubmit={onDetailsFormSubmit}
-        flashingId={flashingId}
+        flashing={flashing}
         onModalDiscardChanges={onModalDiscardChanges}
-        // Header={<Header title="Details" returnHref="/f/preview" />}
       />
     </>
   );

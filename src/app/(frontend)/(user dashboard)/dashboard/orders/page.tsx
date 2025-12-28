@@ -1,8 +1,7 @@
 "use client";
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import { Header } from "@/components/dashboard/header";
-import { OrderCard, RequestCard } from "@/components/dashboard/order/cards";
-import { OrderStatusBadge } from "@/components/dashboard/order/badge";
+import { OrderCard } from "@/components/dashboard/order/cards";
 import {
   Box2,
   Building,
@@ -16,10 +15,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/uikit/tabs";
-import Link from "next/link";
-import { Order } from "@/types/orders/orderType";
-import { useGETAllOrders } from "@/lib/db/helpers/orderHelpers";
-import { useGETAllReplacementRequests } from "@/lib/db/helpers/replacementRequestHelpers";
 import useSWR from "swr";
 import { fetcher } from "@/lib/axios";
 import { notFound } from "next/navigation";
@@ -31,8 +26,6 @@ export default function OrdersPage() {
     error,
   } = useSWR("/a/order/", fetcher, { onError: notFound });
 
-  const replacementRequests = null;
-
   console.log(orders);
 
   return (
@@ -40,7 +33,7 @@ export default function OrdersPage() {
       <Header title="Orders" returnHref="/dashboard/profile" />
       <ContentWrapper className="pb-4 pt-14 no-scrollbar">
         <Tabs defaultValue="current">
-          <TabsList className="sticky top-4 bg-white z-20 mx-auto w-full">
+          <TabsList className="sticky top-4 bg-white mx-auto w-full">
             <TabsTrigger value="current">Current</TabsTrigger>
             <TabsTrigger value="past">Past</TabsTrigger>
             {/* <TabsTrigger value="replacement">Replacement</TabsTrigger> */}
@@ -53,7 +46,7 @@ export default function OrdersPage() {
                     (o: any) =>
                       o.status === "pending" ||
                       o.status === "in_progress" ||
-                      o.status === "delivered"
+                      o.status === "ready"
                   );
 
                   if (filteredOrders.length === 0)
@@ -77,7 +70,9 @@ export default function OrdersPage() {
                 (() => {
                   const filteredOrders = orders.results.filter(
                     (o: any) =>
-                      o.status === "complete" || o.status === "cancelled"
+                      o.status === "completed" ||
+                      o.status === "cancelled" ||
+                      o.status === "rejected"
                   );
 
                   if (filteredOrders.length === 0)

@@ -1,11 +1,5 @@
 "use client";
 import { Button } from "@/components/uikit/buttons/button";
-import { Label } from "@/components/dashboard/material&color/label";
-import {
-  RadioGroup,
-  RadioGroupItem,
-  RadioGroupIndicator,
-} from "@/components/dashboard/material&color/radioGroup";
 import { Header } from "@/components/dashboard/header";
 import { Footer } from "@/components/dashboard/footer";
 import {
@@ -18,31 +12,16 @@ import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import z from "zod";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/uikit/form";
+import { Form } from "@/components/uikit/form";
 import { cn } from "@/utilities/ui";
-import { useNewFlashingContext } from "@/providers/data_providers/flashing_providers/NewFlashingContext";
-import { ColorType, ThicknessType } from "@/types/material&PropsType";
-import { db } from "@/lib/db/appDB";
-import { useLiveQuery } from "dexie-react-hooks";
-import { FeaturedCheckSmall } from "@/components/uikit/icons";
-import {
-  notFound,
-  useParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { upsertPartialFlashing } from "@/lib/db/helpers/flashingHelpers";
-import { use, useEffect, useState } from "react";
-import axios from "axios";
+import { use, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import api, { fetcher } from "@/lib/axios";
 import { toast } from "sonner";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db/appDB";
 
 export default function SelectMaterialAndColorPage({
   searchParams,
@@ -53,19 +32,22 @@ export default function SelectMaterialAndColorPage({
   }>;
 }) {
   const router = useRouter();
-  const [isNavigating, setIsNavigating] = useState<boolean>(false);
+
+  const { flashingId, next } = use(searchParams);
+
+  const dexieFlashing = useLiveQuery(
+    () => (flashingId ? undefined : db.flashings.get({ id: "1" })),
+    [flashingId],
+    null
+  );
 
   const [tabValue, setTabValue] = useState<string>("");
 
-  const flashingId = use(searchParams).flashingId;
-
   const nextUrl = use(searchParams).next;
 
-  const {
-    data: materials,
-    error,
-    isLoading,
-  } = useSWR("/a/materials/", fetcher);
+  const { data: materials } = useSWR("/a/materials/", fetcher, {
+    onError: notFound,
+  });
 
   const FormSchema = z.object({
     material: z.number().nonoptional(),
@@ -77,18 +59,25 @@ export default function SelectMaterialAndColorPage({
     resolver: zodResolver(FormSchema),
   });
 
-  const {
-    data: flashing,
-    // error,
-    // isLoading,
-  } = useSWR(flashingId ? `/a/flashing/${flashingId}/` : null, fetcher, {
-    onSuccess: (data) => {
-      selectMaterialForm.setValue("material", data.material);
-      setTabValue(data.material_data.name);
-    },
-  });
+  const { data: swrFlashing } = useSWR(
+    flashingId ? `/a/flashing/${flashingId}/` : null,
+    fetcher
+  );
 
-  // const flashing = flashing ?
+  const flashing = useMemo(() => {
+    if (flashingId) {
+      return swrFlashing ?? null;
+    }
+    return dexieFlashing ?? null;
+  }, [flashingId, swrFlashing, dexieFlashing]);
+
+  useEffect(() => {
+    if (!flashing) return;
+    selectMaterialForm.reset({
+      material: flashing.material_data.id ?? flashing.material,
+    });
+    setTabValue((prev) => (prev ? prev : flashing.material_data.name));
+  }, [flashing, selectMaterialForm]);
 
   const selectedMaterial = useWatch({
     control: selectMaterialForm.control,
@@ -104,8 +93,17 @@ export default function SelectMaterialAndColorPage({
       toast("Material updated");
       router.replace("/cart");
     } else {
+      const variantData = (() => {
+        for (const m of materials) {
+          const v = m.variants.find((v: any) => v.id === data.material);
+          if (v) return { ...v, name: m.name, variant_type: m.variant_type };
+        }
+        return null;
+      })();
+
       await upsertPartialFlashing("1", {
         material: String(data.material),
+        material_data: variantData,
       });
       if (nextUrl === "preview") {
         toast("Material updated");
@@ -115,15 +113,19 @@ export default function SelectMaterialAndColorPage({
         router.push("/f/canvas");
       }
     }
-    // setIsNavigating(true);
   };
 
-  // if (savedFlashing) {
   return (
     <>
       <Header
         title="Select Material & Properties"
-        returnHref={flashing ? "/cart" : "/dashboard"}
+        returnHref={
+          next === "preview"
+            ? "/f/preview"
+            : flashingId
+            ? "/cart"
+            : "/dashboard"
+        }
       />
 
       <ContentWrapper className="bg-white pt-18 pb-22">
@@ -133,6 +135,7 @@ export default function SelectMaterialAndColorPage({
             className="grid gap-8"
           >
             <Tabs
+              // defaultValue={tabValue}
               value={tabValue}
               onValueChange={(v) => {
                 selectMaterialForm.setValue("material", null);
@@ -144,7 +147,7 @@ export default function SelectMaterialAndColorPage({
 
                 <TabsList>
                   <div className="flex flex-wrap gap-2">
-                    {materials?.results?.map((mat: any) => (
+                    {materials?.map((mat: any) => (
                       <TabsTrigger key={mat.id} value={mat.name}>
                         {mat.name}
                       </TabsTrigger>
@@ -152,7 +155,7 @@ export default function SelectMaterialAndColorPage({
                   </div>
                 </TabsList>
               </div>
-              {materials?.results?.map((mat: any, index: number) => (
+              {materials?.map((mat: any, index: number) => (
                 <TabsContent key={index} value={mat.name}>
                   {mat.variant_type === "color" ? (
                     <>

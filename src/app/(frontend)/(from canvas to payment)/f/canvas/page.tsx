@@ -1,25 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
 import useCanvas from "@/hooks/canvas/useCanvas";
 import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
-// import useGrid from "@/hooks/canvas/useGrid";
 import useDrawing from "@/hooks/canvas/useDrawing";
 import useControls from "@/hooks/canvas/useControls";
 import usePinchZoom from "@/hooks/canvas/usePinchZoom";
 import usePanning from "@/hooks/canvas/usePanning";
 import useRulering from "@/hooks/canvas/useRuler";
-
-// import CanvasControllers from "@/components/ui/canvas/controllers";
 import CanvasControllers from "@/components/flashing/canvas/canvasUI/canvasController";
 import { useHistory } from "@/hooks/canvas/useHistory";
 import { AlertModal } from "@/components/uikit/alertModal";
 import { Button } from "@/components/uikit/buttons/button";
 import { FeaturedStop } from "@/components/uikit/icons";
 import useTapper from "@/hooks/canvas/useTapper";
-import { useParams } from "next/navigation";
-import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "@/lib/db/appDB";
 
 export default function CanvasPage({
   searchParams,
@@ -43,12 +36,6 @@ export default function CanvasPage({
   useRulering();
 
   useTapper();
-
-  // if (flashing && (flashing.color || flashing.thickness) && flashing.nodes.length > 1) {
-  //   useLoading({ flashing })
-  // } else if (flashing && !(flashing.color || flashing.thickness)) {
-  //   notFound()
-  // }
 
   return (
     <>
