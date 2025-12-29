@@ -10,21 +10,14 @@ import {
   FormMessage,
 } from "../../uikit/form";
 import z from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input, LabeledInput } from "../../uikit/input";
-import { ReactNode, useEffect, useState } from "react";
+import { Input } from "../../uikit/input";
 import { IconButton } from "../../uikit/buttons/iconButton";
-import { ArrowLeft, Minus, Plus } from "../../uikit/icons";
-import { StoredOrder } from "@/types/orderTypes";
+import { Minus, Plus } from "../../uikit/icons";
 import { Header } from "../../dashboard/header";
 import { ContentWrapper } from "../../dashboard/contentWrapper";
-import { UnsavedChangesOnDetailsModal } from "./modals";
-import { useGETFlashingById } from "@/lib/db/helpers/flashingHelpers";
-import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "@/lib/db/appDB";
-import useSWR from "swr";
-import { fetcher } from "@/lib/axios";
+import { useEffect } from "react";
 
 const SpecSchema = z.object({
   quantity: z.number("Required field").min(1, "??"),
@@ -52,63 +45,50 @@ const DetailsFormSchema = z.object({
     ),
 });
 
-type SpecDraft = { quantity?: number; length?: number };
 export type DetailsFormValues = z.infer<typeof DetailsFormSchema>;
 
 export default function DetailsComponent({
   onDetailsFormSubmit,
-  onModalDiscardChanges,
-  flashingId,
+  flashing,
 }: {
   onDetailsFormSubmit: (data: DetailsFormValues) => void;
   onModalDiscardChanges: () => void;
-  flashingId?: string;
+  flashing?: any;
 }) {
-  const form = useForm<DetailsFormValues>({
+  const flashingDetailsForm = useForm<DetailsFormValues>({
     resolver: zodResolver(DetailsFormSchema),
     defaultValues: {
       specifications: [{ quantity: undefined, length: undefined }],
     },
   });
 
-  const {
-    data: flashing,
-    // error,
-    // isLoading,
-  } = useSWR(flashingId ? `/a/flashing/${flashingId}/` : null, fetcher, {
-    onSuccess: (data) => {
-      console.log(data);
-      form.setValue("code", data.code);
-      form.setValue("position", data.position);
-      form.setValue("specifications", data.specifications);
-    },
-  });
+  useEffect(() => {
+    if (!flashing) return;
 
-  // useEffect(() => {
-  //   if (order?.flashings?.length) {
-  //     const lastFlashing = order.flashings.find((flash) => flash.id === flashingId)
-  //     form.reset({
-  //       code: lastFlashing?.code,
-  //       position: lastFlashing?.position,
-  //       specifications: lastFlashing?.specifications,
-  //     })
-  //   }
-  // }, [order, form])
+    flashingDetailsForm.reset({
+      code: flashing.code,
+      position: flashing.position,
+      specifications: flashing.specifications,
+    });
+  }, [flashing, flashingDetailsForm]);
 
   const { fields, append, remove } = useFieldArray({
-    control: form.control,
+    control: flashingDetailsForm.control,
     name: "specifications",
   });
 
-  const specifications = form.watch("specifications") || [];
+  const specifications = useWatch({
+    control: flashingDetailsForm.control,
+    name: "specifications",
+  });
 
-  const { isDirty } = form.formState;
+  const { isDirty } = flashingDetailsForm.formState;
 
   return (
     <>
       {/* <UnsavedChangesOnDetailsModal
           onDiscardChanges={onModalDiscardChanges}
-          onSaveChanges={() => form.handleSubmit(onDetailsFormSubmit)()}
+          onSaveChanges={() => flashingDetailsForm.handleSubmit(onDetailsFormSubmit)()}
         >
           <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white border-b-1 border-border-dark">
             <div className="flex items-center justify-between h-full w-full px-4">
@@ -123,13 +103,15 @@ export default function DetailsComponent({
       <Header title="Details" returnHref={flashing ? "/cart" : "/f/preview"} />
 
       <ContentWrapper className="pt-18 bg-white pb-24">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onDetailsFormSubmit)}>
+        <Form {...flashingDetailsForm}>
+          <form
+            onSubmit={flashingDetailsForm.handleSubmit(onDetailsFormSubmit)}
+          >
             <div className="grid gap-4">
               <h6>Identification</h6>
               <div className="grid grid-cols-2 gap-4 items-start">
                 <FormField
-                  control={form.control}
+                  control={flashingDetailsForm.control}
                   name="code"
                   render={({ field }) => (
                     <FormItem>
@@ -148,7 +130,7 @@ export default function DetailsComponent({
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={flashingDetailsForm.control}
                   name="position"
                   render={({ field }) => (
                     <FormItem>
@@ -172,7 +154,7 @@ export default function DetailsComponent({
                 </p>
               </div>
               <FormField
-                control={form.control}
+                control={flashingDetailsForm.control}
                 name="specifications"
                 render={() => (
                   <div className="grid gap-4">
@@ -182,7 +164,7 @@ export default function DetailsComponent({
                           <div className="col-start-1 col-end-3">
                             {/* Quantity */}
                             <FormField
-                              control={form.control}
+                              control={flashingDetailsForm.control}
                               name={`specifications.${index}.quantity`}
                               render={({ field }) => (
                                 <FormItem>
@@ -212,7 +194,7 @@ export default function DetailsComponent({
                           <div className="col-start-3 col-end-6">
                             {/* Length */}
                             <FormField
-                              control={form.control}
+                              control={flashingDetailsForm.control}
                               name={`specifications.${index}.length`}
                               render={({ field }) => (
                                 <FormItem>

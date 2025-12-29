@@ -2,17 +2,14 @@
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import { Footer } from "@/components/dashboard/footer";
 import { Header } from "@/components/dashboard/header";
-import {
-  DeleteFlashingModalOnOrderReview,
-  NewOrderCard,
-} from "@/components/dashboard/order/cards";
+import { DeleteFlashingModalOnOrderReview } from "@/components/dashboard/order/cards";
 import { Button } from "@/components/uikit/buttons/button";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from "@/components/uikit/carousel";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { NoFlashingSVG } from "@/components/dashboard/order/svgs";
 import useSWR from "swr";
@@ -21,11 +18,9 @@ import { Download, Edit, Remove } from "@/components/uikit/icons";
 import FlashingSVG from "@/components/utils/flashingSVG";
 
 export default function OrderReviewPage() {
-  const { orderId }: { orderId: string } = useParams();
-
   const router = useRouter();
 
-  const { data: cart, error, isLoading, mutate } = useSWR("/a/cart/", fetcher);
+  const { data: cart, mutate } = useSWR("/a/cart/", fetcher);
 
   const onDeleteFlashing = async (flashingId: string) => {
     try {
@@ -83,7 +78,7 @@ export default function OrderReviewPage() {
                           onClick={() =>
                             router.replace(`/f/canvas?flashingId=${flash.id}`)
                           }
-                          className="grid grid-cols-2 p-3 rounded-xs border border-border-default bg-gray-50"
+                          className="grid grid-cols-2 p-3 rounded-xs border border-border-default bg-gray-50 text-start"
                         >
                           <FlashingSVG
                             flashing={flash}
@@ -104,7 +99,7 @@ export default function OrderReviewPage() {
                           onClick={() =>
                             router.replace(`/f/material?flashingId=${flash.id}`)
                           }
-                          className="flex justify-between items-start p-3 rounded-xs border border-border-default bg-gray-50"
+                          className="flex justify-between items-start p-3 rounded-xs border border-border-default bg-gray-50 text-start"
                         >
                           <div className="grid gap-2">
                             <p className="caption-small">
@@ -122,7 +117,7 @@ export default function OrderReviewPage() {
                           onClick={() =>
                             router.replace(`/f/details?flashingId=${flash.id}`)
                           }
-                          className="grid gap-4 p-3 rounded-xs border border-border-default bg-gray-50"
+                          className="grid gap-4 p-3 rounded-xs border border-border-default bg-gray-50 text-start"
                         >
                           <div className="flex justify-between items-start">
                             <div className="grid gap-2">

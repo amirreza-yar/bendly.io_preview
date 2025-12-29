@@ -12,34 +12,31 @@ import {
 } from "@/components/uikit/icons";
 import Link from "next/link";
 import { OrderStatusBadge } from "./badge";
-import { Flashing, Order } from "@/types/orders/orderType";
 import { ReplacementRequest } from "@/types/orders/requestType";
 import { formatDate, formatDateTime } from "./utils";
-import { StoredOrder, StoredOrderFlashing } from "@/types/orderTypes";
+import { StoredOrderFlashing } from "@/types/orderTypes";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { AlertDialogContent } from "@/components/uikit/alertModal";
 import { Button } from "@/components/uikit/buttons/button";
 import { ReactNode } from "react";
 import { StoredFlashing } from "@/types/flashingTypes";
-import { EditFlashingDrawer } from "@/components/dashboard/order/drawers";
 import { cn } from "@/utilities/ui";
 import FlashingSVG from "@/components/utils/flashingSVG";
 
-function formatStatus(status: any) {
+function formatStatus(status: any, type: any) {
   const map: any = {
     pending: "Pending",
     in_progress: "In Progress",
-    delivered: "Delivered",
+    ready: type === "delivery" ? "On the way" : "Ready for pickup",
     cancelled: "Cancelled",
-    complete: "Complete",
+    completed: "Completed",
+    rejected: "Rejected",
   };
 
   return map[status] || status;
 }
 
 export function OrderCard({ order, ...props }: { order: any }) {
-  console.log(order);
-
   return (
     <Link
       href={`/dashboard/orders/${order.id}`}
@@ -51,7 +48,9 @@ export function OrderCard({ order, ...props }: { order: any }) {
           <p className="caption-regular text-subtitle">Order Number</p>
           <span className="label-regular text-heading">{order.id}</span>
         </div>
-        <OrderStatusBadge status={formatStatus(order.status)} />
+        <OrderStatusBadge
+          status={formatStatus(order.status, order.fulfillment.type)}
+        />
       </div>
       <div className="grid gap-1">
         <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
@@ -81,7 +80,7 @@ export function OrderCard({ order, ...props }: { order: any }) {
                 <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
                   <WareHouse />
                   <span>
-                    <span>{order?.fulfillment.address.full_address}</span>
+                    <span>No address - Self pickup</span>
                   </span>
                 </div>
               );
@@ -177,8 +176,6 @@ export function NewOrderCard({
   className?: string;
 }) {
   if (!flashing) return;
-
-  console.log(flashing.total_girth);
 
   return (
     <div

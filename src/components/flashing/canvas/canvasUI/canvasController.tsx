@@ -1,6 +1,6 @@
 // CanvasControllers.jsx
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import TopBar from "./topBar";
 import ActionBar from "./actionBar";
 import BottomControls from "./bottomControls";
@@ -24,22 +24,14 @@ import { useResizingContext } from "@/providers/canvas_providers/resizingProvide
 import { useTapperingContext } from "@/providers/canvas_providers/tapperingProvider";
 import TapperingDrawer from "../tappering/tapperingDrawer";
 import { upsertPartialFlashing } from "@/lib/db/helpers/flashingHelpers";
-import {
-  notFound,
-  redirect,
-  useParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db/appDB";
-import useLoading from "@/hooks/canvas/useLoading";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useHistory } from "@/hooks/canvas/useHistory";
 import useObjectUtils from "@/hooks/canvas/useObjectUtils";
 
 import { Circle, Line } from "fabric";
-import { removeAnnotations } from "@/utilities/canvas/annotationUtils";
 import { createCrushFoldObject } from "@/utilities/canvas/crushFoldUtils";
 import useSWR from "swr";
 import { fetcher } from "@/lib/axios";
@@ -79,15 +71,12 @@ const CanvasControllers = ({
   searchParams: Promise<{ flashingId?: string }>;
 }) => {
   const flashingId = use(searchParams).flashingId;
-  const orderId = null;
 
-  // const savedFlashing = useLiveQuery(
-  //   () => db.flashings.get({ id: flashingId }),
-  //   [flashingId],
-  //   null, // initial value
-  // )
-
-  const { data: swrFlashing, isLoading } = useSWR(
+  const {
+    data: swrFlashing,
+    isLoading,
+    mutate: mutateFlashing,
+  } = useSWR(
     flashingId ? `/a/flashing/${flashingId}/` : null,
     fetcher,
 
@@ -95,16 +84,15 @@ const CanvasControllers = ({
       onError: () => {
         router.replace("/404");
       },
+      revalidateOnMount: true,
     }
   );
 
   const dexieFlashing = useLiveQuery(
-    () => db.flashings.get({ id: "1" }),
-    [],
+    () => (flashingId ? undefined : db.flashings.get({ id: "1" })),
+    [flashingId],
     null
   );
-
-  const savedFlashing = swrFlashing ? swrFlashing : dexieFlashing;
 
   const router = useRouter();
 
@@ -160,10 +148,16 @@ const CanvasControllers = ({
     }
   };
 
+  const savedFlashing = useMemo(() => {
+    if (flashingId) {
+      return swrFlashing ?? null;
+    }
+    return dexieFlashing ?? null;
+  }, [flashingId, swrFlashing, dexieFlashing]);
+
   useEffect(() => {
-    console.log("running the useEffect");
-    if (flashingId && !isLoading && savedFlashing === undefined) {
-      notFound();
+    if (!savedFlashing) {
+      return;
     }
 
     const canvas = canvasInstance.current;
@@ -173,10 +167,7 @@ const CanvasControllers = ({
       return;
     }
 
-    console.log("reading saved flashing");
-
     if (savedFlashing && !isLoading) {
-      console.log("saved flashing was read");
       crushFoldObjectDirectionRef.current = savedFlashing.color_side_dir;
 
       savedFlashing.nodes.map((cir) => {
@@ -275,7 +266,6 @@ const CanvasControllers = ({
               hoverCursor: "pointer",
             }
           );
-          // console.log(currentCir);
 
           if (currentCir.next_line_bside_length) {
             line.bSideLineLength = currentCir.next_line_bside_length;
@@ -303,8 +293,6 @@ const CanvasControllers = ({
           setCanvasIsEmpty(false);
 
           addHistory("drawing", currentCir, true);
-
-          // console.log(nextCir.node_id);
         });
 
       activeCircle.current = circles.find((cir) => !cir.next_node_id);
@@ -313,7 +301,6 @@ const CanvasControllers = ({
         const startCircle = circles.find((cir) => !cir.prev_node_id);
         startCircle.set({ radius: 0.2 });
         addCrushFoldObject(canvas, startCircle, "start");
-        // console.log(
         //   startCircle.prev_node_id,
         //   startCircle.prev_next_id,
         //   startCircle.line1,
@@ -325,7 +312,6 @@ const CanvasControllers = ({
         const endCircle = circles.find((cir) => !cir.next_node_id);
         endCircle.set({ radius: 0.2 });
         addCrushFoldObject(canvas, endCircle, "end");
-        // console.log(
         //   endCircle.prev_node_id,
         //   endCircle.prev_next_id,
         //   endCircle.line1,
@@ -340,7 +326,7 @@ const CanvasControllers = ({
     // return () => {
     //   canvas.dispose();
     // };
-  }, [canvasInstance.current?.objects, savedFlashing, isLoading]);
+  }, [canvasInstance, swrFlashing, isLoading, dexieFlashing]);
 
   const {
     topBarVisible,
@@ -435,18 +421,25 @@ const CanvasControllers = ({
       index += 1;
     }
 
-    // console.log(savedFlashing);
-
     if (!canvasIsEmpty && savedFlashing && flashingId) {
       (async () => {
         try {
-          await api.patch(`/a/flashing/${flashingId}/`, {
+          const res = await api.patch(`/a/flashing/${flashingId}/`, {
             nodes: flashing.nodes,
-            color_side_dir: flashing.crushFoldDir,
+            // color_side_dir: flashing.crushFoldDir,
             start_crush_fold: flashing.startCrushFold,
             end_crush_fold: flashing.endCrushFold,
           });
-          router.push("/cart");
+
+          if (
+            res.data.endCrushFold ||
+            res.data.startCrushFold ||
+            res.data.material_data.type === "thickness"
+          ) {
+            router.replace(`/f/cart`);
+          } else {
+            router.replace(`/f/color-side?flashingId=${flashingId}`);
+          }
         } catch (err) {
           toast("Something went wrong");
         }
@@ -458,7 +451,16 @@ const CanvasControllers = ({
         startCrushFold: flashing.startCrushFold,
         endCrushFold: flashing.endCrushFold,
       });
-      router.replace(`/f/preview`);
+      if (
+        flashing.endCrushFold ||
+        flashing.startCrushFold ||
+        savedFlashing.material_data.variant_type === "thickness" ||
+        savedFlashing.material_data.type === "thickness"
+      ) {
+        router.replace(`/f/preview`);
+      } else {
+        router.replace(`/f/color-side`);
+      }
     }
   };
 

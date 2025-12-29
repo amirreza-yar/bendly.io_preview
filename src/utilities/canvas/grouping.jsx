@@ -3,7 +3,7 @@ import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProv
 import { Group } from "fabric";
 
 export const groupDrawings = () => {
-  const { canvasInstance , objectsZoomScale,} = useCanvasContext();
+  const { canvasInstance, objectsZoomScale } = useCanvasContext();
   const canvas = canvasInstance.current;
   const objects = canvas
     .getObjects()
@@ -40,7 +40,7 @@ export const groupDrawings = () => {
 };
 
 export const unGroupDrawings = () => {
-  const { canvasInstance , objectsZoomScale,} = useCanvasContext();
+  const { canvasInstance, objectsZoomScale } = useCanvasContext();
   const canvas = canvasInstance.current;
 
   const currentZoom = canvas.getZoom();
@@ -60,17 +60,12 @@ export const unGroupDrawings = () => {
       item.line2 && item.line2.set({ x1: item.left, y1: item.top });
       item.isEdge === true ? setLastDotRef(item.getCenterPoint()) : {};
     } else if (item.type == "line") {
-      console.log(item.circle1.getCenterPoint());
-
       item.set({
         strokeWidth: 2 / objectsZoomScale.current,
       });
-      console.log(item.circle1.getCenterPoint().x);
       item.setCoords();
     }
   });
-
-  console.log("UNgrouping objects");
 
   if (!drawingGroup || drawingGroup.type !== "group") return; // Ensure it's a group
 

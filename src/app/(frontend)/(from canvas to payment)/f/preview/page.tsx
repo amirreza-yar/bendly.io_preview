@@ -1,6 +1,6 @@
 "use client";
-import { use, useState } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/uikit/buttons/button";
 import { ArrowRight, Edit } from "@/components/uikit/icons";
 import { Header } from "@/components/dashboard/header";
@@ -15,23 +15,15 @@ import { toast } from "sonner";
 import { UseFormReturn } from "react-hook-form";
 import PreviewCanvas from "@/components/flashing/preview/previewCanvas";
 import { deleteFlashingById } from "@/lib/db/helpers/flashingHelpers";
-import { EditFlashingDrawer } from "@/components/flashing/preview/drawers";
 import {
   AddTemplateModal,
   DeleteFlashingModalOnPreview,
   TemplateFormValues,
 } from "@/components/flashing/preview/modals";
 import { addTemplate } from "@/lib/db/helpers/templateHelpers";
-import useSWR from "swr";
-import { fetcher } from "@/lib/axios";
+import api from "@/lib/axios";
 
-export default function PreviewPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ flashingId: string | undefined }>;
-}) {
-  const flashingId = use(searchParams).flashingId;
-
+export default function PreviewPage() {
   const router = useRouter();
 
   const flashing = useLiveQuery(() => db.flashings.get({ id: "1" }), [], null);
@@ -51,30 +43,27 @@ export default function PreviewPage({
       });
     } catch (err: any) {
       toast("Something went wrong");
-      router.replace("/dashboard");
+      // router.replace("/dashboard");
     }
   };
 
   const submitTemplate = async (
-    data: TemplateFormValues,
-    form: UseFormReturn<TemplateFormValues>
+    data: TemplateFormValues
+    // form: UseFormReturn<TemplateFormValues>
   ) => {
-    const error =
-      flashing &&
-      (await addTemplate({
+    try {
+      await api.post("/a/template/", {
         name: data.name,
-        flashing: flashing,
-        owner: "user",
-      }));
-
-    if (error && error.name === "ConstraintError") {
-      form.setError("name", {
-        type: "manual",
-        message: "This name is already in use",
+        start_crush_fold: flashing?.startCrushFold,
+        end_crush_fold: flashing?.endCrushFold,
+        color_side_dir: flashing?.colorSideDirection,
+        tapered: flashing?.tapered,
+        nodes: flashing?.nodes,
       });
-    } else {
       toast("Drawing save as template");
       setIsTemplateModalOpen(false);
+    } catch (error: any) {
+      toast("Something went wrong");
     }
   };
 
@@ -135,12 +124,14 @@ export default function PreviewPage({
               className="flex items-center gap-2 caption-small rounded-xs bg-surface-disable p-2 border border-border-default"
             >
               <div className="grid gap-2 caption-small">
-                <p>Material: {flashing?.material}</p>
-                {flashing?.material ? (
-                  <p>Color: {flashing.material}</p>
-                ) : (
-                  <p>Thickness: {flashing?.thickness?.thickness}mm</p>
-                )}
+                <p>Material: {flashing?.material_data?.name}</p>
+
+                <p>
+                  {flashing?.material_data?.variant_type === "color"
+                    ? "Color: "
+                    : "Thickness: "}{" "}
+                  {flashing?.material_data?.label}
+                </p>
               </div>
               <Edit className="size-5" />
             </Link>
@@ -148,12 +139,12 @@ export default function PreviewPage({
         </div>
       </ContentWrapper>
       <Footer>
-        <div className="flex gap-2 w-full">
-          {/* <AddTemplateModal
+        <div className="grid grid-cols-2 gap-2 w-full">
+          <AddTemplateModal
             setIsTemplateModalOpen={setIsTemplateModalOpen}
             isTemplateModalOpen={isTemplateModalOpen}
             submitTemplate={submitTemplate}
-          /> */}
+          />
 
           <Link href={`/f/details`} className="w-full">
             <Button size="large" className="w-full">

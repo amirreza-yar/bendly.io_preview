@@ -1,47 +1,48 @@
 // src/lib/db.ts
-import Dexie, { Table } from 'dexie'
-import type { StoredFlashing } from '@/types/flashingTypes'
-import { StoredMaterialAndProps } from '@/types/material&PropsType'
-import { Template } from '@/types/templateType'
-import { StoredOrder } from '@/types/orderTypes'
-import { StoredJobReference } from '@/types/jobReferenceTypes'
+import Dexie, { Table } from "dexie";
+import type { StoredFlashing } from "@/types/flashingTypes";
+import { StoredMaterialAndProps } from "@/types/material&PropsType";
+import { Template } from "@/types/templateType";
+import { StoredOrder } from "@/types/orderTypes";
+import { StoredJobReference } from "@/types/jobReferenceTypes";
 
 export interface UserProfile {
-  id: string // Primary key - user ID
-  email: string
-  fullname: string
-  phone?: string
-  roleId: string
-  status: string
-  createdAt: string
-  updatedAt: string
-  lastLogin?: string
+  id: string; // Primary key - user ID
+  email: string;
+  fullname: string;
+  phone?: string;
+  roleId: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  lastLogin?: string;
 }
 
 export class AppDB extends Dexie {
-  userProfile!: Table<UserProfile, string>
-  flashings!: Table<StoredFlashing, string>
-  materialsAndProps!: Table<StoredMaterialAndProps, number>
-  templates!: Table<Template, string>
-  orders!: Table<StoredOrder, number>
-  jobReferences!: Table<StoredJobReference, string>
+  userProfile!: Table<UserProfile, string>;
+  flashings!: Table<StoredFlashing, string>;
+  materialsAndProps!: Table<StoredMaterialAndProps, number>;
+  templates!: Table<Template, string>;
+  orders!: Table<StoredOrder, number>;
+  jobReferences!: Table<StoredJobReference, string>;
 
   constructor() {
-    super('AppDB')
+    super("AppDB");
     this.version(2).stores({
       // Existing tables
-      flashings: 'id, material, color, thickness, createdAt, updatedAt',
-      materialsAndProps: 'material',
-      templates: 'name, owner',
-      orders: 'id, status, progress, deliveryType',
-      jobReferences: 'id, code, projectName',
+      flashings:
+        "id, material, material_data, color, thickness, createdAt, updatedAt, crushFoldDir",
+      materialsAndProps: "material",
+      templates: "name, owner",
+      orders: "id, status, progress, deliveryType",
+      jobReferences: "id, code, projectName",
       // New user profile table for authenticated user data
-      userProfile: 'id, email, roleId, status',
-    })
+      userProfile: "id, email, roleId, status",
+    });
   }
 }
 
-export const db = new AppDB()
+export const db = new AppDB();
 
 /**
  * Lazy DB instance — don't create it on module load to avoid SSR errors.

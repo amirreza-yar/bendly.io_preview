@@ -21,19 +21,18 @@ import {
 } from "@/components/uikit/icons";
 import { Separator } from "@/components/uikit/separator";
 import { fetcher } from "@/lib/axios";
-import { useGETOrderById } from "@/lib/db/helpers/orderHelpers";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { useMemo } from "react";
 import useSWR from "swr";
 
-function formatStatus(status: any) {
+function formatStatus(status: any, type: any) {
   const map: any = {
     pending: "Pending",
     in_progress: "In Progress",
-    delivered: "Delivered",
+    ready: type === "delivery" ? "On the way" : "Ready for pickup",
     cancelled: "Cancelled",
-    complete: "Complete",
+    completed: "Completed",
+    rejected: "Rejected",
   };
 
   return map[status] || status;
@@ -59,7 +58,9 @@ export default function OrderDetails() {
             <div className="flex items-center justify-between label-small pb-1">
               <p className="text-subtitle">Order Status</p>
               <span className="text-heading">
-                <OrderStatusBadge status={formatStatus(order?.status)} />
+                <OrderStatusBadge
+                  status={formatStatus(order?.status, order?.fulfillment.type)}
+                />
               </span>
             </div>
             <div className="flex items-center justify-between label-small">
@@ -89,7 +90,7 @@ export default function OrderDetails() {
             )}
           </div>
 
-          {order?.status !== "Rejected" && (
+          {order?.status !== "rejected" && (
             <div className="grid gap-2 bg-white p-4">
               {order?.fulfillment?.type === "delivery" ? (
                 <h6 className="pb-4">Delivery Information</h6>
@@ -112,15 +113,17 @@ export default function OrderDetails() {
                 <div className="flex items-start justify-start gap-2 label-small [&_svg]:size-4">
                   <WareHouse />
                   <span className="text-heading grid gap-1">
-                    {order?.job_reference?.full_address}
-                    <p className="label-small">{order?.pickupInfo?.desc}</p>
+                    <span>{order?.fulfillment.address.factory_address}</span>
+                    <p className="label-small opacity-70">
+                      {order?.fulfillment.address.factory_work_desc}
+                    </p>
                   </span>
                 </div>
               )}
               <div className="flex items-center justify-start gap-1 label-small [&_svg]:size-4">
                 <ProfileNav />
                 <span className="text-subtitle">
-                  {order?.fulfillment.address.recipient_name}{" "}
+                  {order?.fulfillment.address.recipient_name} - +67{" "}
                   {order?.fulfillment.address.recipient_phone}
                 </span>
               </div>
@@ -130,33 +133,32 @@ export default function OrderDetails() {
                   {formatDateWithDay(order?.fulfillment.date ?? 0)}
                 </span>
               </div>
-              {order?.status === "in_progress" && (
-                <div className="flex items-center justify-between label-small">
-                  <p className="text-subtitle">Delivery ID</p>
-                  <span className="text-heading">{order?.deliveryId}</span>
-                </div>
-              )}
+              {order?.status !== "pending" &&
+                order?.fulfillment?.type === "delivery" && (
+                  <div className="flex items-center justify-between label-small">
+                    <p className="text-subtitle">Delivery ID</p>
+                    <span className="text-heading">
+                      {order?.fulfillment.id}
+                    </span>
+                  </div>
+                )}
               {order?.fulfillment?.type === "delivery" &&
-                order?.status === "in_progress" &&
+                order?.status === "ready" &&
                 (() => {
-                  const driverInfo = order?.driverInfo;
+                  const driver = order?.fulfillment.driver;
                   return (
                     <>
-                      {order?.progress === "Ready" ||
-                      order?.progress === "In Production" ||
-                      order?.progress === "Completed" ? (
+                      {order?.status === "ready" ? (
                         <>
                           <div className="flex items-center justify-between label-small">
                             <p className="text-subtitle">Driver Information</p>
-                            <span className="text-heading">
-                              {driverInfo?.name}
-                            </span>
+                            <span className="text-heading">{driver?.name}</span>
                           </div>
 
-                          {order?.progress !== "Completed" && (
+                          {order?.status !== "completed" && (
                             <div className="flex justify-end items-center pt-1">
                               <Link
-                                href={`tel:${driverInfo?.mobile}`}
+                                href={`tel:+67${driver?.phone}`}
                                 className="flex gap-2 items-center text-xs/[17px] font-semibold rounded-md py-2 px-4 border-1 border-border-default"
                               >
                                 <Phone className="size-5" />
@@ -179,13 +181,13 @@ export default function OrderDetails() {
             </div>
           )}
 
-          {order?.progress === "Completed" &&
+          {order?.status === "completed" &&
             (() => {
-              // const req = replacementRequests.find((req) => order?.id === req.order?.id)
-              const req = {
-                requestDateTime: undefined,
-                requestProgress: undefined,
-              };
+              const req = undefined;
+              // const req = {
+              //   requestDateTime: undefined,
+              //   requestProgress: undefined,
+              // };
 
               if (req !== undefined) {
                 return (
@@ -211,7 +213,8 @@ export default function OrderDetails() {
                     </p>
                     <Link
                       className="w-full"
-                      href={`/dashboard/orders/${orderId}/replacement-request`}
+                      // href={`/dashboard/orders/${orderId}/replacement-request`}
+                      href=""
                     >
                       <Button variant="secondary" className="mt-2 w-full">
                         Request Replacement
@@ -224,21 +227,21 @@ export default function OrderDetails() {
 
           <div className="grid gap-2 bg-white p-4">
             <h6 className="pb-4">Order Progress</h6>
-            {order?.status !== "Rejected" ? (
-              <ProgressionObject progress={order?.status} />
+            {order?.status !== "rejected" ? (
+              <ProgressionObject status={order?.status} />
             ) : (
               <>
-                <RejectedProgressionObject progress={order?.progress} />
+                <RejectedProgressionObject />
                 <Separator className="my-2 mt-1" />
                 <p className="label-small text-subtitle">Reasons for Reject:</p>
                 <span className="label-small text-body">
-                  {order?.rejectionDesc}
+                  {order?.reject_reason ? order?.reject_reason : "Not provided"}
                 </span>
               </>
             )}
           </div>
 
-          {order?.status !== "Rejected" && (
+          {order?.status !== "rejected" && (
             <div className="grid gap-2 bg-white p-4">
               <h6 className="pb-4">Order Summary</h6>
               {order?.flashings && (
@@ -293,7 +296,7 @@ export default function OrderDetails() {
               <div className="flex items-center justify-between">
                 <p className="label-small text-subtitle">Total</p>
                 <p className="label-small text-heading">
-                  {order?.payment_history?.amount.toFixed(2)}
+                  $ {order?.payment_history?.amount.toFixed(2)}
                 </p>
               </div>
               <div className="flex items-center justify-between">
@@ -310,14 +313,14 @@ export default function OrderDetails() {
               </div>
               <div className="flex items-center justify-between">
                 <p className="label-small text-subtitle">Via</p>
-                <p className="label-small text-heading">
+                <p className="label-small text-heading capitalize">
                   {order?.payment_history?.method}
                 </p>
               </div>
             </div>
           </div>
 
-          {order?.progress !== "Completed" && (
+          {order?.status !== "Completed" && (
             <div className="grid bg-white p-4 gap-6">
               <h6>Need Help?</h6>
               <div className="grid gap-4">

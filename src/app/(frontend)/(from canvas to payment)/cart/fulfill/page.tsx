@@ -177,7 +177,7 @@ export default function FulFillPage({
   useEffect(() => {
     if (!cart) return;
 
-    if (cart && cart.address.id && cart.delivery_date) {
+    if (cart && cart?.address?.id && cart?.delivery_date) {
       fulFillmentForm.setValue("job_reference_id", cart?.job_reference.id);
       fulFillmentForm.setValue("address_id", cart?.address.id);
       fulFillmentForm.setValue("delivery_date", cart?.delivery_date);

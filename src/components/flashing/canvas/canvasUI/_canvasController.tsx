@@ -136,8 +136,6 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
     }
   };
 
-  console.log(savedFlashing);
-
   // useEffect(() => {
   //   if (savedFlashing) {
   //     notFound()
@@ -155,8 +153,6 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
 
     if (canvas && savedFlashing) {
       crushFoldObjectDirectionRef.current = savedFlashing.color_side_dir;
-
-      console.log("saved flashing loaded");
 
       savedFlashing.nodes.map((cir) => {
         canvas.add(
@@ -197,8 +193,6 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
           const nextCir = canvas
             .getObjects()
             .find((obj) => obj.node_id === currentCir.next_node_id);
-
-          console.log(cir);
 
           const line = new Line(
             [
@@ -256,7 +250,6 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
               hoverCursor: "pointer",
             }
           );
-          console.log(currentCir, "testing");
 
           if (currentCir.next_line_bside_length) {
             line.bSideLineLength = currentCir.next_line_bside_length;
@@ -284,8 +277,6 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
           setCanvasIsEmpty(false);
 
           addHistory("drawing", currentCir, true);
-
-          console.log(nextCir.node_id);
         });
 
       // activeCircle.current = circles.find((cir) => !cir.next_node_id)
@@ -294,7 +285,7 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
       //   const startCircle = circles.find((cir) => !cir.prev_node_id)
       //   startCircle.set({ radius: 0.2 })
       //   addCrushFoldObject(canvas, startCircle, 'start')
-      //   console.log(
+
       //     startCircle.prev_node_id,
       //     startCircle.prev_next_id,
       //     startCircle.line1,
@@ -306,15 +297,13 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
       //   const endCircle = circles.find((cir) => !cir.next_node_id)
       //   endCircle.set({ radius: 0.2 })
       //   addCrushFoldObject(canvas, endCircle, 'end')
-      //   console.log(
+
       //     endCircle.prev_node_id,
       //     endCircle.prev_next_id,
       //     endCircle.line1,
       //     endCircle.node_id,
       //   )
       // }
-
-      console.log("flashing seems loaded");
 
       canvasInstance.current.request;
 
@@ -419,8 +408,6 @@ const CanvasControllers = ({ handleUndo, handleRedo }) => {
 
       index += 1;
     }
-
-    console.log(savedFlashing);
 
     if (
       (!canvasIsEmpty && flashing.startCrushFold) ||
