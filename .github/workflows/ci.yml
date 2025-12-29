@@ -23,23 +23,38 @@ jobs:
             exit 1
           fi
 
-      # Checkout repository BEFORE any git commands that need .git
+      - name: Validate PR source branch (only for PRs to main)
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: |
+          # github.head_ref is available in PR events
+          SOURCE_BRANCH="${{ github.head_ref }}"
+
+          if [[ "$SOURCE_BRANCH" == "stage" ]] || \
+             [[ "$SOURCE_BRANCH" == fix/* ]] || \
+             [[ "$SOURCE_BRANCH" == hotfix/* ]]; then
+            echo "PR source branch '$SOURCE_BRANCH' is allowed for main"
+          else
+            echo "PRs to main are only allowed from:"
+            echo "  - stage"
+            echo "  - fix/*"
+            echo "  - hotfix/*"
+            echo ""
+            echo "Current source branch: $SOURCE_BRANCH"
+            exit 1
+          fi
+
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          # get full history so git merge-base works
+          # full history so git merge-base works
           fetch-depth: 0
-          # checkout PR head if this is a PR, otherwise checkout the ref for pushes
+          # checkout PR head if PR, otherwise the ref for pushes
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
 
-      # Now the repo exists; this check can run
-      - name: Check PR branch is up-to-date with stage
+      - name: Ensure PR branch is up-to-date with stage
         if: github.event_name == 'pull_request' && github.base_ref == 'stage'
         run: |
-          # Ensure origin/stage is present
           git fetch origin stage
-
-          # Fail if origin/stage is NOT an ancestor of HEAD (i.e. branch doesn't include stage)
           if git merge-base --is-ancestor origin/stage HEAD; then
             echo "Branch includes stage — OK"
           else
@@ -47,15 +62,37 @@ jobs:
             exit 1
           fi
 
-      - uses: pnpm/action-setup@v3
+      - name: Ensure PR branch is up-to-date with main
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: |
+          git fetch origin main
+          if git merge-base --is-ancestor origin/main HEAD; then
+            echo "Branch includes main — OK"
+          else
+            echo "Your branch is missing commits from main. Please merge or rebase main into your branch."
+            exit 1
+          fi
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
         with:
           version: 9
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
-      # - run: pnpm lint
-      - run: pnpm build
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Optional: enable lint/test if you want them to be required checks
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test --if-present
+
+      - name: Build
+        run: pnpm build
