@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - stage
+  push:
+    branches-ignore:
+      - main
+      - stage
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block direct pushes to protected branches
+        if: github.event_name == 'push'
+        run: |
+          BRANCH="${GITHUB_REF##*/}"
+          if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "stage" ]; then
+            echo "Direct pushes to $BRANCH are not allowed"
+            exit 1
+          fi
+
+      # Checkout repository BEFORE any git commands that need .git
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          # get full history so git merge-base works
+          fetch-depth: 0
+          # checkout PR head if this is a PR, otherwise checkout the ref for pushes
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+
+      # Now the repo exists; this check can run
+      - name: Check PR branch is up-to-date with stage
+        if: github.event_name == 'pull_request' && github.base_ref == 'stage'
+        run: |
+          # Ensure origin/stage is present
+          git fetch origin stage
+
+          # Fail if origin/stage is NOT an ancestor of HEAD (i.e. branch doesn't include stage)
+          if git merge-base --is-ancestor origin/stage HEAD; then
+            echo "Branch includes stage — OK"
+          else
+            echo "Your branch is missing commits from stage. Please merge or rebase stage into your branch."
+            exit 1
+          fi
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      # - run: pnpm lint
+      - run: pnpm build
