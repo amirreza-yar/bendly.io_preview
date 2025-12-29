@@ -1,0 +1,73 @@
+name: CI - Main
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches-ignore:
+      - main
+      - stage
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block direct pushes to protected branches
+        if: github.event_name == 'push'
+        run: |
+          BRANCH="${GITHUB_REF##*/}"
+          if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "stage" ]; then
+            echo "Direct pushes to $BRANCH are not allowed"
+            exit 1
+          fi
+
+      - name: Validate PR source branch
+        if: github.event_name == 'pull_request'
+        run: |
+          SOURCE_BRANCH="${{ github.head_ref }}"
+
+          if [[ "$SOURCE_BRANCH" == "stage" ]] || \
+             [[ "$SOURCE_BRANCH" == fix/* ]] || \
+             [[ "$SOURCE_BRANCH" == hotfix/* ]]; then
+            echo "PR source branch '$SOURCE_BRANCH' is allowed for main"
+          else
+            echo "PRs to main are only allowed from:"
+            echo "  - stage"
+            echo "  - fix/*"
+            echo "  - hotfix/*"
+            echo ""
+            echo "Current source branch: $SOURCE_BRANCH"
+            exit 1
+          fi
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+
+      - name: Ensure PR branch is up-to-date with main
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin main
+          if git merge-base --is-ancestor origin/main HEAD; then
+            echo "Branch includes main — OK"
+          else
+            echo "Your branch is missing commits from main. Please merge or rebase main into your branch."
+            exit 1
+          fi
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+    #   - run: pnpm lint
+    #   - run: pnpm test --if-present
+      - run: pnpm build
