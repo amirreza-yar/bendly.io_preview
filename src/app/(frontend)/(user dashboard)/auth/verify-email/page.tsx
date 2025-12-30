@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import Link from "next/link";
 import {
+  ArrowLeft,
   Edit,
   FeaturedSuccess,
   Mail,
@@ -76,12 +77,19 @@ export default function VerifyEmailPage({
 
   return (
     <>
-      <HeaderWithCenterTitle title="" returnHref={`/auth`} />
+      {/* <HeaderWithCenterTitle
+        title=""
+        returnHref={`/auth`}
+        className="pt-4 pl-8"
+      /> */}
       <ContentWrapper className="flex flex-col gap-2 items-center items-center justify-center">
-        <div className="absolute z-20 flex items-center gap-2 mx-auto top-4 text-[14px] font-semibold">
-          <MainLogo className="size-6 text-primary" />
+        <div className="absolute flex items-center gap-2 mx-auto top-6 text-[16px] font-semibold z-10">
+          <MainLogo className="size-6 text-black" />
           Bendly.io
         </div>
+        <Link href="/auth" className="absolute top-5 left-5 p-1">
+          <ArrowLeft />
+        </Link>
 
         <FeaturedSuccess className="size-10 mb-4" />
         <h5>Verification email sent</h5>
