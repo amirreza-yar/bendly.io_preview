@@ -185,8 +185,8 @@ export default function FulFillPage({
     }
 
     if (job_ref_id && address_id) {
-      fulFillmentForm.setValue("job_reference_id", job_ref_id);
-      fulFillmentForm.setValue("address_id", address_id);
+      fulFillmentForm.setValue("job_reference_id", Number(job_ref_id));
+      fulFillmentForm.setValue("address_id", Number(address_id));
     }
   }, [cart, fulFillmentForm, job_ref_id, address_id]);
 
@@ -332,7 +332,7 @@ export default function FulFillPage({
                             <div className="truncate">
                               <>
                                 <p className="body-small">
-                                  {addr?.recipient_name} - +67
+                                  {addr?.recipient_name} +
                                   {addr?.recipient_phone}
                                 </p>
                               </>
@@ -699,7 +699,7 @@ export default function FulFillPage({
                                                           {
                                                             address.recipient_name
                                                           }{" "}
-                                                          {" +67"}
+                                                          {" +"}
                                                           {
                                                             address.recipient_phone
                                                           }
@@ -736,7 +736,9 @@ export default function FulFillPage({
 
                                     <Footer>
                                       <Button className="w-full" asChild>
-                                        <Link href="/cart/new-address">
+                                        <Link
+                                          href={`/cart/new-address?job_ref_id=${job.id}`}
+                                        >
                                           <Plus />
                                           Add New Address
                                         </Link>

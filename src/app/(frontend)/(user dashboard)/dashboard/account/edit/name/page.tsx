@@ -23,7 +23,7 @@ import { notFound, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 // Validation schema
-const CreateAccountFormSchema = z.object({
+const EditFullNameFormSchema = z.object({
   fullName: z
     .string()
     .nonempty("Fullname is required")
@@ -35,13 +35,13 @@ const CreateAccountFormSchema = z.object({
     .max(50, "Full name must be less than 50 characters"),
 });
 
-type CreateAccountFormValues = z.infer<typeof CreateAccountFormSchema>;
+type EditFullNameFormValues = z.infer<typeof EditFullNameFormSchema>;
 
 export default function EditNamePage() {
   const router = useRouter();
 
-  const form = useForm<CreateAccountFormValues>({
-    resolver: zodResolver(CreateAccountFormSchema),
+  const form = useForm<EditFullNameFormValues>({
+    resolver: zodResolver(EditFullNameFormSchema),
   });
 
   const { data, isLoading } = useSWR("/a/profile/", fetcher, {
@@ -56,7 +56,7 @@ export default function EditNamePage() {
     }
   }, [data, form]);
 
-  const onSubmit = async (data: CreateAccountFormValues) => {
+  const onSubmit = async (data: EditFullNameFormValues) => {
     try {
       const parts = data.fullName.trim().split(/\s+/);
       const firstName = parts[0];

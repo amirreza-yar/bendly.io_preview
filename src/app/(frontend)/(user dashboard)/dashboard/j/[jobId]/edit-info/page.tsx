@@ -1,24 +1,11 @@
 "use client";
 import { useForm } from "react-hook-form";
-import { ArrowLeft, Info } from "@/components/uikit/icons";
-import { Input, LabeledInput } from "@/components/uikit/input";
+import { Input } from "@/components/uikit/input";
 import { Button } from "@/components/uikit/buttons/button";
-import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  notFound,
-  useParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import {
-  useGETJobRefById,
-  jobReferCodeExists,
-  updateJobReference,
-} from "@/lib/db/helpers/jobRefHelpers";
-import { useEffect } from "react";
 import {
   FormControl,
   FormField,

@@ -10,13 +10,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/uikit/form";
 import { Button } from "@/components/uikit/buttons/button";
 import { use, useEffect, useState } from "react";
-import api from "@/lib/axios";
+import api, { fetcher } from "@/lib/axios";
 import { toast } from "sonner";
 import { Footer } from "@/components/dashboard/footer";
 import {
   AddressFormTab,
   RecipientFormTab,
 } from "@/components/dashboard/jobReference/tabs";
+import useSWR from "swr";
 
 const NewAddressFormSchema = z.object({
   title: z
@@ -55,7 +56,7 @@ const NewAddressFormSchema = z.object({
 
   phone: z
     .string("Phone number is required")
-    .regex(/^\d{10}$/, "Enter a valid phone number"),
+    .regex(/^[2-478]\d{8}$/, "Enter a valid phone number"),
 });
 
 export type NewAddressFormValues = z.infer<typeof NewAddressFormSchema>;
@@ -90,7 +91,7 @@ export default function NewAddressPage({
         state: data.state,
         postcode: data.postcode,
         recipient_name: data.name,
-        recipient_phone: data.phone,
+        recipient_phone: `+61${data.phone}`,
       });
 
       toast("New Address Added");
@@ -101,6 +102,8 @@ export default function NewAddressPage({
       toast("Something went wrong");
     }
   };
+
+  const { data: userInfo } = useSWR("/a/profile/", fetcher);
 
   const handleNextPage = async () => {
     const validation = await newAddressForm.trigger([
@@ -155,6 +158,7 @@ export default function NewAddressPage({
             <RecipientFormTab
               tabValue="recipient-tab"
               recipientForm={newAddressForm}
+              userInfo={userInfo}
               Header={
                 <Header
                   title="New Address Recipient Info"

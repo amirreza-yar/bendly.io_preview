@@ -123,7 +123,7 @@ export default function OrderDetails() {
               <div className="flex items-center justify-start gap-1 label-small [&_svg]:size-4">
                 <ProfileNav />
                 <span className="text-subtitle">
-                  {order?.fulfillment.address.recipient_name} - +67{" "}
+                  {order?.fulfillment.address.recipient_name} +
                   {order?.fulfillment.address.recipient_phone}
                 </span>
               </div>

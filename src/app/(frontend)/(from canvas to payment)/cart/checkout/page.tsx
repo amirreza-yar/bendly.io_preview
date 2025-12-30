@@ -57,7 +57,7 @@ export default function CheckOutPage() {
                 <div className="flex gap-2 items-center">
                   <ProfileNav className="size-4 mb-0.5" />
                   <p className="caption-small text-subtitle">
-                    {cart?.address?.recipient_name} -{" "}
+                    {cart?.address?.recipient_name} {" +"}
                     {cart?.address?.recipient_phone}
                   </p>
                 </div>

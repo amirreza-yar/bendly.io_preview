@@ -16,14 +16,6 @@ interface CustomerCardProps {
 export default function CustomerDetailsCard({ data }: CustomerCardProps) {
   const router = useRouter();
 
-  const customerData = {
-    name: "Mike Oldfield",
-    email: "Mike@example.com",
-    phone: "+610412364625",
-  };
-
-  const displayData = data || customerData;
-
   const [open, setOpen] = React.useState(false);
   const [selectedReason, setSelectedReason] = React.useState("");
 
@@ -67,15 +59,15 @@ export default function CustomerDetailsCard({ data }: CustomerCardProps) {
         <div className="flex flex-col px-6 pt-5 space-y-2">
           <div className="flex justify-between">
             <p>Name</p>
-            <p className="font-bold">{displayData.name}</p>
+            <p className="font-bold">{data?.name}</p>
           </div>
           <div className="flex justify-between">
             <p>Email</p>
-            <p className="font-bold">{displayData.email}</p>
+            <p className="font-bold">{data?.email}</p>
           </div>
           <div className="flex justify-between">
             <p>Mobile Number</p>
-            <p className="font-bold">{displayData.phone}</p>
+            <p className="font-bold">{data?.phone}</p>
           </div>
         </div>
 

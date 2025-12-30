@@ -4,7 +4,12 @@ import { HeaderWithCenterTitle } from "@/components/dashboard/header";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import Link from "next/link";
-import { Edit } from "@/components/uikit/icons";
+import {
+  Edit,
+  FeaturedSuccess,
+  Mail,
+  MainLogo,
+} from "@/components/uikit/icons";
 import { use, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -16,6 +21,7 @@ import {
   CodeResendTimeHandle,
 } from "@/components/dashboard/auth/resendTime";
 import api from "@/lib/axios";
+import { Button } from "@/components/uikit/buttons/button";
 
 export default function VerifyEmailPage({
   searchParams,
@@ -26,39 +32,41 @@ export default function VerifyEmailPage({
 
   const email = use(searchParams).email;
 
-  // useEffect(() => {
-  //   if (!email) {
-  //     router.replace("/auth");
-  //   }
-  // }, [email, router]);
+  useEffect(() => {
+    if (!email) {
+      router.replace("/auth");
+    }
+  }, [email, router]);
 
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const resendRef = useRef<CodeResendTimeHandle>(null);
-  const [invalidCodeErrorText, setInvalidCodeErrorText] = useState<string>("");
+  // const [invalidCodeErrorText, setInvalidCodeErrorText] = useState<string>("");
 
-  const onSubmitVerifyEmail = async (data: VerifyEmailOTPValue) => {
-    try {
-      setIsLoading(true);
-      await api.post("/auth/registration/verify-email/", {
-        key: data.emailOTP,
-      });
+  // const onSubmitVerifyEmail = async (data: VerifyEmailOTPValue) => {
+  //   try {
+  //     setIsLoading(true);
+  //     await api.post("/auth/registration/verify-email/", {
+  //       key: data.emailOTP,
+  //     });
 
-      toast("Your email verified");
-      setIsLoading(false);
-      router.replace("/dashboard");
-    } catch (error: any) {
-      setIsLoading(false);
+  //     toast("Your email verified");
+  //     setIsLoading(false);
+  //     router.replace("/dashboard");
+  //   } catch (error: any) {
+  //     setIsLoading(false);
 
-      setInvalidCodeErrorText("Invalid OTP. Please try again.");
-    }
-  };
+  //     setInvalidCodeErrorText("Invalid OTP. Please try again.");
+  //   }
+  // };
 
   const handleResendEmailCode = async () => {
     try {
       await api.post("/auth/registration/resend-email/", {
         email: email,
       });
+
+      resendRef.current?.resetTimer();
 
       toast("Verification email resent");
     } catch (error: any) {
@@ -68,36 +76,37 @@ export default function VerifyEmailPage({
 
   return (
     <>
-      <HeaderWithCenterTitle title="Logo" returnHref={`/auth`} />
-      <ContentWrapper className="pt-26">
-        <div className="grid gap-6 items-center">
-          <div className="grid items-center text-center gap-2">
-            <h5>Verify your email</h5>
-            <p className="subtitle-regular">We sent a 6-digit code to:</p>
-            <Link
-              href={`/auth`}
-              className="flex gap-2 items-center rounded-full border border-border-default bg-surface-disable w-fit justify-self-center py-2 px-4 text-[16px]/[24px] font-regular"
-            >
-              {email}
-              <Edit className="size-5" />
-            </Link>
-          </div>
+      <HeaderWithCenterTitle title="" returnHref={`/auth`} />
+      <ContentWrapper className="flex flex-col gap-2 items-center items-center justify-center">
+        <div className="absolute z-20 flex items-center gap-2 mx-auto top-4 text-[14px] font-semibold">
+          <MainLogo className="size-6 text-primary" />
+          Bendly.io
+        </div>
 
-          <VerifyEmailOTPForm
+        <FeaturedSuccess className="size-10 mb-4" />
+        <h5>Verification email sent</h5>
+        <p className="subtitle-regular pt-4">We sent a verification link to:</p>
+        <div className="flex gap-2 items-center rounded-full border border-border-default bg-surface-disable w-fit justify-self-center py-2 px-4 text-[14px] font-regular">
+          <Mail className="size-4" />
+          {email}
+        </div>
+
+        {/* <VerifyEmailOTPForm
             onSubmitVerifyEmail={onSubmitVerifyEmail}
             errorText={invalidCodeErrorText}
             isLoading={isLoading}
-          />
+          /> */}
 
-          <div className="flex gap-2 items-center justify-center">
-            <span className="text-xs text-gray-600">
-              Did not receive the code?
-            </span>
-            <CodeResendTime
-              ref={resendRef}
-              onResendHandler={handleResendEmailCode}
-            />
-          </div>
+        {/* <Button className="w-50 mt-6">Resend Email</Button> */}
+
+        <div className="flex gap-2 items-center justify-center pt-6">
+          <span className="text-xs text-gray-600">
+            Did not receive the email?
+          </span>
+          <CodeResendTime
+            ref={resendRef}
+            onResendHandler={handleResendEmailCode}
+          />
         </div>
       </ContentWrapper>
     </>

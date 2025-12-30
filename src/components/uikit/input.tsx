@@ -1,9 +1,19 @@
-import React, { useState, InputHTMLAttributes, ReactElement, forwardRef } from 'react'
-import { cn } from '@/utilities/ui'
-import { EyeClosed, EyeOpen, Info } from '@/components/uikit/icons'
+import React, {
+  useState,
+  InputHTMLAttributes,
+  ReactElement,
+  forwardRef,
+} from "react";
+import { cn } from "@/utilities/ui";
+import {
+  EyeClosed,
+  EyeOpen,
+  IconComponent,
+  Info,
+} from "@/components/uikit/icons";
 
 interface InputProp extends React.InputHTMLAttributes<HTMLInputElement> {
-  className?: string
+  className?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProp>(
@@ -17,27 +27,27 @@ export const Input = forwardRef<HTMLInputElement, InputProp>(
         {...props}
         data-slot="input"
         className={cn(
-          'px-4 py-3 font-roboto text-[14px]/[16.6px] text-neutral-dark placeholder:text-neutral-midlight selection:bg-primary-light border-[2px] border-border-default h-11 w-full min-w-0 rounded-md bg-transparent shadow-xs transition-[color,border] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-surface-disable disabled:opacity-60',
-          'focus-visible:border-primary',
-          'file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium ',
-          'aria-invalid:ring-destructive/20 aria-invalid:text-destructive aria-invalid:border-destructive',
-          className,
+          "px-4 py-3 font-roboto text-[14px]/[16.6px] text-neutral-dark placeholder:text-neutral-midlight selection:bg-primary-light border-[2px] border-border-default h-11 w-full min-w-0 rounded-md bg-transparent shadow-xs transition-[color,border] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-surface-disable disabled:opacity-60",
+          "focus-visible:border-primary",
+          "file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium ",
+          "aria-invalid:ring-destructive/20 aria-invalid:text-destructive aria-invalid:border-destructive",
+          className
         )}
       />
-    )
-  },
-)
+    );
+  }
+);
 
-Input.displayName = 'Input'
+Input.displayName = "Input";
 
 interface LabeledInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label?: string
-  required?: boolean
-  icon?: (props: React.SVGProps<SVGSVGElement>) => ReactElement
-  badge?: string
-  helpText?: string
-  className?: string
-  error?: boolean
+  label?: string;
+  required?: boolean;
+  icon?: IconComponent;
+  badge?: string;
+  helpText?: string;
+  className?: string;
+  error?: boolean;
 }
 
 export function LabeledInput({
@@ -46,25 +56,29 @@ export function LabeledInput({
   icon: Icon,
   badge,
   helpText,
-  type = 'text',
+  type = "text",
   placeholder,
   className,
   disabled = false,
   error = false,
   ...props
 }: LabeledInputProps) {
-  const [visible, setVisible] = useState(false)
-  const isPassword = type === 'password'
-  const inputType = isPassword ? (visible ? 'text' : 'password') : type
+  const [visible, setVisible] = useState(false);
+  const isPassword = type === "password";
+  const inputType = isPassword ? (visible ? "text" : "password") : type;
 
   return (
-    <div className={cn('flex flex-col gap-2 font-roboto', className)}>
+    <div className={cn("flex flex-col gap-2 font-roboto", className)}>
       {/* Label */}
       {label && (
         <div className="flex items-center gap-1">
-          <p className="label-regular data-[error=true]:text-destructive label-regular">{label}</p>
+          <p className="label-regular data-[error=true]:text-destructive label-regular">
+            {label}
+          </p>
           {required && (
-            <p className="text-sm font-medium text-attention-default-default text-red-500">*</p>
+            <p className="text-sm font-medium text-attention-default-default text-red-500">
+              *
+            </p>
           )}
         </div>
       )}
@@ -85,16 +99,16 @@ export function LabeledInput({
         {badge && (
           <div
             className={cn(
-              'absolute inset-y-0 end-0 flex items-center',
-              isPassword ? 'pr-11' : 'pr-4',
+              "absolute inset-y-0 end-0 flex items-center",
+              isPassword ? "pr-11" : "pr-4"
             )}
           >
             <span
               className={cn(
-                'px-1 py-[1px] rounded text-sm font-medium',
+                "px-1 py-[1px] rounded text-sm font-medium",
                 disabled
-                  ? 'text-neutral-midlight bg-transparent cursor-not-allowed'
-                  : 'text-primary-dark bg-primary-lightest',
+                  ? "text-neutral-midlight bg-transparent cursor-not-allowed"
+                  : "text-primary-dark bg-primary-lightest"
               )}
             >
               {badge}
@@ -119,7 +133,11 @@ export function LabeledInput({
           type={inputType}
           placeholder={placeholder}
           disabled={disabled}
-          className={`${Icon ? 'pl-11' : 'pl-3'} ${error ? 'border-attention-default focus-visible:border-attention' : ''}`}
+          className={`${Icon ? "pl-11" : "pl-3"} ${
+            error
+              ? "border-attention-default focus-visible:border-attention"
+              : ""
+          }`}
           {...props}
         />
       </div>
@@ -127,18 +145,20 @@ export function LabeledInput({
       {/* Help text */}
       {helpText && (
         <div
-          className={`aria-invalid:text-destructive flex items-center gap-1 [&_svg:not([class*='size-'])]:size-[12px] text-2xs/[19px] font-regular ${error ? 'text-attention-default' : 'text-neutral-dark'}`}
+          className={`aria-invalid:text-destructive flex items-center gap-1 [&_svg:not([class*='size-'])]:size-[12px] text-2xs/[19px] font-regular ${
+            error ? "text-attention-default" : "text-neutral-dark"
+          }`}
         >
           <Info />
           <p>{helpText}</p>
         </div>
       )}
     </div>
-  )
+  );
 }
 
 interface LabeledInputWithCodeProps extends LabeledInputProps {
-  code?: string
+  code?: string;
 }
 
 export function LabeledInputWithCode({
@@ -146,31 +166,41 @@ export function LabeledInputWithCode({
   required = false,
   icon: Icon,
   badge,
-  code = '+61',
+  code = "+61",
   helpText,
-  type = 'text',
+  type = "text",
   placeholder,
   className,
   disabled = false,
   error = false,
   ...props
 }: LabeledInputWithCodeProps) {
-  const [visible, setVisible] = React.useState(false)
-  const isPassword = type === 'password'
+  const [visible, setVisible] = React.useState(false);
+  const isPassword = type === "password";
   // console.log("is password: " + isPassword);
-  const inputType = isPassword ? (visible ? 'text' : 'password') : type
+  const inputType = isPassword ? (visible ? "text" : "password") : type;
 
   // Calculate padding to accommodate icons/badge
-  const leftPadding = Icon ? 'pl-11' : 'pl-3'
-  const rightPadding = isPassword ? (badge ? 'pr-30' : 'pr-10') : badge ? 'pr-1' : 'pr-3'
+  const leftPadding = Icon ? "pl-11" : "pl-3";
+  const rightPadding = isPassword
+    ? badge
+      ? "pr-30"
+      : "pr-10"
+    : badge
+    ? "pr-1"
+    : "pr-3";
 
   return (
-    <div className={cn('flex flex-col gap-2 font-roboto', className)}>
+    <div className={cn("flex flex-col gap-2 font-roboto", className)}>
       {/* Label */}
       {label && (
         <div className="flex items-center gap-1">
-          <p className="text-xs/[16.5px] font-medium text-neutral-dark">{label}</p>
-          {required && <p className="text-sm font-medium text-attention-default">*</p>}
+          <p className="text-xs/[16.5px] font-medium text-neutral-dark">
+            {label}
+          </p>
+          {required && (
+            <p className="text-sm font-medium text-attention-default">*</p>
+          )}
         </div>
       )}
 
@@ -187,16 +217,16 @@ export function LabeledInputWithCode({
         {badge && (
           <div
             className={cn(
-              'absolute inset-y-0 end-0 flex items-center',
-              isPassword ? 'pr-11' : 'pr-4',
+              "absolute inset-y-0 end-0 flex items-center",
+              isPassword ? "pr-11" : "pr-4"
             )}
           >
             <span
               className={cn(
-                'px-1 py-[1px] rounded text-sm font-medium',
+                "px-1 py-[1px] rounded text-sm font-medium",
                 disabled
-                  ? 'text-neutral-midlight bg-transparent cursor-not-allowed'
-                  : 'text-primary-dark bg-primary-lightest',
+                  ? "text-neutral-midlight bg-transparent cursor-not-allowed"
+                  : "text-primary-dark bg-primary-lightest"
               )}
             >
               {badge}
@@ -228,7 +258,11 @@ export function LabeledInputWithCode({
             disabled={disabled}
             type={inputType}
             placeholder={placeholder}
-            className={`${Icon ? 'pl-11' : 'pl-3'} ${error ? 'border-attention-default focus-visible:border-attention' : ''} flex-1 rounded-none rounded-r-md`}
+            className={`${Icon ? "pl-11" : "pl-3"} ${
+              error
+                ? "border-attention-default focus-visible:border-attention"
+                : ""
+            } flex-1 rounded-none rounded-r-md`}
             {...props}
           />
         </div>
@@ -237,12 +271,14 @@ export function LabeledInputWithCode({
       {/* Help text */}
       {helpText && (
         <div
-          className={`flex items-center gap-1 [&_svg:not([class*='size-'])]:size-[12px] text-2xs/[19px] font-regular ${error ? 'text-attention-default' : 'text-neutral-dark'}`}
+          className={`flex items-center gap-1 [&_svg:not([class*='size-'])]:size-[12px] text-2xs/[19px] font-regular ${
+            error ? "text-attention-default" : "text-neutral-dark"
+          }`}
         >
           <Info />
           <p>{helpText}</p>
         </div>
       )}
     </div>
-  )
+  );
 }
