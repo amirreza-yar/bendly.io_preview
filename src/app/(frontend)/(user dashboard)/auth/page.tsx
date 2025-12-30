@@ -12,6 +12,7 @@ import {
 } from "@/components/dashboard/auth/forms";
 import api from "@/lib/axios";
 import { Tabs, TabsContent } from "@radix-ui/react-tabs";
+import { MainLogo } from "@/components/uikit/icons";
 
 const AuthPage = () => {
   const router = useRouter();
@@ -74,8 +75,11 @@ const AuthPage = () => {
 
   return (
     <>
-      <HeaderWithCenterTitle title="Logo" />
       <Tabs value={tabValue} onValueChange={setTabValue}>
+        <div className="absolute flex items-center gap-2 mx-auto left-1/2 -translate-x-1/2 top-6 text-[16px] font-semibold z-10">
+          <MainLogo className="size-6 text-black" />
+          Bendly.io
+        </div>
         <TabsContent value="login-tab">
           <ContentWrapper className="pt-30 md:pt-0 md:flex items-center">
             <div className="flex flex-col max-w-[450px] mx-auto h-fit grow">

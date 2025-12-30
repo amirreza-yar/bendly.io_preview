@@ -254,7 +254,7 @@ export const LoginForm = ({
               </FormControl>
               <FormMessage />
               <Link
-                href=""
+                href="/auth/reset-password"
                 className="text-primary label-regular justify-self-end"
               >
                 Forgot password?

@@ -5,8 +5,8 @@ import Link from "next/link";
 export default function EmailVerifiedPage() {
   return (
     <div className="flex h-full w-full items-center justify-center relative">
-      <div className="absolute flex items-center gap-2 mx-auto top-4 text-[14px] font-semibold">
-        <MainLogo className="size-6 text-primary" />
+      <div className="absolute flex items-center gap-2 mx-auto top-6 text-[16px] font-semibold">
+        <MainLogo className="size-6 text-black" />
         Bendly.io
       </div>
 
