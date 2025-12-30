@@ -6,8 +6,6 @@ import { Separator } from "@/components/ui/separator";
 import { Header } from "@/components/dashboard/header";
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import { Footer } from "@/components/dashboard/footer";
-import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "@/lib/db/appDB";
 import useSWR from "swr";
 import { fetcher } from "@/lib/axios";
 
@@ -28,12 +26,12 @@ export default function AccountPage() {
             />
             <Separator />
           </Link>
-          <Link href="#" className="opacity-40">
+          <Link href="/dashboard/account/edit/phone">
             <ButtonListItem
               text="Mobile Number"
-              caption={data?.phone ? `+${data?.phone}` : "Not set"}
-              badgeText={data?.phone ? "Verified" : "Not Set"}
-              badgeColor={data?.phone ? "green" : "red"}
+              caption={data?.phone ? `${data?.phone}` : "Not set"}
+              // badgeText={data?.phone ? "Verified" : "Not Set"}
+              // badgeColor={data?.phone ? "green" : "red"}
               loading={isLoading}
             />
           </Link>

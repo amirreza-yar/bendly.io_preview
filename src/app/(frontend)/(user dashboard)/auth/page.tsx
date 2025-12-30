@@ -53,8 +53,9 @@ const AuthPage = () => {
         email: data.email.toLowerCase(),
         first_name: firstName,
         last_name: lastName,
-        password1: data.password,
-        password2: data.password,
+        password1: data.password1,
+        password2: data.password2,
+        phone: `+61${data.phone}`,
       });
 
       toast("Verification email sent ");

@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/uikit/form";
 import { Button } from "@/components/uikit/buttons/button";
 import { useState } from "react";
-import api from "@/lib/axios";
+import api, { fetcher } from "@/lib/axios";
 import { toast } from "sonner";
 import { Footer } from "@/components/dashboard/footer";
 import {
@@ -18,6 +18,7 @@ import {
   JobRefFormTab,
   RecipientFormTab,
 } from "@/components/dashboard/jobReference/tabs";
+import useSWR from "swr";
 
 const NewJobRefFormSchema = z.object({
   code: z.string("Code is required").nonempty("Job reference code is required"),
@@ -58,19 +59,21 @@ const NewJobRefFormSchema = z.object({
 
   phone: z
     .string("Phone number is required")
-    .regex(/^\d{10}$/, "Enter a valid phone number"),
+    .regex(/^[2-478]\d{8}$/, "Enter a valid phone number"),
 });
 
 export type NewJobRefFormValues = z.infer<typeof NewJobRefFormSchema>;
 
 export default function NewAddressPage() {
-  const { jobId } = useParams<{ jobId: string }>();
-
   const [tabValue, setTabValue] = useState("job-tab");
 
   const newJobRefForm = useForm<NewJobRefFormValues>({
     resolver: zodResolver(NewJobRefFormSchema),
   });
+
+  const { data: userInfo } = useSWR("/a/profile/", fetcher);
+
+  console.log(userInfo);
 
   const router = useRouter();
 
@@ -87,7 +90,7 @@ export default function NewAddressPage() {
             state: data.state,
             postcode: data.postcode,
             recipient_name: data.name,
-            recipient_phone: data.phone,
+            recipient_phone: `+61${data.phone}`,
           },
         ],
       });
@@ -183,6 +186,7 @@ export default function NewAddressPage() {
               recipientForm={newJobRefForm}
               showAddress={true}
               onAddressCardClick={() => setTabValue("address-tab")}
+              userInfo={userInfo}
               Header={
                 <>
                   <Header

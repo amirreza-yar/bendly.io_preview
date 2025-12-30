@@ -17,7 +17,7 @@ import {
   InputOTPSlot,
 } from "@/components/uikit/inputOTP";
 import z from "zod";
-import { LabeledInput } from "@/components/uikit/input";
+import { LabeledInput, LabeledInputWithCode } from "@/components/uikit/input";
 import { useEffect } from "react";
 import { Checkbox } from "@/components/uikit/checkbox";
 import Link from "next/link";
@@ -271,42 +271,48 @@ export const LoginForm = ({
   );
 };
 
-const CreateAccountFormSchema = z.object({
-  password: z
-    .string("Please enter your password.")
-    .min(8, "Password must be at least 8 characters long.")
-    .max(64, "Password must be at most 64 characters long.")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
-    .regex(/[0-9]/, "Password must contain at least one number.")
-    .regex(
-      /[^a-zA-Z0-9]/,
-      "Password must contain at least one special character."
-    ),
-  email: z
-    .string("Please enter your email address.")
-    .trim()
-    .email("Please enter a valid email address.")
-    .regex(
-      /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
-      "Please enter a valid email address."
-    ),
-  fullName: z
-    .string()
-    .nonempty("Full name is required")
-    .regex(/^[a-zA-Z ]+$/, "Full name must contain letters only")
-    .max(50, "Full name is 50 characters max"),
+const CreateAccountFormSchema = z
+  .object({
+    password1: z
+      .string("Please enter your password.")
+      .min(8, "Password must be at least 8 characters long.")
+      .max(64, "Password must be at most 64 characters long.")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
+      .regex(/[0-9]/, "Password must contain at least one number.")
+      .regex(
+        /[^a-zA-Z0-9]/,
+        "Password must contain at least one special character."
+      ),
+    password2: z.string("Please confirm your password."),
+    email: z
+      .string("Please enter your email address.")
+      .trim()
+      .email("Please enter a valid email address.")
+      .regex(
+        /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
+        "Please enter a valid email address."
+      ),
+    fullName: z
+      .string()
+      .nonempty("Full name is required")
+      .regex(/^[a-zA-Z ]+$/, "Full name must contain letters only")
+      .max(50, "Full name is 50 characters max"),
 
-  // phone: z
-  //   .string()
-  //   .nonempty('Mobile number is required')
-  //   .regex(/^\d{10}$/, 'Mobile number must be 10 digits'),
-  terms: z
-    .boolean("Terms & Conditions must be accepted")
-    .refine((val) => val === true, {
-      message: "Terms & Conditions must be accepted",
-    }),
-});
+    phone: z
+      .string()
+      .nonempty("Mobile number is required")
+      .regex(/^[2-478]\d{8}$/, "Enter a valid phone number"),
+    terms: z
+      .boolean("Terms & Conditions must be accepted")
+      .refine((val) => val === true, {
+        message: "Terms & Conditions must be accepted",
+      }),
+  })
+  .refine((data) => data.password1 === data.password2, {
+    message: "Passwords do not match",
+    path: ["password2"], // attach the error to password2 field
+  });
 
 export type CreateAccountFormValues = z.infer<typeof CreateAccountFormSchema>;
 
@@ -369,7 +375,7 @@ export const CreateAccountForm = ({
           )}
         />
 
-        {/* <FormField
+        <FormField
           control={form.control}
           name="phone"
           render={({ field }) => (
@@ -383,17 +389,17 @@ export const CreateAccountForm = ({
                   type="number"
                   placeholder="e.g., 400123456"
                   {...field}
-                  value={field.value ?? ''}
+                  value={field.value ?? ""}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
-        /> */}
+        />
 
         <FormField
           control={form.control}
-          name="password"
+          name="password1"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex gap-2 label-regular">
@@ -412,6 +418,29 @@ export const CreateAccountForm = ({
               <FormMessage>
                 Use 8+ characters with letters, numbers, and symbols
               </FormMessage>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="password2"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex gap-2 label-regular">
+                Password Confirmation
+                <span className="text-[#E50000]">*</span>
+              </FormLabel>
+              <FormControl>
+                <LabeledInput
+                  icon={PasswordField}
+                  placeholder="Your Password Confirmation"
+                  type="password"
+                  {...field}
+                  value={field.value ?? ""}
+                />
+              </FormControl>
+              <FormMessage>Password confirmation</FormMessage>
             </FormItem>
           )}
         />

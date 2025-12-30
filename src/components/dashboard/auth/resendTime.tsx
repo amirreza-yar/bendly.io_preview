@@ -1,50 +1,56 @@
-'use client'
+"use client";
 
-import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react'
+import {
+  useEffect,
+  useState,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 
-const RESEND_TIMEOUT = Number(process.env.NEXT_PUBLIC_RESEND_TIMEOUT)
+const RESEND_TIMEOUT = Number(process.env.NEXT_PUBLIC_RESEND_TIMEOUT ?? 60);
 
 export interface CodeResendTimeHandle {
-  resetTimer: () => void
+  resetTimer: () => void;
 }
 
 interface Props {
-  onResendHandler: () => void
+  onResendHandler: () => void;
 }
 
 export const CodeResendTime = forwardRef<CodeResendTimeHandle, Props>(
   ({ onResendHandler }, ref) => {
-    const [resendTimer, setResendTimer] = useState<number>(RESEND_TIMEOUT)
-    const intervalRef = useRef<number | null>(null)
+    const [resendTimer, setResendTimer] = useState<number>(RESEND_TIMEOUT);
+    const intervalRef = useRef<number | null>(null);
 
     const startTimer = () => {
-      setResendTimer(RESEND_TIMEOUT)
-      if (intervalRef.current) clearInterval(intervalRef.current)
+      setResendTimer(RESEND_TIMEOUT);
+      if (intervalRef.current) clearInterval(intervalRef.current);
 
       intervalRef.current = window.setInterval(() => {
         setResendTimer((t) => {
           if (t <= 1) {
-            if (intervalRef.current) clearInterval(intervalRef.current)
-            intervalRef.current = null
-            return 0
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            return 0;
           }
-          return t - 1
-        })
-      }, 1000)
-    }
+          return t - 1;
+        });
+      }, 1000);
+    };
 
     // Cleanup
     useEffect(() => {
-      startTimer()
+      startTimer();
       return () => {
-        if (intervalRef.current) clearInterval(intervalRef.current)
-      }
-    }, [])
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      };
+    }, []);
 
     // Expose reset function to parent
     useImperativeHandle(ref, () => ({
       resetTimer: startTimer,
-    }))
+    }));
 
     return (
       <button
@@ -52,10 +58,10 @@ export const CodeResendTime = forwardRef<CodeResendTimeHandle, Props>(
         onClick={onResendHandler}
         disabled={resendTimer > 0}
       >
-        {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend'}
+        {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend"}
       </button>
-    )
-  },
-)
+    );
+  }
+);
 
-CodeResendTime.displayName = 'CodeResendTime'
+CodeResendTime.displayName = "CodeResendTime";

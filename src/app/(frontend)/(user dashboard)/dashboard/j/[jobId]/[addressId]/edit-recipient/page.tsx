@@ -1,26 +1,12 @@
 "use client";
 import { useForm } from "react-hook-form";
-import {
-  ArrowLeft,
-  Edit,
-  Info,
-  MapMarker,
-  Ruler,
-  XIcon,
-} from "@/components/uikit/icons";
 import { LabeledInput, LabeledInputWithCode } from "@/components/uikit/input";
 import { Button } from "@/components/uikit/buttons/button";
-import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RadioGroup, RadioGroupItem } from "@/components/uikit/radioGroup";
-import { Drawer, DrawerClose } from "@/components/uikit/drawer";
-import { useEffect, useState } from "react";
-import { notFound, redirect, useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { jobReferences } from "@/utilities/demo_datas/demoJobRefData";
-import { useGETJobRefAddressByIds } from "@/lib/db/helpers/jobRefHelpers";
 import { Header } from "@/components/dashboard/header";
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import {
@@ -28,13 +14,12 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/uikit/form";
 import { Footer } from "@/components/dashboard/footer";
-import { RecipientForm } from "@/components/dashboard/jobReference/forms";
 import useSWR from "swr";
 import api, { fetcher } from "@/lib/axios";
+import { useEffect } from "react";
 
 const recipientInfoSchema = z.object({
   name: z
@@ -44,18 +29,18 @@ const recipientInfoSchema = z.object({
 
   phone: z
     .string("Phone number is required")
-    .regex(/^\d{10}$/, "Enter a valid phone number"),
+    .regex(/^[2-478]\d{8}$/, "Enter a valid phone number"),
 });
 
 type RecipientInfoValues = z.infer<typeof recipientInfoSchema>;
 
-export default function JobReferencesPage({}) {
+export default function EditRecipientPage({}) {
   const { jobId, addressId } = useParams<{
     jobId: string;
     addressId: string;
   }>();
 
-  const { data, error, isLoading } = useSWR(
+  const { data: recipientData } = useSWR(
     `/a/job-ref/${jobId}/address/${addressId}`,
     fetcher,
     {
@@ -63,21 +48,29 @@ export default function JobReferencesPage({}) {
     }
   );
 
+  const { data: userInfo } = useSWR("/a/profile/", fetcher);
+
   const router = useRouter();
 
   const recipientInfoForm = useForm<RecipientInfoValues>({
     resolver: zodResolver(recipientInfoSchema),
-    defaultValues: {
-      name: data.recipient_name,
-      phone: data.recipient_phone,
-    },
   });
+
+  useEffect(() => {
+    if (!recipientData || !recipientInfoForm) return;
+
+    recipientInfoForm.setValue(
+      "phone",
+      String(recipientData?.recipient_phone)?.slice(2)
+    );
+    recipientInfoForm.setValue("name", recipientData?.recipient_name);
+  }, [recipientInfoForm, recipientData]);
 
   const onRecipientInfoFormSubmit = async (data: RecipientInfoValues) => {
     try {
       await api.patch(`/a/job-ref/${jobId}/address/${addressId}/`, {
         recipient_name: data.name,
-        recipient_phone: data.phone,
+        recipient_phone: `+61${data.phone}`,
       });
 
       toast("Recipient Updated");
@@ -101,8 +94,14 @@ export default function JobReferencesPage({}) {
               variant="ghost"
               size="default"
               onClick={() => {
-                recipientInfoForm.setValue("name", "Amirreza Yarahmadi");
-                recipientInfoForm.setValue("phone", "1231231231");
+                recipientInfoForm.setValue(
+                  "name",
+                  `${userInfo?.first_name} ${userInfo?.last_name}`
+                );
+                recipientInfoForm.setValue(
+                  "phone",
+                  String(userInfo?.phone).slice(2)
+                );
               }}
             >
               Set my info

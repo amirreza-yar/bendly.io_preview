@@ -9,7 +9,6 @@ import JobRefCard from "@/components/uikit/cards/jobRefCard";
 import DividerWithText from "@/components/uikit/dividerWithText";
 import {
   ChevronRight,
-  Edit,
   HomeMenu,
   Info,
   NewOrder,
@@ -17,25 +16,21 @@ import {
 } from "@/components/uikit/icons";
 import Link from "next/link";
 import BottomNav from "@/components/dashboard/bottomNav";
-import { useEffect, useRef } from "react";
-import { useGETAllJobRefs } from "@/lib/db/helpers/jobRefHelpers";
-import {
-  deleteAllDraftFlashings,
-  initNewFlashing,
-} from "@/lib/db/helpers/flashingHelpers";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import { fetcher } from "@/lib/axios";
+import api, { fetcher } from "@/lib/axios";
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import FlashingSVG from "@/components/utils/flashingSVG";
 import { Hash, PencilRuler } from "lucide-react";
 import { timeAgo } from "@/utilities/datetime";
+import { toast } from "sonner";
 
 export default function Page() {
   const router = useRouter();
   const { data: jobReferences } = useSWR("/a/job-ref/", fetcher);
 
-  const { data: cart } = useSWR("/a/cart/", fetcher);
+  const { data: cart, mutate: mutateCart } = useSWR("/a/cart/", fetcher);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -56,6 +51,17 @@ export default function Page() {
     router.push(`/f/material`);
   };
 
+  const onDiscardCart = async () => {
+    try {
+      await api.post("/a/cart/discard-cart/");
+
+      toast("Card discarded");
+      mutateCart();
+    } catch (err: any) {
+      toast("Something went wrong");
+    }
+  };
+
   return (
     <>
       <header className="fixed top-0 left-0 w-full h-14 flex items-center justify-center z-10 bg-white">
@@ -68,7 +74,7 @@ export default function Page() {
       </header>
       <ContentWrapper className="h-full flex flex-col items-center justify-center w-full mx-auto max-w-100">
         {cart && cart.flashings[0] ? (
-          <div className="flex flex-col gap-3 border-1 border-primary/70 rounded-md w-full p-4">
+          <div className="flex flex-col gap-3 border-1 border-primary/70 rounded-md p-4 max-w-100 w-full">
             <h5>Resume Your Order</h5>
 
             <div className="flex items-center gap-2 label-small">
@@ -108,7 +114,7 @@ export default function Page() {
               Resume Order
             </Button>
 
-            <Button variant="secondary" onClick={() => router.replace("/cart")}>
+            <Button variant="secondary" onClick={() => onDiscardCart()}>
               Discard
             </Button>
           </div>
@@ -156,20 +162,22 @@ export default function Page() {
                   className="w-full"
                 >
                   <CarouselContent className="-ml-4">
-                    {jobReferences.results.slice(0, 5).map((item, index) => (
-                      <CarouselItem key={index} className="pt-1">
-                        <Link href={`/dashboard/j/${item.id}`} key={index}>
-                          <JobRefCard
-                            jobRefrenceCode={item.code}
-                            jobRefrenceText={item.project_name}
-                            locationName={
-                              item.addresses?.[0]?.title || "No address"
-                            }
-                            locationAddress={item.addresses[0].full_address}
-                          />
-                        </Link>
-                      </CarouselItem>
-                    ))}
+                    {jobReferences.results
+                      .slice(0, 5)
+                      .map((item: any, index: number) => (
+                        <CarouselItem key={index} className="pt-1">
+                          <Link href={`/dashboard/j/${item.id}`} key={index}>
+                            <JobRefCard
+                              jobRefrenceCode={item.code}
+                              jobRefrenceText={item.project_name}
+                              locationName={
+                                item.addresses?.[0]?.title || "No address"
+                              }
+                              locationAddress={item.addresses[0].full_address}
+                            />
+                          </Link>
+                        </CarouselItem>
+                      ))}
                   </CarouselContent>
                 </Carousel>
               </>

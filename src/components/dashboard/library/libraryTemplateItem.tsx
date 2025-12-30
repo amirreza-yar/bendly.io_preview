@@ -1,5 +1,5 @@
 "use client";
-import { Delete, Edit, Info, More } from "@/components/uikit/icons";
+import { Delete, Edit, Info, More, Plus } from "@/components/uikit/icons";
 import { ReactNode, useState } from "react";
 import { cn } from "@/utilities/ui";
 import { Separator } from "@/components/uikit/separator";
@@ -64,14 +64,19 @@ export function LibraryTemplateItem({
   return (
     <button
       {...props}
-      onClick={() => onTemplateClick(templateId)}
       className="rounded-md border-1 border-border-default px-2 h-39"
     >
       <div className="h-full flex-col">
         <div className=" h-29 justify-center flex items-center relative">
           {children}
           {isMyTemplate && (
-            <Drawer trigger={<More className="absolute -right-1 top-2" />}>
+            <Drawer
+              trigger={
+                <div className="absolute -right-2 top-1 p-1 pl-2 pb-2 z-10">
+                  <More />
+                </div>
+              }
+            >
               <div className="flex flex-col p-6">
                 <div className="flex justify-between pb-2">
                   <p className="text-smd/[19px] font-semibold">
@@ -81,6 +86,14 @@ export function LibraryTemplateItem({
                     <XIcon className="size-6" />
                   </DrawerClose>
                 </div>
+                <button
+                  onClick={() => onTemplateClick(templateId)}
+                  className={cn("flex items-center h-12 gap-4")}
+                >
+                  <Plus />
+                  <span className="label-regular">Add to Order</span>
+                </button>
+                <Separator />
                 <AlertDialogPrimitive.Root data-slot="alert-dialog">
                   <AlertDialogPrimitive.Trigger
                     data-slot="alert-dialog-trigger"
@@ -150,7 +163,7 @@ export function LibraryTemplateItem({
                   </AlertDialogContent>
                 </AlertDialogPrimitive.Root>
 
-                <Separator className="" />
+                <Separator />
                 <AlertDialogPrimitive.Root data-slot="alert-dialog">
                   <AlertDialogPrimitive.Trigger
                     data-slot="alert-dialog-trigger"

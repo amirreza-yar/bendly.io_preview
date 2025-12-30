@@ -157,6 +157,7 @@ export const RecipientFormTab = ({
   className,
   showAddress = false,
   onAddressCardClick,
+  userInfo,
 }: {
   tabValue: string;
   recipientForm: UseFormReturn<any>;
@@ -165,6 +166,7 @@ export const RecipientFormTab = ({
   className?: string;
   showAddress?: boolean;
   onAddressCardClick?: (props: any) => void;
+  userInfo: any;
 }) => {
   const address = useWatch({
     compute: (data: any) => {
@@ -204,8 +206,14 @@ export const RecipientFormTab = ({
               size="default"
               type="button"
               onClick={() => {
-                recipientForm.setValue("name", "Amirreza Yarahmadi");
-                recipientForm.setValue("phone", "1231231231");
+                recipientForm.setValue(
+                  "name",
+                  `${userInfo?.first_name} ${userInfo?.last_name}`
+                );
+                recipientForm.setValue(
+                  "phone",
+                  String(userInfo?.phone)?.slice(2)
+                );
               }}
             >
               Set my info

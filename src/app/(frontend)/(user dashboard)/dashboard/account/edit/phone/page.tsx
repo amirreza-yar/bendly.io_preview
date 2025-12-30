@@ -1,10 +1,9 @@
 "use client";
 import { Button } from "@/components/uikit/buttons/button";
-import { LabeledInput } from "@/components/uikit/input";
+import { LabeledInputWithCode } from "@/components/uikit/input";
 import { Header } from "@/components/dashboard/header";
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import { Footer } from "@/components/dashboard/footer";
-import { useUser } from "@/providers/main_providers/UserContext";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,25 +22,19 @@ import { notFound, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 // Validation schema
-const EditFullNameFormSchema = z.object({
-  fullName: z
-    .string()
-    .nonempty("Fullname is required")
-    .regex(
-      /^[A-Za-z]+(?: [A-Za-z]+)*$/,
-      "You have digit or character in your name?"
-    )
-    .min(2, "Full name must be at least 2 characters long")
-    .max(50, "Full name must be less than 50 characters"),
+const EditPhoneFormSchema = z.object({
+  phone: z
+    .string("Phone number is required")
+    .regex(/^[2-478]\d{8}$/, "Enter a valid phone number"),
 });
 
-type EditFullNameFormValues = z.infer<typeof EditFullNameFormSchema>;
+type EditPhoneFormValues = z.infer<typeof EditPhoneFormSchema>;
 
-export default function EditNamePage() {
+export default function EditPhonePage() {
   const router = useRouter();
 
-  const form = useForm<EditFullNameFormValues>({
-    resolver: zodResolver(EditFullNameFormSchema),
+  const form = useForm<EditPhoneFormValues>({
+    resolver: zodResolver(EditPhoneFormSchema),
   });
 
   const { data, isLoading } = useSWR("/a/profile/", fetcher, {
@@ -51,23 +44,18 @@ export default function EditNamePage() {
   useEffect(() => {
     if (data) {
       form.reset({
-        fullName: `${data.first_name} ${data.last_name}`,
+        phone: `${String(data.phone).slice(2)}`,
       });
     }
   }, [data, form]);
 
-  const onSubmit = async (data: EditFullNameFormValues) => {
+  const onSubmit = async (data: EditPhoneFormValues) => {
     try {
-      const parts = data.fullName.trim().split(/\s+/);
-      const firstName = parts[0];
-      const lastName = parts.slice(1).join(" ") || "";
-
       await api.patch("/a/profile/", {
-        first_name: firstName,
-        last_name: lastName,
+        phone: `+61${data.phone}`,
       });
 
-      toast("Full Name Updated");
+      toast("Phone Updated");
       router.replace("/dashboard/account/");
     } catch (error: any) {
       toast("Something went wrong!");
@@ -87,17 +75,17 @@ export default function EditNamePage() {
           >
             <FormField
               control={form.control}
-              name="fullName"
+              name="phone"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex gap-2 label-regular">
-                    Full Name
+                    Phone number
                     <span className="text-[#E50000]">*</span>
                   </FormLabel>
                   <FormControl>
-                    <LabeledInput
-                      type="text"
-                      placeholder="Enter your full name"
+                    <LabeledInputWithCode
+                      type="number"
+                      placeholder="Enter your phone number"
                       {...field}
                       value={field.value ?? ""}
                     />

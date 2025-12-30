@@ -78,7 +78,8 @@ export async function proxy(req: NextRequest) {
   const token = req.cookies.get("auth-jwt")?.value;
   const refreshToken = req.cookies.get("auth-refresh-jwt")?.value;
 
-  if (!path.startsWith("/") || path === "/") return NextResponse.next();
+  if (!path.startsWith("/") || path === "/" || path.startsWith("/auth"))
+    return NextResponse.next();
 
   let isAuthenticated: boolean = false;
 
@@ -102,7 +103,7 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  if (path === "/auth") {
+  if (path.startsWith("/auth")) {
     if (isAuthenticated) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }

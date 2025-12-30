@@ -1,15 +1,21 @@
-import { JobReference } from '@/utilities/demo_datas/demoJobRefData'
-import { ChevronRight, Edit, MapMarker, ProfileNav, Remove } from '@/components/uikit/icons'
-import Link from 'next/link'
-import { RemoveJobRefAddressModal } from './modals'
-import { StoredAddress, StoredJobReference } from '@/types/jobReferenceTypes'
-import { AlertTriangle } from 'lucide-react'
+import { JobReference } from "@/utilities/demo_datas/demoJobRefData";
+import {
+  ChevronRight,
+  Edit,
+  MapMarker,
+  ProfileNav,
+  Remove,
+} from "@/components/uikit/icons";
+import Link from "next/link";
+import { RemoveJobRefAddressModal } from "./modals";
+import { StoredAddress, StoredJobReference } from "@/types/jobReferenceTypes";
+import { AlertTriangle } from "lucide-react";
 
 interface JobRefAddressCardProps {
-  address: StoredAddress
-  jobId: string
-  toHref?: string
-  onJobRefAddressDelete?: (addressId: string) => void
+  address: StoredAddress;
+  jobId: string;
+  toHref?: string;
+  onJobRefAddressDelete?: (addressId: string) => void;
 }
 
 export function JobRefAddressCard({
@@ -31,7 +37,8 @@ export function JobRefAddressCard({
           <div className="grid gap-1">
             <p className="label-regular truncate">{address.title}</p>
             <p className="body-small truncate">
-              {address.street_address}, {address.suburb}, {address.state} {address.postcode}{' '}
+              {address.street_address}, {address.suburb}, {address.state}{" "}
+              {address.postcode}{" "}
             </p>
           </div>
         </div>
@@ -39,7 +46,7 @@ export function JobRefAddressCard({
           <ProfileNav className="size-5 mt-[2px]" />
           <div className="grid gap-1">
             <p className="body-small truncate">
-              {address.recipient_name} {address.recipient_phone}
+              {address.recipient_name} +61{address.recipient_phone}
             </p>
           </div>
         </div>
@@ -56,14 +63,17 @@ export function JobRefAddressCard({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 interface JobRefInfoCardProps {
-  jobReference: StoredJobReference | null
+  jobReference: StoredJobReference | null;
 }
 
-export function JobRefInfoCard({ jobReference, ...props }: JobRefInfoCardProps) {
+export function JobRefInfoCard({
+  jobReference,
+  ...props
+}: JobRefInfoCardProps) {
   return (
     <Link
       {...props}
@@ -77,7 +87,7 @@ export function JobRefInfoCard({ jobReference, ...props }: JobRefInfoCardProps) 
         <div className="flex gap-2 truncate">{jobReference?.project_name}</div>
       </div>
     </Link>
-  )
+  );
 }
 
 export function JobRefCard({
@@ -85,10 +95,10 @@ export function JobRefCard({
   toHref,
   ...props
 }: {
-  job: StoredJobReference | null
-  toHref?: string
+  job: StoredJobReference | null;
+  toHref?: string;
 }) {
-  const href = toHref ? toHref : `/dashboard/j/${job?.id}`
+  const href = toHref ? toHref : `/dashboard/j/${job?.id}`;
   return (
     <Link
       {...props}
@@ -109,8 +119,9 @@ export function JobRefCard({
               <div className="flex flex-col gap-1 truncate">
                 <p className="label-regular">{job?.addresses?.[0]?.title}</p>
                 <p className="body-small">
-                  {job?.addresses?.[0]?.streetAddress}, {job?.addresses?.[0]?.suburb},{' '}
-                  {job?.addresses?.[0]?.state} {job?.addresses?.[0]?.postcode}
+                  {job?.addresses?.[0]?.streetAddress},{" "}
+                  {job?.addresses?.[0]?.suburb}, {job?.addresses?.[0]?.state}{" "}
+                  {job?.addresses?.[0]?.postcode}
                 </p>
               </div>
             </div>
@@ -146,11 +157,13 @@ export function JobRefCard({
             <AlertTriangle className="size-5 mt-0.5" />
             <div className="grid">
               <p className="label-large">Associated addresses deleted</p>
-              <p className="body-small">Add an address to continue or delete this Job Reference.</p>
+              <p className="body-small">
+                Add an address to continue or delete this Job Reference.
+              </p>
             </div>
           </div>
         </>
       )}
     </Link>
-  )
+  );
 }
