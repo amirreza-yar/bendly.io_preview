@@ -25,22 +25,26 @@ const processQueue = (error: any) => {
   failedQueue = [];
 };
 
+const clearAuthCookies = () => {
+  document.cookie = "auth-jwt=; Max-Age=0; path=/";
+  document.cookie = "auth-refresh-jwt=; Max-Age=0; path=/";
+};
+
 export const setupAxiosInterceptor = () => {
   api.interceptors.response.use(
     (response) => response,
     async (error) => {
       const originalRequest = error.config;
 
-      // Ignore requests that already retried
-      if (!originalRequest || originalRequest._retry)
+      if (!originalRequest || originalRequest._retry) {
         return Promise.reject(error);
+      }
 
       if (
-        error.response?.status === 401 &&
+        (error.response?.status === 401 || error.response?.status === 401) &&
         !originalRequest.url.includes("/auth/token/refresh/")
       ) {
         if (isRefreshing) {
-          // Queue the request until refresh finished
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject, config: originalRequest });
           });
@@ -50,26 +54,27 @@ export const setupAxiosInterceptor = () => {
         originalRequest._retry = true;
 
         try {
-          // Call refresh endpoint (browser automatically sends cookies)
           await api.post("/auth/token/refresh/");
 
           isRefreshing = false;
           processQueue(null);
 
-          // Retry original request
           return api(originalRequest);
         } catch (refreshError) {
           isRefreshing = false;
           processQueue(refreshError);
 
-          // Logout & redirect
           try {
             await api.post("/auth/logout/");
           } catch {
-            // ignore logout errors
+            // logout failed, fine, we go nuclear
+            if (typeof window !== "undefined") {
+              clearAuthCookies();
+            }
           }
 
           if (typeof window !== "undefined") {
+            clearAuthCookies();
             window.location.href = "/auth";
           }
 

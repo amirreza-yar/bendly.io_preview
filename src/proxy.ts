@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { decodeJwt } from "jose";
 
 const onRedirectToLogin = async (req: NextRequest) => {
+  console.log("redirected to login");
   const res = NextResponse.redirect(new URL("/auth", req.url));
 
   res.cookies.set("auth-jwt", "", { path: "/", maxAge: 0 });
