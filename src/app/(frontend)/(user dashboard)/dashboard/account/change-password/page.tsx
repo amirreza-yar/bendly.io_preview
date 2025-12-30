@@ -23,8 +23,9 @@ import { useRouter } from "next/navigation";
 // Validation schema
 const ChangePasswordFormSchema = z
   .object({
+    old_password: z.string("Please enter your old password"),
     new_password1: z
-      .string("Please enter your password.")
+      .string("Please enter your new password.")
       .min(8, "Password must be at least 8 characters long.")
       .max(64, "Password must be at most 64 characters long.")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
@@ -46,13 +47,14 @@ type ChangePasswordFormValues = z.infer<typeof ChangePasswordFormSchema>;
 export default function ChangePasswordPage() {
   const router = useRouter();
 
-  const ChangePasswordForm = useForm<ChangePasswordFormValues>({
+  const changePasswordForm = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(ChangePasswordFormSchema),
   });
 
   const onSubmit = async (data: ChangePasswordFormValues) => {
     try {
       await api.post("/auth/password/change/", {
+        old_password: data.old_password,
         new_password1: data.new_password1,
         new_password2: data.new_password2,
       });
@@ -60,7 +62,11 @@ export default function ChangePasswordPage() {
       toast("Password changed Updated");
       router.replace("/dashboard/account/");
     } catch (error: any) {
-      toast("Something went wrong!");
+      if (error.response.data.old_password) {
+        changePasswordForm.setError("old_password", {
+          message: "Your password is incorrect",
+        });
+      } else toast("Something went wrong!");
     }
   };
 
@@ -69,14 +75,36 @@ export default function ChangePasswordPage() {
       <Header title="Change Password" returnHref="/dashboard/account" />
       <ContentWrapper className="pt-18">
         {/* Give form an ID so Footer button can reference it */}
-        <Form {...ChangePasswordForm}>
+        <Form {...changePasswordForm}>
           <form
             id="edit-name-form"
             className="grid gap-6"
-            onSubmit={ChangePasswordForm.handleSubmit(onSubmit)}
+            onSubmit={changePasswordForm.handleSubmit(onSubmit)}
           >
             <FormField
-              control={ChangePasswordForm.control}
+              control={changePasswordForm.control}
+              name="old_password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex gap-2 label-regular">
+                    Current Password
+                    <span className="text-[#E50000]">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <LabeledInput
+                      icon={PasswordField}
+                      placeholder="Your Current Password"
+                      type="password"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormMessage>Your current password</FormMessage>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={changePasswordForm.control}
               name="new_password1"
               render={({ field }) => (
                 <FormItem>
@@ -87,7 +115,7 @@ export default function ChangePasswordPage() {
                   <FormControl>
                     <LabeledInput
                       icon={PasswordField}
-                      placeholder="Your Password"
+                      placeholder="Your New Password"
                       type="password"
                       {...field}
                       value={field.value ?? ""}
@@ -100,7 +128,7 @@ export default function ChangePasswordPage() {
               )}
             />
             <FormField
-              control={ChangePasswordForm.control}
+              control={changePasswordForm.control}
               name="new_password2"
               render={({ field }) => (
                 <FormItem>
@@ -111,7 +139,7 @@ export default function ChangePasswordPage() {
                   <FormControl>
                     <LabeledInput
                       icon={PasswordField}
-                      placeholder="Your Password Confirmation"
+                      placeholder="Your New Password Confirmation"
                       type="password"
                       {...field}
                       value={field.value ?? ""}
