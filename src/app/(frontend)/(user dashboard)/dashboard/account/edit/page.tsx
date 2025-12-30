@@ -29,7 +29,7 @@ export default function AccountPage() {
           <Link href="/dashboard/account/edit/phone">
             <ButtonListItem
               text="Mobile Number"
-              caption={data?.phone ? `${data?.phone}` : "Not set"}
+              caption={data?.phone ? `+${data?.phone}` : "Not set"}
               // badgeText={data?.phone ? "Verified" : "Not Set"}
               // badgeColor={data?.phone ? "green" : "red"}
               loading={isLoading}
