@@ -22,7 +22,9 @@ import useSWR from "swr";
 
 const NewJobRefFormSchema = z.object({
   code: z.string("Code is required").nonempty("Job reference code is required"),
-  projectName: z.string().optional(),
+  projectName: z
+    .string("Project name is required")
+    .nonempty("Project name is required"),
   title: z
     .string("Address Title / Site Name is required")
     .nonempty("Address Title / Site Name is required")
@@ -107,7 +109,19 @@ export default function NewAddressPage() {
       const validation = await newJobRefForm.trigger(["code", "projectName"]);
 
       if (validation) {
-        setTabValue("address-tab");
+        try {
+          await api.post(`/a/job-ref/`, {
+            code: newJobRefForm.getValues("code"),
+          });
+        } catch (error: any) {
+          if (error.response.data.code) {
+            newJobRefForm.setError("code", {
+              message: "You already have a job refrence with this code",
+            });
+          } else {
+            setTabValue("address-tab");
+          }
+        }
       }
     } else if (tabValue === "address-tab") {
       const validation = await newJobRefForm.trigger([
