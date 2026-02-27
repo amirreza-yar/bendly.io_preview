@@ -280,46 +280,6 @@ export default function LibraryPage() {
     }
   };
 
-  // const onTemplateEditName = async (data: { id: number; name: string }) => {
-  //   try {
-  //     await api.patch(`/a/template/${data.id}/`, {
-  //       name: data.name,
-  //     });
-  //     mutateTemplates();
-  //   } catch (err: any) {
-  //     toast("Something went wrong");
-  //   }
-  // };
-
-  // const onTemplateDelete = async (id: number) => {
-  //   try {
-  //     await api.delete(`/a/template/${id}/`);
-  //     mutateTemplates();
-  //   } catch (err: any) {
-  //     toast("Something went wrong");
-  //   }
-  // };
-
-  // const onTemplateClick = async (id: number) => {
-  //   try {
-  //     const template = myTemplates?.results?.find(
-  //       (temp: any) => temp.id === id,
-  //     );
-
-  //     await upsertPartialFlashing("1", {
-  //       nodes: template.nodes,
-  //       crushFoldDir: template.color_side_dir,
-  //       startCrushFold: template.start_crush_fold,
-  //       endCrushFold: template.end_crush_fold,
-  //     });
-
-  //     router.replace("/f/material");
-  //     toast("Flashing loaded from template");
-  //   } catch (err: any) {
-  //     toast("Something went wrong");
-  //   }
-  // };
-
   return (
     <>
       <UILayout className="pb-100">
@@ -435,50 +395,4 @@ export default function LibraryPage() {
       <BottomNav />
     </>
   );
-  {
-    /* <TabsContent value="my-templates">
-                <div className="grid grid-cols-2 pt-2 gap-4">
-                  {myTemplates?.results?.length > 0 ? (
-                    myTemplates?.results?.map((template: any) => (
-                      <LibraryTemplateItem
-                        key={template.id}
-                        title={template.name}
-                        isMyTemplate={true}
-                        templateId={template.id}
-                        onTemplateDelete={onTemplateDelete}
-                        onTemplateEditName={onTemplateEditName}
-                        onTemplateClick={onTemplateClick}
-                      >
-                        <FlashingSVG flashing={template} className="h-20" />
-                      </LibraryTemplateItem>
-                    ))
-                  ) : (
-                    <div className="col-span-2 flex flex-col items-center justify-center py-8 text-center">
-                      <p className="text-subtitle">No templates found</p>
-                      <p className="text-sm text-gray-400 mt-1">
-                        Create your first template to get started
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </TabsContent> */
-    /* <TabsContent value="app-templates">
-                          <div className="grid grid-cols-2 pt-2 gap-4">
-                            {appTemplates.length > 0 ? (
-                              appTemplates.map((template, index) => (
-                                <LibraryTemplateItem key={template.name + index} title={template.name}>
-                                  <FlashingSVG flashing={template.flashing} className="h-20" />
-                                </LibraryTemplateItem>
-                              ))
-                            ) : (
-                              <div className="col-span-2 flex flex-col items-center justify-center py-8 text-center">
-                                <p className="text-subtitle">No app templates available</p>
-                                <p className="text-sm text-gray-400 mt-1">
-                                  Check back later for new templates
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </TabsContent> */
-  }
 }

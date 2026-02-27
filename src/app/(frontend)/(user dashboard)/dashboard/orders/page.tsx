@@ -14,7 +14,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/uikit/tabs";
+} from "@/components/ui/custom-tabs";
 import useSWR from "swr";
 import { fetcher } from "@/lib/axios";
 import { notFound } from "next/navigation";
@@ -44,7 +44,7 @@ export default function OrdersPage() {
                     (o: any) =>
                       o.status === "pending" ||
                       o.status === "in_progress" ||
-                      o.status === "ready"
+                      o.status === "ready",
                   );
 
                   if (filteredOrders.length === 0)
@@ -70,7 +70,7 @@ export default function OrdersPage() {
                     (o: any) =>
                       o.status === "completed" ||
                       o.status === "cancelled" ||
-                      o.status === "rejected"
+                      o.status === "rejected",
                   );
 
                   if (filteredOrders.length === 0)

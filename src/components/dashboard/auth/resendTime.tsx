@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   useEffect,
   useState,
@@ -53,15 +54,16 @@ export const CodeResendTime = forwardRef<CodeResendTimeHandle, Props>(
     }));
 
     return (
-      <button
-        className="text-blue-600 text-xs disabled:text-gray-400"
+      <Button
+        // className="text-blue-600 text-xs disabled:text-gray-400"
         onClick={onResendHandler}
         disabled={resendTimer > 0}
+        size="lg"
       >
         {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend"}
-      </button>
+      </Button>
     );
-  }
+  },
 );
 
 CodeResendTime.displayName = "CodeResendTime";

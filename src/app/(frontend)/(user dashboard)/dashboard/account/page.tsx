@@ -9,7 +9,7 @@ import {
   RightArrow,
   User,
 } from "@/components/uikit/icons";
-import BottomNav from "@/components/dashboard/bottomNav";
+import BottomNav from "@/components/dashboard/bottom-nav";
 import { ButtonListItem } from "@/components/uikit/buttons/buttonListItem";
 import { Header } from "@/components/dashboard/header";
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";

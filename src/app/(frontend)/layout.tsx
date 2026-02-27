@@ -21,10 +21,7 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        style={{ width: "100vw", height: "100%" }}
-        className={`${robot_flex.className} font-roboto`}
-      >
+      <body className={`${robot_flex.className}`}>
         <UserProvider>
           <Toaster
             position="bottom-center"
@@ -46,7 +43,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <DBProvider>
-              <main className="h-screen relative w-screen overflow-auto no-scrollbar font-roboto max-w-[1000px] mx-auto">
+              <main className="h-screen relative w-screen overflow-auto no-scrollbar font-roboto mx-auto">
                 {children}
               </main>
             </DBProvider>
