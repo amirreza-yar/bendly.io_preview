@@ -5,15 +5,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/custom-tabs";
-import { LibraryTemplateItem } from "@/components/dashboard/library/libraryTemplateItem";
 import BottomNav from "@/components/dashboard/bottom-nav";
-import { Header } from "@/components/dashboard/header";
-import { ContentWrapper } from "@/components/dashboard/contentWrapper";
-import FlashingSVG from "@/components/utils/flashingSVG";
-import useSWR from "swr";
-import api, { fetcher } from "@/lib/axios";
-import { toast } from "sonner";
-import { upsertPartialFlashing } from "@/lib/db/helpers/flashingHelpers";
+import { fetcher } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import {
   UILayout,
@@ -21,10 +14,8 @@ import {
   UILayoutContentWrapper,
 } from "@/components/main";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { ArrowLeft, Search } from "@/components/icons";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { cn } from "@/utilities/ui";
 import {
   InputGroup,
@@ -34,9 +25,9 @@ import {
 } from "@/components/ui/input-group";
 import { X } from "lucide-react";
 import useSWRInfinite from "swr/infinite";
-import { Spinner } from "@/components/ui/spinner";
 import { SquareLoader } from "@/components/ui/loader";
 import { useDebounce } from "use-debounce";
+import FlashingSVG from "@/components/utils/flashingSVG";
 
 function useScrollShadow(threshold = 10) {
   const ref = useRef<HTMLDivElement>(null);
@@ -103,21 +94,34 @@ const TemplateContent = ({
       <div
         ref={ref}
         onScroll={handleScroll}
-        className="w-full h-[calc(100vh-215px)] overflow-y-auto  px-4"
+        className="w-full h-[calc(100vh-215px)] sm:h-fit overflow-y-auto px-4 sm:px-8"
       >
-        <div className="grid grid-cols-2 gap-2">
-          {templates?.map((template) => (
-            <div
-              key={template.id}
-              className="flex flex-col gap-1.5 justify-center rounded-md p-2 pt-1 border"
-            >
-              <div className="h-21  border-b" />
-              <p className="w-full text-center caption-small px-2 py-1 border rounded-full truncate">
-                {template.name}
-              </p>
-            </div>
-          ))}
-        </div>
+        {templates?.length > 0 ? (
+          <div className="grid grid-cols-2 gap-2 sm:gap-4">
+            {templates?.map((template) => (
+              <div
+                key={template.id}
+                className="flex flex-col gap-1.5 justify-center rounded-md p-2 pt-1 border"
+              >
+                <FlashingSVG
+                  flashing={template}
+                  className="h-20 sm:h-35 pb-1 sm:p-4"
+                />
+                <p className="w-full text-center caption-small px-2 py-1 border rounded-full truncate">
+                  {template.name}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="h-[calc(100vh-175px)] flex flex-col items-center justify-center px-9 text-center">
+            <h6 className="text-subtitle">No templates</h6>
+            <p className="subtitle-regular text-gray-400 mt-1">
+              You have&apos;nt created any templates yet. Start a new design
+              first.
+            </p>
+          </div>
+        )}
         {isLoadingMore && (
           <div className="col-span-2 flex justify-center pb-4 pt-8">
             <SquareLoader />
@@ -218,7 +222,7 @@ const TemplateSearchContent = ({
       <div
         ref={ref}
         onScroll={handleScroll}
-        className="w-full h-[calc(100vh-215px)] overflow-y-auto px-4"
+        className="w-full h-[calc(100vh-215px)] sm:h-fit overflow-y-auto px-4"
       >
         <div className="grid grid-cols-2 gap-2">
           {templates?.map((template) => (
@@ -226,7 +230,10 @@ const TemplateSearchContent = ({
               key={template.id}
               className="flex flex-col gap-1.5 justify-center rounded-md p-2 pt-1 border"
             >
-              <div className="h-21  border-b" />
+              <FlashingSVG
+                flashing={template}
+                className="h-20 sm:h-35 pb-1 sm:p-4"
+              />
               <p className="w-full text-center caption-small px-2 py-1 border rounded-full truncate">
                 {template.name}
               </p>
@@ -323,7 +330,7 @@ export default function LibraryPage() {
   return (
     <>
       <UILayout className="pb-100">
-        <div className="fixed top-1 w-full text-primary-foreground">
+        <div className="fixed top-1 sm:top-3 sm:px-4 w-full text-primary-foreground">
           {tabValue === "search-templates" ? (
             <div className="flex items-center h-13 pl-1 pr-4 data-[showsearch=false]:hidden transition-all">
               <Button
@@ -372,10 +379,10 @@ export default function LibraryPage() {
             </div>
           )}
         </div>
-        <UILayoutContentWrapper className="top-0 mt-15 pb-20 fixed">
-          <UILayoutContent className="py-4 flex flex-col px-0">
+        <UILayoutContentWrapper className="top-0 sm:top-2 mt-15 pb-20 fixed">
+          <UILayoutContent className="py-4 sm:py-8 flex flex-col px-0">
             {isLoading ? (
-              <div className="space-y-2 px-4 animate-pulse">
+              <div className="space-y-2 px-4 sm:space-y-2 sm:px-4 animate-pulse">
                 <div className="grid grid-cols-2 gap-1 p-1 h-10 border rounded-md">
                   <div className="bg-gray-300 rounded rounded-md" />
                   <div className="bg-gray-300 rounded rounded-md" />
@@ -399,7 +406,7 @@ export default function LibraryPage() {
                 onValueChange={setTabValue}
               >
                 {tabValue !== "search-templates" && (
-                  <TabsList className="mx-4">
+                  <TabsList className="mx-4 sm:w-100 sm:mx-auto sm:mb-2">
                     <TabsTrigger value="my-templates">My Templates</TabsTrigger>
                     <TabsTrigger value="app-templates">
                       App Templates

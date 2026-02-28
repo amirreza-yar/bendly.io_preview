@@ -2,7 +2,7 @@
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import { Footer } from "@/components/dashboard/footer";
 import { Header } from "@/components/dashboard/header";
-import { DeleteFlashingModalOnOrderReview } from "@/components/dashboard/order/cards";
+import { DeleteFlashingModalOnOrderReview } from "@/components/order/cards";
 import { Button } from "@/components/uikit/buttons/button";
 import {
   Carousel,
@@ -11,7 +11,7 @@ import {
 } from "@/components/uikit/carousel";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { NoFlashingSVG } from "@/components/dashboard/order/svgs";
+import { NoFlashingSVG } from "@/components/order/svgs";
 import useSWR from "swr";
 import api, { fetcher } from "@/lib/axios";
 import { Download, Edit, Remove } from "@/components/uikit/icons";
@@ -146,7 +146,7 @@ export default function OrderReviewPage() {
                                   <p key={index} className="caption-small">
                                     {spec.quantity} pcs
                                   </p>
-                                )
+                                ),
                               )}
                             </div>
                             <div className="grid gap-2 pr-6">
@@ -158,7 +158,7 @@ export default function OrderReviewPage() {
                                   <p key={index} className="caption-small">
                                     {spec.length} mm
                                   </p>
-                                )
+                                ),
                               )}
                             </div>
                           </div>

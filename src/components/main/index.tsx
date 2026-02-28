@@ -1,6 +1,5 @@
 import { cn } from "@/utilities/ui";
 import { ReactNode } from "react";
-import { ScrollArea } from "../ui/scroll-area";
 
 export function UILayoutBackground({
   className,
@@ -13,7 +12,9 @@ export function UILayoutBackground({
     <div
       className={cn(
         "fixed top-0 w-full h-[283px] bg-gradient-to-t from-[#132a55] to-[#295cbb]",
-        variant === "short" ? "h-[195px]" : "h-[283px]",
+        variant === "short"
+          ? "h-[195px] sm:h-[324px]"
+          : "h-[283px] sm:h-[420px]",
         className,
       )}
     >
@@ -86,7 +87,7 @@ export function UILayoutContent({
   return (
     <div
       className={cn(
-        "px-4 py-6 rounded-lg shadow-md w-[calc(100vw-32px)] bg-background",
+        "px-4 py-6 rounded-lg shadow-md w-[calc(100vw-32px)] sm:w-[calc(100vw-65px)] bg-background",
         className,
       )}
     >

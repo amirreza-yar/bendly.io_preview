@@ -20,11 +20,11 @@ const orderProgresses: OrderProgressItem[] = [
     status: "pending",
     progress: "Order Review",
     index: 0,
-    desc: "Reviewing your specifications",
+    desc: "Reviewing your your order details",
   },
   {
     status: "in_progress",
-    progress: "In Progress",
+    progress: "In Production",
     index: 1,
     desc: "Your order is being manufactured",
   },
@@ -32,13 +32,13 @@ const orderProgresses: OrderProgressItem[] = [
     status: "ready",
     progress: "Ready",
     index: 2,
-    desc: "Your order is complete and ready for delivery / pickup",
+    desc: "Your order is ready for delivery / pickup",
   },
   {
     status: "completed",
     progress: "Completed",
     index: 3,
-    desc: "Order delivered / picked up successfully",
+    desc: "Order delivered / collected successfully",
   },
 ];
 
@@ -59,13 +59,13 @@ export function ProgressionObject({ status }: OrderStatusionObjectProps) {
   if (progressIndex === 3) {
     return (
       <div className="relative mx-2 grid">
-        <div className="border-l border-border-info">
+        <div className="border-l border-primary-lightest">
           <div className="ms-6">
-            <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+            <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-background text-foreground">
               <ProgressChecked className="size-6" />
             </span>
-            <span className="label-regular text-body">Order Recieved</span>
-            <p className="body-small text-subtitle">
+            <span className="text-label">Order Recieved</span>
+            <p className="text-body-sm text-gray-darkest">
               Your order has been received{" "}
             </p>
           </div>
@@ -76,11 +76,11 @@ export function ProgressionObject({ status }: OrderStatusionObjectProps) {
           <div className="h-[2px] w-[2px] rounded-full bg-primary" />
         </div>
         <div className="ms-6">
-          <span className="absolute -start-3 flex w-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+          <span className="absolute -start-3 flex w-6 items-center justify-center rounded-full bg-background">
             <ProgressChecked className="size-6" />
           </span>
-          <span className="label-regular text-body">Completed</span>
-          <p className="body-small text-subtitle">
+          <span className="text-label">Completed</span>
+          <p className="text-body-sm text-gray-darkest">
             Order delivered / picked up successfully
           </p>
         </div>
@@ -94,11 +94,11 @@ export function ProgressionObject({ status }: OrderStatusionObjectProps) {
             key={prog.index}
             className={cn(
               "relative",
-              prog.index !== 3 && "border-l border-border-info"
+              prog.index !== 3 && "border-l border-primary-lightest",
             )}
           >
             <div className={cn("ms-6", prog.index !== 4 && "mb-5")}>
-              <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+              <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-background">
                 {prog.index <= progressIndex ? (
                   <ProgressChecked className="size-6" />
                 ) : prog.index === progressIndex + 1 ? (
@@ -107,8 +107,8 @@ export function ProgressionObject({ status }: OrderStatusionObjectProps) {
                   <NotProgressed className="size-6" />
                 )}
               </span>
-              <span className="label-regular text-body">{prog.progress}</span>
-              <p className="body-small text-subtitle">{prog.desc}</p>
+              <span className="text-label">{prog.progress}</span>
+              <p className="text-body-sm text-gray-darkest">{prog.desc}</p>
             </div>
           </div>
         ))}
@@ -120,13 +120,13 @@ export function ProgressionObject({ status }: OrderStatusionObjectProps) {
 export function RejectedProgressionObject() {
   return (
     <div className="relative mx-2 grid">
-      <div className={cn("relative", "border-l border-border-info")}>
+      <div className={cn("relative", "border-l border-primary-lightest")}>
         <div className={cn("ms-6")}>
-          <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+          <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-background">
             <ProgressChecked className="size-6" />
           </span>
-          <span className="label-regular text-body">Order Review</span>
-          <p className="body-small text-subtitle">
+          <span className="text-label">Order Review</span>
+          <p className="text-body-sm text-gray-darkest">
             Reviewing your specifications
           </p>
         </div>
@@ -138,11 +138,11 @@ export function RejectedProgressionObject() {
       </div>
       <div className="relative">
         <div className="ms-6">
-          <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+          <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-background">
             <ProgressRejected className="size-6" />
           </span>
-          <span className="label-regular text-body">Rejected</span>
-          <p className="body-small text-subtitle">
+          <span className="text-label">Rejected</span>
+          <p className="text-body-sm text-gray-darkest">
             Your request was not approved
           </p>
         </div>
@@ -154,26 +154,26 @@ export function RejectedProgressionObject() {
     //       key={prog.index}
     //       className={cn(
     //         "relative",
-    //         prog.index !== 4 && "border-l border-border-info"
+    //         prog.index !== 4 && "border-l border-primary-lightest"
     //       )}
     //     >
     //       <div className={cn("ms-6", prog.index !== 4 && "mb-5")}>
-    //         <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+    //         <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-background">
     //           <ProgressChecked className="size-6" />
     //         </span>
-    //         <span className="label-regular text-body">{prog.progress}</span>
-    //         <p className="body-small text-subtitle">{prog.desc}</p>
+    //         <span className="text-label">{prog.progress}</span>
+    //         <p className="text-body-sm text-gray-darkest">{prog.desc}</p>
     //       </div>
     //     </div>
     //   ))}
 
     //   <div key={progressIndex} className="relative">
     //     <div className="ms-6">
-    //       <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+    //       <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-background">
     //         <ProgressRejected className="size-6" />
     //       </span>
-    //       <span className="label-regular text-body">Rejected</span>
-    //       <p className="body-small text-subtitle">
+    //       <span className="text-label">Rejected</span>
+    //       <p className="text-body-sm text-gray-darkest">
     //         Your request was not approved
     //       </p>
     //     </div>
@@ -224,20 +224,20 @@ export function RequestProgressionObject({
   progress,
 }: RequestProgressionObjectProps) {
   const progressItem = requestProgresses.find(
-    (prog) => prog.progress === progress
+    (prog) => prog.progress === progress,
   );
   const progressIndex = progressItem?.index ?? -1;
 
   if (progressIndex === 4) {
     return (
       <div className="relative mx-2 grid">
-        <div className="border-l border-border-info">
+        <div className="border-l border-primary-lightest">
           <div className="mb-2 ms-6">
-            <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+            <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-background">
               <ProgressChecked className="size-6" />
             </span>
-            <span className="label-regular text-body">Order Recieved</span>
-            <p className="body-small text-subtitle">
+            <span className="text-label">Order Recieved</span>
+            <p className="text-body-sm text-gray-darkest">
               Your order has been received{" "}
             </p>
           </div>
@@ -248,11 +248,11 @@ export function RequestProgressionObject({
           <div className="h-[2px] w-[2px] rounded-full bg-primary" />
         </div>
         <div className="ms-6">
-          <span className="absolute -start-3 flex w-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+          <span className="absolute -start-3 flex w-6 items-center justify-center rounded-full bg-background">
             <ProgressChecked className="size-6" />
           </span>
-          <span className="label-regular text-body">Completed</span>
-          <p className="body-small text-subtitle">
+          <span className="text-label">Completed</span>
+          <p className="text-body-sm text-gray-darkest">
             Order delivered / picked up successfully
           </p>
         </div>
@@ -266,11 +266,11 @@ export function RequestProgressionObject({
             key={prog.index}
             className={cn(
               "relative",
-              prog.index !== 4 && "border-l border-border-info"
+              prog.index !== 4 && "border-l border-primary-lightest",
             )}
           >
             <div className={cn("ms-6", prog.index !== 4 && "mb-5")}>
-              <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+              <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-background">
                 {prog.index <= progressIndex ? (
                   <ProgressChecked className="size-6" />
                 ) : prog.index === progressIndex + 1 ? (
@@ -279,8 +279,8 @@ export function RequestProgressionObject({
                   <NotProgressed className="size-6" />
                 )}
               </span>
-              <span className="label-regular text-body">{prog.progress}</span>
-              <p className="body-small text-subtitle">{prog.desc}</p>
+              <span className="text-label">{prog.progress}</span>
+              <p className="text-body-sm text-gray-darkest">{prog.desc}</p>
             </div>
           </div>
         ))}
@@ -293,7 +293,7 @@ export function RejectedRequestProgressionObject({
   progress,
 }: RequestProgressionObjectProps) {
   const progressItem = requestProgresses.find(
-    (prog) => prog.progress === progress
+    (prog) => prog.progress === progress,
   );
   const progressIndex = progressItem?.index ?? -1;
 
@@ -304,26 +304,26 @@ export function RejectedRequestProgressionObject({
           key={prog.index}
           className={cn(
             "relative",
-            prog.index !== 4 && "border-l border-border-info"
+            prog.index !== 4 && "border-l border-primary-lightest",
           )}
         >
           <div className={cn("ms-6", prog.index !== 4 && "mb-5")}>
-            <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+            <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-background">
               <ProgressChecked className="size-6" />
             </span>
-            <span className="label-regular text-body">{prog.progress}</span>
-            <p className="body-small text-subtitle">{prog.desc}</p>
+            <span className="text-label">{prog.progress}</span>
+            <p className="text-body-sm text-gray-darkest">{prog.desc}</p>
           </div>
         </div>
       ))}
 
       <div key={progressIndex} className="relative">
         <div className="ms-6">
-          <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-white ring-5 ring-white">
+          <span className="absolute -start-3 flex h-6 items-center justify-center rounded-full bg-background">
             <ProgressRejected className="size-6" />
           </span>
-          <span className="label-regular text-body">Rejected</span>
-          <p className="body-small text-subtitle">
+          <span className="text-label">Rejected</span>
+          <p className="text-body-sm text-gray-darkest">
             Your request was not approved
           </p>
         </div>

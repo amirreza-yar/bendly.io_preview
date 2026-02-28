@@ -1,19 +1,7 @@
 "use client";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/custom-tabs";
-import { LibraryTemplateItem } from "@/components/dashboard/library/libraryTemplateItem";
+import { Tabs, TabsContent } from "@/components/ui/custom-tabs";
 import BottomNav from "@/components/dashboard/bottom-nav";
-import { Header } from "@/components/dashboard/header";
-import { ContentWrapper } from "@/components/dashboard/contentWrapper";
-import FlashingSVG from "@/components/utils/flashingSVG";
-import useSWR from "swr";
-import api, { fetcher } from "@/lib/axios";
-import { toast } from "sonner";
-import { upsertPartialFlashing } from "@/lib/db/helpers/flashingHelpers";
+import { fetcher } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import {
   UILayout,
@@ -22,9 +10,14 @@ import {
 } from "@/components/main";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft, Search } from "@/components/icons";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useMemo, useRef, useState } from "react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ChevronRight,
+  MapMarker,
+  Search,
+} from "@/components/icons";
+import { useRef, useState } from "react";
 import { cn } from "@/utilities/ui";
 import {
   InputGroup,
@@ -32,9 +25,8 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import useSWRInfinite from "swr/infinite";
-import { Spinner } from "@/components/ui/spinner";
 import { SquareLoader } from "@/components/ui/loader";
 import { useDebounce } from "use-debounce";
 
@@ -68,15 +60,37 @@ type Template = {
   nodes: Node[];
 };
 
-const TemplateContent = ({
-  templates,
+type Address = {
+  id?: number;
+  title: string;
+  street_address: string;
+  suburb: string;
+  state: string;
+  postcode: number;
+  recipient_name: string;
+  recipient_phone: number;
+  full_address: string;
+  distance_to_factory?: number;
+};
+
+type Project = {
+  id: number;
+  code: number;
+  project_name: string;
+  addresses: Address[];
+};
+
+const ProjectsContent = ({
+  projects,
   isLoadingMore,
   loadMore,
+  className,
 }: {
-  templates: Template[];
+  projects: Project[];
   hasMore: boolean;
   isLoadingMore: boolean;
   loadMore: () => void;
+  className?: string;
 }) => {
   const { showShadow, ref, onScroll } = useScrollShadow(25);
 
@@ -95,26 +109,85 @@ const TemplateContent = ({
   return (
     <>
       <div
-        className={`pointer-events-none absolute top-0 left-0 h-4 w-full
-                              bg-gradient-to-b from-gray-400/50 to-transparent 
-                              transition-opacity duration-200
-                              ${showShadow ? "opacity-100" : "opacity-0"}`}
-      />
-      <div
         ref={ref}
         onScroll={handleScroll}
-        className="w-full h-[calc(100vh-215px)] overflow-y-auto  px-4"
+        className={cn("w-full overflow-y-auto px-4", className)}
       >
-        <div className="grid grid-cols-2 gap-2">
-          {templates?.map((template) => (
+        <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
+          {projects?.map((proj) => (
             <div
-              key={template.id}
-              className="flex flex-col gap-1.5 justify-center rounded-md p-2 pt-1 border"
+              // href={`/dashboard/j/${proj.id}`}
+              key={proj.code}
+              data-slot="card"
+              className="grid gap-4 rounded-md border py-3 px-4 relative"
             >
-              <div className="h-21  border-b" />
-              <p className="w-full text-center caption-small px-2 py-1 border rounded-full truncate">
-                {template.name}
-              </p>
+              <Button
+                variant="ghost"
+                size="icon-lg"
+                className="absolute right-0"
+                asChild
+              >
+                <Link href="">
+                  <ChevronRight className="size-5" />
+                </Link>
+              </Button>
+              <div className="space-y-1 text-label">
+                <p>JR-{proj.code}</p>
+                <p>{proj.project_name}</p>
+              </div>
+              {(proj.addresses?.length ?? 0) > 0 ? (
+                <>
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <MapMarker className="size-5" />
+                      <div className="space-y-1">
+                        <p className="text-caption">
+                          {proj.addresses?.[0]?.title}
+                        </p>
+                        <p className="text-caption font-normal truncate">
+                          {proj.addresses[0].full_address}
+                        </p>
+                      </div>
+                    </div>
+                    {proj.addresses?.[1] ? (
+                      <>
+                        <div className="flex items-center gap-2">
+                          <p className="text-label-sm">Other Address:</p>
+                          <span className="text-caption rounded-[900px] border-1 border-border-default px-[10px] py-1 bg-surface-disable">
+                            {proj.addresses?.[1].title}
+                          </span>
+                          {proj.addresses?.length > 2 && (
+                            <span className="text-caption rounded-full border px-2.5 py-1 bg-secondary text-secondary-foreground">
+                              +{proj.addresses?.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2">
+                          <p className="text-label-sm">Other Address:</p>
+                          <span className="text-caption rounded-full border px-2.5 py-1 bg-secondary text-secondary-foreground">
+                            ---
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex gap-3 items-start text-alert bg-alert-subtle p-3 rounded-md">
+                    <AlertTriangle className="size-5 mt-0.5" />
+                    <div className="grid">
+                      <p className="text-label">Associated addresses deleted</p>
+                      <p className="text-body-sm">
+                        Add an address to continue or delete this Job Reference.
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -124,6 +197,12 @@ const TemplateContent = ({
           </div>
         )}
       </div>
+      <div
+        className={`pointer-events-none absolute top-0 left-0 h-4 w-full
+                              bg-gradient-to-b from-gray-400/50 to-transparent 
+                              transition-opacity duration-200
+                              ${showShadow ? "opacity-100" : "opacity-0"}`}
+      />
     </>
   );
 };
@@ -246,7 +325,7 @@ const TemplateSearchContent = ({
 export default function LibraryPage() {
   const router = useRouter();
 
-  const [tabValue, setTabValue] = useState("my-templates");
+  const [tabValue, setTabValue] = useState("all-projects");
   const [searchVal, setSearchVal] = useState<string>("");
 
   const [debouncedSearch] = useDebounce(searchVal, 400);
@@ -254,7 +333,7 @@ export default function LibraryPage() {
   const getKey = (pageIndex: number, previousPageData: any) => {
     if (previousPageData && !previousPageData.next) return null;
 
-    const base = `/a/template?page=${pageIndex + 1}`;
+    const base = `/a/job-ref?page=${pageIndex + 1}`;
 
     if (debouncedSearch) {
       return `${base}&search=${encodeURIComponent(debouncedSearch)}`;
@@ -268,7 +347,7 @@ export default function LibraryPage() {
     fetcher,
   );
 
-  const templates = data ? data.flatMap((page) => page.results) : [];
+  const projects = data ? data.flatMap((page) => page.results) : [];
 
   const hasMore = data ? !!data[data.length - 1]?.next : true;
 
@@ -284,13 +363,13 @@ export default function LibraryPage() {
     <>
       <UILayout className="pb-100">
         <div className="fixed top-1 w-full text-primary-foreground">
-          {tabValue === "search-templates" ? (
+          {tabValue === "search-projects" ? (
             <div className="flex items-center h-13 pl-1 pr-4 data-[showsearch=false]:hidden transition-all">
               <Button
                 variant="ghost"
                 size="icon-lg"
                 className="hover:bg-transparent hover:text-primary-light"
-                onClick={() => setTabValue("my-templates")}
+                onClick={() => setTabValue("all-projects")}
               >
                 <ArrowLeft />
               </Button>
@@ -320,12 +399,12 @@ export default function LibraryPage() {
             </div>
           ) : (
             <div className="data-[showheader=false]:hidden transition-all flex items-center justify-between pl-4">
-              <h6>Library</h6>
+              <h6>Projects</h6>
               <Button
                 variant="ghost"
                 size="icon-lg"
                 className="hover:bg-transparent hover:text-primary-light mr-5"
-                onClick={() => setTabValue("search-templates")}
+                onClick={() => setTabValue("search-projects")}
               >
                 <Search />
               </Button>
@@ -353,38 +432,43 @@ export default function LibraryPage() {
                 </div>
               </div>
             ) : (
-              <Tabs
-                defaultValue="my-templates"
-                value={tabValue}
-                onValueChange={setTabValue}
-              >
-                {tabValue !== "search-templates" && (
-                  <TabsList className="mx-4">
-                    <TabsTrigger value="my-templates">My Templates</TabsTrigger>
-                    <TabsTrigger value="app-templates">
-                      App Templates
-                    </TabsTrigger>
-                  </TabsList>
-                )}
-                <TabsContent value="my-templates" className="relative">
-                  <TemplateContent
-                    templates={templates}
-                    hasMore={hasMore}
-                    isLoadingMore={isLoadingMore}
-                    loadMore={loadMore}
-                  />
-                </TabsContent>
-                <TabsContent value="app-templates" className="relative">
-                  {/* <TemplateContent templates={templates} /> */}
+              <Tabs value={tabValue} onValueChange={setTabValue}>
+                <TabsContent value="all-projects">
+                  <div className="flex items-center justify-between pb-3 px-4">
+                    <p className="text-label-sm">Associated Addresses</p>
+                    <Button
+                      className=" border-border"
+                      variant="outline"
+                      size="xs"
+                    >
+                      <Plus />
+                      Add new address
+                    </Button>
+                  </div>
+                  <div className="relative">
+                    <ProjectsContent
+                      projects={projects}
+                      hasMore={hasMore}
+                      isLoadingMore={isLoadingMore}
+                      loadMore={loadMore}
+                      className="h-[calc(100vh-205px)]"
+                    />
+                  </div>
                 </TabsContent>
 
-                <TabsContent value="search-templates" className="relative pt-1">
-                  <TemplateSearchContent
-                    templates={templates}
-                    hasMore={hasMore}
-                    isLoadingMore={isLoadingMore}
-                    loadMore={loadMore}
-                  />
+                <TabsContent value="search-projects" className="relative pt-1">
+                  <p className="text-label-sm pl-4 pb-3 text-gray-darkest">
+                    Search results
+                  </p>
+                  <div className="relative">
+                    <ProjectsContent
+                      projects={projects}
+                      hasMore={hasMore}
+                      isLoadingMore={isLoadingMore}
+                      loadMore={loadMore}
+                      className="h-[calc(100vh-175px)]"
+                    />
+                  </div>
                 </TabsContent>
               </Tabs>
             )}

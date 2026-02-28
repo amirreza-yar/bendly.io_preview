@@ -98,7 +98,7 @@ export default function AccountSettingsPage() {
             className="hover:bg-transparent hover:text-primary-light"
             asChild
           >
-            <Link href="/dashboard/setting">
+            <Link href="/dashboard/setting/account">
               <ArrowLeft className="size-5" />
             </Link>
           </Button>

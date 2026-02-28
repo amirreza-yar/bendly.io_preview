@@ -13,55 +13,40 @@ import {
 import Link from "next/link";
 import { OrderStatusBadge } from "./badge";
 import { ReplacementRequest } from "@/types/orders/requestType";
-import { formatDate, formatDateTime } from "./utils";
+import { formatDate, formatDateTime, formatPrice, formatStatus } from "./utils";
 import { StoredOrderFlashing } from "@/types/orderTypes";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { AlertDialogContent } from "@/components/uikit/alertModal";
-import { Button } from "@/components/uikit/buttons/button";
+import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
 import { StoredFlashing } from "@/types/flashingTypes";
 import { cn } from "@/utilities/ui";
 import FlashingSVG from "@/components/utils/flashingSVG";
+import { Order } from "@/types/api";
 
-function formatStatus(status: any, type: any) {
-  const map: any = {
-    pending: "Pending",
-    in_progress: "In Progress",
-    ready: type === "delivery" ? "On the way" : "Ready for pickup",
-    cancelled: "Cancelled",
-    completed: "Completed",
-    rejected: "Rejected",
-  };
-
-  return map[status] || status;
-}
-
-export function OrderCard({ order, ...props }: { order: any }) {
+export function OrderCard({ order, ...props }: { order: Order }) {
   return (
-    <Link
-      href={`/dashboard/orders/${order.id}`}
+    <div
       {...props}
-      className="grid gap-4 rounded-md bg-gray-50 border-1 border-border-default p-4"
+      className="grid gap-4 rounded-lg bg-background text-foreground border px-4 pt-4"
     >
       <div className="flex items-center justify-between">
-        <div className="flex gap-2">
-          <p className="caption-regular text-subtitle">Order Number</p>
-          <span className="label-regular text-heading">{order.id}</span>
+        <div className="flex items-center gap-2">
+          <p className="text-caption text-gray-darkest">Order</p>
+          <span className="text-label">#{order.id}</span>
         </div>
         <OrderStatusBadge
           status={formatStatus(order.status, order.fulfillment.type)}
         />
       </div>
-      <div className="grid gap-1">
-        <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
+      <div className="space-y-1 text-label-sm [&_svg]:size-4 [&>div]:flex [&>div]:items-center [&>div]:gap-2">
+        <div>
           <DateIcon />
-          <span className="text-[12px]">
-            Delivery Date: {formatDate(order.fulfillment.date ?? 0)}
-          </span>
+          Delivery Date: {formatDate(order.fulfillment.date ?? 0)}
         </div>
-        <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
+        <div>
           <Building />
-          <span className="rounded-[900px] bg-gray-100 font-bold px-[10px] py-[2px] border-1 border-border-default">
+          <span className="rounded-full px-2.5 border">
             JR-{order?.job_reference?.code}
           </span>
           <span className="">{order?.job_reference?.project_name}</span>
@@ -69,7 +54,7 @@ export function OrderCard({ order, ...props }: { order: any }) {
         {order.fulfillment.type === "delivery"
           ? (() => {
               return (
-                <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
+                <div>
                   <Delivery />
                   <span>{order?.fulfillment.address?.full_address}</span>
                 </div>
@@ -77,7 +62,7 @@ export function OrderCard({ order, ...props }: { order: any }) {
             })()
           : (() => {
               return (
-                <div className="flex items-center justify-start gap-2 [&_svg]:size-4 text-body  text-[12px]">
+                <div>
                   <WareHouse />
                   <span>
                     <span>No address - Self pickup</span>
@@ -86,31 +71,40 @@ export function OrderCard({ order, ...props }: { order: any }) {
               );
             })()}
       </div>
-      <div className="grid auto-cols-max grid-flow-col content-center gap-2 [&_svg]:size-4 text-body text-[12px]">
-        <Box2 />
-        <span className="rounded-xs border-1 border-border-default px-2 py-1 bg-gray-100">
-          {order?.flashings?.[0].material_data.name} /{" "}
+      <div
+        className={`flex gap-2 [&_svg]:size-4 text-caption-sm relative 
+          [&>span]:rounded-sm [&>span]:border [&>span]:px-2 [&>span]:py-1 
+          [&>span]:bg-gray-light rounded-sm [&>span]:border [&>span]:px-2 
+          [&>span]:py-1 [&>span]:bg-gray-light`}
+      >
+        <Box2 className="mt-1" />
+        <span className="max-w-[60%]">
+          {order?.flashings?.[0].material_data.name} .{" "}
           {order?.flashings?.[0].material_data.label}
           <br />
           {order?.flashings?.[0].specifications?.reduce(
             (sum: number, spec: any) => sum + spec.quantity,
-            0
+            0,
           )}{" "}
           pcs
         </span>
         {(order?.flashings?.length ?? 0) > 1 && (
-          <span className="flex items-center rounded-xs border-1 border-border-default px-2 bg-gray-100">
-            +{(order?.flashings?.length ?? 1) - 1}
+          <span className="flex items-center">
+            +{(order?.flashings?.length ?? 1) - 1} Item
           </span>
         )}
       </div>
-      <div className="flex justify-between items-center">
-        <span className="label-regular">
-          ${order?.payment_history?.amount.toFixed(2)}
+      <div className="flex justify-between items-center -mt-2">
+        <span className="text-label">
+          {formatPrice(order?.payment_history?.amount)}
         </span>
-        <ChevronRight />
+        <Button variant="ghost" size="icon-lg" asChild>
+          <Link href={`/dashboard/order/${order.id}`}>
+            <ChevronRight className="size-5 -mr-5" />
+          </Link>
+        </Button>
       </div>
-    </Link>
+    </div>
   );
 }
 
@@ -182,7 +176,7 @@ export function NewOrderCard({
       {...props}
       className={cn(
         "grid gap-2 bg-white p-3 rounded-xs border border-border-default",
-        className
+        className,
       )}
     >
       {/* {flashing.material_data.type === "color" &&

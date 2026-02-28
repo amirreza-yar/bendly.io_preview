@@ -54,7 +54,7 @@ export default function Page() {
                   <ProfileNav />
                 </ItemMedia>
                 <ItemContent className="gap-1">
-                  <ItemTitle>Account Information</ItemTitle>
+                  <ItemTitle>Account Details</ItemTitle>
                   <ItemDescription>
                     Name, Password, Phone number
                   </ItemDescription>
@@ -64,14 +64,14 @@ export default function Page() {
                 </ItemActions>
               </Link>
             </Item>
-            <p className="text-lg font-bold pl-2 pt-6.5">Global Setting</p>
+            <p className="text-lg font-bold pl-2 pt-6.5">Global Settings</p>
             <Item variant="default" className="gap-1 pr-4 pl-2 py-3" asChild>
               <Link href="">
                 <ItemMedia variant="image">
                   <Ruler className="size-6" />
                 </ItemMedia>
                 <ItemContent className="gap-1">
-                  <ItemTitle>Measurement</ItemTitle>
+                  <ItemTitle>Units</ItemTitle>
                 </ItemContent>
                 <ItemActions>
                   <ChevronRight />
@@ -141,7 +141,7 @@ export default function Page() {
                   <Document className="size-6" />
                 </ItemMedia>
                 <ItemContent className="gap-1">
-                  <ItemTitle>Term of Use</ItemTitle>
+                  <ItemTitle>Terms of Use</ItemTitle>
                 </ItemContent>
                 <ItemActions>
                   <ChevronRight />
@@ -155,7 +155,7 @@ export default function Page() {
                 <Logout className="size-6" />
               </ItemMedia>
               <ItemContent className="p-0">
-                <ItemHeader>Logout</ItemHeader>
+                <ItemHeader>Log out</ItemHeader>
               </ItemContent>
               <ItemActions>
                 <ChevronRight />

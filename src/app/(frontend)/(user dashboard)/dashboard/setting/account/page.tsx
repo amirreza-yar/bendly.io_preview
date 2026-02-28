@@ -131,14 +131,14 @@ export default function AccountSettingsPage() {
           <UILayoutContent className="px-0 py-4">
             {isLoading ? (
               <div className="flex flex-col gap-2 w-full animate-pulse px-4">
-                <div className="h-4 w-16 bg-gray-300 rounded-md" />
+                <div className="h-3 w-16 bg-gray-300 rounded-md" />
                 <div className="h-10 w-full bg-gray-300 rounded-md" />
-                <div className="h-4 w-16 bg-gray-300 rounded-md mt-4" />
+                <div className="h-3 w-16 bg-gray-300 rounded-md mt-4" />
                 <div className="h-10 w-full bg-gray-300 rounded-md" />
-                <div className="h-4 w-16 bg-gray-300 rounded-md mt-4" />
+                <div className="h-3 w-16 bg-gray-300 rounded-md mt-4" />
                 <div className="h-10 w-full bg-gray-300 rounded-md" />
                 <div className="h-5 w-24 bg-gray-300 rounded-md" />
-                <div className="h-4 w-16 bg-gray-300 rounded-md mt-4" />
+                <div className="h-3 w-16 bg-gray-300 rounded-md mt-4" />
                 <div className="h-10 w-full bg-gray-300 rounded-md" />
                 <div className="h-5 w-24 bg-gray-300 rounded-md" />
 

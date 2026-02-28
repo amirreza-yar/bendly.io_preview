@@ -48,7 +48,7 @@ export function TabsTrigger({
       {...props}
       data-slot="tabs-trigger"
       className={cn(
-        "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-foreground rounded-md transition-[color,box-shadow] grow py-1.5 label-small",
+        "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-foreground rounded-md transition-[color,box-shadow] grow py-1 label-small",
         className,
       )}
     />

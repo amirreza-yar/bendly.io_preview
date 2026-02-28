@@ -29,10 +29,8 @@ const navItems = [
   },
   {
     label: "Order",
-    href: "/dashboard/orders",
-    match: (path: string) =>
-      path.startsWith("/dashboard/profile") ||
-      path.startsWith("/dashboard/account"),
+    href: "/dashboard/order",
+    match: (path: string) => path.startsWith("/dashboard/order"),
     Icon: Orders,
     ActiveIcon: OrdersBold,
   },

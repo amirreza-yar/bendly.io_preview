@@ -1,10 +1,8 @@
 "use client";
 import BottomNav from "@/components/dashboard/bottom-nav";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import api, { fetcher } from "@/lib/axios";
-import { toast } from "sonner";
+import { fetcher } from "@/lib/axios";
 import {
   UILayout,
   UILayoutContent,
@@ -33,7 +31,7 @@ type Template = {
   nodes: Node[];
 };
 
-export default function Page() {
+export default function HomePage() {
   // const router = useRouter();
   // const { data: jobReferences } = useSWR("/a/job-ref/", fetcher);
 
@@ -96,15 +94,15 @@ export default function Page() {
             </Link>
           </Button>
 
-          <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 text-primary-foreground text-center">
+          <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 sm:top-24 text-primary-foreground text-center">
             <h5 className="overflow-hidden">Start Your Flashing Design!</h5>
             <p className="caption-small">
               Create a new order or use a template to begin
             </p>
           </div>
         </div>
-        <UILayoutContentWrapper className="top-40 pb-17">
-          <UILayoutContent className="py-4">
+        <UILayoutContentWrapper className="top-40 sm:top-50 pb-17">
+          <UILayoutContent className="py-4 sm:py-8 sm:px-8">
             <div className="flex flex-col gap-2">
               <Button size="lg">
                 <Plus />
@@ -127,29 +125,41 @@ export default function Page() {
                 </Button>
               </div>
 
-              <div className="grid grid-cols-3 gap-1">
-                {templatesLoading
-                  ? [0, 0, 0, 0, 0, 0].map((temp, index) => (
-                      <div
-                        key={index}
-                        className="flex flex-col gap-1.5 justify-center rounded-md p-2 border animate-pulse"
-                      >
-                        <div className="h-18 bg-gray-300 rounded-md" />
-                        <div className="bg-gray-300 h-3 w-full rounded-md" />
-                      </div>
-                    ))
-                  : templates?.slice(0, 6).map((temp) => (
-                      <div
-                        key={temp.id}
-                        className="flex flex-col gap-1.5 justify-center rounded-md p-2 pt-1 border"
-                      >
-                        <div className="h-18  border-b" />
-                        <p className="w-full text-center label-xxsmall px-2 py-1 border rounded-full truncate">
-                          {temp.name}
-                        </p>
-                      </div>
-                    ))}
-              </div>
+              {templatesLoading ? (
+                <div className="grid grid-cols-3 gap-1">
+                  {[0, 0, 0, 0, 0, 0].map((temp, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-col gap-1.5 justify-center rounded-md p-2 border animate-pulse"
+                    >
+                      <div className="h-18 bg-gray-300 rounded-md" />
+                      <div className="bg-gray-300 h-3 w-full rounded-md" />
+                    </div>
+                  ))}
+                </div>
+              ) : templates?.length > 0 ? (
+                <div className="grid grid-cols-3 gap-1">
+                  {templates?.slice(0, 6).map((temp) => (
+                    <div
+                      key={temp.id}
+                      className="flex flex-col gap-1.5 justify-center rounded-md p-2 pt-1 border"
+                    >
+                      <div className="h-18  border-b" />
+                      <p className="w-full text-center label-xxsmall px-2 py-1 border rounded-full truncate">
+                        {temp.name}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="h-35 w-full flex flex-col items-center justify-center px-9 text-center">
+                  <h6 className="text-subtitle">No templates yet</h6>
+                  <p className="text-label text-gray-dark mt-1">
+                    You have&apos;nt created any templates yet. Start a new
+                    design first.
+                  </p>
+                </div>
+              )}
             </div>
           </UILayoutContent>
         </UILayoutContentWrapper>
