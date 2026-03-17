@@ -19,7 +19,7 @@ import {
   WareHouse,
   XIcon,
 } from "@/components/uikit/icons";
-import { TabsContent } from "@/components/uikit/tabs";
+import { TabsContent } from "@/components/ui/custom-tabs";
 import api, { fetcher } from "@/lib/axios";
 import { cn } from "@/utilities/ui";
 import { Tabs } from "@radix-ui/react-tabs";
@@ -237,7 +237,7 @@ export default function FulFillPage({
                     "rounded-md py-1.5 text-[13px]",
                     deliveryType === "delivery"
                       ? "bg-primary text-white"
-                      : "text-body"
+                      : "text-body",
                   )}
                   onClick={() =>
                     fulFillmentForm.setValue("delivery_type", "delivery")
@@ -250,7 +250,7 @@ export default function FulFillPage({
                     "rounded-md py-1.5 text-[13px]",
                     deliveryType === "pickup"
                       ? "bg-primary text-white"
-                      : "text-body"
+                      : "text-body",
                   )}
                   onClick={() =>
                     fulFillmentForm.setValue("delivery_type", "pickup")
@@ -268,10 +268,10 @@ export default function FulFillPage({
                 {fetched_job_references && jobId ? (
                   (() => {
                     const job = fetched_job_references?.results?.find(
-                      (j: any) => String(j.id) === String(jobId)
+                      (j: any) => String(j.id) === String(jobId),
                     );
                     const addr = job?.addresses?.find(
-                      (a: any) => String(a.id) === String(addressId)
+                      (a: any) => String(a.id) === String(addressId),
                     );
 
                     return (
@@ -284,7 +284,7 @@ export default function FulFillPage({
                             onClick={() => {
                               fulFillmentForm.setValue(
                                 "job_reference_id",
-                                null
+                                null,
                               );
                               fulFillmentForm.setValue("address_id", null);
                             }}
@@ -416,7 +416,7 @@ export default function FulFillPage({
                             "flex flex-col items-center text-center rounded-md border p-2",
                             deliveryDate === date
                               ? "border-primary bg-primary-lightest/40 ring-primary text-primary-dark font-bold"
-                              : "border-border-default"
+                              : "border-border-default",
                           )}
                         >
                           <p className="text-[13px]">
@@ -427,7 +427,7 @@ export default function FulFillPage({
                           </p>
                         </div>
                       </CarouselItem>
-                    )
+                    ),
                   )}
                 </CarouselContent>
               </Carousel>
@@ -489,7 +489,7 @@ export default function FulFillPage({
                     {
                       // 'overflow-y-auto': jobReferenceDrawerSnap === 1,
                       // 'overflow-hidden': jobReferenceDrawerSnap !== 1,
-                    }
+                    },
                   )}
                 >
                   <Drawer.Title className="hidden" />
@@ -507,13 +507,13 @@ export default function FulFillPage({
                                 ref={searchInputRef}
                                 value={searchValue}
                                 onChange={(
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   const value = e.target.value;
                                   setSearchValue(value);
                                   const results = searchJobReferences(
                                     fetched_job_references?.results,
-                                    value
+                                    value,
                                   );
                                   setSearchResults(results);
                                 }}
@@ -526,7 +526,7 @@ export default function FulFillPage({
                                   onClick={() => {
                                     setSearchValue("");
                                     setSearchResults(
-                                      fetched_job_references?.results
+                                      fetched_job_references?.results,
                                     );
                                     searchInputRef.current?.focus();
                                   }}
@@ -541,7 +541,7 @@ export default function FulFillPage({
                               {
                                 // 'overflow-y-auto': jobReferenceDrawerSnap === 1,
                                 // 'overflow-hidden': jobReferenceDrawerSnap !== 1,
-                              }
+                              },
                             )}
                           >
                             {searchResults?.map((job) => (
@@ -556,7 +556,7 @@ export default function FulFillPage({
                                     data-slot="card"
                                     className={cn(
                                       "grid gap-4 rounded-md border-1 border-border-default py-3 px-4 relative text-start",
-                                      jobId === Number(job.id) && "bg-gray-100"
+                                      jobId === Number(job.id) && "bg-gray-100",
                                     )}
                                     // disabled
                                   >
@@ -647,13 +647,13 @@ export default function FulFillPage({
                                     <ContentWrapper className="flex flex-col gap-4 pt-0">
                                       <div className="mx-auto w-20 h-1.5 flex-shrink-0 rounded-full bg-gray-300 mt-4" />
                                       {(searchResults?.find(
-                                        (job_ref) => job_ref.id === job?.id
+                                        (job_ref) => job_ref.id === job?.id,
                                       )?.addresses?.length ?? 0) > 0 ? (
                                         <>
                                           {searchResults
                                             ?.find(
                                               (job_ref) =>
-                                                job_ref.id === job?.id
+                                                job_ref.id === job?.id,
                                             )
                                             ?.addresses?.map((address: any) => (
                                               <Drawer.Close
@@ -661,14 +661,14 @@ export default function FulFillPage({
                                                 onClick={() => {
                                                   fulFillmentForm.setValue(
                                                     "job_reference_id",
-                                                    Number(job.id)
+                                                    Number(job.id),
                                                   );
                                                   fulFillmentForm.setValue(
                                                     "address_id",
-                                                    Number(address.id)
+                                                    Number(address.id),
                                                   );
                                                   setJobReferenceDrawerOpen(
-                                                    false
+                                                    false,
                                                   );
                                                 }}
                                                 className={cn(
@@ -676,7 +676,7 @@ export default function FulFillPage({
                                                   addressId ===
                                                     Number(address.id)
                                                     ? "bg-gray-100"
-                                                    : ""
+                                                    : "",
                                                 )}
                                               >
                                                 <div className="flex flex-col gap-2">

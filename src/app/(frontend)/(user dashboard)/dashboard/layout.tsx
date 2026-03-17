@@ -24,5 +24,5 @@ export default function DashboardLayout({
     setupAxiosInterceptor();
   }, []);
 
-  return <>{children}</>;
+  return children;
 }

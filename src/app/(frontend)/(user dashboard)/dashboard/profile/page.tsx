@@ -8,7 +8,7 @@ import {
   RightArrow,
 } from "@/components/uikit/icons";
 import { Separator } from "@/components/uikit/separator";
-import BottomNav from "@/components/dashboard/bottomNav";
+import BottomNav from "@/components/dashboard/bottom-nav";
 import { apiGetProfile } from "@/utilities/api/auth";
 import { db } from "@/lib/db/appDB";
 import { Header } from "@/components/dashboard/header";

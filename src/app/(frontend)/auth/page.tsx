@@ -1,0 +1,168 @@
+"use client";
+import { Logo, Mail, PasswordField } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { EyeOffIcon } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
+import z from "zod";
+import {
+  UILayout,
+  UILayoutContent,
+  UILayoutContentWrapper,
+} from "@/components/main";
+import api from "@/lib/axios";
+import { toast } from "sonner";
+import useSWRMutation from "swr/mutation";
+import { Spinner } from "@/components/ui/spinner";
+
+const LoginFormSchema = z.object({
+  password: z.string("Please enter your password."),
+  email: z
+    .string("Please enter your email address.")
+    .trim()
+    .email("Please enter a valid email address.")
+    .regex(
+      /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
+      "Please enter a valid email address.",
+    ),
+});
+
+type LoginFormValue = z.infer<typeof LoginFormSchema>;
+
+async function loginRequest(url: string, { arg }: { arg: LoginFormValue }) {
+  const res = await api.post("/auth/login/", {
+    email: arg.email.toLowerCase(),
+    password: arg.password,
+  });
+
+  return res.data;
+}
+
+export default function LoginPage() {
+  const loginForm = useForm<LoginFormValue>({
+    resolver: zodResolver(LoginFormSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  const router = useRouter();
+
+  const { trigger, isMutating } = useSWRMutation("/auth/login/", loginRequest);
+
+  const onLogin = async (data: LoginFormValue) => {
+    console.log(data);
+    try {
+      await trigger(data);
+
+      toast("Welcome!");
+      router.replace("/dashboard");
+    } catch (error: any) {
+      const message =
+        error.response?.data?.non_field_errors[0] ||
+        error.response?.data ||
+        "Something broke, probably not your fault.";
+
+      toast(message);
+    }
+  };
+
+  return (
+    <UILayout>
+      <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
+        Bendly
+      </h6>
+
+      <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
+
+      <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 text-primary-foreground text-center">
+        <h2 className="overflow-hidden">Welcome Back!</h2>
+        <p className="caption-small">Enter credentials to login</p>
+      </div>
+      <UILayoutContentWrapper>
+        <UILayoutContent>
+          <form onSubmit={loginForm.handleSubmit(onLogin)}>
+            <FieldSet>
+              <FieldGroup className="gap-6">
+                <Controller
+                  control={loginForm.control}
+                  name="email"
+                  render={({ field, fieldState }) => (
+                    <Field className="gap-2" data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                      <InputGroup>
+                        <InputGroupInput
+                          {...field}
+                          id={field.name}
+                          type="email"
+                          placeholder="demo@bendly.io"
+                          aria-invalid={fieldState.invalid}
+                          autoComplete="off"
+                        />
+                        <InputGroupAddon>
+                          <Mail className="size-5" />
+                        </InputGroupAddon>
+                      </InputGroup>
+                    </Field>
+                  )}
+                />
+                <Controller
+                  control={loginForm.control}
+                  name="password"
+                  render={({ field, fieldState }) => (
+                    <Field className="gap-2" data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                      <InputGroup>
+                        <InputGroupInput
+                          {...field}
+                          id={field.name}
+                          type="password"
+                          placeholder="********"
+                          aria-invalid={fieldState.invalid}
+                          autoComplete="off"
+                        />
+                        <InputGroupAddon>
+                          <PasswordField className="size-5" />
+                        </InputGroupAddon>
+                        <InputGroupAddon align="inline-end">
+                          <EyeOffIcon />
+                        </InputGroupAddon>
+                      </InputGroup>
+                      <Button
+                        size="xs"
+                        className="w-fit! self-end pr-1"
+                        variant="link"
+                        type="button"
+                        asChild
+                      >
+                        <Link href="/auth/reset-password">
+                          Forgot Password?
+                        </Link>
+                      </Button>
+                    </Field>
+                  )}
+                />
+                <Button size="lg" className="mb-0" disabled={isMutating}>
+                  {isMutating && <Spinner />}
+                  Log in
+                </Button>
+              </FieldGroup>
+            </FieldSet>
+            <div className="flex items-center w-full justify-center pt-5">
+              <p className="text-xs">Don&apos;t have an account? </p>
+              <Button variant="link" size="xs" type="button" asChild>
+                <Link href="/auth/signup">Sign up</Link>
+              </Button>
+            </div>
+          </form>
+        </UILayoutContent>
+      </UILayoutContentWrapper>
+    </UILayout>
+  );
+}

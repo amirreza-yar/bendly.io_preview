@@ -3,7 +3,7 @@
 import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import { Footer } from "@/components/dashboard/footer";
 import { Header } from "@/components/dashboard/header";
-import { NewOrderSummaryAccordion } from "@/components/dashboard/order/accordion";
+import { NewOrderSummaryAccordion } from "@/components/order/accordion";
 import { Button } from "@/components/uikit/buttons/button";
 import {
   Delivery,
