@@ -28,7 +28,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "src/app/(frontend)/(user dashboard)/dashboard/library/.old/_swr_infinite_templates_page.tsx",
+    "src/app/(frontend)/(user dashboard)/dashboard/project/.old/page.tsx"
   ],
   "exclude": ["node_modules"]
 }

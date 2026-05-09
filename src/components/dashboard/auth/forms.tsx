@@ -183,7 +183,7 @@ const LoginFormSchema = z.object({
     .email("Please enter a valid email address.")
     .regex(
       /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
-      "Please enter a valid email address."
+      "Please enter a valid email address.",
     ),
 });
 
@@ -282,7 +282,7 @@ const CreateAccountFormSchema = z
       .regex(/[0-9]/, "Password must contain at least one number.")
       .regex(
         /[^a-zA-Z0-9]/,
-        "Password must contain at least one special character."
+        "Password must contain at least one special character.",
       ),
     password2: z.string("Please confirm your password."),
     email: z
@@ -291,7 +291,7 @@ const CreateAccountFormSchema = z
       .email("Please enter a valid email address.")
       .regex(
         /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
-        "Please enter a valid email address."
+        "Please enter a valid email address.",
       ),
     fullName: z
       .string()
@@ -302,7 +302,7 @@ const CreateAccountFormSchema = z
     phone: z
       .string()
       .nonempty("Mobile number is required")
-      .regex(/^[2-478]\d{8}$/, "Enter a valid phone number"),
+      .regex(/^\d{10}$/, "Enter a valid phone number"),
     terms: z
       .boolean("Terms & Conditions must be accepted")
       .refine((val) => val === true, {

@@ -62,21 +62,11 @@
     }
   }
 
-  .order__details .typography {
-    p {
-      @apply text-label-sm text-gray-darkest;
-    }
-
-    span {
-      @apply text-label-sm;
-    }
-  }
-
-  .order__details .flex__between {
+  .flex__between {
     @apply flex items-center justify-between;
   }
 
-  .order__details .flex__start {
+  .flex__start {
     @apply flex items-center justify-start  [&_svg]:size-4;
   }
 

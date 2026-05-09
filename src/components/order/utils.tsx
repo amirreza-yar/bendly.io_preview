@@ -129,7 +129,7 @@ export function formatPrice(value: number) {
 export function formatStatus(status: any, type: any) {
   const map: any = {
     pending: "Pending",
-    in_progress: "In Progress",
+    in_progress: "In Production",
     ready: type === "delivery" ? "In Transit" : "Ready for pickup",
     cancelled: "Cancelled",
     completed: "Completed",

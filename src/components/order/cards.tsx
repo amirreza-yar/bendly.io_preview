@@ -11,7 +11,7 @@ import {
   XIcon,
 } from "@/components/uikit/icons";
 import Link from "next/link";
-import { OrderStatusBadge } from "./badge";
+import { OrderStatusBadge } from "./order-status-badge";
 import { ReplacementRequest } from "@/types/orders/requestType";
 import { formatDate, formatDateTime, formatPrice, formatStatus } from "./utils";
 import { StoredOrderFlashing } from "@/types/orderTypes";

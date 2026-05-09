@@ -65,6 +65,7 @@ async function changePassowrdReq(
 export default function AccountSettingsPage() {
   const changePasswordForm = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(ChangePasswordFormSchema),
+    defaultValues: { old_password: "", new_password1: "", new_password2: "" },
   });
 
   const router = useRouter();

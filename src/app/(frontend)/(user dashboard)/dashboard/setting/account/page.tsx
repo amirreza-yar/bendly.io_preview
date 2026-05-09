@@ -36,7 +36,7 @@ import z from "zod";
 const EditNameORPhoneFormSchema = z.object({
   phone: z
     .string("Phone number is required")
-    .regex(/^[2-478]\d{8}$/, "Enter a valid phone number"),
+    .regex(/^\d{10}$/, "Enter a valid phone number"),
   fullName: z
     .string()
     .nonempty("Fullname is required")
@@ -202,7 +202,7 @@ export default function AccountSettingsPage() {
                               autoComplete="off"
                             />
                             <InputGroupAddon className="bg-primary h-full pr-2.5 pl-2 rounded-l-md text-sm bg-[#eee] text-[#b1b1b1]">
-                              +67
+                              +61
                             </InputGroupAddon>
                           </InputGroup>
                           {fieldState.invalid && (

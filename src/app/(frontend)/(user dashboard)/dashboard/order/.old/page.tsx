@@ -1,4 +1,3 @@
-"use client";
 import {
   Tabs,
   TabsContent,
@@ -6,7 +5,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/custom-tabs";
 import BottomNav from "@/components/dashboard/bottom-nav";
-import { fetcher } from "@/lib/axios";
+import api, { fetcher } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import {
   UILayout,
@@ -31,214 +30,125 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
-import { Material } from "@/types/api";
+import { Material, Order } from "@/types/api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cookies } from "next/headers";
+import Link from "next/link";
 
-export default function LibraryPage() {
-  const router = useRouter();
+const onFetchMaterials: () => Promise<{
+  ok: boolean;
+  data?: Material[];
+}> = async () => {
+  "use server";
 
-  const { data: materials, isLoading: isMaterialsLoading } = useSWR<Material[]>(
-    "/a/materials/",
-    fetcher,
-  );
+  try {
+    const accessToken = (await cookies()).get("auth-jwt")?.value;
 
-  const filtersFormSchema = z.object({
-    materials: z
-      .array(z.number())
-      .refine(
-        (value) => value.every((mat) => materials?.some((a) => a.id === mat)),
-        {
-          message: "You selected an invalid material",
-        },
-      ),
-
-    price: z
-      .array(z.number())
-      .length(2)
-      .refine(([min, max]) => min <= max, {
-        message: "Invalid range",
-      }),
-    due_date_range: z
-      .object({
-        from: z.date(),
-        to: z.date(),
-      })
-      .refine((data) => data.from <= data.to, {
-        message: "Invalid date range",
-      })
-      .partial(),
-  });
-
-  const filtersForm = useForm<z.infer<typeof filtersFormSchema>>({
-    resolver: zodResolver(filtersFormSchema),
-    defaultValues: {
-      materials: [],
-      price: [100, 1000000],
-      due_date_range: {},
-    },
-  });
-
-  const [tabValue, setTabValue] = useState("active-orders");
-  const [searchVal, setSearchVal] = useState<string>("");
-  const [orderFilters, setOrderFilters] = useState<
-    z.infer<typeof filtersFormSchema>
-  >({
-    materials: [],
-    price: [],
-    due_date_range: {},
-  });
-
-  const [debouncedSearch] = useDebounce(searchVal, 400);
-  const [debouncedFilters] = useDebounce(orderFilters, 400);
-
-  const getKey = (pageIndex: number, previousPageData: any) => {
-    if (previousPageData && !previousPageData.next) return null;
-
-    const params = new URLSearchParams();
-
-    params.set("page", String(pageIndex + 1));
-
-    if (debouncedSearch) {
-      params.set("search", debouncedSearch);
-    }
-
-    if (debouncedFilters?.materials?.length) {
-      params.set("materials", debouncedFilters.materials.join(","));
-    }
-
-    if (debouncedFilters?.price?.length === 2) {
-      const [min, max] = debouncedFilters.price;
-      params.set("price_min", String(min));
-      params.set("price_max", String(max));
-    }
-
-    if (debouncedFilters?.due_date_range?.from) {
-      params.set(
-        "due_from",
-        debouncedFilters.due_date_range.from.toISOString(),
-      );
-    }
-
-    if (debouncedFilters?.due_date_range?.to) {
-      params.set("due_to", debouncedFilters.due_date_range.to.toISOString());
-    }
-
-    return `/a/order?${params.toString()}`;
-  };
-
-  const { data, size, setSize, isLoading, isValidating } = useSWRInfinite(
-    getKey,
-    fetcher,
-  );
-
-  const orders = data ? data.flatMap((page) => page.results) : [];
-
-  const hasMore = data ? !!data[data.length - 1]?.next : true;
-
-  const isLoadingMore = isValidating && size > 0;
-
-  const loadMore = () => {
-    if (hasMore && !isLoadingMore) {
-      setSize(size + 1);
-    }
-  };
-
-  const onFilterOrders = async (data: z.infer<typeof filtersFormSchema>) => {
-    setOrderFilters({
-      materials: data.materials,
-      price: data.price,
-      due_date_range: data.due_date_range,
+    const res = await api.post(`/a/materials/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
 
-    setTabValue("active-orders");
-  };
-
-  if (tabValue === "filter-orders") {
-    return (
-      <div className="fixed h-screen w-screen bg-background text-foreground relative">
-        <div className="fixed z-10 top-0 w-full">
-          <div className="flex items-center gap-4 pl-3 py-3 bg-background text-foreground">
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setTabValue("active-orders")}
-            >
-              <X className="size-5" />
-            </Button>
-            <h6>Filters</h6>
-          </div>
-        </div>
-        <OrderFilterContent
-          materials={materials!}
-          filtersForm={filtersForm}
-          onFilterOrders={onFilterOrders}
-        />
-
-        <div className="fixed bottom-0 w-full px-4 pb-4 bg-background text-foreground">
-          <div className="border-t flex items-center justify-between pt-4">
-            <Button variant="link" onClick={() => filtersForm.reset()}>
-              Clear all
-            </Button>
-            <Button type="submit" form="filters-form">
-              Apply changes
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    return { ok: true, data: res.data as Material[] };
+  } catch (error: any) {
+    console.error(error, error.response.data);
+    try {
+      return { ok: false };
+    } catch {
+      return { ok: false };
+    }
   }
+};
+
+const onFetchOrders: (query?: string) => Promise<{
+  ok: boolean;
+  data?: Order[];
+}> = async (query) => {
+  "use server";
+
+  try {
+    const accessToken = (await cookies()).get("auth-jwt")?.value;
+
+    const res = await api.post(`/a/order?${query}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return { ok: true, data: res.data as Order[] };
+  } catch (error: any) {
+    console.error(error, error.response.data);
+    try {
+      return { ok: false };
+    } catch {
+      return { ok: false };
+    }
+  }
+};
+
+export default async function OrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>;
+}) {
+  const isOnActiveOrdersTab = (await searchParams).type === "active";
+
+  const { data: materials } = await onFetchMaterials();
+  const { data: orders } = await onFetchOrders();
+
+  // const getKey = (pageIndex: number, previousPageData: any) => {
+  //   if (previousPageData && !previousPageData.next) return null;
+
+  //   const params = new URLSearchParams();
+
+  //   params.set("page", String(pageIndex + 1));
+
+  //   if (debouncedSearch) {
+  //     params.set("search", debouncedSearch);
+  //   }
+
+  //   if (debouncedFilters?.materials?.length) {
+  //     params.set("materials", debouncedFilters.materials.join(","));
+  //   }
+
+  //   if (debouncedFilters?.price?.length === 2) {
+  //     const [min, max] = debouncedFilters.price;
+  //     params.set("price_min", String(min));
+  //     params.set("price_max", String(max));
+  //   }
+
+  //   if (debouncedFilters?.due_date_range?.from) {
+  //     params.set(
+  //       "due_from",
+  //       debouncedFilters.due_date_range.from.toISOString(),
+  //     );
+  //   }
+
+  //   if (debouncedFilters?.due_date_range?.to) {
+  //     params.set("due_to", debouncedFilters.due_date_range.to.toISOString());
+  //   }
+
+  //   return `/a/order?${params.toString()}`;
+  // };
 
   return (
     <>
       <UILayout className="pb-100">
         <div className="fixed top-1 sm:top-3 sm:px-4 w-full text-primary-foreground">
-          {tabValue === "search-orders" ? (
-            <div className="flex items-center h-13 pl-1 pr-4 transition-all">
-              <Button
-                variant="ghost"
-                size="icon-lg"
-                className="hover:bg-transparent hover:text-primary-light"
-                onClick={() => setTabValue("active-orders")}
-              >
-                <ArrowLeft />
-              </Button>
-              <InputGroup className="bg-background text-foreground">
-                <InputGroupAddon>
-                  <Search />
-                </InputGroupAddon>
-                <InputGroupInput
-                  type="text"
-                  placeholder="Search order..."
-                  value={searchVal}
-                  onChange={(e) => setSearchVal(e.target.value)}
-                />
-
-                <InputGroupButton
-                  onClick={() => setSearchVal("")}
-                  className={cn(
-                    "transition-opacity duration-200",
-                    searchVal.length > 0
-                      ? "opacity-100"
-                      : "opacity-0 pointer-events-none",
-                  )}
-                >
-                  <X />
-                </InputGroupButton>
-              </InputGroup>
-            </div>
-          ) : (
-            <div className="transition-all flex items-center justify-between pl-4">
-              <h6>Orders</h6>
-              <Button
-                variant="ghost"
-                size="icon-lg"
-                className="hover:bg-transparent hover:text-primary-light mr-5"
-                onClick={() => setTabValue("search-orders")}
-              >
+          <div className="transition-all flex items-center justify-between pl-4">
+            <h6>Orders</h6>
+            <Button
+              variant="ghost"
+              size="icon-lg"
+              className="hover:bg-transparent hover:text-primary-light mr-5"
+              asChild
+            >
+              <Link href="/dashboard/order/filter">
                 <Search />
-              </Button>
-            </div>
-          )}
+              </Link>
+            </Button>
+          </div>
         </div>
         <UILayoutContentWrapper className="top-0 sm:top-2 mt-15 pb-20 fixed">
           <UILayoutContent className="py-4 sm:py-9 px-0">

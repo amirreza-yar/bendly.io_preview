@@ -10,11 +10,11 @@ const colorBadgeVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
-        green: "bg-success-subtle text-success",
-        orange: "bg-alert-subtle text-alert",
-        red: "bg-destructive-subtle text-destructive",
-        blue: "bg-primary-lightest text-primary",
-        gray: "bg-gray text-black",
+        green: "bg-success-subtle/60 text-green-700",
+        orange: "bg-alert-subtle/60 text-orange-700",
+        red: "bg-destructive-subtle/60 text-red-700",
+        blue: "bg-primary-lightest/60 text-blue-700",
+        gray: "bg-gray text-black/60",
       },
     },
     defaultVariants: {

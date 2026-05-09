@@ -29,7 +29,7 @@ const recipientInfoSchema = z.object({
 
   phone: z
     .string("Phone number is required")
-    .regex(/^[2-478]\d{8}$/, "Enter a valid phone number"),
+    .regex(/^\d{10}$/, "Enter a valid phone number"),
 });
 
 type RecipientInfoValues = z.infer<typeof recipientInfoSchema>;
@@ -45,7 +45,7 @@ export default function EditRecipientPage({}) {
     fetcher,
     {
       onError: () => notFound(),
-    }
+    },
   );
 
   const { data: userInfo } = useSWR("/a/profile/", fetcher);
@@ -61,7 +61,7 @@ export default function EditRecipientPage({}) {
 
     recipientInfoForm.setValue(
       "phone",
-      String(recipientData?.recipient_phone)?.slice(2)
+      String(recipientData?.recipient_phone)?.slice(2),
     );
     recipientInfoForm.setValue("name", recipientData?.recipient_name);
   }, [recipientInfoForm, recipientData]);
@@ -96,11 +96,11 @@ export default function EditRecipientPage({}) {
               onClick={() => {
                 recipientInfoForm.setValue(
                   "name",
-                  `${userInfo?.first_name} ${userInfo?.last_name}`
+                  `${userInfo?.first_name} ${userInfo?.last_name}`,
                 );
                 recipientInfoForm.setValue(
                   "phone",
-                  String(userInfo?.phone).slice(2)
+                  String(userInfo?.phone).slice(2),
                 );
               }}
             >
@@ -111,7 +111,7 @@ export default function EditRecipientPage({}) {
             <form
               className="h-full space-y-4"
               onSubmit={recipientInfoForm.handleSubmit(
-                onRecipientInfoFormSubmit
+                onRecipientInfoFormSubmit,
               )}
             >
               <FormField

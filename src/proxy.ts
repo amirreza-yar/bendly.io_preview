@@ -84,7 +84,7 @@ export async function proxy(req: NextRequest) {
 
   let isAuthenticated: boolean = false;
 
-  console.log("is auth?: ", token, refreshToken);
+  // console.log("is auth?: ", token, refreshToken);
 
   if (token) {
     const ver = await onVerifyToken(token, req);

@@ -141,16 +141,19 @@ function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
 
 function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
-    <p
-      data-slot="field-description"
-      className={cn(
-        "flex items-center gap-1 text-black caption-small leading-normal font-normal group-has-[[data-orientation=horizontal]]/field:text-balance",
-        "last:mt-0 nth-last-2:-mt-1 [[data-variant=legend]+&]:-mt-1.5",
-        "[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
-        className,
-      )}
-      {...props}
-    />
+    <div className="flex items-center gap-1">
+      <Info className="size-3" />
+      <p
+        data-slot="field-description"
+        className={cn(
+          "flex items-center gap-1 text-black caption-small leading-normal font-normal group-has-[[data-orientation=horizontal]]/field:text-balance",
+          "last:mt-0 nth-last-2:-mt-1 [[data-variant=legend]+&]:-mt-1.5",
+          "[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
+          className,
+        )}
+        {...props}
+      />
+    </div>
   );
 }
 

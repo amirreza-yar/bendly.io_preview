@@ -5,13 +5,7 @@ import React, { ComponentPropsWithoutRef } from "react";
 export function Tabs({
   ...props
 }: ComponentPropsWithoutRef<typeof TabsPrimitive.Root>) {
-  return (
-    <TabsPrimitive.Root
-      {...props}
-      data-slot="tabs"
-      className="flex flex-col gap-2 w-full"
-    />
-  );
+  return <TabsPrimitive.Root {...props} data-slot="tabs" />;
 }
 
 export function TabsList({

@@ -38,7 +38,7 @@ export function OrderSpecificationAccordion({
                   Quantity:{" "}
                   {flash.sepcifications.reduce(
                     (sum: number, spec: any) => sum + spec.quantity,
-                    0
+                    0,
                   )}{" "}
                   pcs
                 </p>
@@ -110,7 +110,7 @@ export function OrderSummeryAccordion({
                   Quantity:{" "}
                   {flash.sepcifications.reduce(
                     (sum: number, spec: any) => sum + spec.quantity,
-                    0
+                    0,
                   )}{" "}
                   pcs
                 </p>
@@ -197,7 +197,7 @@ export function NewOrderSummaryAccordion({ flashings }: { flashings: any }) {
                       Qty:{" "}
                       {flash.specifications?.reduce(
                         (sum: number, spec: any) => sum + spec.quantity,
-                        0
+                        0,
                       )}{" "}
                       pcs
                     </p>
@@ -209,7 +209,7 @@ export function NewOrderSummaryAccordion({ flashings }: { flashings: any }) {
                           {flash.specifications
                             ?.reduce(
                               (sum: any, spec: any) => sum + (spec?.cost ?? 0),
-                              0
+                              0,
                             )
                             .toLocaleString(undefined, {
                               minimumFractionDigits: 2,
@@ -233,7 +233,10 @@ export function NewOrderSummaryAccordion({ flashings }: { flashings: any }) {
               <div className="flex justify-between pb-4">
                 <div className="grid gap-2 pl-19">
                   {flash.specifications?.map((spec: any, index: number) => (
-                    <p key={index} className="caption-small text-subtitle">
+                    <p
+                      key={index}
+                      className="caption-small text-muted-foreground"
+                    >
                       {spec.quantity} x {spec.length} mm
                     </p>
                   ))}

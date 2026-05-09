@@ -21,7 +21,10 @@ import {
 import useSWR from "swr";
 
 const NewJobRefFormSchema = z.object({
-  code: z.string("Code is required").nonempty("Job reference code is required"),
+  code: z
+    .string("Code is required")
+    .nonempty("Project code is required")
+    .regex(/^\d$/, "Code must only contain digits"),
   projectName: z
     .string("Project name is required")
     .nonempty("Project name is required"),
@@ -35,7 +38,7 @@ const NewJobRefFormSchema = z.object({
     .nonempty("Street Address is required")
     .regex(
       /^[a-zA-Z0-9\s,'\.-]+$/,
-      "Street address can only contain letters, numbers, spaces, comma, hyphen, dot, and apostrophe"
+      "Street address can only contain letters, numbers, spaces, comma, hyphen, dot, and apostrophe",
     )
     .max(100, "Street address must be under 100 characters"),
 
@@ -44,7 +47,7 @@ const NewJobRefFormSchema = z.object({
     .nonempty("Suburb is required")
     .regex(
       /^[a-zA-Z\s'-]+$/,
-      "Suburb must contain only letters, spaces, and hyphens"
+      "Suburb must contain only letters, spaces, and hyphens",
     )
     .max(50, "Suburb name must be under 50 characters"),
 
@@ -61,7 +64,7 @@ const NewJobRefFormSchema = z.object({
 
   phone: z
     .string("Phone number is required")
-    .regex(/^[2-478]\d{8}$/, "Enter a valid phone number"),
+    .regex(/^\d{10}$/, "Enter a valid phone number"),
 });
 
 export type NewJobRefFormValues = z.infer<typeof NewJobRefFormSchema>;

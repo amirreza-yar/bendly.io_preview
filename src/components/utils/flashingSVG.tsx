@@ -1,4 +1,5 @@
 "use client";
+import { Template } from "@/types/api";
 import { StoredFlashing } from "@/types/flashingTypes";
 import { StoredOrderFlashing } from "@/types/orderTypes";
 
@@ -34,7 +35,7 @@ function calculateLines(nodes: StoredFlashing["nodes"]) {
   // Find the longest line
   const longestLine = lines.reduce(
     (max, l) => (l.length > max.length ? l : max),
-    lines[0]
+    lines[0],
   );
 
   return { lines, longestLine };
@@ -68,7 +69,7 @@ function createPathD(nodes: StoredFlashing["nodes"]) {
 function generate3DPaths(
   nodes: StoredFlashing["nodes"],
   offset = 200,
-  coeff = PATH3DCOEFF
+  coeff = PATH3DCOEFF,
 ): { from: string; to: string; d: string }[] {
   const nodeMap = Object.fromEntries(nodes.map((n) => [n.node_id, n]));
   const visited = new Set<string>();
@@ -107,7 +108,7 @@ function generate3DPaths(
 function getNodeBounds(
   nodes: StoredFlashing["nodes"],
   offset: number,
-  path3DOffset: number
+  path3DOffset: number,
 ) {
   if (!nodes.length) {
     throw new Error("Node list is empty.");
@@ -123,16 +124,16 @@ function getNodeBounds(
   // console.log('max top/left: ', maxTop, maxLeft)
 
   return `${Math.round(minLeft - offset / 2)} ${Math.round(
-    minTop - offset / 2 - path3DOffset * PATH3DCOEFF
+    minTop - offset / 2 - path3DOffset * PATH3DCOEFF,
   )} ${Math.round(maxLeft - minLeft + offset + path3DOffset)} ${Math.round(
-    maxTop - minTop + offset + path3DOffset * PATH3DCOEFF
+    maxTop - minTop + offset + path3DOffset * PATH3DCOEFF,
   )}`;
 }
 
 function genStartCrushFoldCoor(
   nodes: StoredFlashing["nodes"],
   crushFoldOffset: number,
-  crushFoldDir: boolean
+  crushFoldDir: boolean,
 ) {
   const { lines } = calculateLines(nodes);
 
@@ -151,13 +152,13 @@ function genStartCrushFoldCoor(
       A1.left +
       crushFoldOffset *
         Math.cos(
-          ((lines[0].angle + 90 * (crushFoldDir ? 1 : -1)) * Math.PI) / 180
+          ((lines[0].angle + 90 * (crushFoldDir ? 1 : -1)) * Math.PI) / 180,
         ),
     top:
       A1.top +
       crushFoldOffset *
         Math.sin(
-          ((lines[0].angle + 90 * (crushFoldDir ? 1 : -1)) * Math.PI) / 180
+          ((lines[0].angle + 90 * (crushFoldDir ? 1 : -1)) * Math.PI) / 180,
         ),
   };
 
@@ -166,13 +167,13 @@ function genStartCrushFoldCoor(
       M.left +
       crushFoldOffset *
         Math.cos(
-          ((lines[0].angle + 90 * (crushFoldDir ? 1 : -1)) * Math.PI) / 180
+          ((lines[0].angle + 90 * (crushFoldDir ? 1 : -1)) * Math.PI) / 180,
         ),
     top:
       M.top +
       crushFoldOffset *
         Math.sin(
-          ((lines[0].angle + 90 * (crushFoldDir ? 1 : -1)) * Math.PI) / 180
+          ((lines[0].angle + 90 * (crushFoldDir ? 1 : -1)) * Math.PI) / 180,
         ),
   };
 
@@ -191,7 +192,7 @@ function genStartCrushFoldCoor(
 function genEndCrushFoldCoor(
   nodes: StoredFlashing["nodes"],
   crushFoldOffset: number,
-  crushFoldDir: boolean
+  crushFoldDir: boolean,
 ) {
   const { lines } = calculateLines(nodes);
 
@@ -218,7 +219,7 @@ function genEndCrushFoldCoor(
         Math.cos(
           ((lines[lines.length - 1].angle + 90 * (crushFoldDir ? 1 : -1)) *
             Math.PI) /
-            180
+            180,
         ),
     top:
       A1.top +
@@ -226,7 +227,7 @@ function genEndCrushFoldCoor(
         Math.sin(
           ((lines[lines.length - 1].angle + 90 * (crushFoldDir ? 1 : -1)) *
             Math.PI) /
-            180
+            180,
         ),
   };
 
@@ -237,7 +238,7 @@ function genEndCrushFoldCoor(
         Math.cos(
           ((lines[lines.length - 1].angle + 90 * (crushFoldDir ? 1 : -1)) *
             Math.PI) /
-            180
+            180,
         ),
     top:
       M.top +
@@ -245,7 +246,7 @@ function genEndCrushFoldCoor(
         Math.sin(
           ((lines[lines.length - 1].angle + 90 * (crushFoldDir ? 1 : -1)) *
             Math.PI) /
-            180
+            180,
         ),
   };
 
@@ -270,7 +271,7 @@ export default function FlashingSVG({
   crushFoldOffsetCoeff = 1,
   path3DOffsetCoeff = 1.2,
 }: {
-  flashing: StoredFlashing;
+  flashing: StoredFlashing | Template;
   className?: string;
   strokeWidthCoeff?: number;
   crushFoldOffsetCoeff?: number;
@@ -320,7 +321,7 @@ export default function FlashingSVG({
             d={genStartCrushFoldCoor(
               flashing.nodes,
               crushFoldOffset,
-              flashing.crushFoldDir
+              flashing.crushFoldDir ?? flashing.color_side_dir,
             )}
             stroke="#262626"
             fill="none"
@@ -335,7 +336,7 @@ export default function FlashingSVG({
             d={genEndCrushFoldCoor(
               flashing.nodes,
               crushFoldOffset,
-              flashing.crushFoldDir
+              flashing.crushFoldDir ?? flashing.color_side_dir,
             )}
             stroke="#262626"
             fill="none"

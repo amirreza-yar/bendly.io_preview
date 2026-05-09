@@ -16,6 +16,13 @@ export type Template = {
   nodes: Node[];
 };
 
+export type Project = {
+  id: number;
+  code: number;
+  project_name: string;
+  addresses: Address[];
+};
+
 export type Specification = {
   quantity: number;
   length: number;
@@ -42,7 +49,7 @@ export type Flashing = {
 };
 
 export type Address = {
-  id?: number;
+  id: number;
   title: string;
   street_address: string;
   suburb: string;

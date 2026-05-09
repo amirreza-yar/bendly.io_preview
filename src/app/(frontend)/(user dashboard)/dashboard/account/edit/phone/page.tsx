@@ -25,7 +25,7 @@ import { useEffect } from "react";
 const EditPhoneFormSchema = z.object({
   phone: z
     .string("Phone number is required")
-    .regex(/^[2-478]\d{8}$/, "Enter a valid phone number"),
+    .regex(/^\d{10}$/, "Enter a valid phone number"),
 });
 
 type EditPhoneFormValues = z.infer<typeof EditPhoneFormSchema>;

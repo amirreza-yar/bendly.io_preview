@@ -1,109 +1,46 @@
-"use client";
 import BottomNav from "@/components/dashboard/bottom-nav";
-import { useEffect } from "react";
-import useSWR from "swr";
-import { fetcher } from "@/lib/axios";
-import {
-  UILayout,
-  UILayoutContent,
-  UILayoutContentWrapper,
-} from "@/components/main";
+import { UILayoutBackground } from "@/components/main";
 import { Logo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ChevronRight, Plus, Settings } from "lucide-react";
 import Link from "next/link";
-
-type Node = {
-  node_id: string;
-  left: number;
-  top: number;
-  prev_node_id?: string;
-  next_node_id?: string;
-};
-
-type Template = {
-  id: number;
-  name: string;
-  start_crush_fold: boolean;
-  end_crush_fold: boolean;
-  color_side_dir: boolean;
-  tapered: boolean;
-  nodes: Node[];
-};
+import RecentTemplates, {
+  RecentTemplatesLoading,
+} from "@/components/dashboard/recent-templates";
+import { Suspense } from "react";
 
 export default function HomePage() {
-  // const router = useRouter();
-  // const { data: jobReferences } = useSWR("/a/job-ref/", fetcher);
-
-  // const { data: cart, mutate: mutateCart } = useSWR("/a/cart/", fetcher);
-
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((reg) => {
-          // console.log('sw registered!')
-          // console.log(reg)
-        })
-        .catch((error) => {
-          // console.log('sw reg failed!')
-          // console.log(error)
-        });
-    }
-  }, []);
-
-  // const newFlashing = () => {
-  //   router.push(`/f/material`);
-  // };
-
-  // const onDiscardCart = async () => {
-  //   try {
-  //     await api.post("/a/cart/discard-cart/");
-
-  //     toast("Card discarded");
-  //     mutateCart();
-  //   } catch (err: any) {
-  //     toast("Something went wrong");
-  //   }
-  // };
-
-  const { data, isLoading: templatesLoading } = useSWR<{ results: Template[] }>(
-    "/a/template",
-    fetcher,
-  );
-
-  const templates = data ? data.results : [];
-
   return (
     <>
-      <UILayout className="pb-100">
-        <div className="fixed top-0 w-full">
-          <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
-            Bendly
-          </h6>
+      <UILayoutBackground />
+      <div className="fixed top-0 w-full">
+        <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
+          Bendly
+        </h6>
 
-          <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
-          <Button
-            variant="ghost"
-            size="icon-lg"
-            className="absolute right-1 top-1 text-primary-foreground hover:bg-transparent hover:text-primary-light"
-            asChild
-          >
-            <Link href="/dashboard/setting">
-              <Settings className="size-6" />
-            </Link>
-          </Button>
+        <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
+        <Button
+          variant="ghost"
+          size="icon-lg"
+          className="absolute right-1 top-1 text-primary-foreground hover:bg-transparent hover:text-primary-light"
+          asChild
+        >
+          <Link href="/dashboard/setting">
+            <Settings className="size-6" />
+          </Link>
+        </Button>
 
-          <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 sm:top-24 text-primary-foreground text-center">
-            <h5 className="overflow-hidden">Start Your Flashing Design!</h5>
-            <p className="caption-small">
-              Create a new order or use a template to begin
-            </p>
-          </div>
+        <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 sm:top-24 text-primary-foreground text-center">
+          <h5 className="overflow-hidden">Create Your Flashing Order</h5>
+          <p className="caption-small">
+            Create a new order or use a template to get started
+          </p>
         </div>
-        <UILayoutContentWrapper className="top-40 sm:top-50 pb-17">
-          <UILayoutContent className="py-4 sm:py-8 sm:px-8">
-            <div className="flex flex-col gap-2">
+      </div>
+      <div className="fixed top-40 sm:top-50 w-full bottom-20 md:bottom-25 sm:px-8 px-4 max-w-200 left-1/2 -translate-x-1/2">
+        <div className="bg-background rounded-lg pt-4 sm:pt-6 pb-0! h-full [@media(min-height:700px)]:h-fit shadow-md">
+          <div className="h-full gap-2 flex flex-col">
+            <div className="flex flex-col gap-2 px-4 sm:px-6 shrink-0">
               <Button size="lg">
                 <Plus />
                 New Order
@@ -124,46 +61,15 @@ export default function HomePage() {
                   </Link>
                 </Button>
               </div>
-
-              {templatesLoading ? (
-                <div className="grid grid-cols-3 gap-1">
-                  {[0, 0, 0, 0, 0, 0].map((temp, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col gap-1.5 justify-center rounded-md p-2 border animate-pulse"
-                    >
-                      <div className="h-18 bg-gray-300 rounded-md" />
-                      <div className="bg-gray-300 h-3 w-full rounded-md" />
-                    </div>
-                  ))}
-                </div>
-              ) : templates?.length > 0 ? (
-                <div className="grid grid-cols-3 gap-1">
-                  {templates?.slice(0, 6).map((temp) => (
-                    <div
-                      key={temp.id}
-                      className="flex flex-col gap-1.5 justify-center rounded-md p-2 pt-1 border"
-                    >
-                      <div className="h-18  border-b" />
-                      <p className="w-full text-center label-xxsmall px-2 py-1 border rounded-full truncate">
-                        {temp.name}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="h-35 w-full flex flex-col items-center justify-center px-9 text-center">
-                  <h6 className="text-subtitle">No templates yet</h6>
-                  <p className="text-label text-gray-dark mt-1">
-                    You have&apos;nt created any templates yet. Start a new
-                    design first.
-                  </p>
-                </div>
-              )}
             </div>
-          </UILayoutContent>
-        </UILayoutContentWrapper>
-      </UILayout>
+            <div className="flex-1 min-h-0">
+              <Suspense fallback={<RecentTemplatesLoading />}>
+                <RecentTemplates />
+              </Suspense>
+            </div>
+          </div>
+        </div>
+      </div>
       <BottomNav />
     </>
   );

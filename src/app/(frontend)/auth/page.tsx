@@ -61,7 +61,7 @@ export default function LoginPage() {
     try {
       await trigger(data);
 
-      toast("Welcome!");
+      toast("Successfully signed in");
       router.replace("/dashboard");
     } catch (error: any) {
       const message =
@@ -83,7 +83,7 @@ export default function LoginPage() {
 
       <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 text-primary-foreground text-center">
         <h2 className="overflow-hidden">Welcome Back!</h2>
-        <p className="caption-small">Enter credentials to login</p>
+        <p className="caption-small">Enter your credentials to Sign in</p>
       </div>
       <UILayoutContentWrapper>
         <UILayoutContent>
@@ -150,7 +150,7 @@ export default function LoginPage() {
                 />
                 <Button size="lg" className="mb-0" disabled={isMutating}>
                   {isMutating && <Spinner />}
-                  Log in
+                  Sign in
                 </Button>
               </FieldGroup>
             </FieldSet>
