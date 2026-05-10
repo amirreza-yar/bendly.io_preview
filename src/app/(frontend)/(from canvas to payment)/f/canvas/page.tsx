@@ -1,91 +1,138 @@
-"use client";
+'use client';
+import { useEffect, useRef, useState } from 'react';
+import { Engine } from '@/lib/flashing/engine/engine';
+import { DrawMode } from '@/lib/flashing/engine/modes/draw';
+import { graphStore } from '@/lib/flashing/store/store';
+import { useGraphStore } from '@/lib/flashing/store/useStore';
+import { Node } from '@/lib/flashing/types/types';
+import ModeComponent from '@/lib/flashing/components/mode';
+import { PolygonAlertDialog } from '@/components/canvas/base/polygon-alert';
+import CanvasLoader from '@/components/canvas/base/canvas-loader';
+import SelectMaterialDialog from '@/components/canvas/base/material';
 
-import useCanvas from "@/hooks/canvas/useCanvas";
-import { useCanvasContext } from "@/providers/canvas_providers/canvasContextProvider";
-import useDrawing from "@/hooks/canvas/useDrawing";
-import useControls from "@/hooks/canvas/useControls";
-import usePinchZoom from "@/hooks/canvas/usePinchZoom";
-import usePanning from "@/hooks/canvas/usePanning";
-import useRulering from "@/hooks/canvas/useRuler";
-import CanvasControllers from "@/components/flashing/canvas/canvasUI/canvasController";
-import { useHistory } from "@/hooks/canvas/useHistory";
-import { AlertModal } from "@/components/uikit/alertModal";
-import { Button } from "@/components/uikit/buttons/button";
-import { FeaturedStop } from "@/components/uikit/icons";
-import useTapper from "@/hooks/canvas/useTapper";
+const demoData: Node[] = [
+  {
+    node_id: 'gwomd9',
+    x: 100,
+    y: 350,
+    next_node_id: '9rnao4',
+  },
+  {
+    node_id: '9rnao4',
+    x: 50,
+    y: 500,
+    prev_node_id: 'gwomd9',
+    next_node_id: 'jeq3bi',
+    next_line_bside_length: 300,
+  },
+  {
+    node_id: 'jeq3bi',
+    x: 150,
+    y: 500,
+    prev_node_id: '9rnao4',
+    next_node_id: '6jagob',
+  },
+  {
+    node_id: '6jagob',
+    x: 200,
+    y: 400,
+    prev_node_id: 'jeq3bi',
+    next_node_id: 'b7lk16',
+  },
+  {
+    node_id: 'b7lk16',
+    x: 150,
+    y: 350,
+    prev_node_id: '6jagob',
+  },
+];
 
-export default function CanvasPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ flashingId?: string }>;
-}) {
-  const { canvasRef } = useCanvasContext();
+export default function GraphPage() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const engine = useRef<Engine>(null);
 
-  useCanvas();
+  const engineReady = useGraphStore((s) => s.engineReady);
+  const openPolygonAlert = useGraphStore((s) => s.openPolygonAlert);
 
-  useDrawing();
+  const [openMaterialDialog, setOpenMaterialDialog] = useState<boolean>(false);
+  const material = useGraphStore((s) => s.material);
 
-  useControls();
+  useEffect(() => {
+    const prevent = (e: Event) => e.preventDefault();
 
-  useHistory();
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
 
-  usePinchZoom();
+    document.addEventListener('gesturestart', prevent);
+    document.addEventListener('gesturechange', prevent);
+    document.addEventListener('gestureend', prevent);
 
-  usePanning();
+    return () => {
+      document.removeEventListener('gesturestart', prevent);
+      document.removeEventListener('gesturechange', prevent);
+      document.removeEventListener('gestureend', prevent);
+    };
+  }, []);
 
-  useRulering();
+  useEffect(() => {
+    if (!containerRef.current) return;
 
-  useTapper();
+    const eng = new Engine(containerRef.current);
+    const drawMode = new DrawMode();
+
+    eng.setMode(drawMode);
+    // eng.setMode('color-side');
+
+    engine.current = eng;
+
+    // initialize some data
+    graphStore.setState({
+      data: {
+        // nodes: new Map<string, Node>(demoData.map((n: Node) => [n.node_id, n])),
+        nodes: new Map(),
+        startCrushFold: false,
+        endCrushFold: false,
+        crushFoldDir: false,
+      },
+    });
+
+    return () => {
+      eng.destroy();
+    };
+  }, []);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (!material) {
+      timer = setTimeout(() => {
+        setOpenMaterialDialog(true);
+      }, 300);
+    }
+
+    return () => clearTimeout(timer);
+  }, [material]);
 
   return (
-    <>
-      <AlertModal
-        title="This end is locked with Crush Fold"
-        description="You’ve added a Crush Fold here. To move the Extender Node to this point, remove the Crush Fold first."
-        actionButtonText="Cancel"
-        cancelButtonText="Remove Crush Fold"
-        dismissible
-        onAction={() => {}}
-        onCancle={() => console.log("crush fold on discard clicked")}
-        onCancleButtonVariant="ghost"
-      >
-        <Button className="hidden" id="trigger-remove-crush-fold-alert-dialog">
-          Trigger modal
-        </Button>
-      </AlertModal>
+    <div style={{ width: '100vw', height: '100vh' }}>
+      {!engineReady ? (
+        <CanvasLoader />
+      ) : (
+        <>
+          <ModeComponent engine={engine} />
+          <SelectMaterialDialog
+            openDialog={openMaterialDialog}
+            setOpenDialog={setOpenMaterialDialog}
+          />
+          <PolygonAlertDialog openPolygonAlert={openPolygonAlert} />
+        </>
+      )}
 
-      <AlertModal
-        title="Both Ends Locked"
-        description="Both ends have Crush Folds. To draw, remove one or both Crush Folds.
-Need adjustments? Use the Adjust tool."
-        actionButtonText="Got it!"
-        dismissible
-        onAction={() => {}}
-      >
-        <Button
-          className="hidden"
-          id="trigger-both-ends-closed-crush-fold-alert-dialog"
-        >
-          Trigger modal
-        </Button>
-      </AlertModal>
+      {/* <WelcomeDialog /> */}
 
-      <AlertModal
-        title="You Cannot Create A Polygon"
-        icon={FeaturedStop}
-        alignmentVariant="justify"
-        actionButtonText="Got it!"
-        onAction={() => {}}
-        description={`To change the expanding point, select the Node that is open on one side`}
-      >
-        <Button className="hidden" id="trigger-overlap-alert-dialog">
-          Trigger modal
-        </Button>
-      </AlertModal>
-      <CanvasControllers searchParams={searchParams} />
-      <div className="flex-1 h-full w-full">
-        <canvas ref={canvasRef} className="w-full" />
-      </div>
-    </>
+      <div
+        ref={containerRef}
+        className="canvas-root bg-secondary/30"
+        style={{ width: '100%', height: '100%', zIndex: 'auto' }}
+      />
+    </div>
   );
 }

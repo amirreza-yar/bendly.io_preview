@@ -1,4 +1,5 @@
 "use client";
+import { setupAxiosInterceptor } from "@/lib/axios";
 import { useEffect } from "react";
 
 export default function DashboardMainRootLayout({
@@ -18,6 +19,7 @@ export default function DashboardMainRootLayout({
           // console.log("sw reg failed!");
           // console.log(error);
         });
+      setupAxiosInterceptor();
     }
   }, []);
   return <>{children}</>;

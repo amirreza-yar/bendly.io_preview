@@ -8,7 +8,19 @@ export default function MyComponent({
   children: React.ReactNode;
 }) {
   useEffect(() => {
-    setupAxiosInterceptor();
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((reg) => {
+          // console.log("sw registered!");
+          // console.log(reg);
+        })
+        .catch((error) => {
+          // console.log("sw reg failed!");
+          // console.log(error);
+        });
+      setupAxiosInterceptor();
+    }
   }, []);
 
   return <>{children}</>;
