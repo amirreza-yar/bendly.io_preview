@@ -27,7 +27,8 @@ const onFetchTemplates: () => Promise<Template[] | []> = async () => {
     });
 
     return res.data?.results;
-  } catch {
+  } catch (error) {
+    console.log(error.response.data);
     return [];
   }
 };

@@ -94,7 +94,7 @@ export default async function ProjectsPage() {
                   </Link>
                 </Button>
                 <div className="space-y-1 text-label">
-                  <p>PRJ-{proj.code}</p>
+                  <p className="font-semibold text-[15px]">PRJ-{proj.code}</p>
                   <p>{proj.project_name}</p>
                 </div>
                 {(proj.addresses?.length ?? 0) > 0 ? (

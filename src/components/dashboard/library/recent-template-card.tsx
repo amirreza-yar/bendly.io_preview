@@ -10,11 +10,23 @@ import {
 import { ComponentProps } from "react";
 import { Button } from "../../ui/button";
 import { Plus } from "lucide-react";
+import { compressToEncodedURIComponent } from "lz-string";
 
 export default async function RecentTemplateCard({
   template,
   ...props
 }: { template: Template } & ComponentProps<"div">) {
+  const compressedFlashing = () => {
+    const flash = {
+      nodes: template.nodes,
+      start_crush_fold: template.start_crush_fold,
+      end_crush_fold: template.end_crush_fold,
+      color_side_dir: template.color_side_dir,
+    };
+
+    return compressToEncodedURIComponent(JSON.stringify(flash));
+  };
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -57,9 +69,11 @@ export default async function RecentTemplateCard({
           </p>
 
           <div className="flex justify-center gap-3 pt-4 px-4">
-            <Button>
-              <Plus />
-              Add to Order
+            <Button asChild>
+              <a href={`/canvas?flashing=${compressedFlashing()}`}>
+                <Plus />
+                Add to Order
+              </a>
             </Button>
           </div>
         </div>

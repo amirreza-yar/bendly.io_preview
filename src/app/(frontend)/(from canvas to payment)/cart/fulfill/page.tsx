@@ -91,6 +91,8 @@ export default async function OrderFulfillmentPage({
     return redirect("/cart");
   }
 
+  console.log(cart);
+
   return (
     <>
       <OrderFulfillmentForm

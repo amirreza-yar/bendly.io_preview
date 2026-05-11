@@ -100,24 +100,6 @@ const onPostDiscardCart: () => Promise<{ ok: boolean }> = async () => {
   }
 };
 
-const onFetchTemplates: () => Promise<Template[] | []> = async () => {
-  "use server";
-
-  try {
-    const accessToken = (await cookies()).get("auth-jwt")?.value;
-
-    const res = await api.get("/a/template", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return res.data?.results;
-  } catch {
-    return [];
-  }
-};
-
 const compressedFlashing = (fetchedFlashing: Flashing) => {
   const flash = {
     nodes: fetchedFlashing.nodes,

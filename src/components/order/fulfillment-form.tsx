@@ -172,8 +172,8 @@ export default function OrderFulfillmentForm({
   const fulFillmentForm = useForm<FulFillmentFormValue>({
     resolver: zodResolver(fulFillmentFormSchema),
     defaultValues: {
-      job_reference_id: String(queryProjectId ?? cart.job_reference?.id),
-      address_id: String(queryAddressId ?? cart.address?.id),
+      job_reference_id: String(queryProjectId ?? cart.job_reference?.id ?? ""),
+      address_id: String(queryAddressId ?? cart.address?.id ?? ""),
       delivery_type: cart.delivery_type,
       delivery_date: cart.delivery_date,
     },

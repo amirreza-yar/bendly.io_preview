@@ -1,14 +1,7 @@
-import { ContentWrapper } from "@/components/dashboard/contentWrapper";
-import { Footer } from "@/components/dashboard/footer";
-import { Header } from "@/components/dashboard/header";
 import { NewOrderSummaryAccordion } from "@/components/order/accordion";
-import { Button } from "@/components/ui/button";
 import { Delivery, MapMarker, ProfileNav, WareHouse } from "@/components/icons";
-import { Separator } from "@/components/ui/separator";
 import api from "@/lib/axios";
 import { getDayMonthNumber, getDayString } from "@/utilities/datetime";
-import { cn } from "@/utilities/ui";
-import { Loader2 } from "lucide-react";
 import { Cart } from "@/components/order/fulfillment-form";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";

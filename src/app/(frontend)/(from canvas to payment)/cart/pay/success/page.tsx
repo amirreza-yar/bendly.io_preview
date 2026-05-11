@@ -112,7 +112,7 @@ export default async function SuccessPayPage({
         </div>
         <div className="flex flex-col gap-3 w-full">
           <Button className="w-full" size="lg" asChild>
-            <Link href={`/dashboard/orders/${orderId}`}>Track This Order</Link>
+            <Link href={`/dashboard/order/${orderId}`}>Track This Order</Link>
           </Button>
           <Button variant="outline" className="w-full" size="lg" asChild>
             <Link href={`/dashboard`}>Back to Home</Link>
