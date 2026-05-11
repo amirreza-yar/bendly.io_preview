@@ -1,5 +1,4 @@
-import { Order } from "@/types/orders/orderType";
-import { ReplacementRequest } from "@/types/orders/requestType";
+import { Order } from "@/types/api";
 
 export const orders: Order | any[] = [
   {
@@ -515,7 +514,7 @@ export const orders: Order | any[] = [
   },
 ];
 
-export const replacementRequests: ReplacementRequest[] = [
+export const replacementRequests = [
   {
     requestId: 65802343,
     order: {

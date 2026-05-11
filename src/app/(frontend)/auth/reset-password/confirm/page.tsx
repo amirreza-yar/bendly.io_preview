@@ -1,5 +1,4 @@
 "use client";
-import Header from "@/components/main/header";
 import { Logo, PasswordField } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,11 +21,7 @@ import { useRouter } from "next/navigation";
 import { use } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
-import {
-  UILayout,
-  UILayoutContent,
-  UILayoutContentWrapper,
-} from "@/components/main";
+import { UILayoutBackground } from "@/components/main";
 import { toast } from "sonner";
 
 const ResetPasswordConfirmFormSchema = z
@@ -78,13 +73,14 @@ export default function ResetPasswordConfirmPage({
 
       toast("Password reset successfull");
       router.replace("/auth");
-    } catch (error: any) {
+    } catch {
       toast("Something went wrong!");
     }
   };
 
   return (
-    <UILayout>
+    <>
+      <UILayoutBackground />
       <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
         Bendly
       </h6>
@@ -97,8 +93,8 @@ export default function ResetPasswordConfirmPage({
           Please enter a new password for your account
         </p>
       </div>
-      <UILayoutContentWrapper>
-        <UILayoutContent>
+      <div className="fixed top-40 sm:top-45 w-full bottom-20 md:bottom-25 sm:px-8 px-4 max-w-150 left-1/2 -translate-x-1/2">
+        <div className="bg-background rounded-lg px-6 sm:px-8 py-8 sm:py-10 h-fit shadow-md space-y-4">
           <form
             onSubmit={resetPasswordConfirmForm.handleSubmit(
               onResetPasswordConfirm,
@@ -177,8 +173,8 @@ export default function ResetPasswordConfirmPage({
               </Link>
             </div>
           </form>
-        </UILayoutContent>
-      </UILayoutContentWrapper>
-    </UILayout>
+        </div>
+      </div>
+    </>
   );
 }

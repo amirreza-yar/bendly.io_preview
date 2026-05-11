@@ -13,11 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
-import {
-  UILayout,
-  UILayoutContent,
-  UILayoutContentWrapper,
-} from "@/components/main";
+import { UILayoutBackground } from "@/components/main";
 import api from "@/lib/axios";
 import { toast } from "sonner";
 import useSWRMutation from "swr/mutation";
@@ -73,19 +69,22 @@ export default function LoginPage() {
   };
 
   return (
-    <UILayout>
-      <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
-        Bendly
-      </h6>
+    <>
+      <UILayoutBackground />
+      <div className="fixed top-0 w-full">
+        <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
+          Bendly
+        </h6>
 
-      <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
+        <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
 
-      <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 text-primary-foreground text-center">
-        <h2 className="overflow-hidden">Welcome Back!</h2>
-        <p className="caption-small">Enter your credentials to Sign in</p>
+        <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 sm:top-24 text-primary-foreground text-center">
+          <h2 className="overflow-hidden">Welcome Back!</h2>
+          <p className="caption-small">Enter your credentials to Sign in</p>
+        </div>
       </div>
-      <UILayoutContentWrapper>
-        <UILayoutContent>
+      <div className="fixed top-45 sm:top-50 w-full bottom-20 md:bottom-25 sm:px-8 px-4 max-w-150 left-1/2 -translate-x-1/2">
+        <div className="bg-background rounded-lg px-6 sm:px-8 py-8 sm:py-10 h-fit shadow-md space-y-4">
           <form onSubmit={loginForm.handleSubmit(onLogin)}>
             <FieldSet>
               <FieldGroup className="gap-6">
@@ -160,8 +159,8 @@ export default function LoginPage() {
               </Button>
             </div>
           </form>
-        </UILayoutContent>
-      </UILayoutContentWrapper>
-    </UILayout>
+        </div>
+      </div>
+    </>
   );
 }

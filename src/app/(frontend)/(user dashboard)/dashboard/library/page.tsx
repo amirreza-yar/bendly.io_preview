@@ -1,4 +1,4 @@
-import TemplateCard from "@/components/dashboard/template-card";
+import TemplateCard from "@/components/dashboard/library/template-card";
 import { Templates } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {

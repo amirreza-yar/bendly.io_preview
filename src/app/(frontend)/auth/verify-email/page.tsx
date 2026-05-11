@@ -1,33 +1,15 @@
 "use client";
-
-import { HeaderWithCenterTitle } from "@/components/dashboard/header";
-import { useRouter, useSearchParams } from "next/navigation";
-import { ContentWrapper } from "@/components/dashboard/contentWrapper";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Edit,
-  FeaturedSuccess,
-  Mail,
-  MainLogo,
-} from "@/components/icons";
-import { use, useEffect, useRef, useState } from "react";
+import { Mail } from "@/components/icons";
+import { use, useRef } from "react";
 import { toast } from "sonner";
-import {
-  VerifyEmailOTPForm,
-  VerifyEmailOTPValue,
-} from "@/components/dashboard/auth/forms";
 import {
   CodeResendTime,
   CodeResendTimeHandle,
 } from "@/components/dashboard/auth/resendTime";
 import api from "@/lib/axios";
 
-import {
-  UILayout,
-  UILayoutContent,
-  UILayoutContentWrapper,
-} from "@/components/main";
+import { UILayoutBackground } from "@/components/main";
 import { Logo } from "@/components/icons";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
@@ -42,7 +24,7 @@ export default function VerifyEmailPage({
 }: {
   searchParams: Promise<{ email?: string }>;
 }) {
-  const router = useRouter();
+  // const router = useRouter();
 
   const email = use(searchParams).email;
 
@@ -57,61 +39,60 @@ export default function VerifyEmailPage({
       resendRef.current?.resetTimer();
 
       toast("Verification email resent");
-    } catch (error: any) {
+    } catch {
       toast("Something went wrong!");
     }
   };
 
   return (
     <>
-      <UILayout>
-        <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
-          Bendly
-        </h6>
+      <UILayoutBackground />
+      <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
+        Bendly
+      </h6>
 
-        <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
+      <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
 
-        <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 text-primary-foreground text-center">
-          <h5 className="overflow-hidden">Verification email sent.</h5>
-          <p className="caption-small">We&apos;ve sent a link to your email</p>
-        </div>
-
-        <UILayoutContentWrapper>
-          <UILayoutContent>
-            <Field className="gap-2">
-              <FieldLabel htmlFor="email">Email</FieldLabel>
-              <InputGroup>
-                <InputGroupInput
-                  id="email"
-                  type="email"
-                  autoComplete="off"
-                  value={email}
-                  disabled
-                />
-                <InputGroupAddon>
-                  <Mail className="size-5" />
-                </InputGroupAddon>
-              </InputGroup>
-            </Field>
-
-            <div className="flex flex-col pt-6">
-              <CodeResendTime
-                ref={resendRef}
-                onResendHandler={handleResendEmailCode}
+      <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 text-primary-foreground text-center">
+        <h5 className="overflow-hidden">Verification email sent.</h5>
+        <p className="caption-small">We&apos;ve sent a link to your email</p>
+      </div>
+      <div className="fixed top-40 sm:top-45 w-full bottom-20 md:bottom-25 sm:px-8 px-4 max-w-150 left-1/2 -translate-x-1/2">
+        <div className="bg-background rounded-lg px-6 sm:px-8 py-8 sm:py-10 h-fit shadow-md space-y-4">
+          <Field className="gap-2">
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <InputGroup>
+              <InputGroupInput
+                id="email"
+                type="email"
+                autoComplete="off"
+                value={email}
+                disabled
               />
-            </div>
+              <InputGroupAddon>
+                <Mail className="size-5" />
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
 
-            <div className="flex items-center w-full justify-center pt-5">
-              <p className="text-xs">Not your email?</p>
-              <Link href="/auth/signup">
-                <Button variant="link" size="xs" type="button">
-                  Change email
-                </Button>
-              </Link>
-            </div>
-          </UILayoutContent>
-        </UILayoutContentWrapper>
-      </UILayout>
+          <div className="flex flex-col pt-6">
+            <CodeResendTime
+              ref={resendRef}
+              onResendHandler={handleResendEmailCode}
+            />
+          </div>
+
+          <div className="flex items-center w-full justify-center pt-5">
+            <p className="text-xs">Not your email?</p>
+            <Link href="/auth/signup">
+              <Button variant="link" size="xs" type="button">
+                Change email
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* <ContentWrapper className="flex flex-col gap-2 items-center items-center justify-center">
         <div className="absolute flex items-center gap-2 mx-auto top-6 text-[16px] font-semibold z-10">
           <MainLogo className="size-6 text-black" />

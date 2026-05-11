@@ -148,7 +148,7 @@ export default function SignupPage() {
           <p className="caption-small">Create your account to get started</p>
         </div>
       </div>
-      <div className="fixed top-40 w-full bottom-4 sm:px-8 px-4 max-w-130 left-1/2 -translate-x-1/2">
+      <div className="fixed top-40 w-full bottom-4 sm:px-8 px-4 max-w-150 left-1/2 -translate-x-1/2">
         <div className="bg-background rounded-lg pb-0! h-full [@media(min-height:900px)]:h-fit shadow-md">
           <form
             className="relative h-full gap-2 flex flex-col"

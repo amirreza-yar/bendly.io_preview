@@ -1,5 +1,4 @@
 "use client";
-import Header from "@/components/main/header";
 import { Logo, Mail } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
@@ -11,15 +10,9 @@ import {
 import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
-import {
-  UILayout,
-  UILayoutContent,
-  UILayoutContentWrapper,
-  UILayoutHeader,
-} from "@/components/main";
+import { UILayoutBackground } from "@/components/main";
 import { toast } from "sonner";
 
 const ResetPasswordFormSchema = z.object({
@@ -38,10 +31,10 @@ export type ResetPasswordFormValues = z.infer<typeof ResetPasswordFormSchema>;
 export default function ResetPasswordPage() {
   const resetPasswordForm = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(ResetPasswordFormSchema),
-    defaultValues: {},
+    defaultValues: { email: "" },
   });
 
-  const router = useRouter();
+  // const router = useRouter();
 
   const onResetPassword = async (data: ResetPasswordFormValues) => {
     try {
@@ -49,14 +42,14 @@ export default function ResetPasswordPage() {
         email: data.email,
       });
       toast("Email sent");
-      //   router.replace("/dashboard/account/");
-    } catch (error: any) {
+    } catch {
       toast("Something went wrong!");
     }
   };
 
   return (
-    <UILayout>
+    <>
+      <UILayoutBackground />
       <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
         Bendly
       </h6>
@@ -68,8 +61,8 @@ export default function ResetPasswordPage() {
         <p className="caption-small">We will send a link to your email</p>
       </div>
 
-      <UILayoutContentWrapper>
-        <UILayoutContent>
+      <div className="fixed top-40 sm:top-45 w-full bottom-20 md:bottom-25 sm:px-8 px-4 max-w-150 left-1/2 -translate-x-1/2">
+        <div className="bg-background rounded-lg px-6 sm:px-8 py-8 sm:py-10 h-fit shadow-md space-y-4">
           <form onSubmit={resetPasswordForm.handleSubmit(onResetPassword)}>
             <FieldSet>
               <FieldGroup className="gap-6">
@@ -109,8 +102,8 @@ export default function ResetPasswordPage() {
               </Link>
             </div>
           </form>
-        </UILayoutContent>
-      </UILayoutContentWrapper>
-    </UILayout>
+        </div>
+      </div>
+    </>
   );
 }

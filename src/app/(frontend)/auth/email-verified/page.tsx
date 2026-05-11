@@ -1,4 +1,4 @@
-import { Button } from "@/components/uikit/buttons/button";
+import { Button } from "@/components/ui/button";
 import { FeaturedSuccess, MainLogo } from "@/components/icons";
 import Link from "next/link";
 

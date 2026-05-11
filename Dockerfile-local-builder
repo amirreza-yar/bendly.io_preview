@@ -1,0 +1,30 @@
+# docker.arvancloud.ir/node:latest
+# mirror2.chabokan.net/v2/library/node:latest
+
+FROM hub.megan.ir/node:24.12.0-alpine AS base
+
+ENV NODE_ENV="production"
+
+ARG APP_DIR=/home/frontend
+WORKDIR ${APP_DIR}
+
+RUN addgroup --system nextjs && adduser --system --ingroup nextjs nextjs
+
+ARG NEXT_PUBLIC_API_URL
+
+COPY ./public ${APP_DIR}/public
+COPY --chown=nextjs:nextjs ./.next/standalone ${APP_DIR}
+RUN mkdir ${APP_DIR}/.next/static
+COPY --chown=nextjs:nextjs ./.next/static ${APP_DIR}/.next/static
+
+RUN chown -R nextjs:nextjs ${APP_DIR}
+
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD node server.js

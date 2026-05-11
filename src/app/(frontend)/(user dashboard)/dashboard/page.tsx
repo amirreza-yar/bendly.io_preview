@@ -14,7 +14,7 @@ import {
 import Link from "next/link";
 import RecentTemplates, {
   RecentTemplatesLoading,
-} from "@/components/dashboard/recent-templates";
+} from "@/components/dashboard/library/recent-templates";
 import { Suspense } from "react";
 import api from "@/lib/axios";
 import { cookies } from "next/headers";

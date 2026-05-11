@@ -1,0 +1,17 @@
+volumes:
+  postgres_data: {}
+  production_django_media: {}
+
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-local-builder
+
+    image: bendly_client_frontend
+
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8001/api/v1

@@ -1,6 +1,6 @@
 import BackController from "@/components/back-controller";
 import BottomNav from "@/components/dashboard/bottom-nav";
-import LibraryHeader from "@/components/dashboard/library-header";
+import LibraryHeader from "@/components/dashboard/library/library-header";
 import { UILayoutBackground } from "@/components/main";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
