@@ -1,9 +1,13 @@
-import { RefObject } from 'react';
-import { Engine } from '../engine/engine';
-import { useGraphStore } from '../store/useStore';
-import { AnimatePresence, motion } from 'framer-motion';
+import { RefObject } from "react";
+import { Engine } from "../engine/engine";
+import { useGraphStore } from "../store/useStore";
+import { AnimatePresence, motion } from "framer-motion";
 
-export default function ModeComponent({ engine }: { engine: RefObject<Engine | null> }) {
+export default function ModeComponent({
+  engine,
+}: {
+  engine: RefObject<Engine | null>;
+}) {
   const activeMode = useGraphStore((s) => s.activeMode);
 
   if (!engine.current || !engine.current.activeMode) return null;

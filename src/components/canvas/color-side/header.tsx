@@ -1,7 +1,7 @@
-import { CircleQuestion } from '@/components/icons';
-import { Button } from '@/components/ui/button';
-import { Item, ItemActions, ItemContent } from '@/components/ui/item';
-import { Check, X } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Item, ItemActions, ItemContent } from "@/components/ui/item";
+import { ArrowLeftToLine, X } from "lucide-react";
+import BaseTipModal from "../base/tip-modal";
 
 export default function ColorSideModeHeader({
   onSave,
@@ -28,14 +28,17 @@ export default function ColorSideModeHeader({
         <Item className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 shadow-md">
           <ItemContent>
             <p>
-              <span className="font-semibold">Select the colour side.</span> Use the toggle to
-              choose which side will be coloured.
+              <span className="font-semibold">Select the colour side.</span> Use
+              the toggle to choose which side will be coloured.
             </p>
           </ItemContent>
           <ItemActions>
-            <Button variant="ghost" size="icon-lg" className="bg-background rounded-lg shadow-md">
-              <CircleQuestion className="size-5" />
-            </Button>
+            <BaseTipModal
+              Icon={ArrowLeftToLine}
+              title="Color Side"
+              description="By default, the Color side is set to the outer side of the shape. Use the Toggle button to change the direction of the Color side"
+              videoSrc="/videos/tips/colorside.mp4"
+            />
           </ItemActions>
         </Item>
       </div>

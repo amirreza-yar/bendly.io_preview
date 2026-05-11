@@ -20,6 +20,7 @@ import { Field, FieldError } from "../ui/field";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { compressToEncodedURIComponent } from "lz-string";
 
 const editTemplateFormSchema = z.object({
   name: z
@@ -53,7 +54,6 @@ export default function TemplateCard({
     data: z.infer<typeof editTemplateFormSchema>,
   ) => {
     const res = await onEditTemplate(template.id, data.name);
-    console.log(res);
     if (res.ok) {
       toast("Template updated");
       setTemplateModalOpen(false);
@@ -71,6 +71,17 @@ export default function TemplateCard({
       return val !== defaultName;
     },
   });
+
+  const compressedFlashing = () => {
+    const flash = {
+      nodes: template.nodes,
+      start_crush_fold: template.start_crush_fold,
+      end_crush_fold: template.end_crush_fold,
+      color_side_dir: template.color_side_dir,
+    };
+
+    return compressToEncodedURIComponent(JSON.stringify(flash));
+  };
 
   return (
     <Dialog open={templateModalOpen}>
@@ -195,9 +206,11 @@ export default function TemplateCard({
                   </DialogContent>
                 </Dialog>
               )}
-              <Button>
-                <Plus />
-                Add to Order
+              <Button asChild>
+                <a href={`/canvas?flashing=${compressedFlashing()}`}>
+                  <Plus />
+                  Add to Order
+                </a>
               </Button>
             </div>
           </div>

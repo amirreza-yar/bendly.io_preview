@@ -267,7 +267,7 @@ function genEndCrushFoldCoor(
 export default function FlashingSVG({
   flashing,
   className,
-  strokeWidthCoeff = 40,
+  strokeWidthCoeff = 50,
   crushFoldOffsetCoeff = 1,
   path3DOffsetCoeff = 1.2,
 }: {

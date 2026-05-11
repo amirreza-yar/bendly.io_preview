@@ -5,7 +5,7 @@ import {
   DateIcon,
   Delivery,
   WareHouse,
-} from "@/components/uikit/icons";
+} from "@/components/icons";
 import Link from "next/link";
 import { OrderStatusBadge } from "./order-status-badge";
 import { formatDate, formatPrice, formatStatus } from "./utils";

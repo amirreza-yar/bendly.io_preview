@@ -57,7 +57,6 @@ export default function LoginPage() {
   const { trigger, isMutating } = useSWRMutation("/auth/login/", loginRequest);
 
   const onLogin = async (data: LoginFormValue) => {
-    console.log(data);
     try {
       await trigger(data);
 

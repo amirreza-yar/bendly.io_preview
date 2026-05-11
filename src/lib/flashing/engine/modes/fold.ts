@@ -1,18 +1,18 @@
-import { G } from '@svgdotjs/svg.js';
-import { Node } from '@/lib/flashing/types/types';
-import { BaseMode } from './base';
-import { graphStore } from '@/lib/flashing/store/store';
-import { FoldModeUI } from '@/components/canvas/fold';
-import { Dispatch, SetStateAction } from 'react';
-import { RemoveModeComponentProps } from '@/components/canvas/remove';
-import { toast } from 'sonner';
-import { calculateLineAngle } from '../helpers/geometry';
-import { createLengthAnnotations } from '../helpers/annotation';
+import { G } from "@svgdotjs/svg.js";
+import { Node } from "@/lib/flashing/types/types";
+import { BaseMode } from "./base";
+import { graphStore } from "@/lib/flashing/store/store";
+import { FoldModeUI } from "@/components/canvas/fold";
+import { Dispatch, SetStateAction } from "react";
+import { RemoveModeComponentProps } from "@/components/canvas/remove";
+import { toast } from "sonner";
+import { calculateLineAngle } from "../helpers/geometry";
+import { createLengthAnnotations } from "../helpers/annotation";
 
 const PATH_DATA = `M12.0817 0.75V10.0891C12.0817 11.1932 11.1871 12.0882 10.0835 12.0882C8.67968 12.0882 7.71347 10.6782 8.21964 9.36833L9.22718 6.76096M0.75 8.58577L5.08333 4.25244M0.75 4.25244L5.08333 8.58577`;
 
 export class FoldMode extends BaseMode {
-  name = 'fold';
+  name = "fold";
   historyStarted: boolean = false;
 
   ComponentUI = FoldModeUI;
@@ -54,7 +54,7 @@ export class FoldMode extends BaseMode {
     const commitRes = state.commitHistory();
 
     if (commitRes) {
-      toast('Flashing line(s) removed');
+      toast("Crush fold(s) updated");
       return true;
     } else {
       this.historyStarted = false;
@@ -85,30 +85,32 @@ export class FoldMode extends BaseMode {
     const state = graphStore.getState();
 
     const haveCrushFold =
-      (firstFold && state.data?.startCrushFold) || (!firstFold && state.data?.endCrushFold);
+      (firstFold && state.data?.startCrushFold) ||
+      (!firstFold && state.data?.endCrushFold);
 
     this.createNode(
       g,
       node,
       {
         radius: this.getFlexStrokeWidth() * 15,
-        fill: haveCrushFold ? 'var(--primary)' : '#00000000',
+        fill: haveCrushFold ? "var(--primary)" : "#00000000",
       },
       {
         width: this.getFlexStrokeWidth(),
-        color: 'var(--primary)',
+        color: "var(--primary)",
       },
     );
 
     if (haveCrushFold) {
       const path = this.createPath(g, PATH_DATA, {
         width: 1.5,
-        color: 'var(--primary-foreground)',
+        color: "var(--primary-foreground)",
       });
       const bbox = path.bbox();
       path.move(-bbox.width / 2 - bbox.x, -bbox.height / 2 - bbox.y);
       const pb = path.bbox();
-      const scale = (this.getFlexStrokeWidth() * 5) / Math.max(pb.width, pb.height);
+      const scale =
+        (this.getFlexStrokeWidth() * 5) / Math.max(pb.width, pb.height);
       path.scale(scale);
       path.center(0, 0);
     }
@@ -124,7 +126,10 @@ export class FoldMode extends BaseMode {
     }
 
     if (firstFold) {
-      state.setData({ ...state.data, startCrushFold: !state.data?.startCrushFold });
+      state.setData({
+        ...state.data,
+        startCrushFold: !state.data?.startCrushFold,
+      });
     } else {
       state.setData({ ...state.data, endCrushFold: !state.data?.endCrushFold });
     }
@@ -134,7 +139,7 @@ export class FoldMode extends BaseMode {
     if (node.prev_node_id === undefined) {
       const state = graphStore.getState();
       const nodes = state.data?.nodes;
-      const to = nodes?.get(node.next_node_id ?? '');
+      const to = nodes?.get(node.next_node_id ?? "");
 
       if (!to) return;
       const angle = calculateLineAngle(node, to);
@@ -148,7 +153,7 @@ export class FoldMode extends BaseMode {
 
       this.createFoldButton(button, node, true);
 
-      button.on('pointerdown', (e) => {
+      button.on("pointerdown", (e) => {
         e.stopPropagation();
         this.onFoldButtonPointerDown(button, true);
       });
@@ -157,7 +162,7 @@ export class FoldMode extends BaseMode {
     if (node.next_node_id === undefined) {
       const state = graphStore.getState();
       const nodes = state.data?.nodes;
-      const to = nodes?.get(node.prev_node_id ?? '');
+      const to = nodes?.get(node.prev_node_id ?? "");
 
       if (!to) return;
       const angle = calculateLineAngle(node, to);
@@ -171,7 +176,7 @@ export class FoldMode extends BaseMode {
 
       this.createFoldButton(button, node, false);
 
-      button.on('pointerdown', (e) => {
+      button.on("pointerdown", (e) => {
         e.stopPropagation();
         this.onFoldButtonPointerDown(button, false);
       });
@@ -183,7 +188,11 @@ export class FoldMode extends BaseMode {
     this.createPath(g, pathD);
   }
 
-  onAction(s: { startCrushFold?: boolean; endCrushFold?: boolean; crushFoldDir?: boolean }) {
+  onAction(s: {
+    startCrushFold?: boolean;
+    endCrushFold?: boolean;
+    crushFoldDir?: boolean;
+  }) {
     const state = graphStore.getState();
 
     state.beginHistory();

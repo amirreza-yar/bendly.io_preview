@@ -1,5 +1,5 @@
 import { Button } from "@/components/uikit/buttons/button";
-import { FeaturedSuccess, MainLogo } from "@/components/uikit/icons";
+import { FeaturedSuccess, MainLogo } from "@/components/icons";
 import Link from "next/link";
 
 export default function EmailVerifiedPage() {

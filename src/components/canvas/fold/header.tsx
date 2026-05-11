@@ -1,9 +1,10 @@
-import { CircleQuestion } from '@/components/icons';
-import { Button } from '@/components/ui/button';
-import { Item, ItemActions, ItemContent } from '@/components/ui/item';
-import { Check, X } from 'lucide-react';
-import { CancelAlertDialog } from '@/components/canvas/base/cancel-alert';
-import { FoldModeComponentProps } from '.';
+import { CrushFold } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Item, ItemActions, ItemContent } from "@/components/ui/item";
+import { Check, X } from "lucide-react";
+import { CancelAlertDialog } from "@/components/canvas/base/cancel-alert";
+import { FoldModeComponentProps } from ".";
+import BaseTipModal from "../base/tip-modal";
 
 export default function FoldModeHeader({
   componentProps,
@@ -32,7 +33,12 @@ export default function FoldModeHeader({
           <p className="text-md font-semibold">Crush Fold</p>
         </div>
 
-        <Button variant="ghost" size="lg" disabled={!componentProps.canApply} onClick={onSave}>
+        <Button
+          variant="ghost"
+          size="lg"
+          disabled={!componentProps.canApply}
+          onClick={onSave}
+        >
           Apply Crush Fold
           <Check />
         </Button>
@@ -43,9 +49,12 @@ export default function FoldModeHeader({
             <p>Select the start or end point to apply a crush fold.</p>
           </ItemContent>
           <ItemActions>
-            <Button variant="ghost" size="icon-lg" className="bg-background rounded-lg shadow-md">
-              <CircleQuestion className="size-5" />
-            </Button>
+            <BaseTipModal
+              Icon={CrushFold}
+              title="Crush Fold"
+              description="To add a Fold to the shape you’ve drawn, select the circles at the start or end of the shape. Use the Toggle button to change the Fold’s direction"
+              videoSrc="/videos/tips/fold.mp4"
+            />
           </ItemActions>
         </Item>
       </div>

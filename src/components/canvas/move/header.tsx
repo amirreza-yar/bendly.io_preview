@@ -1,9 +1,10 @@
-import { CircleQuestion } from '@/components/icons';
-import { Button } from '@/components/ui/button';
-import { Item, ItemActions, ItemContent } from '@/components/ui/item';
-import { Check, X } from 'lucide-react';
-import { CancelAlertDialog } from '@/components/canvas/base/cancel-alert';
-import { MoveModeComponentProps } from '.';
+import { Move } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Item, ItemActions, ItemContent } from "@/components/ui/item";
+import { Check, X } from "lucide-react";
+import { CancelAlertDialog } from "@/components/canvas/base/cancel-alert";
+import { MoveModeComponentProps } from ".";
+import BaseTipModal from "../base/tip-modal";
 
 export default function MoveModeHeader({
   componentProps,
@@ -32,7 +33,12 @@ export default function MoveModeHeader({
           <p className="text-md font-semibold">Move</p>
         </div>
 
-        <Button variant="ghost" size="lg" disabled={!componentProps.canApply} onClick={onSave}>
+        <Button
+          variant="ghost"
+          size="lg"
+          disabled={!componentProps.canApply}
+          onClick={onSave}
+        >
           Apply
           <Check />
         </Button>
@@ -40,12 +46,17 @@ export default function MoveModeHeader({
       <div className="px-4 pt-2 max-w-100 mx-auto">
         <Item className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 shadow-md">
           <ItemContent>
-            <p>Drag nodes to reshape your drawing, then tap Apply at the top.</p>
+            <p>
+              Drag nodes to reshape your drawing, then tap Apply at the top.
+            </p>
           </ItemContent>
           <ItemActions>
-            <Button variant="ghost" size="icon-lg" className="bg-background rounded-lg shadow-md">
-              <CircleQuestion className="size-5" />
-            </Button>
+            <BaseTipModal
+              Icon={Move}
+              title="Move"
+              description="By grabbing the nodes, drag them in any direction you want to achieve your desired size and shape"
+              videoSrc="/videos/tips/move.mp4"
+            />
           </ItemActions>
         </Item>
       </div>

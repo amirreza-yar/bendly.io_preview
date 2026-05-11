@@ -1,9 +1,10 @@
-import { CircleQuestion } from '@/components/icons';
-import { Button } from '@/components/ui/button';
-import { Item, ItemActions, ItemContent } from '@/components/ui/item';
-import { Check, X } from 'lucide-react';
-import { ResizeModeComponentProps } from '.';
-import { CancelAlertDialog } from '@/components/canvas/base/cancel-alert';
+import { Resize } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Item, ItemActions, ItemContent } from "@/components/ui/item";
+import { Check, X } from "lucide-react";
+import { ResizeModeComponentProps } from ".";
+import { CancelAlertDialog } from "@/components/canvas/base/cancel-alert";
+import BaseTipModal from "../base/tip-modal";
 
 export default function ResizeModeHeader({
   componentProps,
@@ -32,7 +33,12 @@ export default function ResizeModeHeader({
           <p className="text-md font-semibold">Adjust</p>
         </div>
 
-        <Button variant="ghost" size="lg" disabled={!componentProps.canApply} onClick={onSave}>
+        <Button
+          variant="ghost"
+          size="lg"
+          disabled={!componentProps.canApply}
+          onClick={onSave}
+        >
           Apply
           <Check />
         </Button>
@@ -43,9 +49,12 @@ export default function ResizeModeHeader({
             <p>Select a line or node to adjust length/angle.</p>
           </ItemContent>
           <ItemActions>
-            <Button variant="ghost" size="icon-lg" className="bg-background rounded-lg shadow-md">
-              <CircleQuestion className="size-5" />
-            </Button>
+            <BaseTipModal
+              Icon={Resize}
+              title="Adjust"
+              description="To adjust the size, select the desired side or angle, then enter your preferred measurement"
+              videoSrc="/videos/tips/adjust.mp4"
+            />
           </ItemActions>
         </Item>
       </div>

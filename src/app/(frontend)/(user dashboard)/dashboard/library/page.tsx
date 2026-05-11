@@ -55,8 +55,7 @@ const onEditTemplate: (
     );
 
     return { data: res.data, ok: true };
-  } catch (error) {
-    console.error(error);
+  } catch {
     return { ok: false };
   }
 };

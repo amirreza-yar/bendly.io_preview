@@ -1,8 +1,7 @@
 import { cookies } from "next/headers";
-import { onFetchProjectDetails } from "../(project details)/page";
-import EditProjectInfoForm from "@/components/dashboard/project/edit-project-info-form";
 import api from "@/lib/axios";
 import NewAddressForm from "@/components/dashboard/project/new-project-address-form";
+import { Address } from "@/types/api";
 
 const onPostNewAddress: (data: {
   id: string | number;
@@ -13,7 +12,7 @@ const onPostNewAddress: (data: {
   postcode: string;
   name: string;
   phone: string;
-}) => Promise<{ ok: boolean; message?: string }> = async ({
+}) => Promise<{ data?: Address; ok: boolean; message?: string }> = async ({
   id,
   title,
   street,
@@ -28,7 +27,7 @@ const onPostNewAddress: (data: {
   try {
     const accessToken = (await cookies()).get("auth-jwt")?.value;
 
-    await api.post(
+    const res = await api.post(
       `/a/job-ref/${id}/address/`,
       {
         title: title,
@@ -46,9 +45,8 @@ const onPostNewAddress: (data: {
       },
     );
 
-    return { ok: true };
+    return { ok: true, data: res.data };
   } catch (error: any) {
-    console.error(error);
     try {
       return { ok: false, message: error.response.data.code[0] };
     } catch {

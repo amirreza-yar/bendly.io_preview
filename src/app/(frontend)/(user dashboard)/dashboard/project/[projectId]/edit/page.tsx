@@ -19,8 +19,6 @@ const onPatchProjectInfo: (data: {
 
     let subData;
 
-    console.log("code & project: ", project_name);
-
     if (code) {
       subData = {
         code: code,

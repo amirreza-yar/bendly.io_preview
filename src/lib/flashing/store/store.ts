@@ -1,9 +1,12 @@
 // engine/store.ts
-import { createStore } from 'zustand/vanilla';
-import type { GraphData, Material } from '../types/types';
-import { hasEdgeCrossing } from '../engine/helpers/engine';
+import { createStore } from "zustand/vanilla";
+import type { GraphData, Material } from "../types/types";
+import { hasEdgeCrossing } from "../engine/helpers/engine";
 
 export type StoreState = {
+  showProceedDialog: boolean;
+  setShowProceedDialog: (t: boolean) => void;
+
   material: Material | null;
   setMaterial: (m: Material) => void;
 
@@ -36,8 +39,8 @@ export type StoreState = {
   scale: number;
   setScale: (scale: number) => void;
 
-  unit: 'mm' | 'in';
-  setUnit: (u: 'mm' | 'in') => void;
+  unit: "mm" | "in";
+  setUnit: (u: "mm" | "in") => void;
 
   triggerRender: boolean;
   setTriggerRender: (t: boolean) => void;
@@ -62,7 +65,12 @@ export type StoreState = {
   setTransform: (zoom: number, panX: number, panY: number) => void;
 
   viewBox: { x: number; y: number; width: number; height: number } | null;
-  setViewBox: (v: { x: number; y: number; width: number; height: number }) => void;
+  setViewBox: (v: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) => void;
 
   history: GraphData[];
   future: GraphData[];
@@ -79,6 +87,9 @@ let undoLock = false;
 let redoLock = false;
 
 export const graphStore = createStore<StoreState>((set, get) => ({
+  showProceedDialog: false,
+  setShowProceedDialog: (m) => set({ showProceedDialog: m }),
+
   material: null,
   setMaterial: (m) => set({ material: m }),
 
@@ -123,7 +134,7 @@ export const graphStore = createStore<StoreState>((set, get) => ({
   scale: 1,
   setScale: (scale: number) => set({ scale: scale }),
 
-  unit: 'mm',
+  unit: "mm",
   setUnit: (u) => set({ unit: u }),
 
   // Rendering and Engine
@@ -159,7 +170,7 @@ export const graphStore = createStore<StoreState>((set, get) => ({
     }),
 
   // Modes
-  activeMode: 'draw',
+  activeMode: "draw",
   setMode: (mode) => set({ activeMode: mode }),
   canDoModeAction: false,
   setCanDoModeAction: (t) => set({ canDoModeAction: t }),
@@ -188,7 +199,11 @@ export const graphStore = createStore<StoreState>((set, get) => ({
     if (hasEdgeCrossing(data)) {
       // console.warn('Polygon unallowed');
       // alert('Polygon unallowed');
-      set({ data: pendingHistory, pendingHistory: null, openPolygonAlert: true });
+      set({
+        data: pendingHistory,
+        pendingHistory: null,
+        openPolygonAlert: true,
+      });
 
       return false;
     }

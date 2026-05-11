@@ -1,7 +1,5 @@
-import { Button } from "@/components/uikit/buttons/button";
-import { FeaturedSuccess } from "@/components/uikit/icons";
+import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
-import { Download } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
@@ -21,24 +19,85 @@ export default async function SuccessPayPage({
     });
 
     order = res.data;
-  } catch (err: any) {}
+  } catch {}
 
   return (
     <>
-      <div className="w-full h-full flex flex-col gap-6 items-center justify-center">
-        <div className="grid text-center p-4 gap-2 bg-gray-50 border border-gray-200 rounded-md">
-          <FeaturedSuccess className="size-12 w-full my-6" />
-          <h5>Payment successfull</h5>
-          <p className="text-[13px]">Your order has been submitted</p>
-          <div className="flex items-center gap-4 justify-between">
-            <p className="text-[13px]">Transaction ID</p>
-            <p className="text-[13px] font-bold">{id}</p>
+      <div className="w-full h-full space-y-6 py-8 px-4 items-center justify-center">
+        <div className="flex flex-col items-center text-center p-4 gap-2">
+          <svg
+            width="101"
+            height="101"
+            viewBox="0 0 101 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="50.5"
+              cy="50.5"
+              r="48.5"
+              fill="url(#paint0_linear_11097_72990)"
+              stroke="#0E742A"
+              strokeWidth="4"
+            />
+            <circle
+              opacity="0.3"
+              cx="50.5"
+              cy="50.5"
+              r="37.5"
+              fill="url(#paint1_linear_11097_72990)"
+            />
+            <circle
+              opacity="0.5"
+              cx="50.5"
+              cy="50.5"
+              r="44.5"
+              stroke="white"
+              strokeWidth="4"
+            />
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M65.5928 33.412C67.0292 31.5877 69.6726 31.2735 71.4971 32.7098C73.3216 34.1462 73.6365 36.7896 72.2002 38.6141L48.2549 69.0311C48.1179 69.2051 47.9697 69.3652 47.8125 69.5116C46.204 71.0873 43.6249 71.1195 41.9785 69.5565L26.5322 54.8934C24.8482 53.2947 24.7793 50.6332 26.3779 48.9491C27.9767 47.265 30.6382 47.196 32.3223 48.7948L44.4326 60.2909L65.5928 33.412Z"
+              fill="white"
+            />
+            <defs>
+              <linearGradient
+                id="paint0_linear_11097_72990"
+                x1="24"
+                y1="11.5"
+                x2="78"
+                y2="93"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="#B5E384" />
+                <stop offset="1" stopColor="#009933" />
+              </linearGradient>
+              <linearGradient
+                id="paint1_linear_11097_72990"
+                x1="26.0645"
+                y1="19.2903"
+                x2="40"
+                y2="51"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          <h5 className="text-2xl text-success pt-4">Payment successfull</h5>
+          <p className="text-sm">Your order has been submitted</p>
+          <div className="flex w-full items-center gap-4 justify-between">
+            <p className="text-sm">Transaction ID</p>
+            <p className="text-sm font-bold">{id ?? "unknown"}</p>
           </div>
-          <div className="flex items-center gap-4 justify-between">
+          <div className="flex w-full items-center gap-4 justify-between">
             <p className="text-[13px]">Order ID</p>
-            <p className="text-[13px] font-bold">{orderId}</p>
+            <p className="text-[13px] font-bold">{orderId ?? "unknown"}</p>
           </div>
-          <div className="flex items-center gap-4 justify-between">
+          <div className="flex w-full items-center gap-4 justify-between">
             <p className="text-[13px]">Date</p>
             <p className="text-[13px] font-bold">
               {new Date(order?.created_at).toLocaleString("en-US", {
@@ -50,20 +109,14 @@ export default async function SuccessPayPage({
               })}
             </p>
           </div>
-          <Button size="default" variant="ghost" className="mt-2 bg-gray-50">
-            Get Reciept
-            <Download />
-          </Button>
         </div>
-        <div className="flex flex-col gap-3 w-full max-w-84">
-          <Link href={`/dashboard/orders/${orderId}`} className="w-full">
-            <Button className="w-full">Track Order</Button>
-          </Link>
-          <Link href={`/dashboard`} className="w-full">
-            <Button variant="ghost" className="w-full">
-              Go Home
-            </Button>
-          </Link>
+        <div className="flex flex-col gap-3 w-full">
+          <Button className="w-full" size="lg" asChild>
+            <Link href={`/dashboard/orders/${orderId}`}>Track This Order</Link>
+          </Button>
+          <Button variant="outline" className="w-full" size="lg" asChild>
+            <Link href={`/dashboard`}>Back to Home</Link>
+          </Button>
         </div>
       </div>
     </>

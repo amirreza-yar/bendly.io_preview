@@ -54,14 +54,6 @@
     font-weight: var(--font-weight-medium);
   }
 
-  .order__details {
-    @apply rounded-lg bg-background text-foreground max-h-[calc(100vh-137px)] overflow-y-scroll;
-
-    h6 {
-      @apply pb-4 pt-12
-    }
-  }
-
   .flex__between {
     @apply flex items-center justify-between;
   }
@@ -69,16 +61,6 @@
   .flex__start {
     @apply flex items-center justify-start  [&_svg]:size-4;
   }
-
-  /* .typography {
-    h2 {
-      font-size: var(--text-3xl);
-      font-weight: var(--font-weight-bold);
-    }
-    p {
-      font-size: var(--text-base);
-    }
-  } */
 }
 
 @theme inline {
@@ -115,9 +97,6 @@
 }
 
 @theme inline {
-  /* --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono); */
-
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 

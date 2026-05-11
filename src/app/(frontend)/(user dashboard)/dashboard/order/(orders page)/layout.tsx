@@ -3,46 +3,15 @@ import { UILayoutBackground } from "@/components/main";
 import OrdersFiltersControlHeader from "@/components/order/orders-filters-header";
 import OrdersTabs from "@/components/order/orders-tabs";
 import { Button } from "@/components/ui/button";
-import api from "@/lib/axios";
-import { Material } from "@/types/api";
 import { Search } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import { ReactNode } from "react";
-
-const onFetchMaterials: () => Promise<{
-  ok: boolean;
-  data?: Material[];
-}> = async () => {
-  "use server";
-
-  try {
-    const accessToken = (await cookies()).get("auth-jwt")?.value;
-
-    const res = await api.get(`/a/materials/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return { ok: true, data: res.data as Material[] };
-  } catch (error: any) {
-    console.error(error, error.response.data);
-    try {
-      return { ok: false };
-    } catch {
-      return { ok: false };
-    }
-  }
-};
 
 export default async function OrdersLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const { data: materials } = await onFetchMaterials();
-
   return (
     <>
       <UILayoutBackground />

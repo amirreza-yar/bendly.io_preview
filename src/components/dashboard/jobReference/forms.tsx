@@ -7,7 +7,7 @@ import {
   MapMarker,
   Ruler,
   XIcon,
-} from "@/components/uikit/icons";
+} from "@/components/icons";
 import { LabeledInput, LabeledInputWithCode } from "@/components/uikit/input";
 import { Button } from "@/components/uikit/buttons/button";
 import Link from "next/link";
@@ -224,7 +224,7 @@ export function RecipientForm({
           <Form {...someOneElseForm}>
             <form
               onSubmit={someOneElseForm.handleSubmit(
-                onSomeOneElseInfoFormSubmit
+                onSomeOneElseInfoFormSubmit,
               )}
               className="grid gap-6"
             >
@@ -289,7 +289,7 @@ const addressFormSchema = z.object({
     .nonempty("Street Address is required")
     .regex(
       /^[a-zA-Z0-9\s,'\.-]+$/,
-      "Street address can only contain letters, numbers, spaces, comma, hyphen, dot, and apostrophe"
+      "Street address can only contain letters, numbers, spaces, comma, hyphen, dot, and apostrophe",
     )
     .max(100, "Street address must be under 100 characters"),
 
@@ -298,7 +298,7 @@ const addressFormSchema = z.object({
     .nonempty("Suburb is required")
     .regex(
       /^[a-zA-Z\s'-]+$/,
-      "Suburb must contain only letters, spaces, and hyphens"
+      "Suburb must contain only letters, spaces, and hyphens",
     )
     .max(50, "Suburb name must be under 50 characters"),
 

@@ -10,7 +10,7 @@ import {
   FeaturedSuccess,
   Mail,
   MainLogo,
-} from "@/components/uikit/icons";
+} from "@/components/icons";
 import { use, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {

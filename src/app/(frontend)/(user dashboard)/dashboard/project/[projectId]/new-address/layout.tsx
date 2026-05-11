@@ -1,3 +1,4 @@
+import NewAddressHeader from "@/components/dashboard/project/new-address-header";
 import { ArrowLeft } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -14,15 +15,7 @@ export default async function NewAddressLayout({
 
   return (
     <>
-      <div className="fixed flex items-center gap-2 absolute top-2 left-2 text-primary-foreground">
-        <Button variant="ghost" size="icon-lg" asChild>
-          <Link href={`/dashboard/project/${projectId}`}>
-            <ArrowLeft />
-          </Link>
-        </Button>
-
-        <h6>Add New Address</h6>
-      </div>
+      <NewAddressHeader projectId={projectId} />
 
       <div className="fixed top-16 sm:top-16 w-full bottom-20 md:bottom-25 sm:px-8 px-4 max-w-200 left-1/2 -translate-x-1/2">
         <div className="bg-background rounded-lg pb-0! h-full shadow-md">

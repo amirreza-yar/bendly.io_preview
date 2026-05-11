@@ -1,8 +1,9 @@
-import { CircleQuestion } from '@/components/icons';
-import { Button } from '@/components/ui/button';
-import { Item, ItemActions, ItemContent } from '@/components/ui/item';
-import { Trash2, X } from 'lucide-react';
-import { RemoveModeComponentProps } from '.';
+import { Remove } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Item, ItemActions, ItemContent } from "@/components/ui/item";
+import { Trash2, X } from "lucide-react";
+import { RemoveModeComponentProps } from ".";
+import BaseTipModal from "../base/tip-modal";
 
 export default function RemoveModeHeader({
   componentProps,
@@ -23,7 +24,12 @@ export default function RemoveModeHeader({
           <p className="text-md font-semibold">Remove</p>
         </div>
 
-        <Button variant="ghost" size="lg" disabled={!componentProps.canApply} onClick={onSave}>
+        <Button
+          variant="ghost"
+          size="lg"
+          disabled={!componentProps.canApply}
+          onClick={onSave}
+        >
           Remove
           <Trash2 />
         </Button>
@@ -34,9 +40,12 @@ export default function RemoveModeHeader({
             <p>Select line(s) first, then tap trash at the top to remove.</p>
           </ItemContent>
           <ItemActions>
-            <Button variant="ghost" size="icon-lg" className="bg-background rounded-lg shadow-md">
-              <CircleQuestion className="size-5" />
-            </Button>
+            <BaseTipModal
+              Icon={Remove}
+              title="Remove"
+              description="Select the line(s) you want to remove, then tap the Remove button to delete them from the design"
+              videoSrc="/videos/tips/remove.mp4"
+            />
           </ItemActions>
         </Item>
       </div>

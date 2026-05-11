@@ -4,6 +4,7 @@ export type Node = {
   top: number;
   prev_node_id?: string;
   next_node_id?: string;
+  next_line_bside_length?: number;
 };
 
 export type Template = {

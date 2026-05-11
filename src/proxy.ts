@@ -99,7 +99,7 @@ export async function proxy(req: NextRequest) {
 
   if (!isAuthenticated && refreshToken) {
     try {
-      // return onRefreshToken(req);
+      return onRefreshToken(req);
       // eslint-disable-next-line
     } catch (err: any) {
       return onRedirectToLogin(req);

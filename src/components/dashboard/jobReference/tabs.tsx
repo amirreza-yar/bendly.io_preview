@@ -12,7 +12,7 @@ import { ReactNode } from "react";
 import { Select } from "@/components/uikit/select";
 import { Separator } from "@/components/uikit/separator";
 import { Button } from "@/components/uikit/buttons/button";
-import { Edit, Info, MapMarker } from "@/components/uikit/icons";
+import { Edit, Info, MapMarker } from "@/components/icons";
 
 const australianStates = [
   { value: "NSW", label: "New South Wales" },
@@ -208,11 +208,11 @@ export const RecipientFormTab = ({
               onClick={() => {
                 recipientForm.setValue(
                   "name",
-                  `${userInfo?.first_name} ${userInfo?.last_name}`
+                  `${userInfo?.first_name} ${userInfo?.last_name}`,
                 );
                 recipientForm.setValue(
                   "phone",
-                  String(userInfo?.phone)?.slice(2)
+                  String(userInfo?.phone)?.slice(2),
                 );
               }}
             >

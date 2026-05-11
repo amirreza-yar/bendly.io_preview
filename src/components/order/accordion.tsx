@@ -1,4 +1,4 @@
-import { ChevronDown } from "@/components/uikit/icons";
+import { ChevronDown } from "@/components/icons";
 import FlashingSVG from "@/components/utils/flashingSVG";
 import { StoredFlashing } from "@/types/flashingTypes";
 import { Flashing, PaymentHistory } from "@/types/orders/orderType";
@@ -169,7 +169,7 @@ export function NewOrderSummaryAccordion({ flashings }: { flashings: any }) {
       type="single"
       collapsible
       defaultValue="item-1"
-      className="grid gap-y-4 divide-y divide-border-seprator items-center"
+      className="grid gap-y-4 items-center"
     >
       {flashings &&
         flashings.map((flash: any, index: any) => (
@@ -183,11 +183,11 @@ export function NewOrderSummaryAccordion({ flashings }: { flashings: any }) {
                   flashing={flash}
                   path3DOffsetCoeff={0.7}
                   strokeWidthCoeff={35}
-                  className="w-17 h-14 p-1 bg-gray-50 rounded-md border border-border-default"
+                  className="w-20 h-16 p-1 bg-gray-50 rounded-md border border-border-default"
                 />
                 <div className="grid items-center justify-items-stretch w-full">
-                  <p className="label-regular justify-self-start">
-                    {flash.material_data.name} /{" "}
+                  <p className="text-sm justify-self-start">
+                    {flash.material_data.name} .{" "}
                     {flash.material_data.type === "color"
                       ? flash.material_data?.label
                       : `${flash.material_data?.value} mm`}

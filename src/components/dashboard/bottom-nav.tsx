@@ -1,10 +1,5 @@
 "use client";
-import {
-  HomeNav,
-  HomeNavBold,
-  LibraryNav,
-  LibraryNavBold,
-} from "../uikit/icons";
+import { HomeNav, HomeNavBold, LibraryNav, LibraryNavBold } from "../icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Orders, OrdersBold, Templates, TemplatesBold } from "../icons";

@@ -14,7 +14,7 @@ import {
 } from "../../ui/field";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { ScrollArea, ScrollBar } from "../../ui/scroll-area";
 import {
@@ -114,6 +114,8 @@ export default function NewProjectForm({
 
   const router = useRouter();
 
+  const returnHref = useSearchParams().get("return");
+
   const handleNewProjectSubmit = async (
     data: z.infer<typeof newProjectFormSchema>,
   ) => {
@@ -146,16 +148,21 @@ export default function NewProjectForm({
 
     const res = await onPostNewProject(subData);
 
-    console.log(res);
-
     if (res.ok && res?.data?.id) {
-      toast("Project created");
-      router.replace(`/dashboard/project/${res.data.id}`);
+      if (returnHref === "cart") {
+        toast("Address updated");
+        router.replace(
+          `/cart/fulfill?address_id=${res.data.addresses.find((a) => a.title === subData.title)?.id}&project_id=${res.data.id}`,
+        );
+      } else {
+        toast("Project created");
+        router.replace(`/dashboard/project/${res.data.id}`);
+      }
     } else {
       if (res.message) {
         toast(res.message);
       } else {
-        toast("Couldn't update project");
+        toast("Couldn't create project");
       }
     }
   };
@@ -185,7 +192,11 @@ export default function NewProjectForm({
       <div className="fixed flex items-center gap-2 absolute top-2 left-2 text-primary-foreground">
         {currentTab === "info" ? (
           <Button variant="ghost" size="icon-lg" asChild>
-            <Link href={`/dashboard/project`}>
+            <Link
+              href={
+                returnHref === "return" ? `/dashboard/project` : "/cart/fulfill"
+              }
+            >
               <ArrowLeft />
             </Link>
           </Button>

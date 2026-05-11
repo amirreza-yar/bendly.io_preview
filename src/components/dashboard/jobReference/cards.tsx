@@ -5,7 +5,7 @@ import {
   MapMarker,
   ProfileNav,
   Remove,
-} from "@/components/uikit/icons";
+} from "@/components/icons";
 import Link from "next/link";
 import { RemoveJobRefAddressModal } from "./modals";
 import { StoredAddress, StoredJobReference } from "@/types/jobReferenceTypes";

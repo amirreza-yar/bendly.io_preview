@@ -20,6 +20,7 @@ import {
   UILayoutContentWrapper,
   UILayoutHeader,
 } from "@/components/main";
+import { toast } from "sonner";
 
 const ResetPasswordFormSchema = z.object({
   email: z
@@ -43,18 +44,15 @@ export default function ResetPasswordPage() {
   const router = useRouter();
 
   const onResetPassword = async (data: ResetPasswordFormValues) => {
-    console.log(data);
-
-    // try {
-    //   await api.post("/auth/password/reset/", {
-    //     email: data.email,
-    //   });
-
-    //   toast("Email sent");
-    //   //   router.replace("/dashboard/account/");
-    // } catch (error: any) {
-    //   toast("Something went wrong!");
-    // }
+    try {
+      await api.post("/auth/password/reset/", {
+        email: data.email,
+      });
+      toast("Email sent");
+      //   router.replace("/dashboard/account/");
+    } catch (error: any) {
+      toast("Something went wrong!");
+    }
   };
 
   return (

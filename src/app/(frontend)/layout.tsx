@@ -1,9 +1,9 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import { Roboto_Flex } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "sonner";
 import { UserProvider } from "@/providers/main_providers/UserContext";
 import { DBProvider } from "@/providers/db_providers/DBContext";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata = {
   title: "Bendly.io Dashboard",
@@ -22,32 +22,22 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${robot_flex.className}`}>
+        {/* <body> */}
         <UserProvider>
-          <Toaster
-            position="bottom-center"
-            mobileOffset={{ bottom: "96px", right: "0", left: "0" }}
-            toastOptions={{
-              unstyled: true,
-              classNames: {
-                toast:
-                  "bg-[#171717] -fit px-6 py-[12.5px] rounded-md max-w-fit mx-auto shadow-md h-12",
-                title: "font-roboto text-xs/[22.5px] text-white",
-              },
-            }}
-            duration={2000}
-          />
-          <ThemeProvider
+          <Toaster />
+          {/* <ThemeProvider
             attribute="class"
             defaultTheme="light"
             enableSystem
             disableTransitionOnChange
+          > */}
+          <main
+            className="h-screen relative w-screen overflow-auto no-scrollbar font-roboto mx-auto"
+            suppressHydrationWarning
           >
-            <DBProvider>
-              <main className="h-screen relative w-screen overflow-auto no-scrollbar font-roboto mx-auto">
-                {children}
-              </main>
-            </DBProvider>
-          </ThemeProvider>
+            {children}
+          </main>
+          {/* </ThemeProvider> */}
         </UserProvider>
       </body>
     </html>

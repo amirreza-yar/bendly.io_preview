@@ -1,4 +1,4 @@
-import { ModeToggle } from '@/components/theme/dropdown';
+import { ModeToggle } from "@/components/theme/dropdown";
 import {
   Drawer,
   DrawerContent,
@@ -6,13 +6,19 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@/components/ui/drawer';
-import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
-import { ReactNode, useState } from 'react';
-import { UnitToggle } from './unit-dropdown';
-import SelectMaterialDialog from '../material';
-import { useGraphStore } from '@/lib/flashing/store/useStore';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/drawer";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+} from "@/components/ui/item";
+import { ReactNode, useState } from "react";
+import { UnitToggle } from "./unit-dropdown";
+import SelectMaterialDialog from "../proceed-order/proceed-material";
+import { useGraphStore } from "@/lib/flashing/store/useStore";
+import { Button } from "@/components/ui/button";
 
 export default function SettingsDrawer({ children }: { children: ReactNode }) {
   const [openMaterialDialog, setOpenMaterialDialog] = useState<boolean>(false);
@@ -52,12 +58,12 @@ export default function SettingsDrawer({ children }: { children: ReactNode }) {
                 <UnitToggle />
               </ItemActions>
             </Item>
-            <Item>
+            {/* <Item>
               <ItemContent>
                 <ItemTitle className="text-sm">Material</ItemTitle>
                 <div className="text-xs flex items-center text-xs text-muted-foreground">
                   {material?.mat_name} . {material?.label}
-                  {material?.type === 'color' ? (
+                  {material?.type === "color" ? (
                     <div
                       className="w-6 h-3 rounded-full border ml-2"
                       style={{
@@ -79,11 +85,10 @@ export default function SettingsDrawer({ children }: { children: ReactNode }) {
                   Change
                 </Button>
               </ItemActions>
-            </Item>
+            </Item> */}
           </div>
         </DrawerContent>
       </Drawer>
-      <SelectMaterialDialog openDialog={openMaterialDialog} setOpenDialog={setOpenMaterialDialog} />
     </>
   );
 }

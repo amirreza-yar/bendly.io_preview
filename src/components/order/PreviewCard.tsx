@@ -1,16 +1,19 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { ViewToggle } from '@/components/uikit/viewToggle'
-import { FlashingPreview3D, FlashingPreview } from '@/components/uikit/tempPreview'
-import { EditModal } from '@/components/uikit/editModal'
-import { DeleteModal } from '@/components/uikit/deleteFlashingModal'
-import { Trash, Pencil } from '@/components/uikit/icons'
+import React from "react";
+import { ViewToggle } from "@/components/uikit/viewToggle";
+import {
+  FlashingPreview3D,
+  FlashingPreview,
+} from "@/components/uikit/tempPreview";
+import { EditModal } from "@/components/uikit/editModal";
+import { DeleteModal } from "@/components/uikit/deleteFlashingModal";
+import { Trash, Pencil } from "@/components/icons";
 
 const PreviewCard = ({ data = {} }) => {
-  const modes = ['2D', '3D'] as const
-  const [view, setView] = React.useState<(typeof modes)[number]>('3D')
-  const [openEdit, setOpenEdit] = React.useState(false)
+  const modes = ["2D", "3D"] as const;
+  const [view, setView] = React.useState<(typeof modes)[number]>("3D");
+  const [openEdit, setOpenEdit] = React.useState(false);
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-4 w-fit">
@@ -18,7 +21,11 @@ const PreviewCard = ({ data = {} }) => {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold">View</span>
-          <ViewToggle modes={modes} view={view} onChange={(newView) => setView(newView)} />
+          <ViewToggle
+            modes={modes}
+            view={view}
+            onChange={(newView) => setView(newView)}
+          />
         </div>
         {/* Trash and Pencil icons (placeholder) */}
         <div className="flex gap-6">
@@ -45,7 +52,7 @@ const PreviewCard = ({ data = {} }) => {
       {/* Preview */}
       <div className="flex flex-col items-center pt-6 space-y-4">
         <div className="border-b-1 border-b-border pb-xs">
-          {view === '3D' ? (
+          {view === "3D" ? (
             <FlashingPreview3D height="155" width="251" />
           ) : (
             <FlashingPreview height="155" width="251" />
@@ -55,19 +62,19 @@ const PreviewCard = ({ data = {} }) => {
 
       {/* Info Cards Grid */}
       <div className="grid grid-cols-2 gap-2">
-        <InfoCard items={[{ label: 'Total Girth', value: '800 mm' }]} />
-        <InfoCard items={[{ label: 'Taperd', value: 'No' }]} />
+        <InfoCard items={[{ label: "Total Girth", value: "800 mm" }]} />
+        <InfoCard items={[{ label: "Taperd", value: "No" }]} />
         <InfoCard
           items={[
-            { label: 'Material', value: 'Steel' },
-            { label: 'Color', value: 'Steel' },
-            { label: 'Thickness', value: '1mm' },
+            { label: "Material", value: "Steel" },
+            { label: "Color", value: "Steel" },
+            { label: "Thickness", value: "1mm" },
           ]}
         />
         <InfoCard
           items={[
-            { label: 'Crush Fold', value: 'Yes' },
-            { label: 'Type', value: 'Crush' },
+            { label: "Crush Fold", value: "Yes" },
+            { label: "Type", value: "Crush" },
           ]}
         />
       </div>
@@ -87,7 +94,9 @@ const PreviewCard = ({ data = {} }) => {
               />
             </svg>
 
-            <span className="caption-reqular label text-xsm font-semibold">Edit drawing</span>
+            <span className="caption-reqular label text-xsm font-semibold">
+              Edit drawing
+            </span>
           </div>
 
           <div className="w-full flex items-center gap-4 px-4 py-3 border-b-1 border-b-border-seprator">
@@ -126,17 +135,19 @@ const PreviewCard = ({ data = {} }) => {
               />
             </svg>
 
-            <span className="caption-reqular label text-xsm font-semibold">Edit color side</span>
+            <span className="caption-reqular label text-xsm font-semibold">
+              Edit color side
+            </span>
           </div>
         </EditModal>
       )}
     </div>
-  )
-}
+  );
+};
 
 type InfoCardProps = {
-  items: { label: string; value: string }[]
-}
+  items: { label: string; value: string }[];
+};
 
 const InfoCard = ({ items }: InfoCardProps) => (
   <div className="rounded-md border-1 border-border px-3 py-2 space-y-1 text-sm">
@@ -147,6 +158,6 @@ const InfoCard = ({ items }: InfoCardProps) => (
       </div>
     ))}
   </div>
-)
+);
 
-export default PreviewCard
+export default PreviewCard;

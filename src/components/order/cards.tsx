@@ -9,20 +9,20 @@ import {
   Remove,
   WareHouse,
   XIcon,
-} from "@/components/uikit/icons";
+} from "@/components/icons";
 import Link from "next/link";
 import { OrderStatusBadge } from "./order-status-badge";
 import { ReplacementRequest } from "@/types/orders/requestType";
 import { formatDate, formatDateTime, formatPrice, formatStatus } from "./utils";
 import { StoredOrderFlashing } from "@/types/orderTypes";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
-import { AlertDialogContent } from "@/components/uikit/alertModal";
 import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
 import { StoredFlashing } from "@/types/flashingTypes";
 import { cn } from "@/utilities/ui";
 import FlashingSVG from "@/components/utils/flashingSVG";
 import { Order } from "@/types/api";
+import { AlertDialogContent } from "../ui/alert-dialog";
 
 export function OrderCard({ order, ...props }: { order: Order }) {
   return (
@@ -309,7 +309,7 @@ export const DeleteFlashingModalOnOrderReview = ({
       <AlertDialogContent className="font-roboto">
         <div data-slot="alert-dialog-header" className="flex flex-col gap-4">
           <AlertDialogPrimitive.Cancel className="absolute top-4 end-4 [&_svg:not([class*='size-'])]:size-6">
-            <XIcon className="text-neutral-dark" variant="secondary" />
+            <XIcon className="text-neutral-dark" />
           </AlertDialogPrimitive.Cancel>
           <AlertDialogPrimitive.Title
             data-slot="alert-dialog-title"

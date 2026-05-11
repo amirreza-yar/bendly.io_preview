@@ -1,16 +1,26 @@
-import { Button } from '@/components/ui/button';
-import { X, RulerDimensionLine, DraftingCompass, ChevronDown } from 'lucide-react';
-import { Field, FieldLabel } from '@/components/ui/field';
-import { Badge } from '@/components/ui/badge';
-import { Dispatch, RefObject, SetStateAction, useEffect, useState } from 'react';
-import VirtualKeyboard from '../base/keyboard';
-import { ResizeModeComponentProps } from '.';
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
-import { graphStore } from '@/lib/flashing/store/store';
-import { cn } from '@/lib/utils';
-import { Engine } from '@/lib/flashing/engine/engine';
-import { inchToMm, mmToInch } from '@/lib/flashing/engine/helpers/geometry';
-import { useGraphStore } from '@/lib/flashing/store/useStore';
+import { Button } from "@/components/ui/button";
+import { RulerDimensionLine, DraftingCompass, ChevronDown } from "lucide-react";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+import VirtualKeyboard from "../base/keyboard";
+import { ResizeModeComponentProps } from ".";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { graphStore } from "@/lib/flashing/store/store";
+import { cn } from "@/utilities/ui";
+import { Engine } from "@/lib/flashing/engine/engine";
+import { inchToMm, mmToInch } from "@/lib/flashing/engine/helpers/geometry";
+import { useGraphStore } from "@/lib/flashing/store/useStore";
 
 export default function ResizeModeFooter({
   componentProps,
@@ -28,9 +38,12 @@ export default function ResizeModeFooter({
   useEffect(() => {
     if (!componentProps.value) return;
 
-    if (componentProps.type === 'line') {
+    if (componentProps.type === "line") {
       const unit = graphStore.getState().unit;
-      const val = unit === 'mm' ? componentProps.value : mmToInch(componentProps.value).toFixed(2);
+      const val =
+        unit === "mm"
+          ? componentProps.value
+          : mmToInch(componentProps.value).toFixed(2);
       // eslint-disable-next-line
       setInputVal(val);
     } else {
@@ -44,15 +57,15 @@ export default function ResizeModeFooter({
 
     const unit = graphStore.getState().unit;
 
-    if (componentProps.type === 'line' && unit === 'mm' && val < 8) return;
-    if (componentProps.type === 'line' && unit === 'in' && val < 0.3) return;
-    if (componentProps.type === 'node' && val < 35) return;
+    if (componentProps.type === "line" && unit === "mm" && val < 8) return;
+    if (componentProps.type === "line" && unit === "in" && val < 0.3) return;
+    if (componentProps.type === "node" && val < 35) return;
 
     if (!componentProps.onApplyValue) return;
 
     let finVal: number = val;
-    if (componentProps.type === 'line') {
-      finVal = unit === 'mm' ? val : inchToMm(val);
+    if (componentProps.type === "line") {
+      finVal = unit === "mm" ? val : inchToMm(val);
     }
 
     componentProps.onApplyValue(finVal);
@@ -61,13 +74,15 @@ export default function ResizeModeFooter({
 
   const onUnitToggle = () => {
     const state = graphStore.getState();
-    state.setUnit(state.unit === 'mm' ? 'in' : 'mm');
+    state.setUnit(state.unit === "mm" ? "in" : "mm");
   };
 
   return (
     <div className="bg-background border-t-1 shadow-md w-full">
       <Field className="p-4 h-fit">
-        <FieldLabel>{componentProps.type === 'node' ? 'Angle' : 'Length'}</FieldLabel>
+        <FieldLabel>
+          {componentProps.type === "node" ? "Angle" : "Length"}
+        </FieldLabel>
         <div className="flex items-center gap-3">
           <InputGroup>
             <InputGroupInput
@@ -80,11 +95,22 @@ export default function ResizeModeFooter({
               value={inputVal ?? 0}
             />
             <InputGroupAddon>
-              {componentProps.type === 'line' ? <RulerDimensionLine /> : <DraftingCompass />}
+              {componentProps.type === "line" ? (
+                <RulerDimensionLine />
+              ) : (
+                <DraftingCompass />
+              )}
             </InputGroupAddon>
             <InputGroupAddon align="inline-end">
-              <Badge className={cn('px-1 rounded-sm', componentProps.type === 'node' && 'pl-2')}>
-                {componentProps.type === 'line' ? graphStore.getState().unit : ` °`}
+              <Badge
+                className={cn(
+                  "px-1 rounded-sm",
+                  componentProps.type === "node" && "pl-2",
+                )}
+              >
+                {componentProps.type === "line"
+                  ? graphStore.getState().unit
+                  : ` °`}
               </Badge>
             </InputGroupAddon>
           </InputGroup>

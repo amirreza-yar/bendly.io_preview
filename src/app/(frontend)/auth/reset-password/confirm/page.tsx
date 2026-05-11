@@ -27,6 +27,7 @@ import {
   UILayoutContent,
   UILayoutContentWrapper,
 } from "@/components/main";
+import { toast } from "sonner";
 
 const ResetPasswordConfirmFormSchema = z
   .object({
@@ -67,20 +68,19 @@ export default function ResetPasswordConfirmPage({
   const onResetPasswordConfirm = async (
     data: ResetPasswordConfirmFormValues,
   ) => {
-    console.log(data);
-    // try {
-    //   await api.post("/auth/password/reset/confirm/", {
-    //     new_password1: data.new_password1,
-    //     new_password2: data.new_password2,
-    //     uid: uid,
-    //     token: token,
-    //   });
+    try {
+      await api.post("/auth/password/reset/confirm/", {
+        new_password1: data.new_password1,
+        new_password2: data.new_password2,
+        uid: uid,
+        token: token,
+      });
 
-    //   toast("Password reset successfull");
-    //   router.replace("/auth");
-    // } catch (error: any) {
-    //   toast("Something went wrong!");
-    // }
+      toast("Password reset successfull");
+      router.replace("/auth");
+    } catch (error: any) {
+      toast("Something went wrong!");
+    }
   };
 
   return (

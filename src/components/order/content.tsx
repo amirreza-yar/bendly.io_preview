@@ -2,8 +2,6 @@ import { useScrollShadow } from "@/hooks/use-scroll-shadow";
 import { Material, Order } from "@/types/api";
 import { OrderCard } from "./cards";
 import { SquareLoader } from "../ui/loader";
-import { Button } from "../ui/button";
-import { X } from "lucide-react";
 import {
   Field,
   FieldContent,

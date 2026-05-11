@@ -50,7 +50,6 @@ const onPatchAddress: (data: {
 
     return { ok: true };
   } catch (error: any) {
-    console.error(error);
     try {
       return { ok: false, message: error.response.data.code[0] };
     } catch {
@@ -79,7 +78,6 @@ const onFetchAddress: (data: {
 
     return { ok: true, data: res.data };
   } catch (error: any) {
-    console.error(error);
     try {
       return { ok: false, message: error.response.data.code[0] };
     } catch {
@@ -97,8 +95,6 @@ export default async function EditProjectInfoPage({
   const addressId = (await params).addressId;
 
   const address = await onFetchAddress({ projectId, addressId });
-
-  console.log(address);
 
   if (!address || !address.data || !address.ok) return notFound();
 

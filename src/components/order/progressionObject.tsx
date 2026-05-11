@@ -3,7 +3,7 @@ import {
   NotProgressed,
   ProgressChecked,
   ProgressRejected,
-} from "@/components/uikit/icons";
+} from "@/components/icons";
 import { cn } from "@/utilities/ui";
 
 import { RequestProgress } from "@/types/orders/requestType";

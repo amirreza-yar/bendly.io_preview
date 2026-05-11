@@ -110,8 +110,6 @@ export default function SignupPage() {
   const { trigger, isMutating } = useSWRMutation("/auth/login/", signupRequest);
 
   const onSignup = async (data: SignupFormValues) => {
-    console.log(data);
-
     try {
       await trigger(data);
       toast("Verification email sent ");

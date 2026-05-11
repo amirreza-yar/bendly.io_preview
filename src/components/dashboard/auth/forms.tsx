@@ -10,7 +10,7 @@ import {
   FormItem,
 } from "@/components/uikit/form";
 import { Button } from "@/components/uikit/buttons/button";
-import { Mail, PasswordField, ProfileNav } from "@/components/uikit/icons";
+import { Mail, PasswordField, ProfileNav } from "@/components/icons";
 import {
   InputOTP,
   InputOTPGroup,

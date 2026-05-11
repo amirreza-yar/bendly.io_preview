@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { DeleteModal } from '@/components/uikit/deleteFlashingModal'
-import { Download, Pencil, Trash } from '@/components/uikit/icons'
-import { OrderPreview } from '@/components/uikit/tempPreview'
-import { EditModal } from '@/components/uikit/editModal'
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { DeleteModal } from "@/components/uikit/deleteFlashingModal";
+import { Download, Pencil, Trash } from "@/components/icons";
+import { OrderPreview } from "@/components/uikit/tempPreview";
+import { EditModal } from "@/components/uikit/editModal";
 
 const OrderReview = ({ data = {} }) => {
-  const [openEdit, setOpenEdit] = useState(false)
+  const [openEdit, setOpenEdit] = useState(false);
   return (
     <div className="bg-surface-card border-1 border-border-default rounded-lg px-4 pt-m pb-2xs">
       <div className="grid gap-4">
@@ -44,11 +44,15 @@ const OrderReview = ({ data = {} }) => {
         <div className="flex border-1 border-border-default rounded-xs p-3 text-sm relative space-y-2">
           <div className="flex-1">
             <div className="label-regular">
-              <span className="text-2xs font-regular text-subtitle">Code: </span>
+              <span className="text-2xs font-regular text-subtitle">
+                Code:{" "}
+              </span>
               <span className="font-semibold text-xs">20UM</span>
             </div>
             <div className="label-regular">
-              <span className="text-2xs font-regular text-subtitle">Position: </span>
+              <span className="text-2xs font-regular text-subtitle">
+                Position:{" "}
+              </span>
               <span className="font-regular text-2xs">Undetermined</span>
             </div>
 
@@ -120,7 +124,9 @@ const OrderReview = ({ data = {} }) => {
               />
             </svg>
 
-            <span className="caption-reqular label text-xsm font-semibold">Edit drawing</span>
+            <span className="caption-reqular label text-xsm font-semibold">
+              Edit drawing
+            </span>
           </div>
 
           <div className="w-full flex items-center gap-4 px-4 py-3 border-b-1 border-b-border-seprator">
@@ -159,7 +165,9 @@ const OrderReview = ({ data = {} }) => {
               />
             </svg>
 
-            <span className="caption-reqular label text-xsm font-semibold">Edit color side</span>
+            <span className="caption-reqular label text-xsm font-semibold">
+              Edit color side
+            </span>
           </div>
         </EditModal>
       )}
@@ -177,7 +185,7 @@ const OrderReview = ({ data = {} }) => {
             </div>
           </div> */}
     </div>
-  )
-}
+  );
+};
 
-export default OrderReview
+export default OrderReview;

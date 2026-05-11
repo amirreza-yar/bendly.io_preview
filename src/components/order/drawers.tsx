@@ -1,16 +1,16 @@
-import { Drawer, DrawerClose } from '@/components/uikit/drawer'
-import { ReactNode } from 'react'
-import { Edit, TransferHorizontaly, XIcon } from '@/components/uikit/icons'
-import { Separator } from '@/components/uikit/separator'
+import { Drawer, DrawerClose } from "@/components/uikit/drawer";
+import { ReactNode } from "react";
+import { Edit, TransferHorizontaly, XIcon } from "@/components/icons";
+import { Separator } from "@/components/uikit/separator";
 
 export function EditFlashingDrawer({
   flashingId,
   orderId,
   children,
 }: {
-  flashingId: string
-  orderId?: string
-  children?: ReactNode
+  flashingId: string;
+  orderId?: string;
+  children?: ReactNode;
 }): ReactNode {
   return (
     <Drawer trigger={children}>
@@ -43,5 +43,5 @@ export function EditFlashingDrawer({
         </div>
       </div>
     </Drawer>
-  )
+  );
 }

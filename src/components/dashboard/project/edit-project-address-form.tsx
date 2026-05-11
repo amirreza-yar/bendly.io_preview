@@ -13,7 +13,7 @@ import {
 } from "../../ui/field";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
-import { notFound, useRouter } from "next/navigation";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { ScrollArea, ScrollBar } from "../../ui/scroll-area";
 import {
@@ -106,6 +106,8 @@ export default function EditAddressForm({
 
   const router = useRouter();
 
+  const returnHref = useSearchParams().get("return");
+
   if (!projectId) return notFound();
 
   const handleEditProjectAddressSubmit = async (
@@ -124,13 +126,20 @@ export default function EditAddressForm({
     });
 
     if (res.ok) {
-      toast("Project updated");
-      router.replace(`/dashboard/project/${projectId}`);
+      if (returnHref === "cart") {
+        toast("Address updated");
+        router.replace(
+          `/cart/fulfill?address_id=${address.id}&project_id=${projectId}`,
+        );
+      } else {
+        toast("Project updated");
+        router.replace(`/dashboard/project/${projectId}`);
+      }
     } else {
       if (res.message) {
         toast(res.message);
       } else {
-        toast("Couldn't update project");
+        toast("Couldn't update address");
       }
     }
   };
