@@ -161,7 +161,7 @@ export default function MainGraphPageComponent({
       <div
         ref={containerRef}
         className="canvas-root bg-secondary/30"
-        style={{ width: "100%", height: "100%", zIndex: "auto" }}
+        style={{ width: "100vw", height: "100vh", zIndex: "auto" }}
       />
 
       <AlertDialog open={showModal}>

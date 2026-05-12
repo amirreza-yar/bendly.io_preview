@@ -18,7 +18,7 @@ export function RemoveModeUI({ engine }: { engine: RefObject<Engine> }) {
 
   useEffect(() => {
     engine.current?.activeMode?.onUIReady?.(setModeProps);
-    engine.current.renderer.centerRenderedContentAnimated(150, 20);
+    engine.current.renderer.centerRenderedContentAnimated(160, 20);
   }, [engine]);
 
   const onSave = () => {
@@ -27,7 +27,7 @@ export function RemoveModeUI({ engine }: { engine: RefObject<Engine> }) {
 
     if (saveRes) {
       engine.current.setMode('draw');
-      engine.current.renderer.centerRenderedContentAnimated(120, 80);
+      engine.current.renderer.centerRenderedContentAnimated();
     }
   };
 
@@ -35,7 +35,7 @@ export function RemoveModeUI({ engine }: { engine: RefObject<Engine> }) {
     if (!engine.current) return;
     modeProps.onCancel();
     engine.current.setMode('draw');
-    engine.current.renderer.centerRenderedContentAnimated(120, 80);
+    engine.current.renderer.centerRenderedContentAnimated();
   };
 
   return (

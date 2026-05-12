@@ -69,7 +69,7 @@ export default function ResizeModeFooter({
     }
 
     componentProps.onApplyValue(finVal);
-    engine.current?.renderer.centerRenderedContentAnimated(40, 300);
+    engine.current?.renderer.centerRenderedContentAnimated(20, 320);
   };
 
   const onUnitToggle = () => {
@@ -122,7 +122,7 @@ export default function ResizeModeFooter({
             onClick={() => {
               componentProps.onDeselect();
               setComponentProps((prev) => ({ ...prev, drawerOpen: false }));
-              engine.current?.renderer.centerRenderedContentAnimated(120, 80);
+              engine.current?.renderer.centerRenderedContentAnimated(160, 20);
             }}
           >
             <ChevronDown />

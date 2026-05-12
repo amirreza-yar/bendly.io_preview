@@ -25,7 +25,7 @@ export function MoveModeUI({ engine }: { engine: RefObject<Engine> }) {
 
   useEffect(() => {
     if (modeProps.triggerCenterCon) {
-      engine.current.renderer.centerRenderedContentAnimated(160, 20, 60);
+      engine.current.renderer.centerRenderedContentAnimated(160, 20, 100);
 
       // eslint-disable-next-line
       setModeProps((prev) => ({ ...prev, triggerCenterCon: false }));
@@ -38,7 +38,7 @@ export function MoveModeUI({ engine }: { engine: RefObject<Engine> }) {
 
     if (saveRes) {
       engine.current.setMode('draw');
-      engine.current.renderer.centerRenderedContentAnimated(120, 80);
+      engine.current.renderer.centerRenderedContentAnimated();
     }
   };
 
@@ -46,7 +46,7 @@ export function MoveModeUI({ engine }: { engine: RefObject<Engine> }) {
     if (!engine.current) return;
     modeProps.onCancel();
     engine.current.setMode('draw');
-    engine.current.renderer.centerRenderedContentAnimated(120, 80);
+    engine.current.renderer.centerRenderedContentAnimated();
   };
 
   return (

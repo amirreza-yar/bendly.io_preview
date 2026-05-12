@@ -20,6 +20,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuPortal,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -95,7 +96,7 @@ export default function CanvasNav({ engine }: { engine: RefObject<Engine> }) {
             engine.current?.activeMode?.name === "move";
 
           return (
-            <DropdownMenu key={index}>
+            <DropdownMenu modal={true} key={index}>
               <DropdownMenuTrigger asChild>
                 <Button
                   key={index}

@@ -46,12 +46,12 @@ export class BaseSvgRenderer {
     if (this.gridPattern) {
       try {
         this.gridPattern.remove();
-      } catch {}
+      } catch { }
     }
     if (this.gridRect) {
       try {
         this.gridRect.remove();
-      } catch {}
+      } catch { }
     }
 
     // create new pattern in userSpace (patternUnits = userSpaceOnUse)
@@ -162,11 +162,23 @@ export class BaseSvgRenderer {
     const ox = this.alignedOrigin(vb.x, this.currentGap);
     const oy = this.alignedOrigin(vb.y, this.currentGap);
 
+    const overscan = this.currentGap * 4;
+
+
     // pattern.x / pattern.y anchor the tiling. pattern.attr works with svg.js Pattern
     this.gridPattern.attr({ x: ox, y: oy });
 
     // update the rect to cover the exact viewBox (only change attributes — cheap)
-    this.gridRect.move(vb.x, vb.y).size(vb.width, vb.height);
+    // this.gridRect.move(vb.x, vb.y).size(vb.width, vb.height);
+    this.gridRect
+      .move(
+        vb.x - overscan,
+        vb.y - overscan
+      )
+      .size(
+        vb.width + overscan * 2,
+        vb.height + overscan * 2
+      );
 
     this.updateGridStrokeForViewBox(vb);
   }
