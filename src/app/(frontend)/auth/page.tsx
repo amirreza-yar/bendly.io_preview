@@ -18,6 +18,8 @@ import api from "@/lib/axios";
 import { toast } from "sonner";
 import useSWRMutation from "swr/mutation";
 import { Spinner } from "@/components/ui/spinner";
+import Image from "next/image";
+import { PasswordInput } from "@/components/ui/custom-field";
 
 const LoginFormSchema = z.object({
   password: z.string("Please enter your password."),
@@ -72,11 +74,19 @@ export default function LoginPage() {
     <>
       <UILayoutBackground />
       <div className="fixed top-0 w-full">
-        <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
+        {/* <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
           Bendly
-        </h6>
+        </h6> */}
 
-        <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
+        <Image
+          src="/images/logo-title.svg"
+          height={0}
+          width={0}
+          alt="Bendly logo"
+          className="absolute top-4 left-1/2 -translate-x-1/2 w-18 -ml-2"
+        />
+
+        {/* <Logo className="absolute text-primary-foreground top-4 left-4 size-5" /> */}
 
         <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 sm:top-24 text-primary-foreground text-center">
           <h2 className="overflow-hidden">Welcome Back!</h2>
@@ -116,22 +126,13 @@ export default function LoginPage() {
                   render={({ field, fieldState }) => (
                     <Field className="gap-2" data-invalid={fieldState.invalid}>
                       <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                      <InputGroup>
-                        <InputGroupInput
-                          {...field}
-                          id={field.name}
-                          type="password"
-                          placeholder="********"
-                          aria-invalid={fieldState.invalid}
-                          autoComplete="off"
-                        />
-                        <InputGroupAddon>
-                          <PasswordField className="size-5" />
-                        </InputGroupAddon>
-                        <InputGroupAddon align="inline-end">
-                          <EyeOffIcon />
-                        </InputGroupAddon>
-                      </InputGroup>
+                      <PasswordInput
+                        {...field}
+                        id={field.name}
+                        placeholder="********"
+                        aria-invalid={fieldState.invalid}
+                        autoComplete="off"
+                      />
                       <Button
                         size="xs"
                         className="w-fit! self-end pr-1"

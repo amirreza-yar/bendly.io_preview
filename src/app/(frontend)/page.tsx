@@ -97,11 +97,19 @@ export default function Page() {
           className="w-screen h-screen inset-0"
         >
           <div className={cn("fixed top-0 w-full", isReady ? "" : "hidden")}>
-            <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
+            {/* <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
               Bendly
-            </h6>
+            </h6> */}
 
-            <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
+            <Image
+              src="/images/logo-title.svg"
+              height={0}
+              width={0}
+              alt="Bendly logo"
+              className="absolute top-4 left-1/2 -translate-x-1/2 w-18 -ml-2"
+            />
+
+            {/* <Logo className="absolute text-primary-foreground top-4 left-4 size-5" /> */}
           </div>
 
           <div

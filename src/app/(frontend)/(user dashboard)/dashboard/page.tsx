@@ -21,6 +21,7 @@ import { cookies } from "next/headers";
 import { Flashing } from "@/types/api";
 import { timeAgo } from "@/utilities/datetime";
 import DiscardCartButton from "@/components/dashboard/discard-cart-button";
+import Image from "next/image";
 
 type FlashingWithDate = Flashing & { updated_at: string };
 
@@ -86,11 +87,19 @@ export default async function HomePage() {
       <>
         <UILayoutBackground />
         <div className="fixed top-0 w-full">
-          <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
+          {/* <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
             Bendly
-          </h6>
+          </h6> */}
 
-          <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
+          <Image
+            src="/images/logo-title.svg"
+            height={0}
+            width={0}
+            alt="Bendly logo"
+            className="absolute top-4 left-1/2 -translate-x-1/2 w-18 -ml-2"
+          />
+
+          {/* <Logo className="absolute text-primary-foreground top-4 left-4 size-5" /> */}
           <Button
             variant="ghost"
             size="icon-lg"
@@ -154,11 +163,19 @@ export default async function HomePage() {
     <>
       <UILayoutBackground />
       <div className="fixed top-0 w-full">
-        <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
+        {/* <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
           Bendly
-        </h6>
+        </h6> */}
 
-        <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
+        <Image
+          src="/images/logo-title.svg"
+          height={0}
+          width={0}
+          alt="Bendly logo"
+          className="absolute top-4 left-1/2 -translate-x-1/2 w-18 -ml-2"
+        />
+
+        {/* <Logo className="absolute text-primary-foreground top-4 left-4 size-5" /> */}
         <Button
           variant="ghost"
           size="icon-lg"

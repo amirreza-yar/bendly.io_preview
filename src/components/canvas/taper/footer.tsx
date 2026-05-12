@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { X, RulerDimensionLine } from 'lucide-react';
+import { X, RulerDimensionLine, ChevronDown } from 'lucide-react';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Badge } from '@/components/ui/badge';
 import { Dispatch, RefObject, SetStateAction, useEffect, useState } from 'react';
@@ -88,7 +88,7 @@ export default function ResizeModeFooter({
               engine.current?.renderer.centerRenderedContentAnimated(120, 80);
             }}
           >
-            <X />
+            <ChevronDown />
           </Button>
         </div>
       </Field>

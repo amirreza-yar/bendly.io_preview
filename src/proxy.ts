@@ -113,6 +113,10 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
+  if (path.startsWith("/terms") || path.startsWith("/privacy-policy")) {
+    return NextResponse.next();
+  }
+
   if (!isAuthenticated) return onRedirectToLogin(req);
 
   const res = NextResponse.next();

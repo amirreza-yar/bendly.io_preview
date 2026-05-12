@@ -14,6 +14,7 @@ import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { UILayoutBackground } from "@/components/main";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const ResetPasswordFormSchema = z.object({
   email: z
@@ -50,11 +51,19 @@ export default function ResetPasswordPage() {
   return (
     <>
       <UILayoutBackground />
-      <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
+      {/* <h6 className="absolute top-4 left-1/2 -translate-x-1/2 text-lg font-semibold text-primary-foreground">
         Bendly
-      </h6>
+      </h6> */}
 
-      <Logo className="absolute text-primary-foreground top-4 left-4 size-5" />
+      <Image
+        src="/images/logo-title.svg"
+        height={0}
+        width={0}
+        alt="Bendly logo"
+        className="absolute top-4 left-1/2 -translate-x-1/2 w-18 -ml-2"
+      />
+
+      {/* <Logo className="absolute text-primary-foreground top-4 left-4 size-5" /> */}
 
       <div className="flex flex-col gap-1 w-full absolute left-1/2 -translate-x-1/2 top-19 text-primary-foreground text-center">
         <h5 className="overflow-hidden">Forgot your password?</h5>

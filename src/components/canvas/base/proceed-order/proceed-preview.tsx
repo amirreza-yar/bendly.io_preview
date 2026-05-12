@@ -131,7 +131,7 @@ export default function PreviewDialogContent({
             path3DOffsetCoeff={viewMode === "2D" ? 0 : 1.5}
             // @ts-expect-error incompatible flashing accross comps
             flashing={foldReversedFlashing}
-            className="w-full self-center"
+            className="w-full self-center max-h-full"
           />
         </div>
         <p className="rounded-xl border px-4 py-2">

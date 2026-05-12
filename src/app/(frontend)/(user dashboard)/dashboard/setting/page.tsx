@@ -1,6 +1,7 @@
 import BottomNav from "@/components/dashboard/bottom-nav";
 import { UILayoutBackground } from "@/components/main";
 import {
+  ArrowLeft,
   ChatBubleCircleQuestion,
   CircleQuestion,
   Document,
@@ -22,6 +23,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cookies } from "next/headers";
 import api from "@/lib/axios";
 import LogoutModal from "@/components/dashboard/logout-modal";
+import { Button } from "@/components/ui/button";
+import MainWrapper from "@/components/main-wrapper";
 
 const onLogout: () => Promise<{ ok: boolean; message?: string }> = async () => {
   "use server";
@@ -57,34 +60,27 @@ const onLogout: () => Promise<{ ok: boolean; message?: string }> = async () => {
 export default async function SettingsPage() {
   return (
     <>
-      <UILayoutBackground />
-      <div className="fixed top-0 w-full">
-        <h6 className="absolute top-5 left-5 text-primary-foreground">
-          Settings
-        </h6>
-      </div>
-      <div className="fixed top-16 sm:top-16 w-full bottom-20 md:bottom-25 sm:px-8 px-4 max-w-200 left-1/2 -translate-x-1/2">
-        <div className="bg-background rounded-lg pt-4 pb-0! h-full shadow-md h-full">
-          <ScrollArea className="h-full">
-            <div className="flex flex-col h-full px-4 pb-4">
-              <p className="text-base font-semibold pb-3">Edit Profile</p>
-              <Item variant="outline" className="gap-1 pr-4 pl-2 py-3" asChild>
-                <Link href="/dashboard/setting/account">
-                  <ItemMedia variant="image">
-                    <ProfileNav />
-                  </ItemMedia>
-                  <ItemContent className="gap-1">
-                    <ItemTitle>Account Details</ItemTitle>
-                    <ItemDescription>
-                      Name, Password, Phone number
-                    </ItemDescription>
-                  </ItemContent>
-                  <ItemActions>
-                    <ChevronRight />
-                  </ItemActions>
-                </Link>
-              </Item>
-              <p className="text-base font-semibold pl-2 pt-6.5">
+      <MainWrapper title="Settings" returnHref="/dashboard">
+        <ScrollArea className="h-full">
+          <div className="flex flex-col h-full px-4 py-4">
+            <p className="text-base font-semibold pb-3">Edit Profile</p>
+            <Item variant="outline" className="gap-1 pr-4 pl-2 py-3" asChild>
+              <Link href="/dashboard/setting/account">
+                <ItemMedia variant="image">
+                  <ProfileNav />
+                </ItemMedia>
+                <ItemContent className="gap-1">
+                  <ItemTitle>Account Details</ItemTitle>
+                  <ItemDescription>
+                    Name, Password, Phone number
+                  </ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <ChevronRight />
+                </ItemActions>
+              </Link>
+            </Item>
+            {/* <p className="text-base font-semibold pl-2 pt-6.5">
                 Global Settings
               </p>
               <Item variant="default" className="gap-1 pr-4 pl-2 py-3" asChild>
@@ -99,86 +95,84 @@ export default async function SettingsPage() {
                     <ChevronRight />
                   </ItemActions>
                 </Link>
-              </Item>
+              </Item> */}
 
-              <p className="text-base font-semibold pl-2 pt-3 pb-2">
-                Help & Support
-              </p>
-              <Item variant="default" className="gap-1 pr-4 pl-0 py-1" asChild>
-                <Link href="">
-                  <ItemMedia variant="image">
-                    <CircleQuestion className="size-6" />
-                  </ItemMedia>
-                  <ItemContent className="gap-1">
-                    <ItemTitle>FAQs</ItemTitle>
-                  </ItemContent>
-                  <ItemActions>
-                    <ChevronRight />
-                  </ItemActions>
-                </Link>
-              </Item>
-              <Item variant="default" className="gap-1 pr-4 pl-0 py-1" asChild>
-                <Link href="">
-                  <ItemMedia variant="image">
-                    <LifeBuoy className="size-6" />
-                  </ItemMedia>
-                  <ItemContent className="gap-1">
-                    <ItemTitle>Help & Tips</ItemTitle>
-                  </ItemContent>
-                  <ItemActions>
-                    <ChevronRight />
-                  </ItemActions>
-                </Link>
-              </Item>
+            <p className="text-base font-semibold pl-2 pt-6 pb-2">
+              Help & Support
+            </p>
+            <Item variant="default" className="gap-1 pr-4 pl-0 py-1" asChild>
+              <Link href="/faq">
+                <ItemMedia variant="image">
+                  <CircleQuestion className="size-6" />
+                </ItemMedia>
+                <ItemContent className="gap-1">
+                  <ItemTitle>FAQs</ItemTitle>
+                </ItemContent>
+                <ItemActions>
+                  <ChevronRight />
+                </ItemActions>
+              </Link>
+            </Item>
+            <Item variant="default" className="gap-1 pr-4 pl-0 py-1" asChild>
+              <Link href="/tips">
+                <ItemMedia variant="image">
+                  <LifeBuoy className="size-6" />
+                </ItemMedia>
+                <ItemContent className="gap-1">
+                  <ItemTitle>Help & Tips</ItemTitle>
+                </ItemContent>
+                <ItemActions>
+                  <ChevronRight />
+                </ItemActions>
+              </Link>
+            </Item>
 
-              <Item variant="default" className="gap-1 pr-4 pl-0 py-1" asChild>
-                <Link href="">
-                  <ItemMedia variant="image">
-                    <ChatBubleCircleQuestion className="size-6" />
-                  </ItemMedia>
-                  <ItemContent className="gap-1">
-                    <ItemTitle>Support</ItemTitle>
-                  </ItemContent>
-                  <ItemActions>
-                    <ChevronRight />
-                  </ItemActions>
-                </Link>
-              </Item>
+            {/* <Item variant="default" className="gap-1 pr-4 pl-0 py-1" asChild>
+              <Link href="">
+                <ItemMedia variant="image">
+                  <ChatBubleCircleQuestion className="size-6" />
+                </ItemMedia>
+                <ItemContent className="gap-1">
+                  <ItemTitle>Support</ItemTitle>
+                </ItemContent>
+                <ItemActions>
+                  <ChevronRight />
+                </ItemActions>
+              </Link>
+            </Item> */}
 
-              <p className="text-base font-semibold pl-2 pt-4">Legal</p>
-              <Item variant="default" className="gap-1 pr-4 pl-0 py-2" asChild>
-                <Link href="">
-                  <ItemMedia variant="image">
-                    <ScrollPrivacyUp className="size-6" />
-                  </ItemMedia>
-                  <ItemContent className="gap-1">
-                    <ItemTitle>Privacy Policy</ItemTitle>
-                  </ItemContent>
-                  <ItemActions>
-                    <ChevronRight />
-                  </ItemActions>
-                </Link>
-              </Item>
-              <Item variant="default" className="gap-1 pr-4 pl-0 py-2" asChild>
-                <Link href="">
-                  <ItemMedia variant="image">
-                    <Document className="size-6" />
-                  </ItemMedia>
-                  <ItemContent className="gap-1">
-                    <ItemTitle>Terms of Use</ItemTitle>
-                  </ItemContent>
-                  <ItemActions>
-                    <ChevronRight />
-                  </ItemActions>
-                </Link>
-              </Item>
+            <p className="text-base font-semibold pl-2 pt-4">Legal</p>
+            <Item variant="default" className="gap-1 pr-4 pl-0 py-2" asChild>
+              <Link href="/privacy-policy">
+                <ItemMedia variant="image">
+                  <ScrollPrivacyUp className="size-6" />
+                </ItemMedia>
+                <ItemContent className="gap-1">
+                  <ItemTitle>Privacy Policy</ItemTitle>
+                </ItemContent>
+                <ItemActions>
+                  <ChevronRight />
+                </ItemActions>
+              </Link>
+            </Item>
+            <Item variant="default" className="gap-1 pr-4 pl-0 py-2" asChild>
+              <Link href="/terms">
+                <ItemMedia variant="image">
+                  <Document className="size-6" />
+                </ItemMedia>
+                <ItemContent className="gap-1">
+                  <ItemTitle>Terms of Use</ItemTitle>
+                </ItemContent>
+                <ItemActions>
+                  <ChevronRight />
+                </ItemActions>
+              </Link>
+            </Item>
 
-              <LogoutModal onAction={onLogout} />
-            </div>
-          </ScrollArea>
-        </div>
-      </div>
-      <BottomNav />
+            <LogoutModal onAction={onLogout} />
+          </div>
+        </ScrollArea>
+      </MainWrapper>
     </>
   );
 }
