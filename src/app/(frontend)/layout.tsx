@@ -3,7 +3,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import PWARegister from "@/components/pwa-register";
-import { InstallPrompt, PushNotificationManager } from "@/components/pwa-main";
 
 export const metadata = {
   title: "Bendly",
@@ -30,8 +29,8 @@ export default async function RootLayout({
       {/* <body className={`${robot_flex.className}`}> */}
       <body>
         <PWARegister />
-        <PushNotificationManager />
-        <InstallPrompt />
+        {/* <PushNotificationManager />
+        <InstallPrompt /> */}
         <Toaster />
         {/* <ThemeProvider
             attribute="class"

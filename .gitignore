@@ -72,3 +72,4 @@ node_modules/
 /playwright/.cache/
 
 .vscode
+.vscode.back
