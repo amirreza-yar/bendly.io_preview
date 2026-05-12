@@ -14,19 +14,6 @@ export default function Page() {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((reg) => {
-          // console.log("sw registered!");
-          // console.log(reg);
-        })
-        .catch((error) => {
-          // console.log("sw reg failed!");
-          // console.log(error);
-        });
-    }
-
     const images = [
       "/images/welcome-1.svg",
       "/images/welcome-2.svg",

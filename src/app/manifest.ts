@@ -2,13 +2,13 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Bendly.io Dashboard",
-    short_name: "Bendly.io",
-    description: "A PWA for Bendly.io Dashboard",
+    name: "Bendly",
+    short_name: "Bendly",
+    description: "Flashing design application",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#f9f9f9",
+    background_color: "#1e4389",
+    theme_color: "#fefefe",
     icons: [
       {
         src: "/images/icon-192x192.png",
