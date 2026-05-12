@@ -306,7 +306,7 @@ export default function OrderFulfillmentForm({
                 <>
                   <p className="text-sm text-muted-foreground">
                     Select an existing project or create a new one to organize
-                    this order
+                    this order.
                   </p>
                   <div className="grid grid-cols-2 gap-2 md:gap-4 py-5 pb-4">
                     <Button
@@ -381,7 +381,7 @@ export default function OrderFulfillmentForm({
               </div>
 
               <Textarea
-                placeholder="Add a note ( Optional )"
+                placeholder="Add a note ( optional )"
                 className="px-4 py-3 resize-none min-h-21"
                 maxLength={300}
               />

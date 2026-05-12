@@ -83,15 +83,11 @@ export default async function OrderFulfillmentPage({
 
   const { project_id, address_id } = await searchParams;
 
-  console.log(project_id, address_id);
-
   if (!cart) return notFound();
 
   if (cart.flashings.length === 0) {
     return redirect("/cart");
   }
-
-  console.log(cart);
 
   return (
     <>

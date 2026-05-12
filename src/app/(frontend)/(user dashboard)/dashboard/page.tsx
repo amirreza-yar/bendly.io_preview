@@ -40,7 +40,9 @@ const onFetchCart: () => Promise<{
     });
 
     return res.data;
-  } catch {
+  } catch (error: any) {
+    console.error(error, error?.response?.data);
+
     return {};
   }
 };

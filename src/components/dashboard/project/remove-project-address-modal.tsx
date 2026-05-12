@@ -54,8 +54,7 @@ export default function RemoveProjectAddressModal({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this address?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              address from our servers.
+              This address will be permanently deleted and cannot be recovered.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -64,7 +63,7 @@ export default function RemoveProjectAddressModal({
               variant="destructive"
               onClick={handleRemoveAddress}
             >
-              Delete
+              Delete Address
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

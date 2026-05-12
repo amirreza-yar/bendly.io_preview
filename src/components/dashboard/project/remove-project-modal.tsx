@@ -51,11 +51,10 @@ export default function RemoveProjectModal({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Are you sure you want to delete?
+              Are you sure you want to delete this project?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              project from our servers.
+              This project will be permanently deleted and cannot be recovered.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -64,7 +63,7 @@ export default function RemoveProjectModal({
               variant="destructive"
               onClick={handleRemoveProject}
             >
-              Continue
+              Delete Project
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

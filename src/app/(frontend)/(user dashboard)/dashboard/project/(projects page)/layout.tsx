@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
-import Link from "next/link";
+import ProjectsHeaderWithSearch from "@/components/dashboard/project/projects-header";
 import { ReactNode } from "react";
 
 export default async function ProjectsLayout({
@@ -10,22 +8,7 @@ export default async function ProjectsLayout({
 }) {
   return (
     <>
-      <div className="fixed top-0 w-full">
-        <h6 className="absolute top-5 left-5 text-primary-foreground">
-          Projects
-        </h6>
-
-        <Button
-          variant="ghost"
-          size="icon-lg"
-          className="absolute right-2 top-2 text-primary-foreground hover:bg-transparent hover:text-primary-light"
-          asChild
-        >
-          <Link href="/dashboard/project">
-            <Search className="size-6" />
-          </Link>
-        </Button>
-      </div>
+      <ProjectsHeaderWithSearch />
       <div className="fixed top-16 sm:top-16 w-full bottom-20 md:bottom-25 sm:px-8 px-4 max-w-200 left-1/2 -translate-x-1/2">
         <div className="bg-background rounded-lg pt-4 pb-0! h-full shadow-md">
           {children}

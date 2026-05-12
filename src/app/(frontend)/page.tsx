@@ -2,10 +2,11 @@
 import { Logo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { cn } from "@/utilities/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page() {
@@ -26,7 +27,17 @@ export default function Page() {
 
   const [tabVal, setTabVal] = useState("page-1");
 
-  return redirect("/dashboard");
+  const router = useRouter();
+
+  const onNextPage = () => {
+    if (tabVal === "page-1") setTabVal("page-2");
+    else if (tabVal === "page-2") setTabVal("page-3");
+    else if (tabVal === "page-3") router.replace("/auth");
+  };
+
+  const onSkip = () => {
+    router.replace("/auth");
+  };
 
   return (
     <div className="fixed bottom-0 top-0 left-0 right-0 h-screen w-screen">
@@ -51,7 +62,11 @@ export default function Page() {
       </div>
 
       <div className="fixed w-full top-14 bottom-0">
-        <Tabs className="h-full" value={tabVal} onValueChange={setTabVal}>
+        <div
+          className="flex flex-col h-full justify-center items-center max-h-220"
+          // value={tabVal}
+          // onValueChange={setTabVal}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={tabVal}
@@ -63,26 +78,28 @@ export default function Page() {
                 animate: { x: 0, opacity: 1 },
                 exit: { x: -12, opacity: 0 },
               }}
-              transition={{ duration: 0.15, ease: "easeOut" }}
+              transition={{ duration: 2, ease: "easeOut" }}
               className="h-full"
             >
-              <TabsContent
+              <div
                 key="page-1"
-                value="page-1"
-                className="h-full w-full"
+                className={cn(
+                  "h-full w-full",
+                  tabVal === "page-1" ? "block" : "hidden",
+                )}
               >
-                <div className="h-full flex flex-col justify-center">
-                  <div className="grow w-full relative flex items-center justify-center">
+                <div className="h-full flex flex-col justify-around items-around">
+                  <div className="w-full flex items-center justify-center">
                     <Image
                       src="/images/welcome-1.svg"
                       alt="welcome-1"
                       height={0}
                       width={0}
-                      className="w-full h-auto max-w-100 py-12 px-14"
+                      className="w-full max-w-100 max-h-full [@media(max-height:550px)]:max-h-65 py-6"
                     />
                   </div>
-                  <div className="text-white px-10 pb-10 mx-auto">
-                    <h1 className="text-4xl font-black">
+                  <div className="text-white mx-auto">
+                    <h1 className="text-4xl xs:text-5xl font-black">
                       Draw It
                       <br />
                       Web Build It.
@@ -90,70 +107,136 @@ export default function Page() {
                     <p className="text-base pt-2">
                       Create precise flashing designs in minutes
                     </p>
-                    <div className="pt-9 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Button variant="ghost" className="mb-1 -mr-1">
-                          Skip
-                        </Button>
-                        <div className="h-3 w-3 rounded-full bg-primary" />
-                        <div className="h-3 w-3 rounded-full bg-white" />
-                        <div className="h-3 w-3 rounded-full bg-white" />
-                      </div>
-                      <Button
-                        onClick={() => setTabVal("page-2")}
-                        size="icon-lg"
-                        className="w-12 h-12"
-                      >
-                        <ChevronRight className="size-5" />
-                      </Button>
-                    </div>
                   </div>
                 </div>
-              </TabsContent>
+              </div>
 
-              <TabsContent
-                value="page-2"
+              <div
                 key="page-2"
-                className="h-full w-full"
+                className={cn(
+                  "h-full w-full",
+                  tabVal === "page-2" ? "block" : "hidden",
+                )}
               >
                 <div className="h-full flex flex-col justify-center">
+                  <div className="text-white px-10 [@media(max-height:600px)]:pt-14 pt-18 mx-auto">
+                    <h1 className="text-4xl xs:text-5xl font-black">
+                      Shape It
+                      <br />
+                      In Your Way
+                    </h1>
+                    <p className="text-base pt-2">
+                      Adjust angles, dimensions, and every detail
+                    </p>
+                  </div>
                   <div className="grow w-full relative flex items-center justify-center">
                     <Image
-                      src="/images/welcome-1.svg"
+                      src="/images/welcome-2.svg"
                       alt="welcome-1"
                       height={0}
                       width={0}
-                      className="w-full h-auto max-w-100 py-12 px-14"
+                      className="w-full max-w-120 px-10 max-h-full [@media(max-height:600px)]:max-h-50"
                     />
                   </div>
-                  <div className="text-white px-10 pb-10 mx-auto">
-                    <h1 className="text-4xl font-black">
-                      Draw It 2
+                </div>
+              </div>
+
+              <div
+                key="page-3"
+                className={cn(
+                  "h-full w-full",
+                  tabVal === "page-3" ? "block" : "hidden",
+                )}
+              >
+                <div className="h-full flex flex-col justify-center">
+                  <div className="text-white px-10 pt-18 mx-auto">
+                    <h1 className="text-4xl xs:text-5xl font-black">
+                      Ready to Draw
                       <br />
-                      Web Build It.
+                      Your Flashing?
                     </h1>
                     <p className="text-base pt-2">
-                      Create precise flashing designs in minutes
+                      Sign in and draw your shape in a simple process
                     </p>
-                    <div className="pt-9 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Button variant="ghost" className="mb-1 -mr-1">
-                          Skip
-                        </Button>
-                        <div className="h-3 w-3 rounded-full bg-primary" />
-                        <div className="h-3 w-3 rounded-full bg-primary" />
-                        <div className="h-3 w-3 rounded-full bg-white" />
-                      </div>
-                      <Button size="icon-lg" className="w-12 h-12">
-                        <ChevronRight className="size-5" />
-                      </Button>
-                    </div>
+                  </div>
+                  <div className="grow w-full relative flex items-center justify-center">
+                    <Image
+                      src="/images/welcome-3.svg"
+                      alt="welcome-1"
+                      height={0}
+                      width={0}
+                      className="w-full max-w-75 max-h-full [@media(max-height:600px)]:max-h-50 lg:max-w-80 py-8 px-10"
+                    />
                   </div>
                 </div>
-              </TabsContent>
+              </div>
             </motion.div>
           </AnimatePresence>
-        </Tabs>
+          <AnimatePresence mode="wait">
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={{
+                initial: { opacity: 0 },
+                animate: { opacity: 1 },
+                exit: { opacity: 0 },
+              }}
+              transition={{ duration: 2, ease: "easeOut" }}
+              className="flex items-center justify-between px-12 max-w-150 w-full pb-10"
+            >
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  className="mb-1 -mr-1 text-primary-foreground"
+                  onClick={onSkip}
+                >
+                  Skip
+                </Button>
+                <div
+                  className={cn(
+                    "transition-all h-3 w-3 rounded-full",
+                    tabVal === "page-1" ? "bg-primary" : "bg-white",
+                  )}
+                />
+                <div
+                  className={cn(
+                    "transition-all h-3 w-3 rounded-full",
+                    tabVal === "page-2" ? "bg-primary" : "bg-white",
+                  )}
+                />
+                <div
+                  className={cn(
+                    "transition-all h-3 w-3 rounded-full",
+                    tabVal === "page-3" ? "bg-primary" : "bg-white",
+                  )}
+                />
+              </div>
+              <Button
+                onClick={onNextPage}
+                size="lg"
+                className="h-12 transition-all"
+              >
+                <AnimatePresence mode="wait">
+                  {tabVal === "page-3" && (
+                    <motion.span
+                      key="get-started" // important: key triggers exit+enter
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      transition={{ duration: 0.3 }}
+                      className="inline-block"
+                    >
+                      Get Started
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+
+                <ChevronRight className="size-5" />
+              </Button>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

@@ -1,25 +1,14 @@
 export default function ProjectDetailsPageLoading() {
   return (
     <div className="space-y-4 px-4 animate-pulse overflow-hidden">
-      <div className="flex gap-1 p-2 h-15 justify-between items-center border rounded-md">
+      <div className="flex gap-1 p-3 h-15 justify-between items-center border rounded-md">
         <div className="space-y-2">
           <div className="bg-gray-300 h-5 w-20 rounded rounded-md" />
           <div className="bg-gray-300 h-4 w-45 rounded rounded-md" />
         </div>
         <div className="bg-gray-300 h-10 w-10 rounded rounded-md" />
       </div>
-      <div className="flex items-center gap-2">
-        {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map((_, i) => (
-          <div
-            key={i}
-            className="flex flex-col gap-1.5 justify-center rounded-md p-2 border"
-          >
-            <div className="h-21 rounded-md bg-gray-300 w-30" />
-            <p className="bg-gray-300 h-3 rounded-md"></p>
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pt-1">
         <div className="bg-gray-300 rounded rounded-md w-30 h-6" />
         <div className="bg-gray-300 rounded rounded-md w-40 h-6" />
       </div>

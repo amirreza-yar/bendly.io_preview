@@ -88,7 +88,7 @@ async function signupRequest(
 ) {
   const parts = arg.fullName.trim().split(/\s+/);
   const firstName = parts[0];
-  const lastName = parts.slice(1).join(" ") || "-";
+  const lastName = parts.slice(1).join(" ") || "";
 
   const res = await api.post("/auth/registration/", {
     email: arg.email.toLowerCase(),
@@ -131,8 +131,10 @@ export default function SignupPage() {
       password1: data.password1,
       password2: data.password2,
       terms: data.terms,
-      factory_token: searchParams.get("factory_token") ?? "",
-      registration_role: searchParams.get("registration_role") ?? "",
+      factory_token:
+        searchParams.get("factory_token") ??
+        process.env.NEXT_PUBLIC_FACTORY_TOKEN,
+      registration_role: searchParams.get("registration_role") ?? "client",
     };
 
     try {

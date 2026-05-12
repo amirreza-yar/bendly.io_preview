@@ -15,7 +15,7 @@ export default async function OrderDetailsLayout({
     <>
       <UILayoutBackground />
       <div className="fixed top-0 w-full">
-        <div className="flex items-center gap-2 absolute top-2 left-2 text-primary-foreground">
+        <div className="flex items-center gap-2 absolute top-3 left-3 text-primary-foreground">
           <Button variant="ghost" size="icon-lg" asChild>
             <Link href="/dashboard/order">
               <ArrowLeft />

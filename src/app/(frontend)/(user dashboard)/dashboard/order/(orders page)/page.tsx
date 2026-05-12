@@ -1,3 +1,4 @@
+import { Orders } from "@/components/icons";
 import { OrderCard } from "@/components/order/order-card";
 import {
   Empty,
@@ -9,12 +10,11 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import api from "@/lib/axios";
 import { Order } from "@/types/api";
-import { GalleryVerticalEnd } from "lucide-react";
 import { cookies } from "next/headers";
 
 const createOrderURI: (query?: string) => string = (query) => {
   if (query) {
-    return "/a/order/";
+    return `/a/order?search=${query}`;
   } else {
     return "/a/order/";
   }
@@ -59,11 +59,12 @@ const getOrdersByTab: (
 export default async function OrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ type?: string }>;
+  searchParams: Promise<{ type?: string; q?: string }>;
 }) {
   const activeTab = (await searchParams).type ?? "active";
+  const query = (await searchParams).q ?? "";
 
-  const { data: orders } = await onFetchOrders();
+  const { data: orders } = await onFetchOrders(query);
 
   // const getKey = (pageIndex: number, previousPageData: any) => {
   //   if (previousPageData && !previousPageData.next) return null;
@@ -100,17 +101,36 @@ export default async function OrdersPage({
   //   return `/a/order?${params.toString()}`;
   // };
 
-  if (orders.length === 0) {
+  const groupedOrders = getOrdersByTab(
+    orders,
+    activeTab as "active" | "completed",
+  );
+
+  if (groupedOrders.length === 0) {
     return (
       <Empty className="h-full">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <GalleryVerticalEnd />
+            <Orders />
           </EmptyMedia>
-          <EmptyTitle>No Orders Yet</EmptyTitle>
-          <EmptyDescription className="max-w-xs text-pretty">
-            Start designing your first flashing.
-          </EmptyDescription>
+          {!query ? (
+            <EmptyTitle>
+              No {activeTab === "active" ? "Active" : "Completed"} Orders Yet
+            </EmptyTitle>
+          ) : (
+            <EmptyTitle>No orders found</EmptyTitle>
+          )}
+          {!query ? (
+            <EmptyDescription className="max-w-xs text-pretty">
+              {activeTab === "active"
+                ? "Start designing your first flashing"
+                : "Order will be shown here when completed"}
+            </EmptyDescription>
+          ) : (
+            <EmptyDescription className="max-w-xs text-pretty">
+              Try another keyword or adjust your search
+            </EmptyDescription>
+          )}
         </EmptyHeader>
       </Empty>
     );
@@ -120,11 +140,9 @@ export default async function OrdersPage({
     <>
       <ScrollArea className="h-full">
         <div className="grid md:grid-cols-2 gap-2 md:gap-3 pb-4 px-4 sm:px-6">
-          {getOrdersByTab(orders, activeTab as "active" | "completed")?.map(
-            (ord) => (
-              <OrderCard order={ord} key={ord.id} />
-            ),
-          )}
+          {groupedOrders?.map((ord) => (
+            <OrderCard order={ord} key={ord.id} />
+          ))}
         </div>
       </ScrollArea>
     </>

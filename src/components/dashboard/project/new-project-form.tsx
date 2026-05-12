@@ -150,7 +150,7 @@ export default function NewProjectForm({
 
     if (res.ok && res?.data?.id) {
       if (returnHref === "cart") {
-        toast("Address updated");
+        toast("Project created");
         router.replace(
           `/cart/fulfill?address_id=${res.data.addresses.find((a) => a.title === subData.title)?.id}&project_id=${res.data.id}`,
         );
@@ -194,7 +194,7 @@ export default function NewProjectForm({
           <Button variant="ghost" size="icon-lg" asChild>
             <Link
               href={
-                returnHref === "return" ? `/dashboard/project` : "/cart/fulfill"
+                returnHref === "cart" ? `/cart/fulfill` : "/dashboard/project"
               }
             >
               <ArrowLeft />

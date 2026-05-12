@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function OrdersTabs() {
   const isOnActiveOrdersTab = useSearchParams().get("type") === "completed";
+
+  const router = useRouter();
 
   return (
     <div className="px-4 flex justify-center pb-2">
@@ -14,17 +16,17 @@ export default function OrdersTabs() {
           size="sm"
           className="text-xs h-8 rounded-md"
           variant={isOnActiveOrdersTab ? "ghost" : "default"}
-          asChild
+          onClick={() => router.replace("?type=active")}
         >
-          <Link href="/dashboard/order">Active</Link>
+          Active
         </Button>
         <Button
           size="sm"
           className="text-xs h-8 rounded-md"
           variant={isOnActiveOrdersTab ? "default" : "ghost"}
-          asChild
+          onClick={() => router.replace("?type=completed")}
         >
-          <Link href="/dashboard/order?type=completed">Completed</Link>
+          Completed
         </Button>
       </div>
     </div>

@@ -23,16 +23,18 @@ export default function LibraryHeader() {
         </h6>
       </div>
 
-      {/* <Button
-        variant="ghost"
-        size="icon-lg"
-        className="absolute right-2 top-2 text-primary-foreground hover:bg-transparent hover:text-primary-light"
-        asChild
-      >
-        <Link href="">
-          <Search className="size-6" />
-        </Link>
-      </Button> */}
+      {!returnToCart && (
+        <Button
+          variant="ghost"
+          size="icon-lg"
+          className="absolute right-3 top-3 text-primary-foreground hover:bg-transparent hover:text-primary-light"
+          asChild
+        >
+          <Link href="/dashboard/library/search?q=">
+            <Search className="size-6" />
+          </Link>
+        </Button>
+      )}
     </div>
   );
 }

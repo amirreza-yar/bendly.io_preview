@@ -135,94 +135,121 @@ export default function FulFillmentJobRefDrawer({
                 Select a project to continue
               </DrawerDescription>
             </div>
-            <ScrollArea className="h-full">
-              <div className="grid gap-4 px-6 pb-34">
-                {jobRefs?.map((proj) => (
-                  <div
-                    key={proj.code}
-                    data-slot="card"
-                    className={cn(
-                      "space-y-4 rounded-xl border py-3 px-4 relative",
-                      localSelectedPrjAddr?.project === proj.id &&
-                        "border-green-600 bg-green-50/50",
-                    )}
-                    onClick={() => {
-                      setActiveJobRefId(proj.id);
-                      setTabVal("addresses");
-                    }}
-                  >
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-lg"
-                      className="absolute right-2"
+            {(jobRefs.length ?? 0) > 0 ? (
+              <ScrollArea className="h-full">
+                <div className="grid gap-4 px-6 pb-34">
+                  {jobRefs?.map((proj) => (
+                    <div
+                      key={proj.code}
+                      data-slot="card"
+                      className={cn(
+                        "space-y-4 rounded-xl border py-3 px-4 relative",
+                        localSelectedPrjAddr?.project === proj.id &&
+                          "border-green-600 bg-green-50/50",
+                      )}
+                      onClick={() => {
+                        setActiveJobRefId(proj.id);
+                        setTabVal("addresses");
+                      }}
                     >
-                      <ChevronRight className="size-5" />
-                    </Button>
-                    <div className="space-y-1 text-label">
-                      <p className="font-semibold text-base">PRJ-{proj.code}</p>
-                      <p>{proj.project_name}</p>
-                    </div>
-                    {(proj.addresses?.length ?? 0) > 0 ? (
-                      <>
-                        <div className="space-y-2">
-                          <div className="flex gap-2">
-                            <MapMarker className="size-5" />
-                            <div className="space-y-1">
-                              <p className="text-caption">
-                                {proj.addresses?.[0]?.title}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-lg"
+                        className="absolute right-2"
+                      >
+                        <ChevronRight className="size-5" />
+                      </Button>
+                      <div className="space-y-1 text-label">
+                        <p className="font-semibold text-base">
+                          PRJ-{proj.code}
+                        </p>
+                        <p>{proj.project_name}</p>
+                      </div>
+                      {(proj.addresses?.length ?? 0) > 0 ? (
+                        <>
+                          <div className="space-y-2">
+                            <div className="flex gap-2">
+                              <MapMarker className="size-5" />
+                              <div className="space-y-1">
+                                <p className="text-caption">
+                                  {proj.addresses?.[0]?.title}
+                                </p>
+                                <p className="text-caption font-normal line-clamp-1">
+                                  {proj.addresses[0].full_address}
+                                </p>
+                              </div>
+                            </div>
+                            {proj.addresses?.[1] ? (
+                              <>
+                                <div className="flex items-center gap-2">
+                                  <p className="text-label-sm">
+                                    Other Address:
+                                  </p>
+                                  <span className="text-xs rounded-[900px] border-1 border-border-default px-2 py-0.5 bg-surface-disable">
+                                    {proj.addresses?.[1].title}
+                                  </span>
+                                  {proj.addresses?.length > 2 && (
+                                    <span className="text-xs rounded-full border px-2 py-0.5 bg-secondary text-secondary-foreground">
+                                      +{proj.addresses?.length - 2}
+                                    </span>
+                                  )}
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <div className="flex items-center gap-2">
+                                  <p className="text-label-sm">
+                                    Other Address:
+                                  </p>
+                                  <span className="text-caption rounded-full border px-2.5 py-1 bg-secondary text-secondary-foreground">
+                                    ---
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex gap-3 items-start text-alert bg-alert-subtle p-3 rounded-md">
+                            <AlertTriangle className="size-5 mt-0.5" />
+                            <div className="grid">
+                              <p className="text-label">
+                                Associated addresses deleted
                               </p>
-                              <p className="text-caption font-normal line-clamp-1">
-                                {proj.addresses[0].full_address}
+                              <p className="text-body-sm">
+                                Add an address to continue or delete this Job
+                                Reference.
                               </p>
                             </div>
                           </div>
-                          {proj.addresses?.[1] ? (
-                            <>
-                              <div className="flex items-center gap-2">
-                                <p className="text-label-sm">Other Address:</p>
-                                <span className="text-xs rounded-[900px] border-1 border-border-default px-2 py-0.5 bg-surface-disable">
-                                  {proj.addresses?.[1].title}
-                                </span>
-                                {proj.addresses?.length > 2 && (
-                                  <span className="text-xs rounded-full border px-2 py-0.5 bg-secondary text-secondary-foreground">
-                                    +{proj.addresses?.length - 2}
-                                  </span>
-                                )}
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <div className="flex items-center gap-2">
-                                <p className="text-label-sm">Other Address:</p>
-                                <span className="text-caption rounded-full border px-2.5 py-1 bg-secondary text-secondary-foreground">
-                                  ---
-                                </span>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="flex gap-3 items-start text-alert bg-alert-subtle p-3 rounded-md">
-                          <AlertTriangle className="size-5 mt-0.5" />
-                          <div className="grid">
-                            <p className="text-label">
-                              Associated addresses deleted
-                            </p>
-                            <p className="text-body-sm">
-                              Add an address to continue or delete this Job
-                              Reference.
-                            </p>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ))}
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            ) : (
+              <div className="h-full w-full">
+                <Empty className="h-full">
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <LibraryNav />
+                    </EmptyMedia>
+                    <EmptyTitle>No Projects Yet</EmptyTitle>
+                    <EmptyDescription className="max-w-xs text-pretty">
+                      No projects have been created yet. Try creating new one
+                    </EmptyDescription>
+                    <Button asChild>
+                      <Link href="/dashboard/project/new?return=cart">
+                        Create New Project
+                      </Link>
+                    </Button>
+                  </EmptyHeader>
+                </Empty>
               </div>
-            </ScrollArea>
+            )}
           </TabsContent>
 
           <TabsContent value="addresses" className="h-full relative">

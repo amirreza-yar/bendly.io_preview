@@ -20,13 +20,13 @@ import { Plus } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
-const onFetchprojects: () => Promise<Project[] | []> = async () => {
+const onFetchprojects: (q?: string) => Promise<Project[] | []> = async (q) => {
   "use server";
 
   try {
     const accessToken = (await cookies()).get("auth-jwt")?.value;
 
-    const res = await api.get("/a/job-ref", {
+    const res = await api.get(!!q ? `/a/job-ref?search=${q}` : `/a/job-ref`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -38,26 +38,38 @@ const onFetchprojects: () => Promise<Project[] | []> = async () => {
   }
 };
 
-export default async function ProjectsPage() {
-  const projects = await onFetchprojects();
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const query = (await searchParams).q ?? "";
+
+  const projects = await onFetchprojects(query);
 
   if (!projects?.length) {
     return (
       <Empty className="h-full">
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <LibraryNav />
-          </EmptyMedia>
-          <EmptyTitle>No Projects Yet</EmptyTitle>
-          <EmptyDescription className="max-w-xs text-pretty">
-            No projects have been created yet.
-          </EmptyDescription>
-        </EmptyHeader>
         <EmptyContent>
-          <Button>
-            <Plus />
-            Create new project
-          </Button>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <LibraryNav />
+            </EmptyMedia>
+            <EmptyTitle>
+              {!!query ? "No projects found" : "No Projects Yet"}
+            </EmptyTitle>
+            <EmptyDescription className="max-w-xs text-pretty">
+              {!!query
+                ? "Try another keyword or adjust your search"
+                : "No projects have been created yet"}
+            </EmptyDescription>
+          </EmptyHeader>
+          {!query && (
+            <Button>
+              <Plus />
+              Create New Project
+            </Button>
+          )}
         </EmptyContent>
       </Empty>
     );
@@ -70,7 +82,7 @@ export default async function ProjectsPage() {
         <Button size="sm" className="text-xs h-7" variant="outline" asChild>
           <Link href="/dashboard/project/new">
             <Plus />
-            Add New Project
+            Create new project
           </Link>
         </Button>
       </div>

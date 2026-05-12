@@ -33,10 +33,14 @@ export default function TemplateCard({
   template,
   isAppTemplate,
   onEditTemplate,
+  onDeleteTemplate,
   ...props
 }: {
   template: Template;
   isAppTemplate: boolean;
+  onDeleteTemplate: (
+    id: string | number,
+  ) => Promise<{ ok: boolean; message?: string }>;
   onEditTemplate: (
     id: string | number,
     name: string,
@@ -56,6 +60,17 @@ export default function TemplateCard({
     const res = await onEditTemplate(template.id, data.name);
     if (res.ok) {
       toast("Template updated");
+      setTemplateModalOpen(false);
+      router.refresh();
+    } else {
+      toast("Couldn't updated template");
+    }
+  };
+
+  const handleDeleteTemplate = async () => {
+    const res = await onDeleteTemplate(template.id);
+    if (res.ok) {
+      toast("Template deleted!");
       setTemplateModalOpen(false);
       router.refresh();
     } else {
@@ -192,7 +207,10 @@ export default function TemplateCard({
                       </p>
 
                       <div className="flex gap-3 px-4 justify-center pt-5">
-                        <Button variant="destructive">
+                        <Button
+                          variant="destructive"
+                          onClick={handleDeleteTemplate}
+                        >
                           <Remove />
                           Delete
                         </Button>
