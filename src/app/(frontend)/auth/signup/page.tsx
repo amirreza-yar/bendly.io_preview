@@ -18,7 +18,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Info, Settings } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { UILayoutBackground } from "@/components/main";
@@ -75,10 +75,20 @@ const SignupFormSchema = z
 
 export type SignupFormValues = z.infer<typeof SignupFormSchema>;
 
-async function signupRequest(url: string, { arg }: { arg: SignupFormValues }) {
+async function signupRequest(
+  url: string,
+  {
+    arg,
+  }: {
+    arg: SignupFormValues & {
+      factory_token?: string;
+      registration_role?: string;
+    };
+  },
+) {
   const parts = arg.fullName.trim().split(/\s+/);
   const firstName = parts[0];
-  const lastName = parts.slice(1).join(" ") || "";
+  const lastName = parts.slice(1).join(" ") || "-";
 
   const res = await api.post("/auth/registration/", {
     email: arg.email.toLowerCase(),
@@ -87,16 +97,20 @@ async function signupRequest(url: string, { arg }: { arg: SignupFormValues }) {
     password1: arg.password1,
     password2: arg.password2,
     phone: `+61${arg.phone}`,
+    factory_token: arg.factory_token ?? "",
+    registration_role: arg.registration_role ?? "",
   });
 
   return res.data;
 }
 
 export default function SignupPage() {
+  const searchParams = useSearchParams();
+
   const signupForm = useForm<SignupFormValues>({
     resolver: zodResolver(SignupFormSchema),
     defaultValues: {
-      email: "",
+      email: searchParams.get("email") ?? "",
       fullName: "",
       phone: "",
       password1: "",
@@ -110,8 +124,19 @@ export default function SignupPage() {
   const { trigger, isMutating } = useSWRMutation("/auth/login/", signupRequest);
 
   const onSignup = async (data: SignupFormValues) => {
+    const dataWithQ = {
+      email: data.email,
+      fullName: data.fullName,
+      phone: data.phone,
+      password1: data.password1,
+      password2: data.password2,
+      terms: data.terms,
+      factory_token: searchParams.get("factory_token") ?? "",
+      registration_role: searchParams.get("registration_role") ?? "",
+    };
+
     try {
-      await trigger(data);
+      await trigger(dataWithQ);
       toast("Verification email sent ");
       router.replace(`/auth/verify-email?email=${data.email}`);
     } catch (error: any) {
