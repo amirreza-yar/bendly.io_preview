@@ -1,6 +1,5 @@
 import BottomNav from "@/components/dashboard/bottom-nav";
 import { UILayoutBackground } from "@/components/main";
-import { Logo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight,

@@ -46,13 +46,6 @@ export async function svgToPngDataUrl(
   return canvas.toDataURL("image/png");
 }
 
-const getSVG2PNGURL = async (id: string | number) => {
-  const svgEl = document.getElementById(`flashing-svg-${flash.id}`);
-  // ) as SVGSVGElement;
-
-  const png = await svgToPngDataUrl(svgEl);
-};
-
 export default function InvoiceFlashingPDF({
   flash,
 }: {
@@ -111,8 +104,6 @@ export default function InvoiceFlashingPDF({
 
     generatePng();
   }, [flash]);
-
-  console.log(png)
 
   return (
     <View
