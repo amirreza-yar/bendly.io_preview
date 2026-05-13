@@ -89,7 +89,7 @@ async function signupRequest(
 ) {
   const parts = arg.fullName.trim().split(/\s+/);
   const firstName = parts[0];
-  const lastName = parts.slice(1).join(" ") || "";
+  const lastName = parts.slice(1).join(" ") || ".";
 
   const res = await api.post("/auth/registration/", {
     email: arg.email.toLowerCase(),
