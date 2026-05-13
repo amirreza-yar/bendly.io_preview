@@ -8,12 +8,26 @@ type OrderStatus =
   | "Cancelled"
   | "Requested"
   | "Completed"
-  | "Rejected";
+  | "Rejected"
+  | "Approved"
+  | "Shipped";
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
   switch (status) {
     case "Pending":
     case "In Production":
+      return (
+        <ColorBadge variant="orange" className="capitalize">
+          {status}
+        </ColorBadge>
+      );
+    case "Approved":
+      return (
+        <ColorBadge variant="green" className="capitalize">
+          {status}
+        </ColorBadge>
+      );
+    case "Shipped":
       return (
         <ColorBadge variant="orange" className="capitalize">
           {status}

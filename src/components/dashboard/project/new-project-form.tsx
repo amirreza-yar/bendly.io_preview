@@ -234,13 +234,16 @@ export default function NewProjectForm({
                                 Project Code{" "}
                                 <span className="text-destructive">*</span>
                               </FieldLabel>
-                              <Input
-                                {...field}
-                                id={field.name}
-                                aria-invalid={isInvalid}
-                                autoComplete="off"
-                                placeholder="PRJ-3547"
-                              />
+                              <InputGroup>
+                                <InputGroupAddon>PRJ - </InputGroupAddon>
+                                <InputGroupInput
+                                  {...field}
+                                  id={field.name}
+                                  aria-invalid={isInvalid}
+                                  autoComplete="off"
+                                  placeholder="3547"
+                                />
+                              </InputGroup>
                               {!isInvalid ? (
                                 <FieldDescription>
                                   Unique identifier for this project

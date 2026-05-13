@@ -92,7 +92,7 @@ export default function AccountSettingsPage() {
   return (
     <>
       <UILayout className="pb-100">
-        <div className="fixed left-1 top-1 flex items-center gap-2 text-primary-foreground">
+        <div className="fixed left-3 top-3 flex items-center gap-2 text-primary-foreground">
           <Button
             variant="ghost"
             size="icon-lg"
@@ -142,7 +142,6 @@ export default function AccountSettingsPage() {
                         )}
                         {!fieldState.invalid && (
                           <FieldDescription>
-                            <Info className="size-3" />
                             Your current password
                           </FieldDescription>
                         )}
@@ -173,7 +172,6 @@ export default function AccountSettingsPage() {
                         )}
                         {!fieldState.invalid && (
                           <FieldDescription>
-                            <Info className="size-3" />
                             Use 8+ characters with letters, numbers, and symbols
                           </FieldDescription>
                         )}
@@ -204,7 +202,6 @@ export default function AccountSettingsPage() {
                         )}
                         {!fieldState.invalid && (
                           <FieldDescription>
-                            <Info className="size-3" />
                             Password confirmation must match the new password
                           </FieldDescription>
                         )}

@@ -162,7 +162,7 @@ export class BaseSvgRenderer {
     const ox = this.alignedOrigin(vb.x, this.currentGap);
     const oy = this.alignedOrigin(vb.y, this.currentGap);
 
-    const overscan = this.currentGap * 10;
+    const overscan = this.currentGap * 20;
 
 
     // pattern.x / pattern.y anchor the tiling. pattern.attr works with svg.js Pattern

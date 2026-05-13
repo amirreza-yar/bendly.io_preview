@@ -65,9 +65,11 @@ export default async function ProjectsPage({
             </EmptyDescription>
           </EmptyHeader>
           {!query && (
-            <Button>
+            <Button asChild>
+              <Link href="/dashboard/project/new">
               <Plus />
               Create New Project
+              </Link>
             </Button>
           )}
         </EmptyContent>

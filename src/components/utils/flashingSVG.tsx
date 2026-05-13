@@ -290,6 +290,7 @@ export default function FlashingSVG({
   return (
     <>
       <svg
+        id={`flashing-svg-${flashing?.id ?? "unknown"}`}
         viewBox={getNodeBounds(flashing.nodes, svgOffset, path3DOffset)}
         className={className}
         xmlns="http://www.w3.org/2000/svg"

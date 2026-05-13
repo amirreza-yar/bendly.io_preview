@@ -114,7 +114,7 @@ export default function AccountSettingsPage() {
   return (
     <>
       <UILayout className="pb-100">
-        <div className="fixed left-1 top-1 flex items-center gap-2 text-primary-foreground">
+        <div className="fixed left-3 top-3 flex items-center gap-2 text-primary-foreground">
           <Button
             variant="ghost"
             size="icon-lg"

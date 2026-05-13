@@ -159,7 +159,7 @@ export default function Page() {
                         <h1 className="text-4xl xs:text-5xl font-black">
                           Draw It
                           <br />
-                          Web Build It.
+                          We Build It.
                         </h1>
                         <p className="text-base pt-2">
                           Create precise flashing designs in minutes

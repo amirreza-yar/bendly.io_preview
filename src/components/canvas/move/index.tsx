@@ -25,7 +25,7 @@ export function MoveModeUI({ engine }: { engine: RefObject<Engine> }) {
 
   useEffect(() => {
     if (modeProps.triggerCenterCon) {
-      engine.current.renderer.centerRenderedContentAnimated(160, 20, 100);
+      engine.current.renderer.centerRenderedContentAnimated(160, 20, 50);
 
       // eslint-disable-next-line
       setModeProps((prev) => ({ ...prev, triggerCenterCon: false }));

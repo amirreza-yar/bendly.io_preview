@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Delivery,
   Info,
+  Mail,
   Phone,
   ProfileNav,
   WareHouse,
@@ -24,6 +25,8 @@ import {
 } from "@/components/order/progressionObject";
 import { NewOrderSummaryAccordion } from "@/components/order/accordion";
 import { cookies } from "next/headers";
+import ExportOrderPDFLink from "@/components/pdf-export";
+import { Download } from "lucide-react";
 
 const onFetchOrderDetails: (
   orderId: string | number,
@@ -297,19 +300,26 @@ export default async function LibraryPage({
         </div>
       </div>
 
+      <Button size="lg" className="w-full">
+        <ExportOrderPDFLink order={order} className="flex items-center gap-2">
+          <Download className="size-5" />
+          Export Invoice
+        </ExportOrderPDFLink>
+      </Button>
+
       {order.status !== "completed" && (
         <div>
           <div className="flex flex-col gap-4">
             <h6 className="pb-2">Need Help?</h6>
             <Button variant="outline" size="lg" asChild>
-              <Link href="tel:+9876543210">
+              <Link href="tel:+61404050208">
                 <Phone className="size-5" />
                 Call Support
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link href="mailto:name@domain.com">
-                <Phone className="size-5" />
+              <Link href="mailto:info@bendly.io">
+                <Mail className="size-5" />
                 Send Mail
               </Link>
             </Button>

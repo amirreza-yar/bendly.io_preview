@@ -1,5 +1,4 @@
-import { Flashing } from "@/types/orders/orderType";
-import { RequestPiece } from "@/types/orders/requestType";
+import { Flashing } from "@/types/api";
 
 export function formatDate(dateStr: string | number): string {
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -10,7 +9,7 @@ export function formatDate(dateStr: string | number): string {
 }
 
 export function getTotalQuantity(flashing: Flashing): number {
-  const specQty = flashing?.sepcifications.reduce(
+  const specQty = flashing?.specifications.reduce(
     (sum: number, spec: any) => sum + spec.quantity,
     0,
   );
@@ -75,7 +74,7 @@ export function formatDateWithDay(input: string | number): string {
   return `${weekday}, ${day} ${month}`;
 }
 
-export function groupByFlashing(requestPieces: RequestPiece[]): Flashing[] {
+export function groupByFlashing(requestPieces: any): Flashing[] {
   const grouped: Record<string, Flashing> = {};
 
   for (const piece of requestPieces) {
@@ -93,6 +92,7 @@ export function groupByFlashing(requestPieces: RequestPiece[]): Flashing[] {
 
     if (!grouped[flashingId]) {
       grouped[flashingId] = {
+        // @ts-expect-error Its ok
         flashingId,
         material,
         color,
@@ -134,6 +134,8 @@ export function formatStatus(status: any, type: any) {
     cancelled: "Cancelled",
     completed: "Completed",
     rejected: "Rejected",
+    approved: "Approved",
+    shipped: "Shipped",
   };
 
   return map[status] || status;

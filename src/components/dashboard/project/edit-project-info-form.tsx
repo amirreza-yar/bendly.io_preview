@@ -16,6 +16,11 @@ import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
 import { notFound, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 
 const editProjectInfoFormSchema = z.object({
   code: z
@@ -122,13 +127,16 @@ export default function EditProjectInfoForm({
                   <FieldLabel htmlFor={field.name}>
                     Project Code <span className="text-destructive">*</span>
                   </FieldLabel>
-                  <Input
-                    {...field}
-                    id={field.name}
-                    aria-invalid={isInvalid}
-                    autoComplete="off"
-                    placeholder="PRJ-3547"
-                  />
+                  <InputGroup>
+                    <InputGroupAddon>PRJ - </InputGroupAddon>
+                    <InputGroupInput
+                      {...field}
+                      id={field.name}
+                      aria-invalid={isInvalid}
+                      autoComplete="off"
+                      placeholder="3547"
+                    />
+                  </InputGroup>
                   {!isInvalid ? (
                     <FieldDescription>
                       Unique identifier for this project
