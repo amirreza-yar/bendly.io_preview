@@ -77,6 +77,7 @@ export default function ProceedOrderDialog({
       await api.post("/a/flashing/", {
         material: material.id,
         code: data.code,
+        fit_together: data.fitTogether,
         position:
           (data.position?.length ?? 0) > 0 ? data.position : "Not provided",
         specifications: specs,

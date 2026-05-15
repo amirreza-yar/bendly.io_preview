@@ -61,10 +61,16 @@ export default function LoginPage() {
       toast("Successfully signed in");
       router.replace("/dashboard");
     } catch (error: any) {
-      const message =
+      const message: string =
         error.response?.data?.non_field_errors[0] ||
         error.response?.data ||
         "Something broke, probably not your fault.";
+
+      if (message.startsWith("E-mail is not verified")) {
+        router.push(`/auth/verify-email?email=${data.email}&from=login`);
+      }
+
+      // http://localhost:3000/auth/verify-email?email=demo2@domain.co
 
       toast(message);
     }

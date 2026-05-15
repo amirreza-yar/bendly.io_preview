@@ -143,10 +143,9 @@ export default function SignupPage() {
       toast("Verification email sent ");
       router.replace(`/auth/verify-email?email=${data.email}`);
     } catch (error: any) {
-      const message =
+      const message: string =
         error.response.data?.email?.[0] ||
         "Something broke, probably not your fault.";
-
       toast(message);
     }
   };

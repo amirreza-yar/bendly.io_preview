@@ -61,7 +61,7 @@ const DetailsFormSchema = z.object({
       { message: "Each specification must have quantity and length" },
     ),
 
-  fitTogether: z.enum(["right-to-left", "left-to-right"]).nonoptional(),
+  fitTogether: z.enum(["rtl", "ltr"]).nonoptional(),
 });
 
 export type DetailsFormValues = z.infer<typeof DetailsFormSchema>;
@@ -78,7 +78,7 @@ export default function DetailsDialogContent({
     defaultValues: {
       code: "",
       position: "",
-      fitTogether: "right-to-left",
+      fitTogether: "rtl",
       specifications: [{ quantity: "", length: "" }],
     },
   });
@@ -184,20 +184,20 @@ export default function DetailsDialogContent({
                         >
                           <div className="flex items-center gap-3">
                             <RadioGroupItem
-                              value="right-to-left"
-                              id="right-to-left"
+                              value="rtl"
+                              id="rtl"
                             />
-                            <FieldLabel htmlFor="right-to-left">
+                            <FieldLabel htmlFor="rtl">
                               Right to Left
                             </FieldLabel>
                           </div>
 
                           <div className="flex items-center gap-3">
                             <RadioGroupItem
-                              value="left-to-right"
-                              id="left-to-right"
+                              value="ltr"
+                              id="ltr"
                             />
-                            <FieldLabel htmlFor="left-to-right">
+                            <FieldLabel htmlFor="ltr">
                               Left to Right
                             </FieldLabel>
                           </div>

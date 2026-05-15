@@ -23,11 +23,12 @@ import Image from "next/image";
 export default function VerifyEmailPage({
   searchParams,
 }: {
-  searchParams: Promise<{ email?: string }>;
+  searchParams: Promise<{ email?: string; from?: string }>;
 }) {
   // const router = useRouter();
 
   const email = use(searchParams).email;
+  const isFromLogin = use(searchParams).from === "login";
 
   const resendRef = useRef<CodeResendTimeHandle>(null);
 
@@ -91,14 +92,22 @@ export default function VerifyEmailPage({
             />
           </div>
 
-          <div className="flex items-center w-full justify-center pt-5">
-            <p className="text-xs">Not your email?</p>
-            <Link href="/auth/signup">
-              <Button variant="link" size="xs" type="button">
-                Change email
+          {!isFromLogin ? (
+            <div className="flex items-center w-full justify-center pt-5">
+              <p className="text-xs">Not your email?</p>
+              <Link href="/auth/signup">
+                <Button variant="link" size="xs" type="button">
+                  Change email
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="flex items-center w-full justify-center pt-2">
+              <Button variant="link" size="xs" type="button" asChild>
+                <Link href="/auth">Return to sign in</Link>
               </Button>
-            </Link>
-          </div>
+            </div>
+          )}
         </div>
       </div>
 

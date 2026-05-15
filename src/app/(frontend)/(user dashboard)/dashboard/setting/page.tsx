@@ -32,8 +32,8 @@ const onLogout: () => Promise<{ ok: boolean; message?: string }> = async () => {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("auth-jwt")?.value;
-
-    const res = await api.post(
+    
+    await api.post(
       `/auth/logout/`,
       {},
       {
@@ -43,16 +43,24 @@ const onLogout: () => Promise<{ ok: boolean; message?: string }> = async () => {
       },
     );
 
-    cookieStore.set("auth-jwt", "");
-    cookieStore.set("auth-refresh-jwt", "");
+    cookieStore.delete("auth-jwt")
+    cookieStore.delete("auth-refresh-jwt")
 
-    return { ok: true, data: res.data };
+
+
+    return { ok: true };
   } catch (error: any) {
     console.error(error, error.response.data, error.request);
+
+    const cookieStore = await cookies();
+
+    cookieStore.delete("auth-jwt")
+    cookieStore.delete("auth-refresh-jwt")
+    
     try {
-      return { ok: false, message: error.response.data };
+      return { ok: true, message: error.response.data };
     } catch {
-      return { ok: false };
+      return { ok: true };
     }
   }
 };

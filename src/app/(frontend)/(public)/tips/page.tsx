@@ -93,10 +93,6 @@ export default function HelpsTipsPage() {
                 desc="Projects are used for, anaging your projects and addresses; each project can have multiple addresses."
               />
               <TipComp
-                title="Projects"
-                desc="Projects are used for, anaging your projects and addresses; each project can have multiple addresses."
-              />
-              <TipComp
                 title="Orders"
                 desc="Track and manage all your orders in one place. View order details, payment status, and delivery updates instantly."
               />

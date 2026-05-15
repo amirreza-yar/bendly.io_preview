@@ -81,12 +81,12 @@ export default async function LibraryPage({
         <Separator className="my-2" />
         <div className="flex__between">
           <p className="text-muted-foreground">Project Code</p>
-          <span>PRJ-{order.job_reference?.code}</span>
+          <span>PRJ-{order.job_reference?.code ?? order.project?.code}</span>
         </div>
         {order.job_reference?.project_name && (
           <div className="flex__between">
             <p className="text-muted-foreground">Project</p>
-            <span>{order.job_reference?.project_name}</span>
+            <span>{order.job_reference?.project_name ?? order.project?.project_name}</span>
           </div>
         )}
       </div>
@@ -300,12 +300,12 @@ export default async function LibraryPage({
         </div>
       </div>
 
-      <Button size="lg" className="w-full">
+      {/* <Button size="lg" className="w-full">
         <ExportOrderPDFLink order={order} className="flex items-center gap-2">
           <Download className="size-5" />
           Export Invoice
         </ExportOrderPDFLink>
-      </Button>
+      </Button> */}
 
       {order.status !== "completed" && (
         <div>
