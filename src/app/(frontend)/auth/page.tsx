@@ -47,7 +47,7 @@ async function loginRequest(url: string, { arg }: { arg: LoginFormValue }) {
 export default function LoginPage() {
   const loginForm = useForm<LoginFormValue>({
     resolver: zodResolver(LoginFormSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: "demo@domain.co", password: "12345678" },
   });
 
   const router = useRouter();
