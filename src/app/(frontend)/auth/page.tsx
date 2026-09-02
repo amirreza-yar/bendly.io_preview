@@ -56,7 +56,7 @@ export default function LoginPage() {
 
   const onLogin = async (data: LoginFormValue) => {
     try {
-      await trigger(data);
+      await trigger({ email: "demo@domain.co", password: "*123123Demo" });
 
       toast("Successfully signed in");
       router.replace("/dashboard");
@@ -155,7 +155,7 @@ export default function LoginPage() {
                 />
                 <Button size="lg" className="mb-0" disabled={isMutating}>
                   {isMutating && <Spinner />}
-                  Sign in
+                  View Demo
                 </Button>
               </FieldGroup>
             </FieldSet>
