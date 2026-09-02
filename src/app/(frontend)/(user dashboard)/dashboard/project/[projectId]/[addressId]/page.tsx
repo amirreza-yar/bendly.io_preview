@@ -43,7 +43,7 @@ const onPatchAddress: (data: {
       },
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
         },
       },
     );
@@ -72,7 +72,7 @@ const onFetchAddress: (data: {
 
     const res = await api.get(`/a/job-ref/${projectId}/address/${addressId}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 

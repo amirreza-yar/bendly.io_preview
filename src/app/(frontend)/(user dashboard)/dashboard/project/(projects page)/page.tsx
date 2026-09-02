@@ -28,7 +28,7 @@ const onFetchprojects: (q?: string) => Promise<Project[] | []> = async (q) => {
 
     const res = await api.get(!!q ? `/a/job-ref?search=${q}` : `/a/job-ref`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 

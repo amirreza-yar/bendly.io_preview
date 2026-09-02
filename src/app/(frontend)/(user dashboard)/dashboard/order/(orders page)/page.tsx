@@ -31,7 +31,7 @@ const onFetchOrders: (query?: string) => Promise<{
 
     const res = await api.get(createOrderURI(query), {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 

@@ -36,7 +36,7 @@ const onFetchRecentTemplates: () => Promise<Template[] | []> = async () => {
 
     const res = await api.get("/a/template", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 

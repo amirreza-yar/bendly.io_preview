@@ -16,7 +16,7 @@ const onFetchTermConditions: () => Promise<{
 
     const res = await api.get("/a/static-content/privacy_policy/", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 

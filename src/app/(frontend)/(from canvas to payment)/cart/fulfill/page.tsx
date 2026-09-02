@@ -18,7 +18,7 @@ const onFetchCart: () => Promise<{
 
     const res = await api.get("/a/cart/", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 
@@ -39,7 +39,7 @@ const onFetchJobRefs: () => Promise<{
 
     const res = await api.get("/a/job-ref/", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 
@@ -60,7 +60,7 @@ const onFetchJobRefs: () => Promise<{
 
 //     const res = await api.patch("/a/cart/", data, {
 //       headers: {
-//         Authorization: `Bearer ${accessToken}`,
+//         Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
 //       },
 //     });
 

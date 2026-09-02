@@ -38,7 +38,7 @@ const onLogout: () => Promise<{ ok: boolean; message?: string }> = async () => {
       {},
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
         },
       },
     );

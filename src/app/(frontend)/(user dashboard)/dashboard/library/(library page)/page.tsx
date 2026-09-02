@@ -22,7 +22,7 @@ export const onFetchTemplates: (
 
     const res = await api.get(q ? `/a/template?search=${q}` : "/a/template", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 
@@ -43,7 +43,7 @@ export const onDeleteTemplate: (
 
     const res = await api.delete(`/a/template/${templateId}/`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 
@@ -71,7 +71,7 @@ export const onEditTemplate: (
       { name: name },
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
         },
       },
     );

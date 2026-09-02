@@ -27,7 +27,7 @@ const onFetchCart: () => Promise<{
 
     const res = await api.get("/a/cart/", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 
@@ -48,7 +48,7 @@ const onFetchMaterials: () => Promise<{
 
     const res = await api.get("/a/materials/", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 
@@ -68,7 +68,7 @@ const onDeleteFlashing: (flashingId: string | number) => Promise<{
 
     const res = await api.delete(`/a/flashing/${flashingId}/`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 
@@ -89,7 +89,7 @@ const onPostDiscardCart: () => Promise<{ ok: boolean }> = async () => {
       {},
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
         },
       },
     );

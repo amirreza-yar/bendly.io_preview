@@ -38,7 +38,7 @@ const onFetchOrderDetails: (
 
     const res = await api.get(`/a/order/${orderId}/`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 

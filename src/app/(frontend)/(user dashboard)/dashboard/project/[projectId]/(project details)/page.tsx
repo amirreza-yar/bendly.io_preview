@@ -26,7 +26,7 @@ export const onFetchProjectDetails: (
 
     const res = await api.get(`/a/job-ref/${id}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 
@@ -47,7 +47,7 @@ export const onRemoveAddress: (
 
     await api.delete(`/a/job-ref/${projectId}/address/${addressId}/`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
     });
 
