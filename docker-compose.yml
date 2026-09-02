@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+
+    image: bendly_client_v2_demo_ui
+
+    ports:
+      - "3000:3000"
